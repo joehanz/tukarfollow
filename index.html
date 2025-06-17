@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TukarFollow</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+    #login-btn, #logout-btn, #send-btn { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+    #logout-btn { display: none; }
+    #username-input { width: 100%; padding: 8px; margin-top: 10px; }
+    #status { margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h2>Selamat Datang di TukarFollow</h2>
+  <p>Masuk pakai Google untuk mulai.</p>
+
+  <button id="login-btn">Login dengan Google</button>
+  <button id="logout-btn">Logout</button>
+
+  <div id="app" style="display:none;">
+    <input type="text" id="username-input" placeholder="Masukkan username TikTok kamu" />
+    <button id="send-btn">Kirim Permintaan</button>
+    <div id="status"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script>
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAuThW1eS73CePt68m40nGapAYoRNg7sqs",
+      authDomain: "tukarfollow-e8811.firebaseapp.com",
+      databaseURL: "https://tukarfollow-e8811-default-rtdb.firebaseio.com",
+      projectId: "tukarfollow-e8811",
+      storageBucket: "tukarfollow-e8811.firebasestorage.app",
+      messagingSenderId: "317096796956",
+      appId: "1:317096796956:web:69b72623474b29f08950d9",
+      measurementId: "G-KFQBGCM775"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Elemen DOM
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const appDiv = document.getElementById('app');
+    const sendBtn = document.getElementById('send-btn');
+    const usernameInput = document.getElementById('username-input');
+    const statusDiv = document.getElementById('status');
+
+    // Login dengan Google
+    loginBtn.onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(err => {
+        alert('Login gagal: ' + err.message);
+      });
+    };
+
+    // Logout
+    logoutBtn.onclick = () => {
+      auth.signOut();
+    };
+
+    // Cek status login
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        appDiv.style.display = 'block';
+        statusDiv.innerText = '';
+      } else {
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        appDiv.style.display = 'none';
+        statusDiv.innerText = '';
+        usernameInput.value = '';
+      }
+    });
+
+    // Kirim username TikTok ke Firebase
+    sendBtn.onclick = () => {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        statusDiv.innerText = 'Masukkan username TikTok terlebih dahulu.';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        statusDiv.innerText = 'Harap login dulu.';
+        return;
+      }
+
+      // Simpan data ke Realtime Database
+      const requestRef = database.ref('requests/' + user.uid);
+      requestRef.set({
+        tiktokUsername: username,
+        userEmail: user.email,
+        timestamp: Date.now()
+      }).then(() => {
+        statusDiv.innerText = 'Permintaan terkirim, tunggu giliran.';
+        usernameInput.value = '';
+      }).catch(error => {
+        statusDiv.innerText = 'Gagal mengirim permintaan: ' + error.message;
+      });
+    };
+  </script>
+</body>
+</html>

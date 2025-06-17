@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - TukarFollow</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #fffdfc; }
+    h2 { color: #333; }
+    .box { max-width: 400px; margin: auto; background: #f1f1f1; padding: 1.5em; border-radius: 10px; }
+    input, button {
+      display: block; width: 100%; margin-top: 1em;
+      padding: 0.8em; border-radius: 5px; border: 1px solid #ccc;
+    }
+    button { background: #007bff; color: white; border: none; cursor: pointer; }
+    .info { margin-top: 1em; font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Halo, <span id="user-name"></span> 👋</h2>
+    <div id="status-info" class="info">Memuat status kamu...</div>
+
+    <input type="text" id="tiktok-username" placeholder="Username TikTok kamu" />
+    <button id="btn-send-request">Kirim Permintaan Follow</button>
+    <button id="btn-logout" style="background:red;">Logout</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAuThW1eS73CePt68m40nGapAYoRNg7sqs",
+      authDomain: "tukarfollow-e8811.firebaseapp.com",
+      projectId: "tukarfollow-e8811"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const userNameSpan = document.getElementById('user-name');
+    const statusInfo = document.getElementById('status-info');
+    const btnLogout = document.getElementById('btn-logout');
+    const btnSend = document.getElementById('btn-send-request');
+    const inputUsername = document.getElementById('tiktok-username');
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) return location.href = "index.html";
+      userNameSpan.textContent = user.displayName || user.email;
+
+      const snapshot = await db.collection("follow_requests")
+        .where("uid", "==", user.uid).limit(1).get();
+
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        statusInfo.textContent = `Permintaan aktif: @${data.tiktokUsername}`;
+      } else {
+        statusInfo.textContent = "Kamu belum mengirim permintaan follow.";
+      }
+    });
+
+    btnSend.onclick = async () => {
+      const user = auth.currentUser;
+      const username = inputUsername.value.trim();
+      if (!username) return alert("Isi username TikTok dulu!");
+
+      await db.collection("follow_requests").add({
+        uid: user.uid,
+        email: user.email,
+        tiktokUsername: username,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      alert("Permintaan dikirim! Tunggu giliran kamu.");
+      inputUsername.value = "";
+      location.reload();
+    };
+
+    btnLogout.onclick = () => auth.signOut().then(() => location.href = "index.html");
+  </script>
+</body>
+</html>
+
