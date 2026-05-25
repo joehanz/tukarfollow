@@ -92,10 +92,10 @@ body {margin:0;font-family:Arial}
   .column {width:100%;}
 }
 
-/* VIDEO PLAYER */
-video {
+iframe {
   width:100%;
   height:350px;
+  border:none;
   background:black;
 }
 </style>
@@ -124,12 +124,10 @@ video {
 
 <div class="row">
 
-  <!-- PLAYER -->
   <div class="column" style="background:#aaa;">
     <div id="player">Loading...</div>
   </div>
 
-  <!-- INFO -->
   <div class="column" style="background:#bbb;">
     <div id="info">Loading film...</div>
   </div>
@@ -142,10 +140,20 @@ function myFunction() {
   x.className = (x.className === "topnav") ? "topnav responsive" : "topnav";
 }
 
-/* GET ID */
 const id = new URLSearchParams(window.location.search).get("id");
 
-/* LOAD JSON */
+/* OPTIONAL FIX EMBED */
+function cleanEmbed(url){
+  if(!url) return "";
+
+  // kalau sudah embed langsung pakai
+  if(url.includes("iframe") || url.includes("embed")){
+    return url;
+  }
+
+  return url;
+}
+
 fetch("movies.json")
 .then(res => res.json())
 .then(data => {
@@ -157,12 +165,10 @@ fetch("movies.json")
     return;
   }
 
-  /* FIX: VIDEO MP4 / STREAM (NO YOUTUBE, NO BLOGSPOT) */
+  const video = cleanEmbed(film.video);
+
   document.getElementById("player").innerHTML = `
-    <video controls autoplay>
-      <source src="${film.video}" type="video/mp4">
-      Browser tidak support video
-    </video>
+    <iframe src="${video}" allowfullscreen></iframe>
   `;
 
   document.getElementById("info").innerHTML = `
