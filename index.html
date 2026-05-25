@@ -3,80 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nav Fix</title>
+<title>Movie Nav</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-black text-white">
 
 <!-- NAV -->
-<nav class="border-b border-gray-800 px-6 py-4">
+<nav class="relative border-b border-gray-800 px-6 py-4">
 
   <div class="flex items-center justify-between">
 
-    <!-- LEFT LOGO -->
+    <!-- LOGO -->
     <div class="text-xl font-bold text-red-600">
       tukarfollow
     </div>
 
-    <!-- RIGHT DESKTOP -->
-    <div class="hidden md:flex items-center gap-6">
+    <!-- RIGHT -->
+    <div class="flex items-center gap-4">
 
-      <!-- SEARCH -->
       <input type="text" placeholder="Cari film..."
-        class="px-3 py-2 bg-gray-900 border border-gray-700 rounded w-64">
+        class="hidden md:block px-3 py-2 bg-gray-900 border border-gray-700 rounded w-64">
 
-      <!-- GENRE -->
-      <ul class="text-sm text-gray-300">
-        <li onclick="toggleAcc('genre')" class="cursor-pointer font-semibold text-white">Genre ▾</li>
-        <div id="genre" class="hidden mt-2 flex flex-col gap-1">
-          <li>Action</li>
-          <li>Comedy</li>
-          <li>Drama</li>
-        </div>
-      </ul>
+      <button onclick="toggleMenu()" class="text-2xl md:hidden">☰</button>
 
-      <!-- COUNTRY / YEAR ACCORDION -->
-      <ul class="text-sm text-gray-300">
-        <li onclick="toggleAcc('year')" class="cursor-pointer font-semibold text-white">Negara / Tahun ▾</li>
-        <div id="year" class="hidden mt-2 flex flex-col gap-1">
-          <li>2026</li>
-          <li>2025</li>
-          <li>2024</li>
-          <li>Classic</li>
-        </div>
-      </ul>
+      <button onclick="toggleMenu()" class="hidden md:block px-3 py-2 bg-gray-900 border border-gray-700 rounded">
+        Menu
+      </button>
 
     </div>
-
-    <!-- BURGER -->
-    <button class="md:hidden text-2xl" onclick="toggleMobile()">☰</button>
 
   </div>
 
-  <!-- MOBILE -->
-  <div id="mobile" class="hidden mt-4 flex flex-col gap-3 md:hidden">
+  <!-- DROPDOWN PANEL (keluar dari bawah nav) -->
+  <div id="panel" class="hidden absolute left-0 top-full w-full bg-black border-b border-gray-800 p-4 z-50">
 
-    <input type="text" placeholder="Cari film..."
-      class="px-3 py-2 bg-gray-900 border border-gray-700 rounded w-full">
+    <div class="flex flex-col md:flex-row gap-6">
 
-    <div>
-      <div onclick="toggleAcc('mgenre')" class="font-semibold cursor-pointer">Genre ▾</div>
-      <div id="mgenre" class="hidden pl-3 mt-2 flex flex-col gap-1 text-gray-300">
-        <div>Action</div>
-        <div>Comedy</div>
-        <div>Drama</div>
-      </div>
-    </div>
+      <!-- SEARCH MOBILE -->
+      <input type="text" placeholder="Cari film..."
+        class="px-3 py-2 bg-gray-900 border border-gray-700 rounded w-full md:hidden">
 
-    <div>
-      <div onclick="toggleAcc('myear')" class="font-semibold cursor-pointer">Negara / Tahun ▾</div>
-      <div id="myear" class="hidden pl-3 mt-2 flex flex-col gap-1 text-gray-300">
-        <div>2026</div>
-        <div>2025</div>
-        <div>2024</div>
-        <div>Classic</div>
-      </div>
+      <!-- GENRE -->
+      <ul class="text-sm text-gray-300">
+        <li class="font-semibold text-white mb-2">Genre</li>
+        <li>Action</li>
+        <li>Comedy</li>
+        <li>Drama</li>
+      </ul>
+
+      <!-- YEAR -->
+      <ul class="text-sm text-gray-300">
+        <li class="font-semibold text-white mb-2">Tahun</li>
+        <li>2026</li>
+        <li>2025</li>
+        <li>2024</li>
+        <li>Classic</li>
+      </ul>
+
     </div>
 
   </div>
@@ -84,12 +68,8 @@
 </nav>
 
 <script>
-function toggleAcc(id){
-  document.getElementById(id).classList.toggle('hidden');
-}
-
-function toggleMobile(){
-  document.getElementById('mobile').classList.toggle('hidden');
+function toggleMenu(){
+  document.getElementById('panel').classList.toggle('hidden');
 }
 </script>
 
