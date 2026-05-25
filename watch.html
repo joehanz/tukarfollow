@@ -2,298 +2,451 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Watch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch Movie</title>
 
-<link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
-/* WRAPPER */
-.watch-wrap{
-  padding:70px 15px 15px;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-/* TOP BAR FIX + CLOSE */
-.watch-topbar{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:60px;
-  background:#111;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 15px;
-  z-index:9999;
+body{
+background:#0d1117;
+font-family:'Poppins',sans-serif;
+color:#fff;
+overflow-x:hidden;
 }
 
-.close-btn{
-  background:red;
-  color:#fff;
-  border:none;
-  padding:6px 12px;
-  border-radius:5px;
-  cursor:pointer;
+/* HEADER */
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+padding:15px 45px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(10px);
 }
 
-/* MAIN LAYOUT FIX */
-.watch-grid{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
+.logo{
+font-size:30px;
+font-weight:700;
+color:#01b4e4;
 }
 
-/* PLAYER */
-.player-wrap iframe{
-  width:100%;
-  height:70vh;
-  border:0;
-  background:#000;
+nav{
+display:flex;
+gap:25px;
 }
 
-/* INFO */
-.info-box{
-  background:#0d0d12;
-  padding:15px;
-  border-radius:10px;
-  max-height:70vh;
-  overflow-y:auto;
+nav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+transition:.3s;
 }
 
-.title{
-  font-size:22px;
-  margin-bottom:10px;
+nav a:hover{
+color:#01b4e4;
 }
 
-.meta{
-  font-size:13px;
-  color:#aaa;
-  margin-bottom:10px;
+/* HERO */
+
+.hero{
+position:relative;
+padding:120px 50px 60px;
+background-size:cover;
+background-position:center;
+}
+
+.hero::before{
+content:'';
+position:absolute;
+inset:0;
+background:
+linear-gradient(to top, #0d1117, rgba(0,0,0,.4));
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+display:flex;
+gap:40px;
+align-items:flex-start;
+}
+
+.poster{
+width:280px;
+border-radius:18px;
+overflow:hidden;
+flex-shrink:0;
+box-shadow:0 15px 40px rgba(0,0,0,.5);
+}
+
+.poster img{
+width:100%;
+display:block;
+}
+
+.info{
+max-width:800px;
 }
 
 .tag{
-  display:inline-block;
-  padding:3px 8px;
-  margin:2px;
-  background:#222;
-  font-size:12px;
-  border-radius:4px;
+display:inline-block;
+padding:6px 15px;
+background:#01b4e4;
+border-radius:50px;
+font-size:13px;
+margin-bottom:20px;
 }
 
-.desc{
-  font-size:13px;
-  line-height:1.5;
+.info h1{
+font-size:50px;
+margin-bottom:20px;
+line-height:1.1;
+}
+
+.meta{
+margin-bottom:20px;
+color:#01b4e4;
+font-size:14px;
+}
+
+.synopsis{
+font-size:15px;
+line-height:1.9;
+color:#ddd;
+}
+
+/* PLAYER */
+
+.player-section{
+padding:40px 50px;
+}
+
+.player-box{
+position:relative;
+padding-top:56.25%;
+border-radius:20px;
+overflow:hidden;
+background:#000;
+}
+
+.player-box iframe{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+border:none;
 }
 
 /* RELATED */
-.related-wrap{
-  margin-top:20px;
-  position:relative;
+
+.section{
+padding:20px 50px 60px;
 }
 
-/* ARROW BUTTONS */
-.arrow{
-  position:absolute;
-  top:40%;
-  background:#000;
-  color:#fff;
-  border:none;
-  font-size:20px;
-  width:35px;
-  height:60px;
-  cursor:pointer;
-  z-index:10;
-  opacity:.7;
+.section-title{
+font-size:28px;
+margin-bottom:25px;
 }
 
-.arrow:hover{opacity:1;}
-
-.arrow.left{left:0;}
-.arrow.right{right:0;}
-
-/* SCROLL ROW */
-.related-row{
-  display:flex;
-  overflow-x:auto;
-  gap:10px;
-  padding:10px 40px;
-  scroll-behavior:smooth;
+.movie-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:22px;
 }
 
-.related-row::-webkit-scrollbar{
-  display:none;
+.movie-card{
+background:#161b22;
+border-radius:18px;
+overflow:hidden;
+transition:.35s;
 }
 
-.related-card{
-  min-width:140px;
-  cursor:pointer;
+.movie-card:hover{
+transform:translateY(-8px);
 }
 
-.related-card img{
-  width:140px;
-  height:200px;
-  object-fit:cover;
-  border-radius:8px;
+.movie-card img{
+width:100%;
+height:270px;
+object-fit:cover;
+display:block;
 }
 
-.related-card .t{
-  font-size:12px;
-  margin-top:5px;
-  opacity:.8;
+.movie-info{
+padding:14px;
+}
+
+.movie-info h3{
+font-size:15px;
+margin-bottom:8px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.movie-info span{
+font-size:13px;
+color:#01b4e4;
+}
+
+/* FOOTER */
+
+footer{
+padding:35px;
+text-align:center;
+color:#888;
+font-size:14px;
 }
 
 /* MOBILE */
+
 @media(max-width:900px){
-  .watch-grid{
-    grid-template-columns:1fr;
-  }
 
-  .player-wrap iframe{
-    height:45vh;
-  }
+header{
+padding:15px 20px;
+}
 
-  .arrow{
-    display:none;
-  }
+.hero{
+padding:100px 20px 40px;
+}
+
+.hero-content{
+flex-direction:column;
+}
+
+.poster{
+width:220px;
+}
+
+.info h1{
+font-size:34px;
+}
+
+.player-section{
+padding:20px;
+}
+
+.section{
+padding:20px;
+}
+
+.movie-grid{
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.movie-card img{
+height:240px;
+}
+
 }
 
 </style>
 </head>
-
 <body>
 
-<!-- TOP BAR -->
-<div class="watch-topbar">
-  <div style="color:#fff;font-weight:bold;">STREAM</div>
-  <button class="close-btn" onclick="goBack()">✕</button>
+<header>
+
+<div class="logo">TMDB</div>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="movies.html">Movies</a>
+<a href="indonesia.html">Indonesia</a>
+</nav>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero" id="hero">
+
+<div class="hero-content">
+
+<div class="poster">
+<img id="poster" src="">
 </div>
 
-<div class="watch-wrap">
+<div class="info">
 
-  <!-- GRID -->
-  <div class="watch-grid">
+<div class="tag" id="extra">HD</div>
 
-    <!-- LEFT PLAYER -->
-    <div class="player-wrap">
-      <iframe id="frame" allowfullscreen></iframe>
-    </div>
+<h1 id="title">Loading...</h1>
 
-    <!-- RIGHT INFO -->
-    <div class="info-box">
+<div class="meta" id="imdb">
+IMDb
+</div>
 
-      <div class="title" id="title">Loading...</div>
-
-      <div class="meta" id="meta"></div>
-
-      <div id="tags"></div>
-
-      <p class="desc" id="desc"></p>
-
-    </div>
-
-  </div>
-
-  <!-- RELATED -->
-  <div class="related-wrap">
-
-    <button class="arrow left" onclick="scrollRel(-300)">‹</button>
-    <button class="arrow right" onclick="scrollRel(300)">›</button>
-
-    <div class="related-row" id="related"></div>
-
-  </div>
+<p class="synopsis" id="synopsis">
+Please wait...
+</p>
 
 </div>
+
+</div>
+
+</section>
+
+<!-- PLAYER -->
+
+<section class="player-section">
+
+<div class="player-box">
+
+<iframe
+id="player"
+allowfullscreen
+allow="autoplay; encrypted-media">
+</iframe>
+
+</div>
+
+</section>
+
+<!-- RELATED -->
+
+<section class="section">
+
+<h2 class="section-title">Related Movies</h2>
+
+<div class="movie-grid" id="relatedGrid"></div>
+
+</section>
+
+<footer>
+© 2026 Watch Movie
+</footer>
 
 <script>
 
-const API = "9e335d21d35f04917b218bae7adc881f";
-const id = new URLSearchParams(location.search).get("id");
+const params =
+new URLSearchParams(window.location.search);
 
-function goBack(){
-  history.back();
+const movieId =
+params.get("id");
+
+const title =
+document.getElementById("title");
+
+const poster =
+document.getElementById("poster");
+
+const synopsis =
+document.getElementById("synopsis");
+
+const imdb =
+document.getElementById("imdb");
+
+const extra =
+document.getElementById("extra");
+
+const player =
+document.getElementById("player");
+
+const hero =
+document.getElementById("hero");
+
+const relatedGrid =
+document.getElementById("relatedGrid");
+
+/* LOAD */
+
+async function loadMovie(){
+
+const res =
+await fetch("movies.json");
+
+const movies =
+await res.json();
+
+const movie =
+movies[movieId];
+
+if(!movie){
+
+title.innerHTML =
+"Movie Not Found";
+
+return;
+
 }
 
-/* PLAYER + INFO */
-async function load(){
+/* DATA */
 
-  if(!id) return;
+title.innerHTML =
+movie.title;
 
-  const r = await fetch(
-    "https://api.themoviedb.org/3/movie/"
-    + id
-    + "?api_key="
-    + API
-    + "&append_to_response=external_ids"
-  );
+poster.src =
+movie.poster;
 
-  const d = await r.json();
+synopsis.innerHTML =
+movie.sinopsis;
 
-  document.getElementById("title").innerText = d.title;
+imdb.innerHTML =
+movie.imdb;
 
-  document.getElementById("meta").innerText =
-    "⭐ " + d.vote_average +
-    " | 📅 " + d.release_date;
+extra.innerHTML =
+movie.extra;
 
-  document.getElementById("desc").innerText = d.overview;
+player.src =
+movie.embed;
 
-  document.getElementById("tags").innerHTML =
-    (d.genres||[]).map(g=>`<span class='tag'>${g.name}</span>`).join("");
-
-  const imdb = d.external_ids?.imdb_id;
-
-  if(imdb){
-    document.getElementById("frame").src =
-      "https://vsembed.su/embed/movie?imdb=" + imdb;
-  }
-
-  loadRelated();
-}
+hero.style.backgroundImage =
+`url(${movie.poster})`;
 
 /* RELATED */
-async function loadRelated(){
 
-  const r = await fetch(
-    "https://api.themoviedb.org/3/movie/"
-    + id +
-    "/recommendations?api_key=" + API
-  );
+relatedGrid.innerHTML = "";
 
-  const d = await r.json();
+movies.slice(0,8).forEach((item,index)=>{
 
-  const box = document.getElementById("related");
+if(index != movieId){
 
-  d.results.forEach(m => {
+relatedGrid.innerHTML += `
 
-    if(!m.poster_path) return;
+<a href="watch.html?id=${index}"
+style="text-decoration:none;color:white;">
 
-    const div = document.createElement("div");
-    div.className = "related-card";
+<div class="movie-card">
 
-    div.innerHTML = `
-      <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-      <div class="t">${m.title}</div>
-    `;
+<img src="${item.poster}">
 
-    div.onclick = () => {
-      location.href = "watch.html?id=" + m.id;
-    };
+<div class="movie-info">
 
-    box.appendChild(div);
-  });
+<h3>${item.title}</h3>
+
+<span>${item.extra}</span>
+
+</div>
+
+</div>
+
+</a>
+
+`;
+
 }
 
-/* ARROW SCROLL */
-function scrollRel(x){
-  document.getElementById("related").scrollBy({
-    left:x,
-    behavior:"smooth"
-  });
+});
+
 }
 
-load();
+loadMovie();
 
 </script>
 
