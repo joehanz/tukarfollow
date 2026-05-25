@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indonesia Movies</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#0d1117;
+font-family:'Poppins',sans-serif;
+color:#fff;
+overflow-x:hidden;
+}
+
+/* HEADER */
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+padding:15px 45px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(10px);
+}
+
+.logo{
+font-size:30px;
+font-weight:700;
+color:#01b4e4;
+}
+
+nav{
+display:flex;
+gap:25px;
+}
+
+nav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+transition:.3s;
+}
+
+nav a:hover{
+color:#01b4e4;
+}
+
+.search-box{
+width:260px;
+height:44px;
+background:#fff;
+border-radius:50px;
+padding:0 18px;
+display:flex;
+align-items:center;
+}
+
+.search-box input{
+border:none;
+outline:none;
+width:100%;
+font-size:14px;
+}
+
+/* HERO */
+
+.hero{
+height:80vh;
+position:relative;
+display:flex;
+align-items:flex-end;
+padding:70px;
+background-size:cover;
+background-position:center;
+}
+
+.hero::before{
+content:'';
+position:absolute;
+inset:0;
+background:
+linear-gradient(to top, #0d1117, rgba(0,0,0,.3));
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+max-width:700px;
+}
+
+.hero-tag{
+display:inline-block;
+padding:6px 16px;
+background:#01b4e4;
+border-radius:50px;
+font-size:13px;
+margin-bottom:20px;
+}
+
+.hero h1{
+font-size:55px;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:15px;
+line-height:1.8;
+color:#ddd;
+}
+
+/* SECTION */
+
+.section{
+padding:40px 50px;
+}
+
+.section-title{
+font-size:28px;
+font-weight:600;
+margin-bottom:25px;
+}
+
+/* GRID */
+
+.movie-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:22px;
+}
+
+.movie-card{
+background:#161b22;
+border-radius:18px;
+overflow:hidden;
+transition:.35s;
+cursor:pointer;
+}
+
+.movie-card:hover{
+transform:translateY(-8px);
+}
+
+.movie-card img{
+width:100%;
+height:270px;
+object-fit:cover;
+display:block;
+}
+
+.movie-info{
+padding:14px;
+}
+
+.movie-info h3{
+font-size:15px;
+margin-bottom:8px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.movie-info span{
+font-size:13px;
+color:#01b4e4;
+}
+
+/* PAGINATION */
+
+.pagination{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:40px;
+flex-wrap:wrap;
+}
+
+.page-btn{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#161b22;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:.3s;
+}
+
+.page-btn:hover,
+.page-btn.active{
+background:#01b4e4;
+}
+
+/* FOOTER */
+
+footer{
+padding:35px;
+text-align:center;
+color:#888;
+font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+header{
+padding:15px 20px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+nav{
+width:100%;
+justify-content:center;
+overflow:auto;
+}
+
+.search-box{
+width:100%;
+}
+
+.hero{
+height:65vh;
+padding:30px 20px;
+}
+
+.hero h1{
+font-size:36px;
+}
+
+.section{
+padding:30px 20px;
+}
+
+.movie-grid{
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.movie-card img{
+height:240px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<header>
+
+<div class="logo">TMDB</div>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="movies.html">Movies</a>
+<a href="indonesia.html">Indonesia</a>
+</nav>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search Indonesian movie...">
+</div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero" id="hero">
+
+<div class="hero-content">
+
+<div class="hero-tag">Indonesia Movies</div>
+
+<h1 id="heroTitle">Loading...</h1>
+
+<p id="heroOverview">
+Please wait...
+</p>
+
+</div>
+
+</section>
+
+<!-- MOVIES -->
+
+<section class="section">
+
+<h2 class="section-title">Latest Indonesian Movies</h2>
+
+<div class="movie-grid" id="movieGrid"></div>
+
+<div class="pagination" id="pagination"></div>
+
+</section>
+
+<footer>
+© 2026 Indonesian Movies
+</footer>
+
+<script>
+
+const API_KEY =
+"9e335d21d35f04917b218bae7adc881f";
+
+const IMG =
+"https://image.tmdb.org/t/p/original";
+
+const POSTER =
+"https://image.tmdb.org/t/p/w500";
+
+const hero =
+document.getElementById("hero");
+
+const heroTitle =
+document.getElementById("heroTitle");
+
+const heroOverview =
+document.getElementById("heroOverview");
+
+const movieGrid =
+document.getElementById("movieGrid");
+
+const pagination =
+document.getElementById("pagination");
+
+let currentPage = 1;
+
+/* HERO */
+
+async function loadHero(){
+
+const res = await fetch(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
+);
+
+const data = await res.json();
+
+const movie = data.results[0];
+
+hero.style.backgroundImage =
+`url(${IMG + movie.backdrop_path})`;
+
+heroTitle.innerHTML =
+movie.title;
+
+heroOverview.innerHTML =
+movie.overview;
+
+}
+
+/* MOVIES */
+
+async function loadMovies(page=1){
+
+currentPage = page;
+
+movieGrid.innerHTML =
+"Loading...";
+
+const res = await fetch(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
+);
+
+const data = await res.json();
+
+movieGrid.innerHTML = "";
+
+data.results.forEach(movie=>{
+
+movieGrid.innerHTML += `
+
+<a href="watch.html?id=${movie.id}"
+style="text-decoration:none;color:white;">
+
+<div class="movie-card">
+
+<img src="${
+movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image'
+}"
+
+loading="lazy">
+
+<div class="movie-info">
+
+<h3>${movie.title}</h3>
+
+<span>
+⭐ ${movie.vote_average.toFixed(1)}
+</span>
+
+</div>
+
+</div>
+
+</a>
+
+`;
+
+});
+
+renderPagination(data.total_pages);
+
+}
+
+/* PAGINATION */
+
+function renderPagination(totalPages){
+
+pagination.innerHTML = "";
+
+let start = currentPage - 2;
+let end = currentPage + 2;
+
+if(start < 1) start = 1;
+if(end > totalPages) end = totalPages;
+
+if(currentPage > 1){
+
+pagination.innerHTML += `
+
+<div class="page-btn"
+onclick="loadMovies(${currentPage - 1})">
+
+‹
+
+</div>
+
+`;
+
+}
+
+for(let i=start;i<=end;i++){
+
+pagination.innerHTML += `
+
+<div class="page-btn ${currentPage===i?'active':''}"
+onclick="loadMovies(${i})">
+
+${i}
+
+</div>
+
+`;
+
+}
+
+if(currentPage < totalPages){
+
+pagination.innerHTML += `
+
+<div class="page-btn"
+onclick="loadMovies(${currentPage + 1})">
+
+›
+
+</div>
+
+`;
+
+}
+
+}
+
+/* SEARCH */
+
+async function searchMovies(query){
+
+const res = await fetch(
+`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
+);
+
+const data = await res.json();
+
+movieGrid.innerHTML = "";
+
+data.results.forEach(movie=>{
+
+if(movie.original_language === "id"){
+
+movieGrid.innerHTML += `
+
+<a href="watch.html?id=${movie.id}"
+style="text-decoration:none;color:white;">
+
+<div class="movie-card">
+
+<img src="${
+movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image'
+}"
+
+loading="lazy">
+
+<div class="movie-info">
+
+<h3>${movie.title}</h3>
+
+<span>
+⭐ ${movie.vote_average.toFixed(1)}
+</span>
+
+</div>
+
+</div>
+
+</a>
+
+`;
+
+}
+
+});
+
+pagination.innerHTML = "";
+
+}
+
+/* SEARCH EVENT */
+
+document
+.getElementById("searchInput")
+.addEventListener("keyup",(e)=>{
+
+const value = e.target.value;
+
+if(value.length > 2){
+
+searchMovies(value);
+
+}else{
+
+loadMovies(1);
+
+}
+
+});
+
+/* START */
+
+loadHero();
+loadMovies();
+
+</script>
+
+</body>
+</html>
