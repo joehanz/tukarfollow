@@ -319,273 +319,219 @@
 
     <script>
 
-      const API_KEY =
-      "9e335d21d35f04917b218bae7adc881f";
+const API_KEY =
+"9e335d21d35f04917b218bae7adc881f";
 
-      const IMG =
-      "https://image.tmdb.org/t/p/original";
+const IMG =
+"https://image.tmdb.org/t/p/original";
 
-      const POSTER =
-      "https://image.tmdb.org/t/p/w500";
+const POSTER =
+"https://image.tmdb.org/t/p/w500";
 
-      const hero =
-      document.getElementById("hero");
+const hero =
+document.getElementById("hero");
 
-      const heroTitle =
-      document.getElementById("heroTitle");
+const heroTitle =
+document.getElementById("heroTitle");
 
-      const heroOverview =
-      document.getElementById("heroOverview");
+const heroOverview =
+document.getElementById("heroOverview");
 
-      const movieGrid =
-      document.getElementById("movieGrid");
+const movieGrid =
+document.getElementById("movieGrid");
 
-      const pagination =
-      document.getElementById("pagination");
+const pagination =
+document.getElementById("pagination");
 
-      let currentPage = 1;
+let currentPage = 1;
 
-      /* HERO */
+/* HERO */
 
-      async function loadHero(){
+async function loadHero(){
 
-      const res = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
-      );
+const res = await fetch(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
+);
 
-      const data = await res.json();
+const data = await res.json();
 
-      const movie = data.results[0];
+const movie = data.results[0];
 
-      hero.style.backgroundImage =
-      `url(${IMG + movie.backdrop_path})`;
+hero.style.backgroundImage =
+`url(${IMG + movie.backdrop_path})`;
 
-      heroTitle.innerHTML =
-      movie.title;
+heroTitle.innerHTML =
+movie.title;
 
-      heroOverview.innerHTML =
-      movie.overview;
+heroOverview.innerHTML =
+movie.overview;
 
-      }
+}
 
-      /* MOVIES */
+/* MOVIES */
 
-      async function loadMovies(page=1){
+async function loadMovies(page=1){
 
-      currentPage = page;
+currentPage = page;
 
-      movieGrid.innerHTML =
-      "Loading...";
+movieGrid.innerHTML = "Loading...";
 
-      const res = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
-      );
+const res = await fetch(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
+);
 
-      const data = await res.json();
+const data = await res.json();
 
-      /* MOVIES.JSON */
+/* LOAD JSON MANUAL */
+const jsonRes = await fetch("movies.json");
+const jsonMovies = await jsonRes.json();
 
-      const jsonRes = await fetch("movies.json");
-      const jsonMovies = await jsonRes.json();
+movieGrid.innerHTML = "";
 
-      movieGrid.innerHTML = "";
+data.results.forEach(movie=>{
 
-      data.results.forEach(movie=>{
+const manualMovie = jsonMovies.find(
+m => String(m.tmdb) === String(movie.id)
+);
 
-      const manualMovie = jsonMovies.find(
-      m => String(m.tmdb) === String(movie.id)
-      );
+/* FIX TOTAL: SEMUA KE WATCH.HTML */
+const watchLink = manualMovie
+? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
+: `watch.html?tmdb=${movie.id}`;
 
-      const watchLink = manualMovie
-      ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : `watch.html?tmdb=${movie.id}`;
+movieGrid.innerHTML += `
 
-      movieGrid.innerHTML += `
+<a href="${watchLink}"
+style="text-decoration:none;color:white;">
 
-      <a href="${watchLink}"
-      style="text-decoration:none;color:white;">
+<div class="movie-card">
 
-      <div class="movie-card">
+<img src="${
+movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image'
+}">
 
-      <img src="${
-      movie.poster_path
-      ? POSTER + movie.poster_path
-      : 'https://via.placeholder.com/500x750?text=No+Image'
-      }"
+<div class="movie-info">
 
-      loading="lazy">
+<h3>${movie.title}</h3>
 
-      <div class="movie-info">
+<span>⭐ ${movie.vote_average.toFixed(1)}</span>
 
-      <h3>${movie.title}</h3>
+</div>
 
-      <span>
-      ⭐ ${movie.vote_average.toFixed(1)}
-      </span>
+</div>
 
-      </div>
+</a>
 
-      </div>
+`;
 
-      </a>
+});
 
-      `;
+renderPagination(data.total_pages);
 
-      });
+}
 
-      renderPagination(data.total_pages);
+/* PAGINATION */
 
-      }
+function renderPagination(totalPages){
 
-      /* PAGINATION */
+pagination.innerHTML = "";
 
-      function renderPagination(totalPages){
+let start = currentPage - 2;
+let end = currentPage + 2;
 
-      pagination.innerHTML = "";
+if(start < 1) start = 1;
+if(end > totalPages) end = totalPages;
 
-      let start = currentPage - 2;
-      let end = currentPage + 2;
+if(currentPage > 1){
+pagination.innerHTML += `
+<div class="page-btn" onclick="loadMovies(${currentPage - 1})">‹</div>
+`;
+}
 
-      if(start < 1) start = 1;
-      if(end > totalPages) end = totalPages;
+for(let i=start;i<=end;i++){
+pagination.innerHTML += `
+<div class="page-btn ${currentPage===i?'active':''}"
+onclick="loadMovies(${i})">${i}</div>
+`;
+}
 
-      if(currentPage > 1){
+if(currentPage < totalPages){
+pagination.innerHTML += `
+<div class="page-btn" onclick="loadMovies(${currentPage + 1})">›</div>
+`;
+}
 
-      pagination.innerHTML += `
+}
 
-      <div class="page-btn"
-      onclick="loadMovies(${currentPage - 1})">
+/* SEARCH */
 
-      ‹
+async function searchMovies(query){
 
-      </div>
+const res = await fetch(
+`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
+);
 
-      `;
+const data = await res.json();
 
-      }
+const jsonRes = await fetch("movies.json");
+const jsonMovies = await jsonRes.json();
 
-      for(let i=start;i<=end;i++){
+movieGrid.innerHTML = "";
 
-      pagination.innerHTML += `
+data.results.forEach(movie=>{
 
-      <div class="page-btn ${currentPage===i?'active':''}"
-      onclick="loadMovies(${i})">
+if(movie.original_language === "id"){
 
-      ${i}
+const manualMovie = jsonMovies.find(
+m => String(m.tmdb) === String(movie.id)
+);
 
-      </div>
+const watchLink = manualMovie
+? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
+: `watch.html?tmdb=${movie.id}`;
 
-      `;
+movieGrid.innerHTML += `
 
-      }
+<a href="${watchLink}"
+style="text-decoration:none;color:white;">
 
-      if(currentPage < totalPages){
+<div class="movie-card">
 
-      pagination.innerHTML += `
+<img src="${
+movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image'
+}">
 
-      <div class="page-btn"
-      onclick="loadMovies(${currentPage + 1})">
+<div class="movie-info">
 
-      ›
+<h3>${movie.title}</h3>
 
-      </div>
+<span>⭐ ${movie.vote_average.toFixed(1)}</span>
 
-      `;
+</div>
 
-      }
+</div>
 
-      }
+</a>
 
-      /* SEARCH */
+`;
 
-      async function searchMovies(query){
+}
 
-      const res = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
-      );
+});
 
-      const data = await res.json();
+pagination.innerHTML = "";
 
-      const jsonRes = await fetch("movies.json");
-      const jsonMovies = await jsonRes.json();
+}
 
-      movieGrid.innerHTML = "";
+/* START */
 
-      data.results.forEach(movie=>{
+loadHero();
+loadMovies();
 
-      if(movie.original_language === "id"){
-
-      const manualMovie = jsonMovies.find(
-      m => String(m.tmdb) === String(movie.id)
-      );
-
-      const watchLink = manualMovie
-      ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : `watch.html?tmdb=${movie.id}`;
-
-      movieGrid.innerHTML += `
-
-      <a href="${watchLink}"
-      style="text-decoration:none;color:white;">
-
-      <div class="movie-card">
-
-      <img src="${
-      movie.poster_path
-      ? POSTER + movie.poster_path
-      : 'https://via.placeholder.com/500x750?text=No+Image'
-      }"
-
-      loading="lazy">
-
-      <div class="movie-info">
-
-      <h3>${movie.title}</h3>
-
-      <span>
-      ⭐ ${movie.vote_average.toFixed(1)}
-      </span>
-
-      </div>
-
-      </div>
-
-      </a>
-
-      `;
-
-      }
-
-      });
-
-      pagination.innerHTML = "";
-
-      }
-
-      /* SEARCH EVENT */
-
-      document
-      .getElementById("searchInput")
-      .addEventListener("keyup",(e)=>{
-
-      const value = e.target.value;
-
-      if(value.length > 2){
-
-      searchMovies(value);
-
-      }else{
-
-      loadMovies(1);
-
-      }
-
-      });
-
-      /* START */
-
-      loadHero();
-      loadMovies();
-    </script>
+</script>
   </body>
 </html>
