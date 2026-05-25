@@ -1,146 +1,37 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Grid Movies</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f0f0f;
-      color: #fff;
-    }
-
-    header {
-      padding: 15px;
-      text-align: center;
-      background: #1a1a1a;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    .search-box {
-      margin-top: 10px;
-    }
-
-    .search-box input {
-      width: 90%;
-      max-width: 400px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-      padding: 15px;
-    }
-
-    .card {
-      background: #1e1e1e;
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .card:hover {
-      transform: scale(1.05);
-    }
-
-    .card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
-
-    .card .title {
-      padding: 8px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-      font-size: 12px;
-    }
-  </style>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+  background-image: url('/w3images/forestbridge.jpg');
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+}
+</style>
 </head>
-
 <body>
 
-<header>
-  <h1>🎬 Grid Movies</h1>
-  <div class="search-box">
-    <input type="text" id="search" placeholder="Cari film..." onkeyup="filterMovies()">
+<div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+  <div class="w3-display-topleft w3-padding-large w3-xlarge">
+    Logo
   </div>
-</header>
-
-<div class="grid" id="grid"></div>
-
-<footer>
-  © 2026 Movies Grid
-</footer>
-
-<script>
-  let movies = [];
-
-  // load JSON
-  fetch("movies.json")
-    .then(res => res.json())
-    .then(data => {
-      movies = data;
-      renderMovies(movies);
-    });
-
-  function renderMovies(data) {
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    data.forEach(movie => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      card.innerHTML = `
-        <img src="${movie.image}" alt="${movie.title}">
-        <div class="title">${movie.title}</div>
-      `;
-
-      card.onclick = () => {
-        if (movie.iframe) {
-          window.open(movie.iframe, "_blank");
-        }
-      };
-
-      grid.appendChild(card);
-    });
-  }
-
-  function filterMovies() {
-    const input = document.getElementById("search").value.toLowerCase();
-
-    const filtered = movies.filter(m =>
-      m.title.toLowerCase().includes(input) ||
-      m.genre.toLowerCase().includes(input) ||
-      m.country.toLowerCase().includes(input)
-    );
-
-    renderMovies(filtered);
-  }
-</script>
+  <div class="w3-display-middle">
+    <h1 class="w3-jumbo w3-animate-top">COMING SOON</h1>
+    <hr class="w3-border-grey" style="margin:auto;width:40%">
+    <p class="w3-large w3-center">35 days left</p>
+  </div>
+  <div class="w3-display-bottomleft w3-padding-large">
+    Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
+  </div>
+</div>
 
 </body>
 </html>
