@@ -2,133 +2,132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Netflix Pro Clone</title>
+<title>Netflix Hybrid Stream</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #000;
-  color: white;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:#fff;
 }
 
-/* TOP BAR */
-.topbar {
-  position: sticky;
-  top: 0;
-  background: #000;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 10;
+/* TOP NAV */
+.topbar{
+  position:sticky;
+  top:0;
+  background:#000;
+  padding:10px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:1000;
+  border-bottom:1px solid #111;
 }
 
-.logo {
-  color: red;
-  font-weight: bold;
-  font-size: 20px;
+.logo{
+  color:red;
+  font-weight:bold;
 }
 
-/* SEARCH */
-input {
-  padding: 6px;
-  border-radius: 5px;
-  border: none;
-  outline: none;
+/* BURGER */
+.burger{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* SIDE MENU */
+.side{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:260px;
+  height:100%;
+  background:#111;
+  padding:15px;
+  transition:0.3s;
+  z-index:2000;
+}
+
+.side.open{
+  left:0;
+}
+
+.side a{
+  display:block;
+  padding:10px 0;
+  color:#fff;
+  text-decoration:none;
+  border-bottom:1px solid #222;
 }
 
 /* HERO */
-.hero {
-  height: 55vh;
+.hero{
+  height:55vh;
   background:
     linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2), rgba(0,0,0,0.85)),
     url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: flex-end;
-  padding: 20px;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:flex-end;
+  padding:20px;
 }
 
 /* SECTION */
-.section {
-  padding: 10px 0;
+.section{
+  padding:10px;
 }
 
-.section h2 {
-  margin: 10px;
-  font-size: 16px;
+.section h2{
+  margin:10px 0;
 }
 
-/* ROW */
-.row {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 0 10px;
-  scroll-padding: 10px;
-}
-
-.row::-webkit-scrollbar {
-  display: none;
+/* GRID TMDB */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:10px;
 }
 
 /* CARD */
-.card {
-  min-width: 140px;
-  cursor: pointer;
-  transition: 0.2s;
+.card{
+  cursor:pointer;
 }
 
-.card img {
-  width: 140px;
-  height: 200px;
-  border-radius: 8px;
-  object-fit: cover;
-  transition: 0.2s;
+.card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:8px;
 }
 
-.card:hover img {
-  transform: scale(1.1);
-  box-shadow: 0 10px 20px rgba(255,0,0,0.3);
+.title{
+  font-size:12px;
+  opacity:0.8;
+  margin-top:5px;
 }
 
-.title {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-top: 5px;
+/* PAGINATION */
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding:15px;
 }
 
-/* FILTER */
-.filters {
-  padding: 10px;
+.pagination button{
+  padding:6px 12px;
+  background:#222;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+  border-radius:5px;
 }
 
-.btn {
-  padding: 5px 10px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background: #222;
-  color: white;
-}
-
-.btn.active {
-  background: red;
-}
-
-@media (max-width: 600px) {
-  .card {
-    min-width: 120px;
-  }
-
-  .card img {
-    width: 120px;
-    height: 180px;
-  }
+.pagination button.active{
+  background:red;
 }
 </style>
 </head>
@@ -136,104 +135,153 @@ input {
 <body>
 
 <div class="topbar">
-  <div class="logo">NETFLIX PRO</div>
-  <input type="text" id="search" placeholder="Search movie...">
+  <div class="burger" onclick="toggleMenu()">☰</div>
+  <div class="logo">STREAM LOCK</div>
+</div>
+
+<div class="side" id="side">
+  <a href="#" onclick="loadManual()">Manual Posts</a>
+  <a href="#" onclick="loadTMDB()">TMDB Grid</a>
+  <a href="#" onclick="loadAll()">All Movies</a>
 </div>
 
 <div class="hero">
   <div>
-    <h1>Unlimited Movies</h1>
-    <p style="opacity:0.7">Stream anytime anywhere</p>
+    <h1>Watch Unlimited Movies</h1>
+    <p>Hybrid Manual + TMDB System</p>
   </div>
 </div>
 
-<div class="filters">
-  <button class="btn active" onclick="filterGenre('all')">All</button>
-  <button class="btn" onclick="filterGenre('action')">Action</button>
-  <button class="btn" onclick="filterGenre('drama')">Drama</button>
-  <button class="btn" onclick="filterGenre('anime')">Anime</button>
+<div class="section">
+  <h2 id="sectionTitle">Movies</h2>
+  <div class="grid" id="grid"></div>
 </div>
 
-<div class="section">
-  <h2>Continue Watching</h2>
-  <div class="row" id="continueRow"></div>
-</div>
-
-<div class="section">
-  <h2>Trending Now</h2>
-  <div class="row" id="movieRow"></div>
-</div>
+<div class="pagination" id="pagination"></div>
 
 <script>
 
-let allMovies = [];
+let mode = "all";
+let page = 1;
+let perPage = 12;
 
-fetch('movies.json')
-.then(res => res.json())
-.then(data => {
-  allMovies = data;
-  renderMovies(data);
-  renderContinue(data);
-});
+let manualMovies = [];
+let tmdbMovies = [];
 
-function renderMovies(list){
-  const row = document.getElementById('movieRow');
-  row.innerHTML = "";
+/* ===== SAMPLE MANUAL ===== */
+manualMovies = [
+  {
+    title:"Manual Movie 1",
+    poster:"https://via.placeholder.com/300x450",
+    embed:"https://example.com"
+  },
+  {
+    title:"Manual Movie 2",
+    poster:"https://via.placeholder.com/300x450",
+    embed:"https://example.com"
+  }
+];
 
-  list.forEach(movie => {
-    const div = document.createElement('div');
-    div.className = 'card';
-
-    div.innerHTML = `
-      <img src="${movie.poster}">
-      <div class="title">${movie.title}</div>
-    `;
-
-    div.onclick = () => {
-      window.location.href = "watch.html?play=" + encodeURIComponent(movie.embed);
-    };
-
-    row.appendChild(div);
+/* ===== SAMPLE TMDB ===== */
+for(let i=1;i<=60;i++){
+  tmdbMovies.push({
+    title:"TMDB Movie "+i,
+    poster:"https://via.placeholder.com/300x450",
+    embed:"https://example.com"
   });
 }
 
-function renderContinue(list){
-  const row = document.getElementById('continueRow');
-  row.innerHTML = "";
-
-  list.slice(0,5).forEach(movie => {
-    const div = document.createElement('div');
-    div.className = 'card';
-
-    div.innerHTML = `
-      <img src="${movie.poster}">
-      <div class="title">▶ ${movie.title}</div>
-    `;
-
-    div.onclick = () => {
-      window.location.href = "watch.html?play=" + encodeURIComponent(movie.embed);
-    };
-
-    row.appendChild(div);
-  });
+function toggleMenu(){
+  document.getElementById("side").classList.toggle("open");
 }
 
-document.getElementById('search').addEventListener('input', function(){
-  let value = this.value.toLowerCase();
-  let filtered = allMovies.filter(m => m.title.toLowerCase().includes(value));
-  renderMovies(filtered);
-});
+/* LOAD MODES */
+function loadManual(){
+  mode="manual";
+  page=1;
+  render();
+  closeMenu();
+}
 
-function filterGenre(genre){
-  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+function loadTMDB(){
+  mode="tmdb";
+  page=1;
+  render();
+  closeMenu();
+}
 
-  if(genre === 'all'){
-    renderMovies(allMovies);
-  } else {
-    renderMovies(allMovies.filter(m => (m.extra || '').includes(genre)));
+function loadAll(){
+  mode="all";
+  page=1;
+  render();
+  closeMenu();
+}
+
+function closeMenu(){
+  document.getElementById("side").classList.remove("open");
+}
+
+/* RENDER */
+function render(){
+
+  let data = [];
+
+  if(mode==="manual") data = manualMovies;
+  else if(mode==="tmdb") data = tmdbMovies;
+  else data = manualMovies.concat(tmdbMovies);
+
+  document.getElementById("sectionTitle").innerText = mode.toUpperCase();
+
+  let start = (page-1)*perPage;
+  let end = start + perPage;
+
+  let paged = data.slice(start,end);
+
+  let grid = document.getElementById("grid");
+  grid.innerHTML="";
+
+  paged.forEach(m=>{
+    let div=document.createElement("div");
+    div.className="card";
+
+    div.innerHTML=`
+      <img src="${m.poster}">
+      <div class="title">${m.title}</div>
+    `;
+
+    div.onclick=()=>{
+      window.location.href="watch.html?play="+encodeURIComponent(m.embed);
+    };
+
+    grid.appendChild(div);
+  });
+
+  renderPagination(data.length);
+}
+
+/* PAGINATION */
+function renderPagination(total){
+
+  let totalPages = Math.ceil(total/perPage);
+  let pag = document.getElementById("pagination");
+  pag.innerHTML="";
+
+  for(let i=1;i<=totalPages;i++){
+    let btn=document.createElement("button");
+    btn.innerText=i;
+
+    if(i===page) btn.classList.add("active");
+
+    btn.onclick=()=>{
+      page=i;
+      render();
+    };
+
+    pag.appendChild(btn);
   }
 }
+
+loadAll();
 
 </script>
 
