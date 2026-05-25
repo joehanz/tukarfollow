@@ -3,111 +3,413 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Watch</title>
+<title>TMDB Style Movie</title>
 
-<link href="https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-.watch-wrap{
-  display:flex;
-  gap:20px;
-  padding:20px;
-  flex-wrap:wrap;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-.player-box{
-  flex:2;
-  min-width:300px;
+body{
+font-family:'Poppins',sans-serif;
+background:#0d1117;
+color:#fff;
+overflow-x:hidden;
 }
 
-.info-box{
-  flex:1;
-  min-width:260px;
+/* HEADER */
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+z-index:999;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,.5);
+backdrop-filter:blur(10px);
 }
 
-.related{
-  display:flex;
-  overflow-x:auto;
-  gap:10px;
-  padding:10px;
+.logo{
+font-size:28px;
+font-weight:700;
+color:#01b4e4;
 }
 
-.related::-webkit-scrollbar{display:none;}
-
-.rel-card{
-  min-width:120px;
-  cursor:pointer;
+nav{
+display:flex;
+gap:25px;
 }
 
-.rel-card img{
-  width:120px;
-  height:160px;
-  object-fit:cover;
-  border-radius:8px;
+nav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+transition:.3s;
+}
+
+nav a:hover{
+color:#01b4e4;
+}
+
+.search-box{
+width:250px;
+height:42px;
+background:#fff;
+border-radius:50px;
+overflow:hidden;
+display:flex;
+align-items:center;
+padding:0 15px;
+}
+
+.search-box input{
+border:none;
+outline:none;
+width:100%;
+font-size:14px;
+}
+
+/* HERO */
+
+.hero{
+height:95vh;
+position:relative;
+display:flex;
+align-items:center;
+padding:0 70px;
+background:
+linear-gradient(to right, rgba(0,0,0,.95), rgba(0,0,0,.5)),
+url('https://image.tmdb.org/t/p/original/9nhjGaFLKtddDPtPaX5EmKqsWdH.jpg');
+background-size:cover;
+background-position:center;
+}
+
+.hero-content{
+max-width:650px;
+}
+
+.hero span{
+display:inline-block;
+padding:6px 14px;
+background:#01b4e4;
+border-radius:30px;
+font-size:13px;
+margin-bottom:20px;
+}
+
+.hero h1{
+font-size:58px;
+line-height:1.1;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:15px;
+line-height:1.8;
+color:#ccc;
+margin-bottom:30px;
+}
+
+.hero-buttons{
+display:flex;
+gap:15px;
+}
+
+.btn{
+padding:14px 28px;
+border-radius:50px;
+text-decoration:none;
+font-size:14px;
+font-weight:600;
+transition:.3s;
+}
+
+.btn-primary{
+background:#01b4e4;
+color:#fff;
+}
+
+.btn-primary:hover{
+background:#0097c0;
+}
+
+.btn-secondary{
+border:2px solid #fff;
+color:#fff;
+}
+
+.btn-secondary:hover{
+background:#fff;
+color:#000;
+}
+
+/* SECTION */
+
+.section{
+padding:40px 50px;
+}
+
+.section-title{
+font-size:28px;
+margin-bottom:25px;
+font-weight:600;
+}
+
+/* MOVIE GRID */
+
+.movie-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:22px;
+}
+
+.movie-card{
+background:#161b22;
+border-radius:18px;
+overflow:hidden;
+transition:.35s;
+cursor:pointer;
+}
+
+.movie-card:hover{
+transform:translateY(-8px) scale(1.02);
+}
+
+.movie-card img{
+width:100%;
+height:270px;
+object-fit:cover;
+display:block;
+}
+
+.movie-info{
+padding:14px;
+}
+
+.movie-info h3{
+font-size:15px;
+margin-bottom:8px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.movie-info span{
+font-size:13px;
+color:#01b4e4;
+}
+
+/* FOOTER */
+
+footer{
+padding:35px;
+text-align:center;
+color:#888;
+font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+header{
+padding:15px 20px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+nav{
+width:100%;
+justify-content:center;
+}
+
+.hero{
+padding:0 25px;
+height:85vh;
+}
+
+.hero h1{
+font-size:40px;
+}
+
+.search-box{
+width:100%;
+}
+
+.section{
+padding:30px 20px;
+}
+
+.movie-grid{
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.movie-card img{
+height:240px;
+}
+
 }
 </style>
-
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="topNav">
-  <a class="logo" href="/">BACK</a>
+<header>
+
+<div class="logo">TMDB</div>
+
+<nav>
+<a href="#">Movies</a>
+<a href="#">TV Shows</a>
+<a href="#">People</a>
+<a href="#">Trending</a>
 </nav>
 
-<div class="watch-wrap">
+<div class="search-box">
+<input type="text" placeholder="Search movie...">
+</div>
 
-  <!-- PLAYER -->
-  <div class="player-box">
-    <iframe id="player" width="100%" height="400px" frameborder="0"></iframe>
-  </div>
+</header>
 
-  <!-- INFO -->
-  <div class="info-box">
-    <h2 id="title"></h2>
-    <p id="desc"></p>
-  </div>
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<span>Now Streaming</span>
+
+<h1>Avatar The Way of Water</h1>
+
+<p>
+Set more than a decade after the events of the first film,
+learn the story of the Sully family and the troubles that follow them.
+</p>
+
+<div class="hero-buttons">
+<a href="#" class="btn btn-primary">Watch Now</a>
+<a href="#" class="btn btn-secondary">Trailer</a>
+</div>
 
 </div>
 
-<!-- RELATED -->
-<h3 style="padding:10px;">Related</h3>
-<div class="related" id="related"></div>
+</section>
 
-<script>
+<!-- TRENDING -->
 
-const params = new URLSearchParams(location.search);
-const embed = params.get("play");
-const id = params.get("id");
+<section class="section">
 
-document.getElementById("player").src = embed || "";
+<h2 class="section-title">Trending Movies</h2>
 
-let movies = [];
+<div class="movie-grid">
 
-fetch("movies.json")
-.then(r => r.json())
-.then(data => {
-  movies = data;
-  renderRelated();
-});
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg">
+<div class="movie-info">
+<h3>Deadpool & Wolverine</h3>
+<span>⭐ 8.1</span>
+</div>
+</div>
 
-function renderRelated(){
-  const box = document.getElementById("related");
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg">
+<div class="movie-info">
+<h3>Dune Part Two</h3>
+<span>⭐ 8.5</span>
+</div>
+</div>
 
-  movies.slice(0,10).forEach(m => {
-    box.innerHTML += `
-      <div class="rel-card" onclick="openMovie('${m.embed}')">
-        <img src="${m.poster}">
-      </div>
-    `;
-  });
-}
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg">
+<div class="movie-info">
+<h3>Kingdom Planet Apes</h3>
+<span>⭐ 7.9</span>
+</div>
+</div>
 
-function openMovie(link){
-  location.href = "watch.html?play="+encodeURIComponent(link);
-}
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg">
+<div class="movie-info">
+<h3>Godzilla x Kong</h3>
+<span>⭐ 8.0</span>
+</div>
+</div>
 
-</script>
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/oZNPzxqM2s5DyVWab09NTQScDQt.jpg">
+<div class="movie-info">
+<h3>Inside Out 2</h3>
+<span>⭐ 8.6</span>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- POPULAR -->
+
+<section class="section">
+
+<h2 class="section-title">Popular Movies</h2>
+
+<div class="movie-grid">
+
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg">
+<div class="movie-info">
+<h3>John Wick 4</h3>
+<span>⭐ 8.3</span>
+</div>
+</div>
+
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg">
+<div class="movie-info">
+<h3>Avengers Endgame</h3>
+<span>⭐ 8.9</span>
+</div>
+</div>
+
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/5YZbUmjbMa3ClvSW1Wj3D6XGolb.jpg">
+<div class="movie-info">
+<h3>Interstellar</h3>
+<span>⭐ 9.0</span>
+</div>
+</div>
+
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/2CAL2433ZeIihfX1Hb2139CX0pW.jpg">
+<div class="movie-info">
+<h3>Oppenheimer</h3>
+<span>⭐ 8.8</span>
+</div>
+</div>
+
+<div class="movie-card">
+<img src="https://image.tmdb.org/t/p/w500/9Gtg2DzBhmYamXBS1hKAhiwbBKS.jpg">
+<div class="movie-info">
+<h3>The Batman</h3>
+<span>⭐ 8.2</span>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+© 2026 TMDB Style Movie Template
+</footer>
 
 </body>
 </html>
