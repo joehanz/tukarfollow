@@ -1,102 +1,42 @@
-<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/main/skin.css">
-
-<style>
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 16px;
-}
-
-.card {
-  background: #222;
-  color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.03);
-}
-
-.card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
-}
-
-.card .title {
-  padding: 10px;
-  font-size: 14px;
-}
-</style>
-
 </head>
-
 <body>
 
-<!-- NAV -->
 <div class="topnav" id="myTopnav">
   <a href="#home" class="active">Home</a>
   <a href="#news">News</a>
   <a href="#contact">Contact</a>
-
   <div class="dropdown">
-    <button class="dropbtn">
-      Dropdown <i class="fa fa-caret-down"></i>
+    <button class="dropbtn">Dropdown 
+      <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-content">
       <a href="#">Link 1</a>
       <a href="#">Link 2</a>
       <a href="#">Link 3</a>
     </div>
-  </div>
-
+  </div> 
   <a href="#about">About</a>
-
-  <a href="javascript:void(0);" class="icon" onclick="toggleNav()">&#9776;</a>
+  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
 
-<!-- GRID -->
-<div id="movies" class="grid"></div>
+<div style="padding-left:16px">
+
+  movies.json tampilkan disini dalam bentuk grid disini
+  
+</div>
 
 <script>
-// NAV TOGGLE (FIXED)
-function toggleNav() {
-  const nav = document.getElementById("myTopnav");
-  if (nav.className === "topnav") {
-    nav.className += " responsive";
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
   } else {
-    nav.className = "topnav";
+    x.className = "topnav";
   }
-}
-
-// LOAD MOVIES
-fetch("movies.json")
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById("movies");
-
-    data.forEach(movie => {
-      container.innerHTML += `
-        <div class="card" onclick="openMovie('${movie.id || movie.title}')">
-          <img src="${movie.image}">
-          <div class="title">${movie.title}</div>
-        </div>
-      `;
-    });
-  });
-
-// OPEN WATCH
-function openMovie(id){
-  window.location.href = "watch.html?id=" + id;
 }
 </script>
 
