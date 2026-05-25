@@ -92,18 +92,25 @@ body {margin:0;font-family:Arial}
   .column {width:100%;}
 }
 
+/* FIX PLAYER */
+#player {
+  width:100%;
+  height:360px;
+  background:#000;
+}
+
 iframe {
   width:100%;
-  height:350px;
+  height:100%;
   border:none;
-  background:black;
+  background:#000;
 }
 </style>
-
 </head>
 
 <body>
 
+<!-- NAV -->
 <div class="topnav" id="myTopnav">
   <a href="index.html" class="active">Home</a>
   <a href="#news">News</a>
@@ -122,6 +129,7 @@ iframe {
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">☰</a>
 </div>
 
+<!-- CONTENT -->
 <div class="row">
 
   <div class="column" style="background:#aaa;">
@@ -140,20 +148,10 @@ function myFunction() {
   x.className = (x.className === "topnav") ? "topnav responsive" : "topnav";
 }
 
+/* GET ID */
 const id = new URLSearchParams(window.location.search).get("id");
 
-/* OPTIONAL FIX EMBED */
-function cleanEmbed(url){
-  if(!url) return "";
-
-  // kalau sudah embed langsung pakai
-  if(url.includes("iframe") || url.includes("embed")){
-    return url;
-  }
-
-  return url;
-}
-
+/* LOAD MOVIES */
 fetch("movies.json")
 .then(res => res.json())
 .then(data => {
@@ -165,10 +163,9 @@ fetch("movies.json")
     return;
   }
 
-  const video = cleanEmbed(film.video);
-
+  // langsung pakai link (MP4 / embed / iframe)
   document.getElementById("player").innerHTML = `
-    <iframe src="${video}" allowfullscreen></iframe>
+    <iframe src="${film.video}" allowfullscreen></iframe>
   `;
 
   document.getElementById("info").innerHTML = `
@@ -180,7 +177,6 @@ fetch("movies.json")
 })
 .catch(err => {
   document.getElementById("player").innerHTML = "Gagal load movies.json";
-  console.log(err);
 });
 </script>
 
