@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -41,7 +42,6 @@ backdrop-filter:blur(10px);
 font-size:30px;
 font-weight:700;
 color:#01b4e4;
-letter-spacing:1px;
 }
 
 nav{
@@ -80,11 +80,11 @@ font-size:14px;
 /* HERO */
 
 .hero{
-height:95vh;
+height:90vh;
 position:relative;
 display:flex;
-align-items:center;
-padding:0 70px;
+align-items:flex-end;
+padding:70px;
 background-size:cover;
 background-position:center;
 }
@@ -94,13 +94,13 @@ content:'';
 position:absolute;
 inset:0;
 background:
-linear-gradient(to right, rgba(0,0,0,.95), rgba(0,0,0,.4));
+linear-gradient(to top, #0d1117, rgba(0,0,0,.25));
 }
 
 .hero-content{
 position:relative;
 z-index:2;
-max-width:650px;
+max-width:700px;
 }
 
 .hero-tag{
@@ -113,9 +113,9 @@ margin-bottom:20px;
 }
 
 .hero h1{
-font-size:60px;
-line-height:1.1;
+font-size:58px;
 margin-bottom:20px;
+line-height:1.1;
 }
 
 .hero p{
@@ -125,37 +125,14 @@ color:#ddd;
 margin-bottom:30px;
 }
 
-.hero-buttons{
-display:flex;
-gap:15px;
-}
-
-.btn{
+.hero-btn{
+display:inline-block;
 padding:14px 28px;
 border-radius:50px;
-text-decoration:none;
-font-size:14px;
-font-weight:600;
-transition:.3s;
-}
-
-.btn-primary{
 background:#01b4e4;
 color:#fff;
-}
-
-.btn-primary:hover{
-background:#0190b6;
-}
-
-.btn-secondary{
-border:2px solid #fff;
-color:#fff;
-}
-
-.btn-secondary:hover{
-background:#fff;
-color:#000;
+text-decoration:none;
+font-weight:600;
 }
 
 /* SECTION */
@@ -170,7 +147,7 @@ font-weight:600;
 margin-bottom:25px;
 }
 
-/* MOVIE GRID */
+/* GRID */
 
 .movie-grid{
 display:grid;
@@ -214,41 +191,13 @@ font-size:13px;
 color:#01b4e4;
 }
 
-/* PAGINATION */
-
-.pagination{
-display:flex;
-justify-content:center;
-gap:10px;
-margin-top:40px;
-flex-wrap:wrap;
-}
-
-.page-btn{
-width:42px;
-height:42px;
-border-radius:50%;
-background:#161b22;
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:.3s;
-}
-
-.page-btn:hover,
-.page-btn.active{
-background:#01b4e4;
-}
-
 /* FOOTER */
 
 footer{
 padding:35px;
 text-align:center;
-font-size:14px;
 color:#888;
+font-size:14px;
 }
 
 /* MOBILE */
@@ -272,8 +221,8 @@ width:100%;
 }
 
 .hero{
-padding:0 25px;
-height:88vh;
+height:70vh;
+padding:30px 20px;
 }
 
 .hero h1{
@@ -294,6 +243,7 @@ height:240px;
 }
 
 }
+
 </style>
 </head>
 <body>
@@ -303,10 +253,9 @@ height:240px;
 <div class="logo">TMDB</div>
 
 <nav>
-<a href="#">Movies</a>
-<a href="#">Indonesia</a>
-<a href="#">Trending</a>
-<a href="#">Latest</a>
+<a href="index.html">Home</a>
+<a href="movies.html">Movies</a>
+<a href="indonesia.html">Indonesia</a>
 </nav>
 
 <div class="search-box">
@@ -321,32 +270,47 @@ height:240px;
 
 <div class="hero-content">
 
-<div class="hero-tag">Indonesia Movie</div>
+<div class="hero-tag">
+Trending Now
+</div>
 
-<h1 id="heroTitle">Loading...</h1>
+<h1 id="heroTitle">
+Loading...
+</h1>
 
 <p id="heroOverview">
 Please wait...
 </p>
 
-<div class="hero-buttons">
-<a href="#" class="btn btn-primary" id="watchHero">Watch Now</a>
-<a href="#" class="btn btn-secondary">Trailer</a>
-</div>
+<a href="#" class="hero-btn" id="heroButton">
+Watch Now
+</a>
 
 </div>
 
 </section>
 
-<!-- GRID -->
+<!-- MANUAL -->
 
 <section class="section">
 
-<h2 class="section-title">Latest Movies</h2>
+<h2 class="section-title">
+Latest Movies
+</h2>
 
-<div class="movie-grid" id="movieGrid"></div>
+<div class="movie-grid" id="manualGrid"></div>
 
-<div class="pagination" id="pagination"></div>
+</section>
+
+<!-- INDONESIA -->
+
+<section class="section">
+
+<h2 class="section-title">
+Indonesia Movies
+</h2>
+
+<div class="movie-grid" id="tmdbGrid"></div>
 
 </section>
 
@@ -356,107 +320,88 @@ Please wait...
 
 <script>
 
-const API_KEY = "9e335d21d35f04917b218bae7adc881f";
+const API_KEY =
+"9e335d21d35f04917b218bae7adc881f";
 
-const IMG = "https://image.tmdb.org/t/p/original";
-const POSTER = "https://image.tmdb.org/t/p/w500";
+const IMG =
+"https://image.tmdb.org/t/p/original";
 
-const hero = document.getElementById("hero");
-const heroTitle = document.getElementById("heroTitle");
-const heroOverview = document.getElementById("heroOverview");
+const POSTER =
+"https://image.tmdb.org/t/p/w500";
 
-const movieGrid = document.getElementById("movieGrid");
-const pagination = document.getElementById("pagination");
+const hero =
+document.getElementById("hero");
 
-let currentPage = 1;
+const heroTitle =
+document.getElementById("heroTitle");
+
+const heroOverview =
+document.getElementById("heroOverview");
+
+const heroButton =
+document.getElementById("heroButton");
+
+const manualGrid =
+document.getElementById("manualGrid");
+
+const tmdbGrid =
+document.getElementById("tmdbGrid");
 
 /* HERO */
 
 async function loadHero(){
 
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
-);
+const res =
+await fetch("movies.json");
 
-const data = await res.json();
+const movies =
+await res.json();
 
-const movie = data.results[0];
+const latest =
+movies[0];
 
 hero.style.backgroundImage =
-`url(${IMG + movie.backdrop_path})`;
+`url(${latest.poster})`;
 
-heroTitle.innerHTML = movie.title;
+heroTitle.innerHTML =
+latest.title;
 
 heroOverview.innerHTML =
-movie.overview;
+latest.sinopsis;
 
-document.getElementById("watchHero").href =
-`watch.html?id=${movie.id}`;
-
-}
-
-/* LOAD MOVIES */
-
-async function loadMovies(page=1){
-
-currentPage = page;
-
-movieGrid.innerHTML =
-'<div class="loader">Loading...</div>';
-
-const tmdbRes = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
-);
-
-const tmdbData = await tmdbRes.json();
-
-/* MOVIES.JSON */
-
-const jsonRes = await fetch("movies.json");
-const customPosts = await jsonRes.json();
-
-movieGrid.innerHTML = "";
-
-let movies = tmdbData.results.map(movie=>({
-
-title:movie.title,
-poster:movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image',
-
-rating:"⭐ " + movie.vote_average.toFixed(1),
-
-url:`watch.html?id=${movie.id}`
-
-}));
-
-/* GABUNG POSTING MANUAL */
-
-if(page === 1){
-
-movies.splice(4,0,...customPosts);
+heroButton.href =
+`watch.html?id=0`;
 
 }
 
-/* GRID */
+/* MANUAL MOVIES */
 
-movies.forEach(movie=>{
+async function loadManualMovies(){
 
-movieGrid.innerHTML += `
+const res =
+await fetch("movies.json");
 
-<a href="${movie.url}"
+const movies =
+await res.json();
+
+manualGrid.innerHTML = "";
+
+movies.slice(0,6).forEach((movie,index)=>{
+
+manualGrid.innerHTML += `
+
+<a href="watch.html?id=${index}"
 style="text-decoration:none;color:white;">
 
 <div class="movie-card">
 
-<img src="${movie.poster}"
-loading="lazy">
+<img src="${movie.poster}" loading="lazy">
 
 <div class="movie-info">
 
 <h3>${movie.title}</h3>
 
-<span>${movie.rating}</span>
+<span>${movie.extra}</span>
 
 </div>
 
@@ -468,99 +413,26 @@ loading="lazy">
 
 });
 
-/* PAGINATION */
-
-renderPagination(tmdbData.total_pages);
-
 }
 
-/* PAGINATION */
+/* TMDB INDONESIA */
 
-function renderPagination(totalPages){
-
-pagination.innerHTML = "";
-
-let start = currentPage - 2;
-let end = currentPage + 2;
-
-if(start < 1) start = 1;
-if(end > totalPages) end = totalPages;
-
-if(currentPage > 1){
-
-pagination.innerHTML += `
-
-<div class="page-btn"
-onclick="loadMovies(${currentPage - 1})">
-
-‹
-
-</div>
-
-`;
-
-}
-
-for(let i=start;i<=end;i++){
-
-pagination.innerHTML += `
-
-<div class="page-btn ${currentPage===i?'active':''}"
-onclick="loadMovies(${i})">
-
-${i}
-
-</div>
-
-`;
-
-}
-
-if(currentPage < totalPages){
-
-pagination.innerHTML += `
-
-<div class="page-btn"
-onclick="loadMovies(${currentPage + 1})">
-
-›
-
-</div>
-
-`;
-
-}
-
-}
-
-/* SEARCH */
-
-async function searchMovies(query){
+async function loadTMDB(){
 
 const res = await fetch(
-`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
 );
 
 const data = await res.json();
 
-movieGrid.innerHTML = "";
+tmdbGrid.innerHTML = "";
 
-if(data.results.length === 0){
+data.results.slice(0,6).forEach(movie=>{
 
-movieGrid.innerHTML =
-'<div class="loader">Movie not found.</div>';
+tmdbGrid.innerHTML += `
 
-pagination.innerHTML = "";
-
-return;
-
-}
-
-data.results.forEach(movie=>{
-
-movieGrid.innerHTML += `
-
-<a href="watch.html?id=${movie.id}"
+<a href="https://www.themoviedb.org/movie/${movie.id}"
+target="_blank"
 style="text-decoration:none;color:white;">
 
 <div class="movie-card">
@@ -577,7 +449,9 @@ loading="lazy">
 
 <h3>${movie.title}</h3>
 
-<span>⭐ ${movie.vote_average.toFixed(1)}</span>
+<span>
+⭐ ${movie.vote_average.toFixed(1)}
+</span>
 
 </div>
 
@@ -589,34 +463,48 @@ loading="lazy">
 
 });
 
-pagination.innerHTML = "";
-
 }
 
-/* SEARCH EVENT */
+/* SEARCH */
 
 document
 .getElementById("searchInput")
 .addEventListener("keyup",(e)=>{
 
-const value = e.target.value;
+const value =
+e.target.value.toLowerCase();
 
-if(value.length > 2){
+const cards =
+document.querySelectorAll(".movie-card");
 
-searchMovies(value);
+cards.forEach(card=>{
+
+const title =
+card.querySelector("h3")
+.innerText
+.toLowerCase();
+
+if(title.includes(value)){
+
+card.parentElement.style.display =
+"block";
 
 }else{
 
-loadMovies(1);
+card.parentElement.style.display =
+"none";
 
 }
+
+});
 
 });
 
 /* START */
 
 loadHero();
-loadMovies();
+loadManualMovies();
+loadTMDB();
 
 </script>
 
