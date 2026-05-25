@@ -1,10 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Tukar Follow</title>
+<meta charset="UTF-8">
+<title>Movie Stream</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f0f0f;
+  color: white;
+}
+
+header {
+  padding: 15px;
+  text-align: center;
+  background: #1a1a1a;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  background: #1c1c1c;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.card .title {
+  padding: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+</style>
 </head>
+
 <body>
-  <h1>Website Aktif 🚀</h1>
-  <p>GitHub Pages sudah jalan</p>
+
+<header>🎬 Tukar Movie Stream</header>
+
+<div class="grid" id="movieGrid"></div>
+
+<script>
+// ambil data dari movies.json
+fetch('movies.json')
+.then(res => res.json())
+.then(data => {
+  const grid = document.getElementById('movieGrid');
+
+  data.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+      <img src="${movie.poster}">
+      <div class="title">${movie.title}</div>
+    `;
+
+    // klik pindah ke watch.html
+    card.onclick = () => {
+      window.location.href = "watch.html?play=" + encodeURIComponent(movie.embed);
+    };
+
+    grid.appendChild(card);
+  });
+});
+</script>
+
 </body>
 </html>
