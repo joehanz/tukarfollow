@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Grid Film</title>
+  <title>Grid Movies</title>
 
   <style>
     body {
@@ -83,53 +83,62 @@
 <body>
 
 <header>
-  <h1>🎬 Grid Film</h1>
+  <h1>🎬 Grid Movies</h1>
   <div class="search-box">
-    <input type="text" id="search" placeholder="Cari film..." onkeyup="filterFilm()">
+    <input type="text" id="search" placeholder="Cari film..." onkeyup="filterMovies()">
   </div>
 </header>
 
-<div class="grid" id="grid">
-
-  <div class="card" onclick="openFilm('https://example.com')">
-    <img src="https://picsum.photos/300/450?1">
-    <div class="title">Film 1</div>
-  </div>
-
-  <div class="card" onclick="openFilm('https://example.com')">
-    <img src="https://picsum.photos/300/450?2">
-    <div class="title">Film 2</div>
-  </div>
-
-  <div class="card" onclick="openFilm('https://example.com')">
-    <img src="https://picsum.photos/300/450?3">
-    <div class="title">Film 3</div>
-  </div>
-
-  <div class="card" onclick="openFilm('https://example.com')">
-    <img src="https://picsum.photos/300/450?4">
-    <div class="title">Film 4</div>
-  </div>
-
-</div>
+<div class="grid" id="grid"></div>
 
 <footer>
-  © 2026 Grid Film Simple
+  © 2026 Movies Grid
 </footer>
 
 <script>
-  function openFilm(url) {
-    window.open(url, "_blank");
+  let movies = [];
+
+  // load JSON
+  fetch("movies.json")
+    .then(res => res.json())
+    .then(data => {
+      movies = data;
+      renderMovies(movies);
+    });
+
+  function renderMovies(data) {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    data.forEach(movie => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${movie.image}" alt="${movie.title}">
+        <div class="title">${movie.title}</div>
+      `;
+
+      card.onclick = () => {
+        if (movie.iframe) {
+          window.open(movie.iframe, "_blank");
+        }
+      };
+
+      grid.appendChild(card);
+    });
   }
 
-  function filterFilm() {
-    let input = document.getElementById("search").value.toLowerCase();
-    let cards = document.querySelectorAll(".card");
+  function filterMovies() {
+    const input = document.getElementById("search").value.toLowerCase();
 
-    cards.forEach(card => {
-      let title = card.querySelector(".title").innerText.toLowerCase();
-      card.style.display = title.includes(input) ? "block" : "none";
-    });
+    const filtered = movies.filter(m =>
+      m.title.toLowerCase().includes(input) ||
+      m.genre.toLowerCase().includes(input) ||
+      m.country.toLowerCase().includes(input)
+    );
+
+    renderMovies(filtered);
   }
 </script>
 
