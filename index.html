@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/main/skin.css">
 
 <style>
-/* GRID MOVIES */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -43,41 +42,43 @@
 
 <body>
 
+<!-- NAV -->
 <div class="topnav" id="myTopnav">
   <a href="#home" class="active">Home</a>
   <a href="#news">News</a>
   <a href="#contact">Contact</a>
 
   <div class="dropdown">
-    <button class="dropbtn">Dropdown 
-      <i class="fa fa-caret-down"></i>
+    <button class="dropbtn">
+      Dropdown <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-content">
       <a href="#">Link 1</a>
       <a href="#">Link 2</a>
       <a href="#">Link 3</a>
     </div>
-  </div> 
+  </div>
 
   <a href="#about">About</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+
+  <a href="javascript:void(0);" class="icon" onclick="toggleNav()">&#9776;</a>
 </div>
 
-<!-- ===== MOVIES GRID ===== -->
+<!-- GRID -->
 <div id="movies" class="grid"></div>
 
 <script>
-// NAV
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
+// NAV TOGGLE (FIXED)
+function toggleNav() {
+  const nav = document.getElementById("myTopnav");
+  if (nav.className === "topnav") {
+    nav.className += " responsive";
   } else {
-    x.className = "topnav";
+    nav.className = "topnav";
   }
 }
 
-// LOAD MOVIES.JSON
+// LOAD MOVIES
 fetch("movies.json")
   .then(res => res.json())
   .then(data => {
@@ -86,27 +87,16 @@ fetch("movies.json")
     data.forEach(movie => {
       container.innerHTML += `
         <div class="card" onclick="openMovie('${movie.id || movie.title}')">
-          <img src="${movie.image}" />
+          <img src="${movie.image}">
           <div class="title">${movie.title}</div>
         </div>
       `;
     });
   });
 
-// CLICK GO WATCH PAGE
+// OPEN WATCH
 function openMovie(id){
   window.location.href = "watch.html?id=" + id;
-}
-</script>
-
-  <script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
 }
 </script>
 
