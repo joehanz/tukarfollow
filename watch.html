@@ -1,459 +1,325 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tukar Follow - Watch Movies Online</title>
-
-<meta name="description" content="Watch latest movies online subtitle indonesia full HD.">
-<meta name="keywords" content="movie, streaming, subtitle indonesia, film online">
-<meta name="theme-color" content="#0d1117">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/main/css/skin.css">
 <style>
+  body {margin:0;font-family:Arial}
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+/* NAV */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
 }
 
-body{
-background:#0d1117;
-font-family:'Poppins',sans-serif;
-color:#fff;
-overflow-x:hidden;
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
 }
 
-/* HEADER */
-
-header{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:15px 45px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(10px);
+.active {
+  background-color: #04AA6D;
+  color: white;
 }
 
-.logo{
-font-size:30px;
-font-weight:700;
-color:#01b4e4;
+.topnav .icon {
+  display: none;
 }
 
-nav{
-display:flex;
-gap:25px;
+.dropdown {
+  float: left;
+  overflow: hidden;
 }
 
-nav a{
-color:#fff;
-text-decoration:none;
-font-size:14px;
-transition:.3s;
+.dropdown .dropbtn {
+  font-size: 17px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
 }
 
-nav a:hover{
-color:#01b4e4;
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
 }
 
-/* HERO */
-
-.hero{
-position:relative;
-padding:120px 50px 60px;
-background-size:cover;
-background-position:center;
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
 }
 
-.hero::before{
-content:'';
-position:absolute;
-inset:0;
-background:
-linear-gradient(to top, #0d1117, rgba(0,0,0,.4));
+.topnav a:hover, .dropdown:hover .dropbtn {
+  background-color: #555;
+  color: white;
 }
 
-.hero-content{
-position:relative;
-z-index:2;
-display:flex;
-gap:40px;
-align-items:flex-start;
+.dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
 }
 
-.poster{
-width:280px;
-border-radius:18px;
-overflow:hidden;
-flex-shrink:0;
-box-shadow:0 15px 40px rgba(0,0,0,.5);
-}
-
-.poster img{
-width:100%;
-display:block;
-}
-
-.info{
-max-width:800px;
-}
-
-.tag{
-display:inline-block;
-padding:6px 15px;
-background:#01b4e4;
-border-radius:50px;
-font-size:13px;
-margin-bottom:20px;
-}
-
-.info h1{
-font-size:50px;
-margin-bottom:20px;
-line-height:1.1;
-}
-
-.meta{
-margin-bottom:20px;
-color:#01b4e4;
-font-size:14px;
-}
-
-.synopsis{
-font-size:15px;
-line-height:1.9;
-color:#ddd;
-}
-
-/* PLAYER */
-
-.player-section{
-padding:40px 50px;
-}
-
-.player-box{
-position:relative;
-padding-top:56.25%;
-border-radius:20px;
-overflow:hidden;
-background:#000;
-}
-
-.player-box iframe{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-border:none;
-}
-
-/* RELATED */
-
-.section{
-padding:20px 50px 60px;
-}
-
-.section-title{
-font-size:28px;
-margin-bottom:25px;
-}
-
-.movie-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:22px;
-}
-
-.movie-card{
-background:#161b22;
-border-radius:18px;
-overflow:hidden;
-transition:.35s;
-}
-
-.movie-card:hover{
-transform:translateY(-8px);
-}
-
-.movie-card img{
-width:100%;
-height:270px;
-object-fit:cover;
-display:block;
-}
-
-.movie-info{
-padding:14px;
-}
-
-.movie-info h3{
-font-size:15px;
-margin-bottom:8px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.movie-info span{
-font-size:13px;
-color:#01b4e4;
-}
-
-/* FOOTER */
-
-footer{
-padding:35px;
-text-align:center;
-color:#888;
-font-size:14px;
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 
 /* MOBILE */
-
-@media(max-width:900px){
-
-header{
-padding:15px 20px;
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child),
+  .dropdown .dropbtn {
+    display: none;
+  }
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
 }
 
-.hero{
-padding:100px 20px 40px;
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .topnav.responsive .dropdown {float: none;}
+  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
 }
 
-.hero-content{
-flex-direction:column;
+/* GRID MOVIES */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 16px;
 }
 
-.poster{
-width:220px;
+.card {
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.info h1{
-font-size:34px;
+.card:hover {
+  transform: scale(1.03);
 }
 
-.player-section{
-padding:20px;
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
 }
 
-.section{
-padding:20px;
+.card .title {
+  padding: 10px;
+  font-size: 14px;
 }
 
-.movie-grid{
-grid-template-columns:repeat(2,1fr);
-gap:15px;
+</style>
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<div class="topnav" id="myTopnav">
+  <a href="#home" class="active">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+
+  <div class="dropdown">
+    <button class="dropbtn">Dropdown 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="#">Link 1</a>
+      <a href="#">Link 2</a>
+      <a href="#">Link 3</a>
+    </div>
+  </div> 
+
+  <a href="#about">About</a>
+
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {margin:0;font-family:Arial}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
 }
 
-.movie-card img{
-height:240px;
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
 }
 
+.active {
+  background-color: #04AA6D;
+  color: white;
 }
 
+.topnav .icon {
+  display: none;
+}
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 17px;    
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.topnav a:hover, .dropdown:hover .dropbtn {
+  background-color: #555;
+  color: white;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child), .dropdown .dropbtn {
+    display: none;
+  }
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .topnav.responsive .dropdown {float: none;}
+  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
 </style>
 </head>
 <body>
 
-<header>
-
-<div class="logo">TUKARFOLLOW</div>
-
-<nav>
-<a href="index.html">Home</a>
-<a href="movies.html">Movies</a>
-<a href="indonesia.html">Indonesia</a>
-</nav>
-
-</header>
-
-<!-- HERO -->
-
-<section class="hero" id="hero">
-
-<div class="hero-content">
-
-<div class="poster">
-<img id="poster" src="">
+<div class="topnav" id="myTopnav">
+  <a href="#home" class="active">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+  <div class="dropdown">
+    <button class="dropbtn">Dropdown 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="#">Link 1</a>
+      <a href="#">Link 2</a>
+      <a href="#">Link 3</a>
+    </div>
+  </div> 
+  <a href="#about">About</a>
+  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
 
-<div class="info">
-
-<div class="tag" id="extra">HD</div>
-
-<h1 id="title">Loading...</h1>
-
-<div class="meta" id="imdb">
-IMDb
+<div style="padding-left:16px">
+  <h2>Responsive Topnav with Dropdown</h2>
+  <p>Resize the browser window to see how it works.</p>
+  <p>Hover over the dropdown button to open the dropdown menu.</p>
 </div>
-
-<p class="synopsis" id="synopsis">
-Please wait...
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- PLAYER -->
-
-<section class="player-section">
-
-<div class="player-box">
-
-<iframe
-id="player"
-allowfullscreen
-allow="autoplay; encrypted-media">
-</iframe>
-
-</div>
-
-</section>
-
-<!-- RELATED -->
-
-<section class="section">
-
-<h2 class="section-title">Related Movies</h2>
-
-<div class="movie-grid" id="relatedGrid"></div>
-
-</section>
-
-<footer>
-© 2026 Watch Movie
-</footer>
 
 <script>
-
-const params =
-new URLSearchParams(window.location.search);
-
-const movieId =
-params.get("id");
-
-const title =
-document.getElementById("title");
-
-const poster =
-document.getElementById("poster");
-
-const synopsis =
-document.getElementById("synopsis");
-
-const imdb =
-document.getElementById("imdb");
-
-const extra =
-document.getElementById("extra");
-
-const player =
-document.getElementById("player");
-
-const hero =
-document.getElementById("hero");
-
-const relatedGrid =
-document.getElementById("relatedGrid");
-
-/* LOAD */
-
-async function loadMovie(){
-
-const res =
-await fetch("movies.json");
-
-const movies =
-await res.json();
-
-const movie =
-movies[movieId];
-
-if(!movie){
-
-title.innerHTML =
-"Movie Not Found";
-
-return;
-
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
 }
-
-/* DATA */
-
-title.innerHTML =
-movie.title;
-
-poster.src =
-movie.poster;
-
-synopsis.innerHTML =
-movie.sinopsis;
-
-imdb.innerHTML =
-movie.imdb;
-
-extra.innerHTML =
-movie.extra;
-
-player.src =
-movie.embed;
-
-hero.style.backgroundImage =
-`url(${movie.poster})`;
-
-/* RELATED */
-
-relatedGrid.innerHTML = "";
-
-movies.slice(0,8).forEach((item,index)=>{
-
-if(index != movieId){
-
-relatedGrid.innerHTML += `
-
-<a href="watch.html?id=${index}"
-style="text-decoration:none;color:white;">
-
-<div class="movie-card">
-
-<img src="${item.poster}">
-
-<div class="movie-info">
-
-<h3>${item.title}</h3>
-
-<span>${item.extra}</span>
-
-</div>
-
-</div>
-
-</a>
-
-`;
-
-}
-
-});
-
-}
-
-loadMovie();
-
 </script>
+
+
 
 </body>
 </html>
