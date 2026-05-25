@@ -317,221 +317,146 @@
 
     <footer>© 2026 Indonesian Movies</footer>
 
-    <script>
+    
+<script>
+const API_KEY = "9e335d21d35f04917b218bae7adc881f";
 
-const API_KEY =
-"9e335d21d35f04917b218bae7adc881f";
+const IMG = "https://image.tmdb.org/t/p/original";
+const POSTER = "https://image.tmdb.org/t/p/w500";
 
-const IMG =
-"https://image.tmdb.org/t/p/original";
-
-const POSTER =
-"https://image.tmdb.org/t/p/w500";
-
-const hero =
-document.getElementById("hero");
-
-const heroTitle =
-document.getElementById("heroTitle");
-
-const heroOverview =
-document.getElementById("heroOverview");
-
-const movieGrid =
-document.getElementById("movieGrid");
-
-const pagination =
-document.getElementById("pagination");
+const hero = document.getElementById("hero");
+const heroTitle = document.getElementById("heroTitle");
+const heroOverview = document.getElementById("heroOverview");
+const movieGrid = document.getElementById("movieGrid");
+const pagination = document.getElementById("pagination");
 
 let currentPage = 1;
 
 /* HERO */
-
 async function loadHero(){
+  const res = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`);
+  const data = await res.json();
+  const movie = data.results[0];
 
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
-);
-
-const data = await res.json();
-
-const movie = data.results[0];
-
-hero.style.backgroundImage =
-`url(${IMG + movie.backdrop_path})`;
-
-heroTitle.innerHTML =
-movie.title;
-
-heroOverview.innerHTML =
-movie.overview;
-
+  hero.style.backgroundImage = `url(${IMG + movie.backdrop_path})`;
+  heroTitle.innerHTML = movie.title;
+  heroOverview.innerHTML = movie.overview;
 }
 
 /* MOVIES */
-
 async function loadMovies(page=1){
+  currentPage = page;
 
-currentPage = page;
+  movieGrid.innerHTML = "Loading...";
 
-movieGrid.innerHTML = "Loading...";
+  const res = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`);
+  const data = await res.json();
 
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
-);
+  const jsonRes = await fetch("movies.json");
+  const jsonMovies = await jsonRes.json();
 
-const data = await res.json();
+  movieGrid.innerHTML = "";
 
-/* LOAD JSON MANUAL */
-const jsonRes = await fetch("movies.json");
-const jsonMovies = await jsonRes.json();
+  data.results.forEach(movie => {
 
-movieGrid.innerHTML = "";
+    const manualMovie = jsonMovies.find(
+      m => String(m.tmdb) === String(movie.id)
+    );
 
-data.results.forEach(movie=>{
+    /* 🔥 FIX PENTING:
+       - kalau manual ada → watch.html pakai index JSON
+       - kalau TMDB saja → tetap bisa klik ke watch.html?tmdb=ID
+    */
 
-const manualMovie = jsonMovies.find(
-m => String(m.tmdb) === String(movie.id)
-);
+    let watchLink = "";
 
-/* FIX TOTAL: SEMUA KE WATCH.HTML */
-const watchLink = manualMovie
-? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-: `watch.html?tmdb=${movie.id}`;
+    if(manualMovie){
+      watchLink = `watch.html?id=${jsonMovies.indexOf(manualMovie)}`;
+    } else {
+      watchLink = `watch.html?tmdb=${movie.id}`;
+    }
 
-movieGrid.innerHTML += `
+    movieGrid.innerHTML += `
+      <a href="${watchLink}" style="text-decoration:none;color:white;">
+        <div class="movie-card">
+          <img src="${movie.poster_path ? POSTER + movie.poster_path : 'https://via.placeholder.com/500x750'}">
+          <div class="movie-info">
+            <h3>${movie.title}</h3>
+            <span>⭐ ${movie.vote_average.toFixed(1)}</span>
+          </div>
+        </div>
+      </a>
+    `;
+  });
 
-<a href="${watchLink}"
-style="text-decoration:none;color:white;">
-
-<div class="movie-card">
-
-<img src="${
-movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image'
-}">
-
-<div class="movie-info">
-
-<h3>${movie.title}</h3>
-
-<span>⭐ ${movie.vote_average.toFixed(1)}</span>
-
-</div>
-
-</div>
-
-</a>
-
-`;
-
-});
-
-renderPagination(data.total_pages);
-
+  renderPagination(data.total_pages);
 }
 
 /* PAGINATION */
-
 function renderPagination(totalPages){
+  pagination.innerHTML = "";
 
-pagination.innerHTML = "";
+  let start = currentPage - 2;
+  let end = currentPage + 2;
 
-let start = currentPage - 2;
-let end = currentPage + 2;
+  if(start < 1) start = 1;
+  if(end > totalPages) end = totalPages;
 
-if(start < 1) start = 1;
-if(end > totalPages) end = totalPages;
+  if(currentPage > 1){
+    pagination.innerHTML += `<div class="page-btn" onclick="loadMovies(${currentPage-1})">‹</div>`;
+  }
 
-if(currentPage > 1){
-pagination.innerHTML += `
-<div class="page-btn" onclick="loadMovies(${currentPage - 1})">‹</div>
-`;
-}
+  for(let i=start;i<=end;i++){
+    pagination.innerHTML += `
+      <div class="page-btn ${currentPage===i?'active':''}" onclick="loadMovies(${i})">
+        ${i}
+      </div>
+    `;
+  }
 
-for(let i=start;i<=end;i++){
-pagination.innerHTML += `
-<div class="page-btn ${currentPage===i?'active':''}"
-onclick="loadMovies(${i})">${i}</div>
-`;
-}
-
-if(currentPage < totalPages){
-pagination.innerHTML += `
-<div class="page-btn" onclick="loadMovies(${currentPage + 1})">›</div>
-`;
-}
-
+  if(currentPage < totalPages){
+    pagination.innerHTML += `<div class="page-btn" onclick="loadMovies(${currentPage+1})">›</div>`;
+  }
 }
 
 /* SEARCH */
-
 async function searchMovies(query){
+  const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`);
+  const data = await res.json();
 
-const res = await fetch(
-`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
-);
+  movieGrid.innerHTML = "";
 
-const data = await res.json();
+  data.results.forEach(movie=>{
+    if(movie.original_language === "id"){
+      movieGrid.innerHTML += `
+        <a href="watch.html?tmdb=${movie.id}" style="text-decoration:none;color:white;">
+          <div class="movie-card">
+            <img src="${movie.poster_path ? POSTER + movie.poster_path : 'https://via.placeholder.com/500x750'}">
+            <div class="movie-info">
+              <h3>${movie.title}</h3>
+              <span>⭐ ${movie.vote_average.toFixed(1)}</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+  });
 
-const jsonRes = await fetch("movies.json");
-const jsonMovies = await jsonRes.json();
-
-movieGrid.innerHTML = "";
-
-data.results.forEach(movie=>{
-
-if(movie.original_language === "id"){
-
-const manualMovie = jsonMovies.find(
-m => String(m.tmdb) === String(movie.id)
-);
-
-const watchLink = manualMovie
-? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-: `watch.html?tmdb=${movie.id}`;
-
-movieGrid.innerHTML += `
-
-<a href="${watchLink}"
-style="text-decoration:none;color:white;">
-
-<div class="movie-card">
-
-<img src="${
-movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image'
-}">
-
-<div class="movie-info">
-
-<h3>${movie.title}</h3>
-
-<span>⭐ ${movie.vote_average.toFixed(1)}</span>
-
-</div>
-
-</div>
-
-</a>
-
-`;
-
+  pagination.innerHTML = "";
 }
 
+/* EVENT */
+document.getElementById("searchInput").addEventListener("keyup",(e)=>{
+  const v = e.target.value;
+  if(v.length > 2){
+    searchMovies(v);
+  } else {
+    loadMovies(1);
+  }
 });
-
-pagination.innerHTML = "";
-
-}
-
-/* START */
 
 loadHero();
 loadMovies();
-
 </script>
   </body>
 </html>
