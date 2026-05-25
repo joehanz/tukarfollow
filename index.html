@@ -2,67 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Netflix Hybrid Stream</title>
+<title>Hybrid Stream</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
+
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#000;
-  color:#fff;
-}
-
-/* TOP NAV */
-.topbar{
-  position:sticky;
-  top:0;
-  background:#000;
-  padding:10px 15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:1000;
-  border-bottom:1px solid #111;
-}
-
-.logo{
-  color:red;
-  font-weight:bold;
-}
-
-/* BURGER */
-.burger{
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* SIDE MENU */
-.side{
-  position:fixed;
-  top:0;
-  left:-260px;
-  width:260px;
-  height:100%;
-  background:#111;
+/* ===== FIX GRID SAFE MOBILE ===== */
+.grid{
   padding:15px;
-  transition:0.3s;
-  z-index:2000;
 }
 
-.side.open{
-  left:0;
+@media(max-width:600px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    padding:10px;
+  }
+
+  .card img{
+    height:240px;
+  }
 }
 
-.side a{
-  display:block;
-  padding:10px 0;
-  color:#fff;
-  text-decoration:none;
-  border-bottom:1px solid #222;
-}
-
-/* HERO */
+/* ===== HERO FIX ===== */
 .hero{
   height:55vh;
   background:
@@ -74,214 +37,168 @@ body{
   align-items:flex-end;
   padding:20px;
 }
-
-/* SECTION */
-.section{
-  padding:10px;
-}
-
-.section h2{
-  margin:10px 0;
-}
-
-/* GRID TMDB */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:10px;
-}
-
-/* CARD */
-.card{
-  cursor:pointer;
-}
-
-.card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-  border-radius:8px;
-}
-
-.title{
-  font-size:12px;
-  opacity:0.8;
-  margin-top:5px;
-}
-
-/* PAGINATION */
-.pagination{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  padding:15px;
-}
-
-.pagination button{
-  padding:6px 12px;
-  background:#222;
-  border:none;
-  color:#fff;
-  cursor:pointer;
-  border-radius:5px;
-}
-
-.pagination button.active{
-  background:red;
-}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-  <div class="burger" onclick="toggleMenu()">☰</div>
-  <div class="logo">STREAM LOCK</div>
-</div>
+<!-- NAV -->
+<nav id='topNav'>
 
-<div class="side" id="side">
-  <a href="#" onclick="loadManual()">Manual Posts</a>
-  <a href="#" onclick="loadTMDB()">TMDB Grid</a>
-  <a href="#" onclick="loadAll()">All Movies</a>
-</div>
+  <a class='logo' href='/'>STREAM</a>
 
+  <div class='nav-right' id='navRight'>
+
+    <form action='/search' method='get'>
+      <input name='q' placeholder='Cari film...' type='text'/>
+      <button>GO</button>
+    </form>
+
+    <div class='dropdown'>
+      <span>Film ▼</span>
+      <div class='dropdown-menu'>
+        <a href='/'>Indonesian Movies</a>
+        <a href='/search'>Sub 🇮🇩 Movies</a>
+      </div>
+    </div>
+
+    <div class='dropdown'>
+      <span>Genre ▼</span>
+      <div class='dropdown-menu'>
+        <a href='#' onclick="filterGenre('action')">Action</a>
+        <a href='#' onclick="filterGenre('comedy')">Comedy</a>
+        <a href='#' onclick="filterGenre('drama')">Drama</a>
+      </div>
+    </div>
+
+    <div class='dropdown'>
+      <span>Country ▼</span>
+      <div class='dropdown-menu'>
+        <a href='#'>Indonesia</a>
+        <a href='#'>USA</a>
+        <a href='#'>Korea</a>
+      </div>
+    </div>
+
+    <div class='dropdown'>
+      <span>Release ▼</span>
+      <div class='dropdown-menu'>
+        <a href='#'>2026</a>
+        <a href='#'>2025</a>
+        <a href='#'>2024</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class='burger' onclick='toggleNav()'>☰</div>
+
+</nav>
+
+<!-- HERO -->
 <div class="hero">
   <div>
-    <h1>Watch Unlimited Movies</h1>
-    <p>Hybrid Manual + TMDB System</p>
+    <h1>Unlimited Movies</h1>
+    <p>Manual + TMDB Hybrid</p>
   </div>
 </div>
 
-<div class="section">
-  <h2 id="sectionTitle">Movies</h2>
-  <div class="grid" id="grid"></div>
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- MODAL PLAYER -->
+<div class="modal" id="modal">
+  <iframe id="player" allowfullscreen></iframe>
 </div>
 
-<div class="pagination" id="pagination"></div>
-
+<!-- SCRIPT -->
 <script>
 
-let mode = "all";
-let page = 1;
-let perPage = 12;
+const API = "9e335d21d35f04917b218bae7adc881f";
 
-let manualMovies = [];
-let tmdbMovies = [];
-
-/* ===== SAMPLE MANUAL ===== */
-manualMovies = [
+let manual = [
   {
-    title:"Manual Movie 1",
+    title:"Manual Film 1",
     poster:"https://via.placeholder.com/300x450",
-    embed:"https://example.com"
-  },
-  {
-    title:"Manual Movie 2",
-    poster:"https://via.placeholder.com/300x450",
-    embed:"https://example.com"
+    embed:"https://example.com",
+    imdb:"tt1234567"
   }
 ];
 
-/* ===== SAMPLE TMDB ===== */
-for(let i=1;i<=60;i++){
-  tmdbMovies.push({
-    title:"TMDB Movie "+i,
-    poster:"https://via.placeholder.com/300x450",
-    embed:"https://example.com"
-  });
+let tmdb = [];
+
+function toggleNav(){
+  document.getElementById("navRight").classList.toggle("active");
 }
 
-function toggleMenu(){
-  document.getElementById("side").classList.toggle("open");
-}
+async function loadTMDB(){
 
-/* LOAD MODES */
-function loadManual(){
-  mode="manual";
-  page=1;
+  const url =
+    "https://api.themoviedb.org/3/discover/movie?api_key="
+    + API
+    + "&with_original_language=id";
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  tmdb = data.results;
+
   render();
-  closeMenu();
 }
 
-function loadTMDB(){
-  mode="tmdb";
-  page=1;
-  render();
-  closeMenu();
-}
-
-function loadAll(){
-  mode="all";
-  page=1;
-  render();
-  closeMenu();
-}
-
-function closeMenu(){
-  document.getElementById("side").classList.remove("open");
-}
-
-/* RENDER */
 function render(){
 
-  let data = [];
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-  if(mode==="manual") data = manualMovies;
-  else if(mode==="tmdb") data = tmdbMovies;
-  else data = manualMovies.concat(tmdbMovies);
+  let all = [...manual, ...tmdb];
 
-  document.getElementById("sectionTitle").innerText = mode.toUpperCase();
+  all.forEach(movie => {
 
-  let start = (page-1)*perPage;
-  let end = start + perPage;
+    if(!movie.poster_path && !movie.poster) return;
 
-  let paged = data.slice(start,end);
+    const div = document.createElement("div");
+    div.className = "card";
 
-  let grid = document.getElementById("grid");
-  grid.innerHTML="";
-
-  paged.forEach(m=>{
-    let div=document.createElement("div");
-    div.className="card";
-
-    div.innerHTML=`
-      <img src="${m.poster}">
-      <div class="title">${m.title}</div>
+    div.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w300${movie.poster_path || movie.poster}">
+      <div class="card-title">${movie.title}</div>
     `;
 
-    div.onclick=()=>{
-      window.location.href="watch.html?play="+encodeURIComponent(m.embed);
+    div.onclick = async () => {
+
+      let imdb = movie.imdb;
+
+      if(!imdb){
+
+        const r = await fetch(
+          "https://api.themoviedb.org/3/movie/"
+          + movie.id
+          + "?api_key="
+          + API
+          + "&append_to_response=external_ids"
+        );
+
+        const d = await r.json();
+        imdb = d.external_ids.imdb_id;
+      }
+
+      if(!imdb) return;
+
+      document.getElementById("modal").style.display = "block";
+      document.getElementById("player").src =
+        "https://vsembed.su/embed/movie?imdb=" + imdb;
     };
 
     grid.appendChild(div);
   });
-
-  renderPagination(data.length);
 }
 
-/* PAGINATION */
-function renderPagination(total){
-
-  let totalPages = Math.ceil(total/perPage);
-  let pag = document.getElementById("pagination");
-  pag.innerHTML="";
-
-  for(let i=1;i<=totalPages;i++){
-    let btn=document.createElement("button");
-    btn.innerText=i;
-
-    if(i===page) btn.classList.add("active");
-
-    btn.onclick=()=>{
-      page=i;
-      render();
-    };
-
-    pag.appendChild(btn);
-  }
+function filterGenre(g){
+  alert("Filter: " + g);
 }
 
-loadAll();
+loadTMDB();
 
 </script>
 
