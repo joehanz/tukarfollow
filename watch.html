@@ -112,41 +112,33 @@
   }
 }
 
-/* GRID MOVIES */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 16px;
+* {
+  box-sizing: border-box;
 }
 
-.card {
-  background: #222;
-  color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.03);
-}
-
-.card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
-}
-
-.card .title {
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
   padding: 10px;
-  font-size: 14px;
+  height: 300px; /* Should be removed. Only for demonstration */
 }
 
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
 </style>
-</style>
+
 </head>
 
 <body>
@@ -176,37 +168,9 @@
 
 
 <style>
-* {
-  box-sizing: border-box;
-}
 
-/* Create two equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 50%;
-  padding: 10px;
-  height: 300px; /* Should be removed. Only for demonstration */
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column {
-    width: 100%;
-  }
-}
 </style>
-</head>
-<body>
 
-<h2>Responsive Two Column Layout</h2>
-<p>Resize the browser window to see the responsive effect (the columns will stack on top of each other instead of floating next to each other, when the screen is less than 600px wide).</p>
 
 <div class="row">
   <div class="column" style="background-color:#aaa;">
