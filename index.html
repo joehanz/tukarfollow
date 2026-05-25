@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Movie Site</title>
+<title>Movies Grid</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -17,63 +17,40 @@
     <a href="index.html">Home</a>
     <a href="movies.html">Movies</a>
   </div>
-
-  <button class="md:hidden">☰</button>
 </nav>
 
-<!-- HERO -->
-<section class="p-6 text-center">
-  <h1 class="text-3xl font-bold">Streaming Movie</h1>
-  <p class="text-gray-400 mt-2">Klik film untuk lihat katalog</p>
-</section>
-
 <!-- GRID -->
-<section class="px-6 pb-10">
-  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+<section class="p-6">
+  <h1 class="text-xl font-bold mb-4">All Movies</h1>
 
-    <a href="movies.html" class="bg-gray-900 rounded-lg p-4 hover:scale-105 transition">
-      Action
-    </a>
-
-    <a href="movies.html" class="bg-gray-900 rounded-lg p-4 hover:scale-105 transition">
-      Drama
-    </a>
-
-    <a href="movies.html" class="bg-gray-900 rounded-lg p-4 hover:scale-105 transition">
-      Sci-Fi
-    </a>
-
-    <a href="movies.html" class="bg-gray-900 rounded-lg p-4 hover:scale-105 transition">
-      Horror
-    </a>
-
-  </div>
+  <div id="grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
 </section>
 
 <!-- FOOTER -->
 <footer class="border-t border-gray-800 p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400">
-  <div>
-    <h3 class="text-white mb-2">Movie+</h3>
-    <p>Streaming template</p>
-  </div>
-
-  <div>
-    <h3 class="text-white mb-2">Menu</h3>
-    <p>Home</p>
-    <p>Movies</p>
-  </div>
-
-  <div>
-    <h3 class="text-white mb-2">Genre</h3>
-    <p>Action</p>
-    <p>Drama</p>
-  </div>
-
-  <div>
-    <h3 class="text-white mb-2">Info</h3>
-    <p>About</p>
-  </div>
+  <div>Movie+</div>
+  <div>Menu</div>
+  <div>Genre</div>
+  <div>Info</div>
 </footer>
+
+<script>
+fetch('movies.json')
+  .then(res => res.json())
+  .then(data => {
+    const grid = document.getElementById('grid');
+
+    data.forEach(movie => {
+      grid.innerHTML += `
+        <a href="watch.html?id=${movie.id || ''}" class="bg-gray-900 rounded overflow-hidden hover:scale-105 transition">
+          <img src="${movie.image}" class="w-full h-44 object-cover">
+          <div class="p-2 text-sm font-semibold">${movie.title}</div>
+          <div class="px-2 pb-2 text-xs text-gray-400">${movie.genre}</div>
+        </a>
+      `;
+    });
+  });
+</script>
 
 </body>
 </html>
