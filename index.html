@@ -3,142 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamMovie - Nonton Film Gratis</title>
-    <!-- Tailwind CSS via CDN -->
+    <title>Streamix - Grid Sempurna</title>
     <script src="https://tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white font-sans">
+<body class="bg-gray-950 text-white font-sans antialiased">
 
-    <!-- NAVBAR -->
-    <nav class="bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-gray-800">
-        <div class="flex items-center space-x-8">
-            <h1 class="text-2xl font-black tracking-wider text-red-600 cursor-pointer">STREAMIX</h1>
-            <div class="hidden md:flex space-x-6 text-sm font-medium text-gray-300">
-                <a href="#" class="hover:text-white transition">Beranda</a>
-                <a href="#" class="hover:text-white transition">Film</a>
-                <a href="#" class="hover:text-white transition">Series</a>
-                <a href="#" class="hover:text-white transition">Populer</a>
-            </div>
-        </div>
-        <div class="flex items-center space-x-4">
-            <input type="text" placeholder="Cari film..." class="bg-gray-800 text-sm px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600 text-gray-200 w-40 sm:w-60 transition-all">
-        </div>
-    </nav>
-
-    <!-- KONTEN UTAMA -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- UTAMA -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
         
-        <!-- JUDUL KATEGORI -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl md:text-2xl font-bold border-l-4 border-red-600 pl-3">Film Terpopuler</h2>
-            <a href="#" class="text-sm text-red-500 hover:underline">Lihat Semua →</a>
-        </div>
+        <h2 class="text-2xl font-bold mb-6 border-l-4 border-red-600 pl-3">Daftar Film Populer</h2>
 
-        <!-- GRID FILM (RESPONSIF) -->
-        <!-- Memakai 2 kolom di HP, 3 di Tablet, 4 di Laptop kecil, dan 5 di Layar Lebar -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <!-- GRID UTAMA: Mengunci baris tetap sejajar menggunakan grid-rows-auto -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 items-stretch">
             
-            <!-- KARTU FILM 1 -->
-            <div class="group relative bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
-                <!-- Wrapper Gambar Poster -->
-                <div class="relative aspect-[2/3] overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster Film" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <!-- Lencana Resolusi (Kiri Atas) -->
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded text-white shadow">4K</span>
-                    <!-- Rating (Kanan Atas) -->
-                    <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-amber-400 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                        ⭐ 8.5
-                    </span>
+            <!-- KARTU FILM 1 (Model Potret) -->
+            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
+                <!-- Memaksa gambar mengikuti rasio poster bioskop 2:3 -->
+                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
+                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
                 </div>
-                <!-- Informasi Film (Bawah) -->
-                <div class="p-3">
-                    <h3 class="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">Judul Film Keren Pertama</h3>
-                    <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
-                        <span>2026</span>
-                        <span class="border border-gray-700 px-1.5 rounded text-[10px]">Action</span>
-                    </div>
+                <!-- Area Teks Terkunci -->
+                <div class="p-3 flex-grow flex flex-col justify-between">
+                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Judul Film Pertama Yang Sangat Panjang Sekali</h3>
+                    <p class="text-xs text-gray-400 mt-2">2026 • Action</p>
                 </div>
             </div>
 
             <!-- KARTU FILM 2 -->
-            <div class="group relative bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
-                <div class="relative aspect-[2/3] overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster Film" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded text-white shadow">HD</span>
-                    <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-amber-400 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                        ⭐ 7.9
-                    </span>
+            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
+                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
+                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded">HD</span>
                 </div>
-                <div class="p-3">
-                    <h3 class="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">Petualangan Ruang Angkasa</h3>
-                    <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
-                        <span>2025</span>
-                        <span class="border border-gray-700 px-1.5 rounded text-[10px]">Sci-Fi</span>
-                    </div>
+                <div class="p-3 flex-grow flex flex-col justify-between">
+                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Petualangan Singkat</h3>
+                    <p class="text-xs text-gray-400 mt-2">2025 • Sci-Fi</p>
                 </div>
             </div>
 
-            <!-- KARTU FILM 3 (Duplikat untuk contoh grid) -->
-            <div class="group relative bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
-                <div class="relative aspect-[2/3] overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster Film" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded text-white shadow">4K</span>
-                    <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-amber-400 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                        ⭐ 9.0
-                    </span>
+            <!-- KARTU FILM 3 -->
+            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
+                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
+                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
                 </div>
-                <div class="p-3">
-                    <h3 class="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">Misteri Malam Hari</h3>
-                    <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
-                        <span>2026</span>
-                        <span class="border border-gray-700 px-1.5 rounded text-[10px]">Thriller</span>
-                    </div>
+                <div class="p-3 flex-grow flex flex-col justify-between">
+                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Misteri Malam</h3>
+                    <p class="text-xs text-gray-400 mt-2">2026 • Thriller</p>
                 </div>
             </div>
 
             <!-- KARTU FILM 4 -->
-            <div class="group relative bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
-                <div class="relative aspect-[2/3] overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster Film" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded text-white shadow">HD</span>
-                    <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-amber-400 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                        ⭐ 8.2
-                    </span>
+            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
+                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
+                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded">HD</span>
                 </div>
-                <div class="p-3">
-                    <h3 class="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">Kisah Klasik Bioskop</h3>
-                    <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
-                        <span>2024</span>
-                        <span class="border border-gray-700 px-1.5 rounded text-[10px]">Drama</span>
-                    </div>
+                <div class="p-3 flex-grow flex flex-col justify-between">
+                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Kisah Klasik Lama Bioskop Indonesia</h3>
+                    <p class="text-xs text-gray-400 mt-2">2024 • Drama</p>
                 </div>
             </div>
 
             <!-- KARTU FILM 5 -->
-            <div class="group relative bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
-                <div class="relative aspect-[2/3] overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster Film" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded text-white shadow">4K</span>
-                    <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-amber-400 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                        ⭐ 7.5
-                    </span>
+            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
+                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
+                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
                 </div>
-                <div class="p-3">
-                    <h3 class="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">Komedi Romantis Kota</h3>
-                    <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
-                        <span>2025</span>
-                        <span class="border border-gray-700 px-1.5 rounded text-[10px]">Romance</span>
-                    </div>
+                <div class="p-3 flex-grow flex flex-col justify-between">
+                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Komedi Romantis</h3>
+                    <p class="text-xs text-gray-400 mt-2">2025 • Romance</p>
                 </div>
             </div>
 
         </div>
     </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-gray-900 text-center py-6 text-xs text-gray-500 mt-20 border-t border-gray-800">
-        <p>&copy; 2026 STREAMIX. Hosted on GitHub Pages.</p>
-    </footer>
 
 </body>
 </html>
