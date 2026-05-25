@@ -2,31 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hybrid Stream FIX</title>
+<title>Hybrid Stream Infinite</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
 
 <style>
-/* SAFE GRID FIX */
-.grid{
-  padding:15px;
-}
-
-/* mobile 2 kolom FIX */
-@media(max-width:600px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    padding:10px;
-  }
-
-  .card img{
-    height:240px;
-  }
-}
-
-/* HERO FIX */
 .hero{
   height:55vh;
   background:
@@ -39,31 +20,34 @@
   padding:20px;
 }
 
-/* PAGER */
-.pager{
-  text-align:center;
+/* SAFE GRID */
+.grid{
   padding:15px;
 }
 
-.pager button{
-  background:#222;
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  margin:2px;
-  cursor:pointer;
-  border-radius:4px;
+@media(max-width:600px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    padding:10px;
+  }
+
+  .card img{
+    height:240px;
+  }
 }
 
-.pager button.active{
-  background:red;
+/* LOADING */
+.loading{
+  text-align:center;
+  padding:20px;
+  opacity:.7;
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAV (KEEP YOUR BLOG NAV SAFE) -->
 <nav id='topNav'>
   <a class='logo' href='/'>STREAM</a>
 
@@ -72,161 +56,96 @@
       <input name='q' placeholder='Cari film...' type='text'/>
       <button>GO</button>
     </form>
-
-    <div class='dropdown'>
-      <span>Menu ▼</span>
-      <div class='dropdown-menu'>
-        <a href='#'>Home</a>
-        <a href='#'>Trending</a>
-      </div>
-    </div>
   </div>
 
   <div class='burger' onclick='toggleNav()'>☰</div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div>
     <h1>Unlimited Movies</h1>
-    <p>Manual + TMDB + JSON System</p>
+    <p>Infinite TMDB Streaming</p>
   </div>
 </div>
 
-<!-- GRID -->
 <div class="grid" id="grid"></div>
 
-<!-- PAGINATION -->
-<div class="pager" id="pager"></div>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <iframe id="player" allowfullscreen></iframe>
-</div>
+<div class="loading" id="loading">Loading...</div>
 
 <script>
 
 const API = "9e335d21d35f04917b218bae7adc881f";
 
-let movies = [];
 let page = 1;
-let perPage = 12;
+let loading = false;
 
-/* FIX: LOAD JSON + TMDB + SAFE COMBINE */
-async function loadAll(){
+/* INFINITE TMDB LOAD */
+async function loadMovies(){
 
-  // 1. load movies.json (FIX ISSUE YANG KAMU BILANG)
-  let jsonData = [];
-  try{
-    const res = await fetch('movies.json');
-    jsonData = await res.json();
-  }catch(e){
-    jsonData = [];
-  }
+  if(loading) return;
+  loading = true;
 
-  // 2. load TMDB
+  document.getElementById("loading").style.display = "block";
+
   const url =
     "https://api.themoviedb.org/3/discover/movie?api_key="
     + API
-    + "&with_original_language=id";
+    + "&with_original_language=id&page="
+    + page;
 
-  const res2 = await fetch(url);
-  const tmdb = await res2.json();
+  const res = await fetch(url);
+  const data = await res.json();
 
-  // 3. combine SAFE (tidak nyempil kosong)
-  movies = [
-    ...jsonData.filter(x => x && x.title && x.poster),
-    ...tmdb.results.filter(x => x && x.poster_path)
-  ];
+  render(data.results);
 
-  render();
+  page++;
+  loading = false;
+
+  document.getElementById("loading").style.display = "none";
 }
 
-/* RENDER WITH PAGINATION FIX */
-function render(){
+/* RENDER GRID */
+function render(list){
 
   const grid = document.getElementById("grid");
-  grid.innerHTML = "";
 
-  let start = (page-1)*perPage;
-  let end = start + perPage;
+  list.forEach(movie => {
 
-  let data = movies.slice(start,end);
-
-  data.forEach(m => {
-
-    const img = m.poster || ("https://image.tmdb.org/t/p/w300" + m.poster_path);
+    if(!movie.poster_path) return;
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      <img src="${img}">
-      <div class="card-title">${m.title}</div>
+      <img src="https://image.tmdb.org/t/p/w300${movie.poster_path}">
+      <div class="card-title">${movie.title}</div>
     `;
 
-    div.onclick = async () => {
-
-      let imdb = m.imdb;
-
-      if(!imdb && m.id){
-
-        const r = await fetch(
-          "https://api.themoviedb.org/3/movie/"
-          + m.id
-          + "?api_key="
-          + API
-          + "&append_to_response=external_ids"
-        );
-
-        const d = await r.json();
-        imdb = d?.external_ids?.imdb_id;
-      }
-
-      if(!imdb) return;
-
-      document.getElementById("modal").style.display = "block";
-      document.getElementById("player").src =
-        "https://vsembed.su/embed/movie?imdb=" + imdb;
+    /* CLICK → WATCH.HTML */
+    div.onclick = () => {
+      window.location.href =
+        "watch.html?id=" + movie.id;
     };
 
     grid.appendChild(div);
   });
-
-  renderPager();
 }
 
-/* PAGINATION FIX FULL */
-function renderPager(){
+/* SCROLL INFINITE */
+window.addEventListener("scroll", () => {
 
-  const pager = document.getElementById("pager");
-  pager.innerHTML = "";
-
-  let totalPages = Math.ceil(movies.length / perPage);
-
-  for(let i=1;i<=totalPages;i++){
-
-    let btn = document.createElement("button");
-    btn.innerText = i;
-
-    if(i === page) btn.classList.add("active");
-
-    btn.onclick = () => {
-      page = i;
-      render();
-    };
-
-    pager.appendChild(btn);
+  if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200){
+    loadMovies();
   }
-}
 
-/* NAV BURGER */
+});
+
 function toggleNav(){
   document.getElementById("navRight").classList.toggle("active");
 }
 
 /* START */
-loadAll();
+loadMovies();
 
 </script>
 
