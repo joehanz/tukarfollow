@@ -1,4 +1,4 @@
-const API = atob("9e335d21d35f04917b218bae7adc881f");
+const API = "9e335d21d35f04917b218bae7adc881f";
 
 let page = 1;
 
@@ -40,6 +40,9 @@ async function load(){
   const d = await r.json();
 
   const grid = document.getElementById("grid");
+
+  if(!grid) return;
+
   grid.innerHTML = "";
 
   d.results.forEach(m => {
@@ -50,8 +53,8 @@ async function load(){
     el.className = "card";
 
     el.innerHTML = `
-      <img src='https://image.tmdb.org/t/p/w300${m.poster_path}'/>
-      <div class='card-title'>${m.title}</div>
+      <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+      <div class="card-title">${m.title}</div>
     `;
 
     el.onclick = () => openMovie(m.id);
@@ -86,6 +89,7 @@ let clickStep = 0;
 async function openMovie(id){
 
   document.getElementById("modal").style.display = "flex";
+
   document.body.classList.add("modal-open");
 
   const r = await fetch(
@@ -125,17 +129,18 @@ async function openMovie(id){
 
   clickStep = 0;
 
-  addOverlay(player, url);
+  addOverlay();
 }
 
 /* =========================
    OVERLAY LOGIC
 ========================= */
-function addOverlay(player, url){
+function addOverlay(){
 
   const modal = document.getElementById("modal");
 
   const old = document.getElementById("clickLayer");
+
   if(old) old.remove();
 
   const layer = document.createElement("div");
@@ -157,15 +162,17 @@ function addOverlay(player, url){
 
     clickStep++;
 
-    /* STEP 1 & 2 */
     if(clickStep === 1 || clickStep === 2){
+
       window.open(randomSite(), "_blank");
+
       return;
     }
 
-    /* STEP 3 */
     if(clickStep >= 3){
+
       layer.remove();
+
       clickStep = 0;
     }
   };
@@ -192,4 +199,6 @@ function closeModal(){
 /* =========================
    INIT
 ========================= */
-load();
+document.addEventListener("DOMContentLoaded", function(){
+  load();
+});
