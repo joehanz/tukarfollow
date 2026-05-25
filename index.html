@@ -1,152 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Hybrid Stream Infinite</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Movie Grid</title>
 
-<link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
-
-<style>
-.hero{
-  height:55vh;
-  background:
-    linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2), rgba(0,0,0,0.85)),
-    url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4');
-  background-size:cover;
-  background-position:center;
-  display:flex;
-  align-items:flex-end;
-  padding:20px;
-}
-
-/* SAFE GRID */
-.grid{
-  padding:15px;
-}
-
-@media(max-width:600px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    padding:10px;
-  }
-
-  .card img{
-    height:240px;
-  }
-}
-
-/* LOADING */
-.loading{
-  text-align:center;
-  padding:20px;
-  opacity:.7;
-}
-</style>
+<link href="https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css" rel="stylesheet"/>
 </head>
 
 <body>
 
-<nav id='topNav'>
-  <a class='logo' href='/'>STREAM</a>
-
-  <div class='nav-right' id='navRight'>
-    <form action='/search' method='get'>
-      <input name='q' placeholder='Cari film...' type='text'/>
-      <button>GO</button>
-    </form>
-  </div>
-
-  <div class='burger' onclick='toggleNav()'>☰</div>
+<!-- NAV -->
+<nav id="topNav">
+  <a class="logo" href="/">MOVIE</a>
 </nav>
 
-<div class="hero">
-  <div>
-    <h1>Unlimited Movies</h1>
-    <p>Infinite TMDB Streaming</p>
-  </div>
-</div>
-
+<!-- GRID -->
 <div class="grid" id="grid"></div>
 
-<div class="loading" id="loading">Loading...</div>
+<!-- PAGINATION -->
+<div class="pager">
+  <button onclick="prev()">Prev</button>
+  <span id="page"></span>
+  <button onclick="next()">Next</button>
+</div>
 
 <script>
-
-const API = "9e335d21d35f04917b218bae7adc881f";
-
+let movies = [];
 let page = 1;
-let loading = false;
+const perPage = 12;
 
-/* INFINITE TMDB LOAD */
-async function loadMovies(){
-
-  if(loading) return;
-  loading = true;
-
-  document.getElementById("loading").style.display = "block";
-
-  const url =
-    "https://api.themoviedb.org/3/discover/movie?api_key="
-    + API
-    + "&with_original_language=id&page="
-    + page;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  render(data.results);
-
-  page++;
-  loading = false;
-
-  document.getElementById("loading").style.display = "none";
-}
-
-/* RENDER GRID */
-function render(list){
-
-  const grid = document.getElementById("grid");
-
-  list.forEach(movie => {
-
-    if(!movie.poster_path) return;
-
-    const div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-      <img src="https://image.tmdb.org/t/p/w300${movie.poster_path}">
-      <div class="card-title">${movie.title}</div>
-    `;
-
-    /* CLICK → WATCH.HTML */
-    div.onclick = () => {
-      window.location.href =
-        "watch.html?id=" + movie.id;
-    };
-
-    grid.appendChild(div);
-  });
-}
-
-/* SCROLL INFINITE */
-window.addEventListener("scroll", () => {
-
-  if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200){
-    loadMovies();
-  }
-
+fetch("movies.json")
+.then(r => r.json())
+.then(res => {
+  movies = res;
+  render();
 });
 
-function toggleNav(){
-  document.getElementById("navRight").classList.toggle("active");
+function render(){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  let start = (page-1)*perPage;
+  let end = start + perPage;
+
+  movies.slice(start,end).forEach(m => {
+    grid.innerHTML += `
+      <div class="card" onclick="openWatch('${m.embed}')">
+        <img src="${m.poster}">
+        <div class="card-title">${m.title}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("page").innerText = page;
 }
 
-/* START */
-loadMovies();
+function next(){
+  if(page * perPage < movies.length){
+    page++;
+    render();
+  }
+}
 
+function prev(){
+  if(page > 1){
+    page--;
+    render();
+  }
+}
+
+function openWatch(link){
+  location.href = "watch.html?play=" + encodeURIComponent(link);
+}
 </script>
 
 </body>
