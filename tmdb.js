@@ -1,195 +1,195 @@
-const API = atob(&quot;OWUzMzVkMjFkMzVmMDQ5MTdiMjE4YmFlN2FkYzg4MWY=&quot;);
+const API = atob("OWUzMzVkMjFkMzVmMDQ5MTdiMjE4YmFlN2FkYzg4MWY=");
 
-  let page = 1;
+let page = 1;
 
-  /* =========================
-     RANDOM SITES
-  ========================= */
-  const sites = [
-    &quot;https://rajarayap.com&quot;,
-    &quot;https://caturbangunsentosa.blogspot.com&quot;,
-    &quot;https://ptdwiprima.blogspot.com&quot;
-  ];
+/* =========================
+   RANDOM SITES
+========================= */
+const sites = [
+  "https://rajarayap.com",
+  "https://caturbangunsentosa.blogspot.com",
+  "https://ptdwiprima.blogspot.com"
+];
 
-  /* =========================
-     RANDOM PICK
-  ========================= */
-  function randomSite(){
-    return sites[Math.floor(Math.random() * sites.length)];
-  }
+/* =========================
+   RANDOM PICK
+========================= */
+function randomSite(){
+  return sites[Math.floor(Math.random() * sites.length)];
+}
 
-  /* =========================
-     ONLY FILM INDONESIA
-  ========================= */
-  function endpoint(){
-    return &quot;https://api.themoviedb.org/3/discover/movie?api_key=&quot;
-      + API
-      + &quot;&amp;with_original_language=id&quot;
-      + &quot;&amp;sort_by=popularity.desc&quot;
-      + &quot;&amp;page=&quot; + page;
-  }
+/* =========================
+   ONLY FILM INDONESIA
+========================= */
+function endpoint(){
+  return "https://api.themoviedb.org/3/discover/movie?api_key="
+    + API
+    + "&with_original_language=id"
+    + "&sort_by=popularity.desc"
+    + "&page=" + page;
+}
 
-  /* =========================
-     GRID LOAD
-  ========================= */
-  async function load(){
+/* =========================
+   GRID LOAD
+========================= */
+async function load(){
 
-    document.getElementById(&quot;pageNum&quot;).innerText = page;
+  document.getElementById("pageNum").innerText = page;
 
-    const r = await fetch(endpoint());
-    const d = await r.json();
+  const r = await fetch(endpoint());
+  const d = await r.json();
 
-    const grid = document.getElementById(&quot;grid&quot;);
-    grid.innerHTML = &quot;&quot;;
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-    d.results.forEach(m =&gt; {
+  d.results.forEach(m => {
 
-      if(!m.poster_path) return;
+    if(!m.poster_path) return;
 
-      const el = document.createElement(&quot;div&quot;);
-      el.className = &quot;card&quot;;
+    const el = document.createElement("div");
+    el.className = "card";
 
-      el.innerHTML = `
-        <img src='https://image.tmdb.org/t/p/w300${m.poster_path}'/>
-        <div class='card-title'>${m.title}</div>
-      `;
+    el.innerHTML = `
+      <img src='https://image.tmdb.org/t/p/w300${m.poster_path}'/>
+      <div class='card-title'>${m.title}</div>
+    `;
 
-      el.onclick = () =&gt; openMovie(m.id);
+    el.onclick = () => openMovie(m.id);
 
-      grid.appendChild(el);
-    });
-  }
+    grid.appendChild(el);
+  });
+}
 
-  /* =========================
-     PAGINATION
-  ========================= */
-  function nextPage(){
-    page++;
+/* =========================
+   PAGINATION
+========================= */
+function nextPage(){
+  page++;
+  load();
+}
+
+function prevPage(){
+  if(page > 1){
+    page--;
     load();
   }
+}
 
-  function prevPage(){
-    if(page &gt; 1){
-      page--;
-      load();
-    }
+/* =========================
+   CLICK STATE TRACKER
+========================= */
+let clickStep = 0;
+
+/* =========================
+   OPEN MOVIE
+========================= */
+async function openMovie(id){
+
+  document.getElementById("modal").style.display = "flex";
+  document.body.classList.add("modal-open");
+
+  const r = await fetch(
+    "https://api.themoviedb.org/3/movie/" +
+    id +
+    "?api_key=" + API +
+    "&append_to_response=external_ids"
+  );
+
+  const d = await r.json();
+
+  document.getElementById("title").innerText = d.title;
+
+  document.getElementById("meta").innerHTML =
+    "⭐ " + d.vote_average +
+    " | 📅 " + d.release_date +
+    " | 🎭 " + d.genres.map(g => g.name).join(", ") +
+    " | 🌍 " + (d.production_countries?.[0]?.name || "-") +
+    " | <span id='onlineCounter'>👁️ 0 Watching</span>";
+
+  document.getElementById("desc").innerText =
+    d.overview || "";
+
+  const imdb = d.external_ids?.imdb_id;
+
+  if(!imdb){
+    document.getElementById("player").src = "";
+    return;
   }
 
-  /* =========================
-     CLICK STATE TRACKER
-  ========================= */
-  let clickStep = 0;
+  const url =
+    "https://vsembed.su/embed/movie?imdb=" + imdb;
 
-  /* =========================
-     OPEN MOVIE
-  ========================= */
-  async function openMovie(id){
+  const player = document.getElementById("player");
 
-    document.getElementById(&quot;modal&quot;).style.display = &quot;flex&quot;;
-    document.body.classList.add(&quot;modal-open&quot;);
+  player.src = url;
 
-    const r = await fetch(
-      &quot;https://api.themoviedb.org/3/movie/&quot; +
-      id +
-      &quot;?api_key=&quot; + API +
-      &quot;&amp;append_to_response=external_ids&quot;
-    );
+  clickStep = 0;
 
-    const d = await r.json();
+  addOverlay(player, url);
+}
 
-    document.getElementById(&quot;title&quot;).innerText = d.title;
+/* =========================
+   OVERLAY LOGIC
+========================= */
+function addOverlay(player, url){
 
-    document.getElementById(&quot;meta&quot;).innerHTML =
-      &quot;&#11088; &quot; + d.vote_average +
-      &quot; | 📅 &quot; + d.release_date +
-      &quot; | 🎭 &quot; + d.genres.map(g =&gt; g.name).join(&quot;, &quot;) +
-      &quot; | 🌍 &quot; + (d.production_countries?.[0]?.name || &quot;-&quot;) +
-      &quot; | <span id='onlineCounter'>👁&#65039; 0 Watching</span>&quot;;
+  const modal = document.getElementById("modal");
 
-    document.getElementById(&quot;desc&quot;).innerText =
-      d.overview || &quot;&quot;;
+  const old = document.getElementById("clickLayer");
+  if(old) old.remove();
 
-    const imdb = d.external_ids?.imdb_id;
+  const layer = document.createElement("div");
 
-    if(!imdb){
-      document.getElementById(&quot;player&quot;).src = &quot;&quot;;
+  layer.id = "clickLayer";
+
+  layer.style.position = "absolute";
+  layer.style.top = "0";
+  layer.style.left = "0";
+  layer.style.width = "100%";
+  layer.style.height = "100%";
+  layer.style.background = "rgba(0,0,0,0.05)";
+  layer.style.zIndex = "9999";
+  layer.style.cursor = "pointer";
+
+  modal.appendChild(layer);
+
+  layer.onclick = function(){
+
+    clickStep++;
+
+    /* STEP 1 & 2 */
+    if(clickStep === 1 || clickStep === 2){
+      window.open(randomSite(), "_blank");
       return;
     }
 
-    const url =
-      &quot;https://vsembed.su/embed/movie?imdb=&quot; + imdb;
+    /* STEP 3 */
+    if(clickStep >= 3){
+      layer.remove();
+      clickStep = 0;
+    }
+  };
+}
 
-    const player = document.getElementById(&quot;player&quot;);
+/* =========================
+   CLOSE MODAL
+========================= */
+function closeModal(){
 
-    player.src = url;
+  document.getElementById("modal").style.display = "none";
 
-    clickStep = 0;
+  document.getElementById("player").src = "";
 
-    addOverlay(player, url);
-  }
+  document.body.classList.remove("modal-open");
 
-  /* =========================
-     OVERLAY LOGIC
-  ========================= */
-  function addOverlay(player, url){
+  const layer = document.getElementById("clickLayer");
 
-    const modal = document.getElementById(&quot;modal&quot;);
+  if(layer) layer.remove();
 
-    const old = document.getElementById(&quot;clickLayer&quot;);
-    if(old) old.remove();
+  clickStep = 0;
+}
 
-    const layer = document.createElement(&quot;div&quot;);
-
-    layer.id = &quot;clickLayer&quot;;
-
-    layer.style.position = &quot;absolute&quot;;
-    layer.style.top = &quot;0&quot;;
-    layer.style.left = &quot;0&quot;;
-    layer.style.width = &quot;100%&quot;;
-    layer.style.height = &quot;100%&quot;;
-    layer.style.background = &quot;rgba(0,0,0,0.05)&quot;;
-    layer.style.zIndex = &quot;9999&quot;;
-    layer.style.cursor = &quot;pointer&quot;;
-
-    modal.appendChild(layer);
-
-    layer.onclick = function(){
-
-      clickStep++;
-
-      /* STEP 1 &amp; 2 */
-      if(clickStep === 1 || clickStep === 2){
-        window.open(randomSite(), &quot;_blank&quot;);
-        return;
-      }
-
-      /* STEP 3 */
-      if(clickStep &gt;= 3){
-        layer.remove();
-        clickStep = 0;
-      }
-    };
-  }
-
-  /* =========================
-     CLOSE MODAL
-  ========================= */
-  function closeModal(){
-
-    document.getElementById(&quot;modal&quot;).style.display = &quot;none&quot;;
-
-    document.getElementById(&quot;player&quot;).src = &quot;&quot;;
-
-    document.body.classList.remove(&quot;modal-open&quot;);
-
-    const layer = document.getElementById(&quot;clickLayer&quot;);
-
-    if(layer) layer.remove();
-
-    clickStep = 0;
-  }
-
-  /* =========================
-     INIT
-  ========================= */
-  load();
+/* =========================
+   INIT
+========================= */
+load();
