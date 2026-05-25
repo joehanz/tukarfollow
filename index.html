@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Stream GOD MODE</title>
+<title>Netflix Pro Clone</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -13,7 +13,7 @@ body {
   color: white;
 }
 
-/* TOP */
+/* TOP BAR */
 .topbar {
   position: sticky;
   top: 0;
@@ -21,75 +21,114 @@ body {
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  z-index: 10;
 }
 
 .logo {
   color: red;
   font-weight: bold;
+  font-size: 20px;
 }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+/* SEARCH */
+input {
+  padding: 6px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+/* HERO */
+.hero {
+  height: 55vh;
+  background:
+    linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2), rgba(0,0,0,0.85)),
+    url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+}
+
+/* SECTION */
+.section {
+  padding: 10px 0;
+}
+
+.section h2 {
+  margin: 10px;
+  font-size: 16px;
+}
+
+/* ROW */
+.row {
+  display: flex;
+  overflow-x: auto;
   gap: 10px;
-  padding: 10px;
+  padding: 0 10px;
+  scroll-padding: 10px;
 }
 
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+/* CARD */
 .card {
-  position: relative;
+  min-width: 140px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .card img {
-  width: 100%;
+  width: 140px;
   height: 200px;
-  object-fit: cover;
   border-radius: 8px;
+  object-fit: cover;
+  transition: 0.2s;
+}
+
+.card:hover img {
+  transform: scale(1.1);
+  box-shadow: 0 10px 20px rgba(255,0,0,0.3);
 }
 
 .title {
   font-size: 12px;
-  margin-top: 5px;
   opacity: 0.7;
+  margin-top: 5px;
 }
 
-/* HEART */
-.heart {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(0,0,0,0.6);
-  padding: 4px;
-  border-radius: 50%;
-  cursor: pointer;
+/* FILTER */
+.filters {
+  padding: 10px;
 }
 
-/* MODAL PLAYER */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.95);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-iframe {
-  width: 90%;
-  height: 70%;
+.btn {
+  padding: 5px 10px;
+  margin-right: 5px;
   border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #222;
+  color: white;
 }
 
-.close {
-  margin-top: 10px;
+.btn.active {
   background: red;
-  padding: 6px 12px;
-  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .card {
+    min-width: 120px;
+  }
+
+  .card img {
+    width: 120px;
+    height: 180px;
+  }
 }
 </style>
 </head>
@@ -97,84 +136,104 @@ iframe {
 <body>
 
 <div class="topbar">
-  <div class="logo">🔥 GOD STREAM</div>
-  <input id="search" placeholder="Search..." style="padding:5px;">
+  <div class="logo">NETFLIX PRO</div>
+  <input type="text" id="search" placeholder="Search movie...">
 </div>
 
-<div class="grid" id="grid"></div>
+<div class="hero">
+  <div>
+    <h1>Unlimited Movies</h1>
+    <p style="opacity:0.7">Stream anytime anywhere</p>
+  </div>
+</div>
 
-<!-- PLAYER -->
-<div class="modal" id="modal">
-  <iframe id="player"></iframe>
-  <div class="close" onclick="closePlayer()">Close</div>
+<div class="filters">
+  <button class="btn active" onclick="filterGenre('all')">All</button>
+  <button class="btn" onclick="filterGenre('action')">Action</button>
+  <button class="btn" onclick="filterGenre('drama')">Drama</button>
+  <button class="btn" onclick="filterGenre('anime')">Anime</button>
+</div>
+
+<div class="section">
+  <h2>Continue Watching</h2>
+  <div class="row" id="continueRow"></div>
+</div>
+
+<div class="section">
+  <h2>Trending Now</h2>
+  <div class="row" id="movieRow"></div>
 </div>
 
 <script>
 
-let movies = [];
+let allMovies = [];
 
-// load data
 fetch('movies.json')
-.then(r => r.json())
+.then(res => res.json())
 .then(data => {
-  movies = data;
-  render(data);
+  allMovies = data;
+  renderMovies(data);
+  renderContinue(data);
 });
 
-// render
-function render(list){
-  const grid = document.getElementById('grid');
-  grid.innerHTML = "";
+function renderMovies(list){
+  const row = document.getElementById('movieRow');
+  row.innerHTML = "";
 
-  list.forEach((m, i) => {
+  list.forEach(movie => {
     const div = document.createElement('div');
-    div.className = "card";
+    div.className = 'card';
 
     div.innerHTML = `
-      <img src="${m.poster}">
-      <div class="heart" onclick="toggleFav(event, ${i})">❤️</div>
-      <div class="title">${m.title}</div>
+      <img src="${movie.poster}">
+      <div class="title">${movie.title}</div>
     `;
 
-    div.onclick = () => openPlayer(m.embed, m.title);
+    div.onclick = () => {
+      window.location.href = "watch.html?play=" + encodeURIComponent(movie.embed);
+    };
 
-    grid.appendChild(div);
+    row.appendChild(div);
   });
 }
 
-// PLAYER MODAL
-function openPlayer(url, title){
-  document.getElementById('modal').style.display = 'flex';
-  document.getElementById('player').src = url;
+function renderContinue(list){
+  const row = document.getElementById('continueRow');
+  row.innerHTML = "";
 
-  localStorage.setItem("lastWatch", title);
+  list.slice(0,5).forEach(movie => {
+    const div = document.createElement('div');
+    div.className = 'card';
+
+    div.innerHTML = `
+      <img src="${movie.poster}">
+      <div class="title">▶ ${movie.title}</div>
+    `;
+
+    div.onclick = () => {
+      window.location.href = "watch.html?play=" + encodeURIComponent(movie.embed);
+    };
+
+    row.appendChild(div);
+  });
 }
 
-function closePlayer(){
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('player').src = "";
-}
-
-// FAVORITE
-function toggleFav(e, i){
-  e.stopPropagation();
-
-  let fav = JSON.parse(localStorage.getItem("fav") || "[]");
-
-  if(fav.includes(i)){
-    fav = fav.filter(x => x !== i);
-  } else {
-    fav.push(i);
-  }
-
-  localStorage.setItem("fav", JSON.stringify(fav));
-}
-
-// SEARCH
 document.getElementById('search').addEventListener('input', function(){
-  let v = this.value.toLowerCase();
-  render(movies.filter(m => m.title.toLowerCase().includes(v)));
+  let value = this.value.toLowerCase();
+  let filtered = allMovies.filter(m => m.title.toLowerCase().includes(value));
+  renderMovies(filtered);
 });
+
+function filterGenre(genre){
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  if(genre === 'all'){
+    renderMovies(allMovies);
+  } else {
+    renderMovies(allMovies.filter(m => (m.extra || '').includes(genre)));
+  }
+}
 
 </script>
 
