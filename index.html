@@ -3,13 +3,51 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/main/skin.css">
+
+<style>
+/* GRID MOVIES */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+
+.card {
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.card .title {
+  padding: 10px;
+  font-size: 14px;
+}
+</style>
+
 </head>
+
 <body>
 
 <div class="topnav" id="myTopnav">
   <a href="#home" class="active">Home</a>
   <a href="#news">News</a>
   <a href="#contact">Contact</a>
+
   <div class="dropdown">
     <button class="dropbtn">Dropdown 
       <i class="fa fa-caret-down"></i>
@@ -20,17 +58,16 @@
       <a href="#">Link 3</a>
     </div>
   </div> 
+
   <a href="#about">About</a>
-  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
 
-<div style="padding-left:16px">
-  <h2>Responsive Topnav with Dropdown</h2>
-  <p>Resize the browser window to see how it works.</p>
-  <p>Hover over the dropdown button to open the dropdown menu.</p>
-</div>
+<!-- ===== MOVIES GRID ===== -->
+<div id="movies" class="grid"></div>
 
 <script>
+// NAV
 function myFunction() {
   var x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
@@ -38,6 +75,27 @@ function myFunction() {
   } else {
     x.className = "topnav";
   }
+}
+
+// LOAD MOVIES.JSON
+fetch("movies.json")
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("movies");
+
+    data.forEach(movie => {
+      container.innerHTML += `
+        <div class="card" onclick="openMovie('${movie.id || movie.title}')">
+          <img src="${movie.image}" />
+          <div class="title">${movie.title}</div>
+        </div>
+      `;
+    });
+  });
+
+// CLICK GO WATCH PAGE
+function openMovie(id){
+  window.location.href = "watch.html?id=" + id;
 }
 </script>
 
