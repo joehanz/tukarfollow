@@ -1,504 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+<title>W3.CSS Template</title>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tukar Follow - Watch Movies Online</title>
-
-<meta name="description" content="Watch latest movies online subtitle indonesia full HD.">
-<meta name="keywords" content="movie, streaming, subtitle indonesia, film online">
-<meta name="theme-color" content="#0d1117">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-background:#0d1117;
-font-family:'Poppins',sans-serif;
-color:#fff;
-overflow-x:hidden;
-}
-
-/* HEADER */
-
-header{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:15px 45px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(10px);
-}
-
-.logo{
-font-size:30px;
-font-weight:700;
-color:#01b4e4;
-}
-
-nav{
-display:flex;
-gap:25px;
-}
-
-nav a{
-color:#fff;
-text-decoration:none;
-font-size:14px;
-transition:.3s;
-}
-
-nav a:hover{
-color:#01b4e4;
-}
-
-.search-box{
-width:260px;
-height:44px;
-background:#fff;
-border-radius:50px;
-padding:0 18px;
-display:flex;
-align-items:center;
-}
-
-.search-box input{
-border:none;
-outline:none;
-width:100%;
-font-size:14px;
-}
-
-/* HERO */
-
-.hero{
-height:90vh;
-position:relative;
-display:flex;
-align-items:flex-end;
-padding:70px;
-background-size:cover;
-background-position:center;
-}
-
-.hero::before{
-content:'';
-position:absolute;
-inset:0;
-background:
-linear-gradient(to top, #0d1117, rgba(0,0,0,.25));
-}
-
-.hero-content{
-position:relative;
-z-index:2;
-max-width:700px;
-}
-
-.hero-tag{
-display:inline-block;
-padding:6px 16px;
-background:#01b4e4;
-border-radius:50px;
-font-size:13px;
-margin-bottom:20px;
-}
-
-.hero h1{
-font-size:58px;
-margin-bottom:20px;
-line-height:1.1;
-}
-
-.hero p{
-font-size:15px;
-line-height:1.8;
-color:#ddd;
-margin-bottom:30px;
-}
-
-.hero-btn{
-display:inline-block;
-padding:14px 28px;
-border-radius:50px;
-background:#01b4e4;
-color:#fff;
-text-decoration:none;
-font-weight:600;
-}
-
-/* SECTION */
-
-.section{
-padding:40px 50px;
-}
-
-.section-title{
-font-size:28px;
-font-weight:600;
-margin-bottom:25px;
-}
-
-/* GRID */
-
-.movie-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:22px;
-}
-
-.movie-card{
-background:#161b22;
-border-radius:18px;
-overflow:hidden;
-transition:.35s;
-cursor:pointer;
-}
-
-.movie-card:hover{
-transform:translateY(-8px);
-}
-
-.movie-card img{
-width:100%;
-height:270px;
-object-fit:cover;
-display:block;
-}
-
-.movie-info{
-padding:14px;
-}
-
-.movie-info h3{
-font-size:15px;
-margin-bottom:8px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.movie-info span{
-font-size:13px;
-color:#01b4e4;
-}
-
-/* FOOTER */
-
-footer{
-padding:35px;
-text-align:center;
-color:#888;
-font-size:14px;
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-
-header{
-padding:15px 20px;
-flex-wrap:wrap;
-gap:15px;
-}
-
-nav{
-width:100%;
-justify-content:center;
-overflow:auto;
-}
-
-.search-box{
-width:100%;
-}
-
-.hero{
-height:70vh;
-padding:30px 20px;
-}
-
-.hero h1{
-font-size:38px;
-}
-
-.section{
-padding:30px 20px;
-}
-
-.movie-grid{
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
-
-.movie-card img{
-height:240px;
-}
-
-}
-
+body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
+.w3-bar-block .w3-bar-item {padding:20px}
 </style>
 </head>
 <body>
 
-<header>
-
-<div class="logo">TUKARFOLLOW</div>
-
-<nav>
-<a href="index.html">Home</a>
-<a href="movies.html">Movies</a>
-<a href="indonesia.html">Indonesia</a>
+<!-- Sidebar (hidden by default) -->
+<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()"
+  class="w3-bar-item w3-button">Close Menu</a>
+  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
+  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
 </nav>
 
-<div class="search-box">
-<input type="text" id="searchInput" placeholder="Search movie...">
+<!-- Top menu -->
+<div class="w3-top">
+  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
+    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
+    <div class="w3-right w3-padding-16">Mail</div>
+    <div class="w3-center w3-padding-16">My Food</div>
+  </div>
 </div>
+  
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
-</header>
+  <!-- First Photo Grid-->
+  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
+    <div class="w3-quarter">
+      <img src="/w3images/sandwich.jpg" alt="Sandwich" style="width:100%">
+      <h3>The Perfect Sandwich, A Real NYC Classic</h3>
+      <p>Just some random text, lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/steak.jpg" alt="Steak" style="width:100%">
+      <h3>Let Me Tell You About This Steak</h3>
+      <p>Once again, some random text to lorem lorem lorem lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/cherries.jpg" alt="Cherries" style="width:100%">
+      <h3>Cherries, interrupted</h3>
+      <p>Lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+      <p>What else?</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/wine.jpg" alt="Pasta and Wine" style="width:100%">
+      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
+      <p>Lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+  </div>
+  
+  <!-- Second Photo Grid-->
+  <div class="w3-row-padding w3-padding-16 w3-center">
+    <div class="w3-quarter">
+      <img src="/w3images/popsicle.jpg" alt="Popsicle" style="width:100%">
+      <h3>All I Need Is a Popsicle</h3>
+      <p>Lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/salmon.jpg" alt="Salmon" style="width:100%">
+      <h3>Salmon For Your Skin</h3>
+      <p>Once again, some random text to lorem lorem lorem lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/sandwich.jpg" alt="Sandwich" style="width:100%">
+      <h3>The Perfect Sandwich, A Real Classic</h3>
+      <p>Just some random text, lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+    <div class="w3-quarter">
+      <img src="/w3images/croissant.jpg" alt="Croissant" style="width:100%">
+      <h3>Le French</h3>
+      <p>Lorem lorem lorem lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+    </div>
+  </div>
 
-<!-- HERO -->
+  <!-- Pagination -->
+  <div class="w3-center w3-padding-32">
+    <div class="w3-bar">
+      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
+      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
+      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
+      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
+      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
+      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
+    </div>
+  </div>
+  
+  <hr id="about">
 
-<section class="hero" id="hero">
+  <!-- About Section -->
+  <div class="w3-container w3-padding-32 w3-center">  
+    <h3>About Me, The Food Man</h3><br>
+    <img src="/w3images/chef.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
+    <div class="w3-padding-32">
+      <h4><b>I am Who I Am!</b></h4>
+      <h6><i>With Passion For Real, Good Food</i></h6>
+      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest of lorem ipsum and mauris neque quam blog. I want to share my world with you. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
+    </div>
+  </div>
+  <hr>
+  
+  <!-- Footer -->
+  <footer class="w3-row-padding w3-padding-32">
+    <div class="w3-third">
+      <h3>FOOTER</h3>
+      <p>Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
+      <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+    </div>
+  
+    <div class="w3-third">
+      <h3>BLOG POSTS</h3>
+      <ul class="w3-ul w3-hoverable">
+        <li class="w3-padding-16">
+          <img src="/w3images/workshop.jpg" class="w3-left w3-margin-right" style="width:50px">
+          <span class="w3-large">Lorem</span><br>
+          <span>Sed mattis nunc</span>
+        </li>
+        <li class="w3-padding-16">
+          <img src="/w3images/gondol.jpg" class="w3-left w3-margin-right" style="width:50px">
+          <span class="w3-large">Ipsum</span><br>
+          <span>Praes tinci sed</span>
+        </li> 
+      </ul>
+    </div>
 
-<div class="hero-content">
+    <div class="w3-third w3-serif">
+      <h3>POPULAR TAGS</h3>
+      <p>
+        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
+        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
+        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
+        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
+        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
+      </p>
+    </div>
+  </footer>
 
-<div class="hero-tag">
-Trending Now
+<!-- End page content -->
 </div>
-
-<h1 id="heroTitle">
-Loading...
-</h1>
-
-<p id="heroOverview">
-Please wait...
-</p>
-
-<a href="#" class="hero-btn" id="heroButton">
-Watch Now
-</a>
-
-</div>
-
-</section>
-
-<!-- MANUAL -->
-
-<section class="section">
-
-<h2 class="section-title">
-Latest Movies
-</h2>
-
-<div class="movie-grid" id="manualGrid"></div>
-
-</section>
-
-<footer>
-© 2026 TMDB Indonesia
-</footer>
 
 <script>
-
-const API_KEY =
-"9e335d21d35f04917b218bae7adc881f";
-
-const IMG =
-"https://image.tmdb.org/t/p/original";
-
-const POSTER =
-"https://image.tmdb.org/t/p/w500";
-
-const hero =
-document.getElementById("hero");
-
-const heroTitle =
-document.getElementById("heroTitle");
-
-const heroOverview =
-document.getElementById("heroOverview");
-
-const heroButton =
-document.getElementById("heroButton");
-
-const manualGrid =
-document.getElementById("manualGrid");
-
-const tmdbGrid =
-document.getElementById("tmdbGrid");
-
-/* HERO */
-
-async function loadHero(){
-
-const res =
-await fetch("movies.json");
-
-const movies =
-await res.json();
-
-const latest =
-movies[0];
-
-hero.style.backgroundImage =
-`url(${latest.poster})`;
-
-heroTitle.innerHTML =
-latest.title;
-
-heroOverview.innerHTML =
-latest.sinopsis;
-
-heroButton.href =
-`watch.html?id=0`;
-
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
 }
-
-/* MANUAL MOVIES */
-
-async function loadManualMovies(){
-
-const res =
-await fetch("movies.json");
-
-const movies =
-await res.json();
-
-manualGrid.innerHTML = "";
-
-movies.slice(0,6).forEach((movie,index)=>{
-
-manualGrid.innerHTML += `
-
-<a href="watch.html?id=${index}"
-style="text-decoration:none;color:white;">
-
-<div class="movie-card">
-
-<img src="${movie.poster}" loading="lazy">
-
-<div class="movie-info">
-
-<h3>${movie.title}</h3>
-
-<span>${movie.extra}</span>
-
-</div>
-
-</div>
-
-</a>
-
-`;
-
-});
-
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
 }
-
-/* TMDB INDONESIA */
-
-async function loadTMDB(){
-
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
-);
-
-const data = await res.json();
-
-tmdbGrid.innerHTML = "";
-
-data.results.slice(0,6).forEach(movie=>{
-
-tmdbGrid.innerHTML += `
-
-<a href="https://www.themoviedb.org/movie/${movie.id}"
-target="_blank"
-style="text-decoration:none;color:white;">
-
-<div class="movie-card">
-
-<img src="${
-movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image'
-}"
-
-loading="lazy">
-
-<div class="movie-info">
-
-<h3>${movie.title}</h3>
-
-<span>
-⭐ ${movie.vote_average.toFixed(1)}
-</span>
-
-</div>
-
-</div>
-
-</a>
-
-`;
-
-});
-
-}
-
-/* SEARCH */
-
-document
-.getElementById("searchInput")
-.addEventListener("keyup",(e)=>{
-
-const value =
-e.target.value.toLowerCase();
-
-const cards =
-document.querySelectorAll(".movie-card");
-
-cards.forEach(card=>{
-
-const title =
-card.querySelector("h3")
-.innerText
-.toLowerCase();
-
-if(title.includes(value)){
-
-card.parentElement.style.display =
-"block";
-
-}else{
-
-card.parentElement.style.display =
-"none";
-
-}
-
-});
-
-});
-
-/* START */
-
-loadHero();
-loadManualMovies();
-loadTMDB();
-
 </script>
 
 </body>
