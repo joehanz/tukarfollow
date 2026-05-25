@@ -10,31 +10,81 @@
 <body class="bg-black text-white">
 
 <!-- NAV -->
-<nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-  <div class="text-red-600 font-bold text-xl">MOVIE+</div>
+<nav class="border-b border-gray-800 px-6 py-4">
 
-  <div class="hidden md:flex gap-6 text-sm text-gray-300">
-    <a href="index.html">Home</a>
-    <a href="movies.html">Movies</a>
+  <div class="flex items-center justify-between">
+
+    <!-- LOGO -->
+    <div class="text-xl font-bold text-red-600">
+      tukarfollow
+    </div>
+
+    <!-- BURGER -->
+    <button class="md:hidden text-white text-2xl" onclick="toggleMenu()">
+      ☰
+    </button>
+
+    <!-- DESKTOP MENU -->
+    <div class="hidden md:flex items-start gap-6 w-full ml-10">
+
+      <!-- SEARCH -->
+      <input type="text" placeholder="Cari film..."
+        class="w-1/3 px-3 py-2 bg-gray-900 border border-gray-700 rounded">
+
+      <!-- FILTER -->
+      <ul class="flex flex-col text-sm text-gray-300 gap-1">
+        <li class="font-semibold text-white">Genre</li>
+        <li>Action</li>
+        <li>Comedy</li>
+        <li>Drama</li>
+      </ul>
+
+      <ul class="flex flex-col text-sm text-gray-300 gap-1">
+        <li class="font-semibold text-white">Tahun</li>
+        <li>2026</li>
+        <li>2025</li>
+        <li>2024</li>
+        <li>Classic</li>
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden mt-4 flex flex-col gap-4 md:hidden">
+
+    <input type="text" placeholder="Cari film..."
+      class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded">
+
+    <ul class="flex flex-col text-sm text-gray-300 gap-1">
+      <li class="font-semibold text-white">Genre</li>
+      <li>Action</li>
+      <li>Comedy</li>
+      <li>Drama</li>
+    </ul>
+
+    <ul class="flex flex-col text-sm text-gray-300 gap-1">
+      <li class="font-semibold text-white">Tahun</li>
+      <li>2026</li>
+      <li>2025</li>
+      <li>2024</li>
+      <li>Classic</li>
+    </ul>
+
   </div>
 </nav>
 
 <!-- GRID -->
 <section class="p-6">
   <h1 class="text-xl font-bold mb-4">All Movies</h1>
-
   <div id="grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
 </section>
 
-<!-- FOOTER -->
-<footer class="border-t border-gray-800 p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400">
-  <div>Movie+</div>
-  <div>Menu</div>
-  <div>Genre</div>
-  <div>Info</div>
-</footer>
-
 <script>
+function toggleMenu(){
+  document.getElementById('mobileMenu').classList.toggle('hidden');
+}
+
 fetch('movies.json')
   .then(res => res.json())
   .then(data => {
