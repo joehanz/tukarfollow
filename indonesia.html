@@ -393,16 +393,17 @@
       data.results.forEach(movie=>{
 
       const manualMovie = jsonMovies.find(
-      m => m.tmdb == movie.id
+      m => String(m.tmdb) === String(movie.id)
       );
 
       const watchLink = manualMovie
       ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : "#";
+      : `https://www.themoviedb.org/movie/${movie.id}`;
 
       movieGrid.innerHTML += `
 
       <a href="${watchLink}"
+      target="_blank"
       style="text-decoration:none;color:white;">
 
       <div class="movie-card">
@@ -516,16 +517,17 @@
       if(movie.original_language === "id"){
 
       const manualMovie = jsonMovies.find(
-      m => m.tmdb == movie.id
+      m => String(m.tmdb) === String(movie.id)
       );
 
       const watchLink = manualMovie
       ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : "#";
+      : `https://www.themoviedb.org/movie/${movie.id}`;
 
       movieGrid.innerHTML += `
 
       <a href="${watchLink}"
+      target="_blank"
       style="text-decoration:none;color:white;">
 
       <div class="movie-card">
