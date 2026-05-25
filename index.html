@@ -131,7 +131,72 @@ body {margin:0;font-family:Arial}
 </div>
 
 <div style="padding-left:16px">
-  kkkkk
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #141414;
+            color: white;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        /* Membuat layout grid */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        /* Mengatur tampilan card film */
+        .movie-card {
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .movie-card h3 {
+            font-size: 1rem;
+            margin: 10px;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Koleksi Film</h1>
+    <div id="movie-container" class="movie-grid"></div>
+
+    <script>
+        // Mengambil data dari movies.json
+        fetch('movies.json')
+            .then(response => response.json())
+            .then(movies => {
+                const container = document.getElementById('movie-container');
+                
+                // Looping data film
+                movies.forEach(movie => {
+                    const card = document.createElement('div');
+                    card.classList.add('movie-card');
+                    
+                    // Hanya mengisi gambar (poster) dan judul
+                    card.innerHTML = `
+                        <img src="${movie.image}" alt="${movie.title}">
+                        <h3>${movie.title}</h3>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Gagal memuat data:', error));
+    </script>
+
 </div>
 
 <script>
