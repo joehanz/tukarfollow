@@ -398,12 +398,11 @@
 
       const watchLink = manualMovie
       ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : `https://www.themoviedb.org/movie/${movie.id}`;
+      : `watch.html?tmdb=${movie.id}`;
 
       movieGrid.innerHTML += `
 
       <a href="${watchLink}"
-      target="_blank"
       style="text-decoration:none;color:white;">
 
       <div class="movie-card">
@@ -522,12 +521,11 @@
 
       const watchLink = manualMovie
       ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
-      : `https://www.themoviedb.org/movie/${movie.id}`;
+      : `watch.html?tmdb=${movie.id}`;
 
       movieGrid.innerHTML += `
 
       <a href="${watchLink}"
-      target="_blank"
       style="text-decoration:none;color:white;">
 
       <div class="movie-card">
