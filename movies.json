@@ -1,32 +1,52 @@
 [
   {
-    "title": "The Punisher (2026)",
-    "tmdb": "12345",
-    "poster": "https://blogger.googleusercontent.com/img/a/AVvXsEj7UmZ7zn8MQOazXlTYxp2tDhLrX44Ns5sfO0-HH2mHsYWY8a7dS_kj7c8vloS4SZMI0Pg0H_cx7wGUo713-O6lwZ0vhQdbn40PPHZlmompyiZtOP0kZ4uZMbPg8rPyWQ3zuQEnxlG2qf7sr0thA9lvmPLMOfxDIJJPcTFMmvoA_A3rTD0t00_cLKAtv4I",
-    "imdb": "tt1234567",
-    "video": "https://example.com/video.mp4",
-    "embed": "https://abyssplayer.com/S4FLBP5d_",
-    "sinopsis": "Frank Castle, seorang veteran yang masih terganggu oleh PTSD, kembali ke medan perang...",
-    "extra": "inggris"
-  },
-  {
-    "title": "Couples Weekend (2025)",
-    "tmdb": "67890",
-    "poster": "https://blogger.googleusercontent.com/img/a/AVvXsEgBdcKYcruSlgiT4vlwJza7uYNqor1aIV3pnrSzh1VtdVel4hALotP48kF-DXHSajyN_m7kqEEdBI1nC8HMQvLS9X1QYzMA2fVV-Xf7dMGLV0U1vhl_6vxGkGqa4e8uf72yiW_y9hNF6edSGN62Os-NqFzOUO_mHX18p3yAigpDzlZKtumXgVn5zH2QNkM",
-    "imdb": "tt7654321",
+    "title": "The Punisher: One Last Kill (2026)",
+    "image": "https://blogger.googleusercontent.com/img/a/AVvXsEj7UmZ7zn8MQOazXlTYxp2tDhLrX44Ns5sfO0-HH2mHsYWY8a7dS_kj7c8vloS4SZMI0Pg0H_cx7wGUo713-O6lwZ0vhQdbn40PPHZlmompyiZtOP0kZ4uZMbPg8rPyWQ3zuQEnxlG2qf7sr0thA9lvmPLMOfxDIJJPcTFMmvoA_A3rTD0t00_cLKAtv4I",
     "video": "",
-    "embed": "https://playcinematic.com/video/Ci8TpCF0AN0sijr",
-    "sinopsis": "Apa yang terjadi ketika sebuah pohon tumbang di hutan dan seseorang mendengarnya?.",
-    "extra": "amerikaserikat"
+    "iframe": "https://abyssplayer.com/S4FLBP5d_",
+    "sinopsis": "Frank Castle, seorang veteran yang masih terganggu oleh PTSD.",
+    "genre": "Action,Adventure,Crime,Drama,Thriller,",
+    "release_date": "2026-03-18",
+    "country": "Inggris"
   },
   {
-  "title": "Broad Trip (2026)",
-  "tmdb": "11234",
-  "poster": "https://blogger.googleusercontent.com/img/a/AVvXsEjdjpOezdXVw2cNSnsqiVeLmKCCzHzF55hxzWNp3hw8dRt51jDjZoVNZQ4glWtfXCzBwtVzhITvtDUP-Y_WipCCXZ8Gwpz1WNj9nqJX3GNZ6aeXipPjezgG3U25CpPEoulLn6H86A9Zk6NpozDfixU8AfeTJCLLKUNSJuF4fnVGIrlM4FidmArzaitDWt0",
-  "imdb": "N/A",
-  "video": "",
-  "embed": "https://playcinematic.com/video/7ubq8zQM49eYYEI",
-  "sinopsis": "Ketika Alice, seorang putri yang pendiam, merencanakan perjalanan darat "pesta lajang" bersama ibunya yang liar.",
-  "extra": "indonesia"
-}
+    "title": "Film Drama 2",
+    "image": "https://via.placeholder.com/300x400",
+    "video": "https://example.com/video2.mp4",
+    "iframe": "https://abyssplayer.com/def456",
+    "sinopsis": "Sinopsis film drama kedua.",
+    "genre": "Drama",
+    "release_date": "2024-11-05",
+    "country": "Korea"
+  },
+  {
+    "title": "Film Sci-Fi 3",
+    "image": "https://via.placeholder.com/300x400",
+    "video": "https://example.com/video3.mp4",
+    "iframe": "https://abyssplayer.com/ghi789",
+    "sinopsis": "Film masa depan dan luar angkasa.",
+    "genre": "Sci-Fi",
+    "release_date": "2023-08-20",
+    "country": "USA"
+  },
+  {
+    "title": "Film Horror 4",
+    "image": "https://via.placeholder.com/300x400",
+    "video": "https://example.com/video4.mp4",
+    "iframe": "https://abyssplayer.com/jkl012",
+    "sinopsis": "Cerita horor menegangkan.",
+    "genre": "Horror",
+    "release_date": "2022-10-31",
+    "country": "Japan"
+  },
+  {
+    "title": "Film Comedy 5",
+    "image": "https://via.placeholder.com/300x400",
+    "video": "https://example.com/video5.mp4",
+    "iframe": "https://abyssplayer.com/mno345",
+    "sinopsis": "Film komedi ringan dan lucu.",
+    "genre": "Comedy",
+    "release_date": "2025-03-15",
+    "country": "Indonesia"
+  }
 ]
