@@ -2,56 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Watch Movie</title>
+<title>Watch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
 
 <style>
 
-/* SAFE WRAPPER */
-.watch-container{
-  display:flex;
-  gap:20px;
+/* WRAPPER */
+.watch-wrap{
   padding:70px 15px 15px;
 }
 
-/* LEFT PLAYER */
-.watch-left{
-  flex:2;
+/* TOP BAR FIX + CLOSE */
+.watch-topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:60px;
+  background:#111;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 15px;
+  z-index:9999;
 }
 
+.close-btn{
+  background:red;
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+/* MAIN LAYOUT FIX */
+.watch-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+}
+
+/* PLAYER */
 .player-wrap iframe{
   width:100%;
-  height:75vh;
+  height:70vh;
   border:0;
   background:#000;
 }
 
-/* RIGHT INFO */
-.watch-right{
-  flex:1;
+/* INFO */
+.info-box{
   background:#0d0d12;
   padding:15px;
   border-radius:10px;
+  max-height:70vh;
   overflow-y:auto;
-  max-height:75vh;
 }
 
-/* TITLE */
-.watch-title{
+.title{
   font-size:22px;
   margin-bottom:10px;
 }
 
-/* META */
 .meta{
   font-size:13px;
   color:#aaa;
   margin-bottom:10px;
 }
 
-/* GENRE TAG */
 .tag{
   display:inline-block;
   padding:3px 8px;
@@ -61,16 +82,44 @@
   border-radius:4px;
 }
 
-/* RELATED */
-.related-title{
-  margin:20px 15px 10px;
+.desc{
+  font-size:13px;
+  line-height:1.5;
 }
 
+/* RELATED */
+.related-wrap{
+  margin-top:20px;
+  position:relative;
+}
+
+/* ARROW BUTTONS */
+.arrow{
+  position:absolute;
+  top:40%;
+  background:#000;
+  color:#fff;
+  border:none;
+  font-size:20px;
+  width:35px;
+  height:60px;
+  cursor:pointer;
+  z-index:10;
+  opacity:.7;
+}
+
+.arrow:hover{opacity:1;}
+
+.arrow.left{left:0;}
+.arrow.right{right:0;}
+
+/* SCROLL ROW */
 .related-row{
   display:flex;
   overflow-x:auto;
   gap:10px;
-  padding:10px 15px 20px;
+  padding:10px 40px;
+  scroll-behavior:smooth;
 }
 
 .related-row::-webkit-scrollbar{
@@ -97,12 +146,16 @@
 
 /* MOBILE */
 @media(max-width:900px){
-  .watch-container{
-    flex-direction:column;
+  .watch-grid{
+    grid-template-columns:1fr;
   }
 
-  .watch-right{
-    max-height:none;
+  .player-wrap iframe{
+    height:45vh;
+  }
+
+  .arrow{
+    display:none;
   }
 }
 
@@ -111,54 +164,64 @@
 
 <body>
 
-<nav id='topNav'>
-  <a class='logo' href='/'>STREAM</a>
-  <div class='burger' onclick='history.back()'>⬅</div>
-</nav>
+<!-- TOP BAR -->
+<div class="watch-topbar">
+  <div style="color:#fff;font-weight:bold;">STREAM</div>
+  <button class="close-btn" onclick="goBack()">✕</button>
+</div>
 
-<!-- MAIN -->
-<div class="watch-container">
+<div class="watch-wrap">
 
-  <!-- LEFT -->
-  <div class="watch-left">
+  <!-- GRID -->
+  <div class="watch-grid">
 
+    <!-- LEFT PLAYER -->
     <div class="player-wrap">
       <iframe id="frame" allowfullscreen></iframe>
     </div>
 
+    <!-- RIGHT INFO -->
+    <div class="info-box">
+
+      <div class="title" id="title">Loading...</div>
+
+      <div class="meta" id="meta"></div>
+
+      <div id="tags"></div>
+
+      <p class="desc" id="desc"></p>
+
+    </div>
+
   </div>
 
-  <!-- RIGHT INFO -->
-  <div class="watch-right">
+  <!-- RELATED -->
+  <div class="related-wrap">
 
-    <div class="watch-title" id="title">Loading...</div>
+    <button class="arrow left" onclick="scrollRel(-300)">‹</button>
+    <button class="arrow right" onclick="scrollRel(300)">›</button>
 
-    <div class="meta" id="meta"></div>
-
-    <div id="tags"></div>
-
-    <p id="desc"></p>
+    <div class="related-row" id="related"></div>
 
   </div>
 
 </div>
-
-<!-- RELATED -->
-<div class="related-title">Related Movies</div>
-<div class="related-row" id="related"></div>
 
 <script>
 
 const API = "9e335d21d35f04917b218bae7adc881f";
 const id = new URLSearchParams(location.search).get("id");
 
-const frame = document.getElementById("frame");
+function goBack(){
+  history.back();
+}
 
-async function loadMovie(){
+/* PLAYER + INFO */
+async function load(){
 
   if(!id) return;
 
-  const res = await fetch(
+  const r = await fetch(
     "https://api.themoviedb.org/3/movie/"
     + id
     + "?api_key="
@@ -166,45 +229,41 @@ async function loadMovie(){
     + "&append_to_response=external_ids"
   );
 
-  const d = await res.json();
+  const d = await r.json();
 
   document.getElementById("title").innerText = d.title;
 
   document.getElementById("meta").innerText =
     "⭐ " + d.vote_average +
-    " | 📅 " + d.release_date +
-    " | 🌍 " + (d.origin_country?.join(", ") || "N/A");
+    " | 📅 " + d.release_date;
 
   document.getElementById("desc").innerText = d.overview;
 
-  // genre
   document.getElementById("tags").innerHTML =
-    (d.genres || []).map(g => `<span class='tag'>${g.name}</span>`).join("");
+    (d.genres||[]).map(g=>`<span class='tag'>${g.name}</span>`).join("");
 
   const imdb = d.external_ids?.imdb_id;
 
   if(imdb){
-    frame.src = "https://vsembed.su/embed/movie?imdb=" + imdb;
+    document.getElementById("frame").src =
+      "https://vsembed.su/embed/movie?imdb=" + imdb;
   }
 
   loadRelated();
 }
 
-/* RELATED HORIZONTAL */
+/* RELATED */
 async function loadRelated(){
 
-  const res = await fetch(
+  const r = await fetch(
     "https://api.themoviedb.org/3/movie/"
-    + id
-    + "/recommendations?api_key="
-    + API
+    + id +
+    "/recommendations?api_key=" + API
   );
 
-  const d = await res.json();
+  const d = await r.json();
 
   const box = document.getElementById("related");
-
-  box.innerHTML = "";
 
   d.results.forEach(m => {
 
@@ -224,10 +283,17 @@ async function loadRelated(){
 
     box.appendChild(div);
   });
-
 }
 
-loadMovie();
+/* ARROW SCROLL */
+function scrollRel(x){
+  document.getElementById("related").scrollBy({
+    left:x,
+    behavior:"smooth"
+  });
+}
+
+load();
 
 </script>
 
