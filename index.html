@@ -3,83 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streamix - Grid Sempurna</title>
-    <script src="https://tailwindcss.com"></script>
+    <title>Streamix Premium</title>
+    <style>
+        body {
+            background-color: #0c111d;
+            color: #ffffff;
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 24px;
+            margin: 0;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f3f4f6;
+        }
+        /* Menggunakan Flexbox agar pasti berbaris ke samping */
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        /* Lebar kartu otomatis menyesuaikan */
+        .movie-card {
+            background-color: #1f2937;
+            border-radius: 8px;
+            width: calc(20% - 13px); /* Pas 5 kolom di layar besar */
+            min-width: 160px; /* Batas minimal di HP agar tidak kekecilan */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (max-width: 768px) {
+            .movie-card {
+                width: calc(50% - 8px); /* Otomatis jadi 2 kolom di HP */
+            }
+        }
+        .image-box {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background-color: #374151;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .badge-quality {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .info-box {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+        .movie-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: #ffffff;
+        }
+        .movie-year {
+            font-size: 12px;
+            color: #9ca3af;
+            margin: 0;
+        }
+    </style>
 </head>
-<body class="bg-gray-950 text-white font-sans antialiased">
+<body>
 
-    <!-- UTAMA -->
-    <main class="max-w-7xl mx-auto px-4 py-12">
-        
-        <h2 class="text-2xl font-bold mb-6 border-l-4 border-red-600 pl-3">Daftar Film Populer</h2>
+    <h2 class="section-title">Daftar Film Populer</h2>
 
-        <!-- GRID UTAMA: Mengunci baris tetap sejajar menggunakan grid-rows-auto -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 items-stretch">
-            
-            <!-- KARTU FILM 1 (Model Potret) -->
-            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
-                <!-- Memaksa gambar mengikuti rasio poster bioskop 2:3 -->
-                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
-                </div>
-                <!-- Area Teks Terkunci -->
-                <div class="p-3 flex-grow flex flex-col justify-between">
-                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Judul Film Pertama Yang Sangat Panjang Sekali</h3>
-                    <p class="text-xs text-gray-400 mt-2">2026 • Action</p>
-                </div>
+    <div class="flex-container">
+
+        <!-- Film 1 -->
+        <div class="movie-card">
+            <div class="image-box">
+                <img src="https://unsplash.com" alt="Poster">
+                <span class="badge-quality">4K</span>
             </div>
-
-            <!-- KARTU FILM 2 -->
-            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
-                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded">HD</span>
-                </div>
-                <div class="p-3 flex-grow flex flex-col justify-between">
-                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Petualangan Singkat</h3>
-                    <p class="text-xs text-gray-400 mt-2">2025 • Sci-Fi</p>
-                </div>
+            <div class="info-box">
+                <p class="movie-title">Judul Film Pertama Yang Sangat Panjang Sekali</p>
+                <p class="movie-year">2026 • Action</p>
             </div>
-
-            <!-- KARTU FILM 3 -->
-            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
-                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
-                </div>
-                <div class="p-3 flex-grow flex flex-col justify-between">
-                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Misteri Malam</h3>
-                    <p class="text-xs text-gray-400 mt-2">2026 • Thriller</p>
-                </div>
-            </div>
-
-            <!-- KARTU FILM 4 -->
-            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
-                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    <span class="absolute top-2 left-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded">HD</span>
-                </div>
-                <div class="p-3 flex-grow flex flex-col justify-between">
-                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Kisah Klasik Lama Bioskop Indonesia</h3>
-                    <p class="text-xs text-gray-400 mt-2">2024 • Drama</p>
-                </div>
-            </div>
-
-            <!-- KARTU FILM 5 -->
-            <div class="flex flex-col bg-gray-900 rounded-lg overflow-hidden border border-gray-800 shadow-xl group cursor-pointer">
-                <div class="relative w-full aspect-[2/3] bg-gray-800 overflow-hidden">
-                    <img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    <span class="absolute top-2 left-2 bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded">4K</span>
-                </div>
-                <div class="p-3 flex-grow flex flex-col justify-between">
-                    <h3 class="font-semibold text-sm line-clamp-2 group-hover:text-red-500 transition-colors">Komedi Romantis</h3>
-                    <p class="text-xs text-gray-400 mt-2">2025 • Romance</p>
-                </div>
-            </div>
-
         </div>
-    </main>
+
+        <!-- Film 2 -->
+        <div class="movie-card">
+            <div class="image-box">
+                <img src="https://unsplash.com" alt="Poster">
+                <span class="badge-quality">HD</span>
+            </div>
+            <div class="info-box">
+                <p class="movie-title">Petualangan Singkat</p>
+                <p class="movie-year">2025 • Sci-Fi</p>
+            </div>
+        </div>
+
+        <!-- Film 3 -->
+        <div class="movie-card">
+            <div class="image-box">
+                <img src="https://unsplash.com" alt="Poster">
+                <span class="badge-quality">4K</span>
+            </div>
+            <div class="info-box">
+                <p class="movie-title">Misteri Malam</p>
+                <p class="movie-year">2026 • Thriller</p>
+            </div>
+        </div>
+
+        <!-- Film 4 -->
+        <div class="movie-card">
+            <div class="image-box">
+                <img src="https://unsplash.com" alt="Poster">
+                <span class="badge-quality">HD</span>
+            </div>
+            <div class="info-box">
+                <p class="movie-title">Kisah Klasik Lama Bioskop Indonesia</p>
+                <p class="movie-year">2024 • Drama</p>
+            </div>
+        </div>
+
+        <!-- Film 5 -->
+        <div class="movie-card">
+            <div class="image-box">
+                <img src="https://unsplash.com" alt="Poster">
+                <span class="badge-quality">4K</span>
+            </div>
+            <div class="info-box">
+                <p class="movie-title">Komedi Romantis</p>
+                <p class="movie-year">2025 • Romance</p>
+            </div>
+        </div>
+
+    </div>
 
 </body>
 </html>
