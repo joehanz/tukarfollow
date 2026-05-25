@@ -1,570 +1,591 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tukar Follow - Watch Movies Online</title>
-
-<meta name="description" content="Watch latest movies online subtitle indonesia full HD.">
-<meta name="keywords" content="movie, streaming, subtitle indonesia, film online">
-<meta name="theme-color" content="#0d1117">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-background:#0d1117;
-font-family:'Poppins',sans-serif;
-color:#fff;
-overflow-x:hidden;
-}
-
-/* HEADER */
-
-header{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:15px 45px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(10px);
-}
-
-.logo{
-font-size:30px;
-font-weight:700;
-color:#01b4e4;
-}
-
-nav{
-display:flex;
-gap:25px;
-}
-
-nav a{
-color:#fff;
-text-decoration:none;
-font-size:14px;
-transition:.3s;
-}
-
-nav a:hover{
-color:#01b4e4;
-}
-
-.search-box{
-width:260px;
-height:44px;
-background:#fff;
-border-radius:50px;
-padding:0 18px;
-display:flex;
-align-items:center;
-}
-
-.search-box input{
-border:none;
-outline:none;
-width:100%;
-font-size:14px;
-}
-
-/* HERO */
-
-.hero{
-height:80vh;
-position:relative;
-display:flex;
-align-items:flex-end;
-padding:70px;
-background-size:cover;
-background-position:center;
-}
-
-.hero::before{
-content:'';
-position:absolute;
-inset:0;
-background:
-linear-gradient(to top, #0d1117, rgba(0,0,0,.3));
-}
-
-.hero-content{
-position:relative;
-z-index:2;
-max-width:700px;
-}
-
-.hero-tag{
-display:inline-block;
-padding:6px 16px;
-background:#01b4e4;
-border-radius:50px;
-font-size:13px;
-margin-bottom:20px;
-}
-
-.hero h1{
-font-size:55px;
-margin-bottom:20px;
-}
-
-.hero p{
-font-size:15px;
-line-height:1.8;
-color:#ddd;
-}
-
-/* SECTION */
-
-.section{
-padding:40px 50px;
-}
-
-.section-title{
-font-size:28px;
-font-weight:600;
-margin-bottom:25px;
-}
-
-/* GRID */
-
-.movie-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:22px;
-}
-
-.movie-card{
-background:#161b22;
-border-radius:18px;
-overflow:hidden;
-transition:.35s;
-cursor:pointer;
-}
-
-.movie-card:hover{
-transform:translateY(-8px);
-}
-
-.movie-card img{
-width:100%;
-height:270px;
-object-fit:cover;
-display:block;
-}
-
-.movie-info{
-padding:14px;
-}
-
-.movie-info h3{
-font-size:15px;
-margin-bottom:8px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.movie-info span{
-font-size:13px;
-color:#01b4e4;
-}
-
-/* PAGINATION */
-
-.pagination{
-display:flex;
-justify-content:center;
-gap:10px;
-margin-top:40px;
-flex-wrap:wrap;
-}
-
-.page-btn{
-width:42px;
-height:42px;
-border-radius:50%;
-background:#161b22;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:.3s;
-}
-
-.page-btn:hover,
-.page-btn.active{
-background:#01b4e4;
-}
-
-/* FOOTER */
-
-footer{
-padding:35px;
-text-align:center;
-color:#888;
-font-size:14px;
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Tukar Follow - Watch Movies Online</title>
+
+    <meta
+      name="description"
+      content="Watch latest movies online subtitle indonesia full HD."
+    />
+    <meta
+      name="keywords"
+      content="movie, streaming, subtitle indonesia, film online"
+    />
+    <meta name="theme-color" content="#0d1117" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+
+      *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      }
+
+      body{
+      background:#0d1117;
+      font-family:'Poppins',sans-serif;
+      color:#fff;
+      overflow-x:hidden;
+      }
+
+      /* HEADER */
+
+      header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      padding:15px 45px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      z-index:999;
+      background:rgba(0,0,0,.55);
+      backdrop-filter:blur(10px);
+      }
+
+      .logo{
+      font-size:30px;
+      font-weight:700;
+      color:#01b4e4;
+      }
+
+      nav{
+      display:flex;
+      gap:25px;
+      }
+
+      nav a{
+      color:#fff;
+      text-decoration:none;
+      font-size:14px;
+      transition:.3s;
+      }
+
+      nav a:hover{
+      color:#01b4e4;
+      }
+
+      .search-box{
+      width:260px;
+      height:44px;
+      background:#fff;
+      border-radius:50px;
+      padding:0 18px;
+      display:flex;
+      align-items:center;
+      }
+
+      .search-box input{
+      border:none;
+      outline:none;
+      width:100%;
+      font-size:14px;
+      }
+
+      /* HERO */
+
+      .hero{
+      height:80vh;
+      position:relative;
+      display:flex;
+      align-items:flex-end;
+      padding:70px;
+      background-size:cover;
+      background-position:center;
+      }
+
+      .hero::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:
+      linear-gradient(to top, #0d1117, rgba(0,0,0,.3));
+      }
+
+      .hero-content{
+      position:relative;
+      z-index:2;
+      max-width:700px;
+      }
+
+      .hero-tag{
+      display:inline-block;
+      padding:6px 16px;
+      background:#01b4e4;
+      border-radius:50px;
+      font-size:13px;
+      margin-bottom:20px;
+      }
+
+      .hero h1{
+      font-size:55px;
+      margin-bottom:20px;
+      }
+
+      .hero p{
+      font-size:15px;
+      line-height:1.8;
+      color:#ddd;
+      }
+
+      /* SECTION */
+
+      .section{
+      padding:40px 50px;
+      }
+
+      .section-title{
+      font-size:28px;
+      font-weight:600;
+      margin-bottom:25px;
+      }
+
+      /* GRID */
+
+      .movie-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:22px;
+      }
+
+      .movie-card{
+      background:#161b22;
+      border-radius:18px;
+      overflow:hidden;
+      transition:.35s;
+      cursor:pointer;
+      }
+
+      .movie-card:hover{
+      transform:translateY(-8px);
+      }
+
+      .movie-card img{
+      width:100%;
+      height:270px;
+      object-fit:cover;
+      display:block;
+      }
+
+      .movie-info{
+      padding:14px;
+      }
+
+      .movie-info h3{
+      font-size:15px;
+      margin-bottom:8px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      }
+
+      .movie-info span{
+      font-size:13px;
+      color:#01b4e4;
+      }
+
+      /* PAGINATION */
+
+      .pagination{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:40px;
+      flex-wrap:wrap;
+      }
+
+      .page-btn{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:#161b22;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:.3s;
+      }
+
+      .page-btn:hover,
+      .page-btn.active{
+      background:#01b4e4;
+      }
+
+      /* FOOTER */
+
+      footer{
+      padding:35px;
+      text-align:center;
+      color:#888;
+      font-size:14px;
+      }
+
+      /* MOBILE */
+
+      @media(max-width:900px){
+
+      header{
+      padding:15px 20px;
+      flex-wrap:wrap;
+      gap:15px;
+      }
+
+      nav{
+      width:100%;
+      justify-content:center;
+      overflow:auto;
+      }
+
+      .search-box{
+      width:100%;
+      }
+
+      .hero{
+      height:65vh;
+      padding:30px 20px;
+      }
+
+      .hero h1{
+      font-size:36px;
+      }
+
+      .section{
+      padding:30px 20px;
+      }
+
+      .movie-grid{
+      grid-template-columns:repeat(2,1fr);
+      gap:15px;
+      }
+
+      .movie-card img{
+      height:240px;
+      }
+
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">TUKARFOLLOW</div>
+
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="movies.html">Movies</a>
+        <a href="indonesia.html">Indonesia</a>
+      </nav>
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search Indonesian movie..."
+        />
+      </div>
+    </header>
 
-header{
-padding:15px 20px;
-flex-wrap:wrap;
-gap:15px;
-}
+    <!-- HERO -->
 
-nav{
-width:100%;
-justify-content:center;
-overflow:auto;
-}
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <div class="hero-tag">Indonesia Movies</div>
 
-.search-box{
-width:100%;
-}
+        <h1 id="heroTitle">Loading...</h1>
 
-.hero{
-height:65vh;
-padding:30px 20px;
-}
+        <p id="heroOverview">Please wait...</p>
+      </div>
+    </section>
 
-.hero h1{
-font-size:36px;
-}
+    <!-- MOVIES -->
 
-.section{
-padding:30px 20px;
-}
+    <section class="section">
+      <h2 class="section-title">Latest Indonesian Movies</h2>
 
-.movie-grid{
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
+      <div class="movie-grid" id="movieGrid"></div>
 
-.movie-card img{
-height:240px;
-}
+      <div class="pagination" id="pagination"></div>
+    </section>
 
-}
+    <footer>© 2026 Indonesian Movies</footer>
 
-</style>
-</head>
-<body>
+    <script>
 
-<header>
+      const API_KEY =
+      "9e335d21d35f04917b218bae7adc881f";
 
-<div class="logo">TUKARFOLLOW</div>
+      const IMG =
+      "https://image.tmdb.org/t/p/original";
 
-<nav>
-<a href="index.html">Home</a>
-<a href="movies.html">Movies</a>
-<a href="indonesia.html">Indonesia</a>
-</nav>
+      const POSTER =
+      "https://image.tmdb.org/t/p/w500";
 
-<div class="search-box">
-<input type="text" id="searchInput" placeholder="Search Indonesian movie...">
-</div>
+      const hero =
+      document.getElementById("hero");
 
-</header>
+      const heroTitle =
+      document.getElementById("heroTitle");
 
-<!-- HERO -->
+      const heroOverview =
+      document.getElementById("heroOverview");
 
-<section class="hero" id="hero">
+      const movieGrid =
+      document.getElementById("movieGrid");
 
-<div class="hero-content">
+      const pagination =
+      document.getElementById("pagination");
 
-<div class="hero-tag">Indonesia Movies</div>
+      let currentPage = 1;
 
-<h1 id="heroTitle">Loading...</h1>
+      /* HERO */
 
-<p id="heroOverview">
-Please wait...
-</p>
+      async function loadHero(){
 
-</div>
+      const res = await fetch(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
+      );
 
-</section>
+      const data = await res.json();
 
-<!-- MOVIES -->
+      const movie = data.results[0];
 
-<section class="section">
+      hero.style.backgroundImage =
+      `url(${IMG + movie.backdrop_path})`;
 
-<h2 class="section-title">Latest Indonesian Movies</h2>
+      heroTitle.innerHTML =
+      movie.title;
 
-<div class="movie-grid" id="movieGrid"></div>
+      heroOverview.innerHTML =
+      movie.overview;
 
-<div class="pagination" id="pagination"></div>
+      }
 
-</section>
+      /* MOVIES */
 
-<footer>
-© 2026 Indonesian Movies
-</footer>
+      async function loadMovies(page=1){
 
-<script>
+      currentPage = page;
 
-const API_KEY =
-"9e335d21d35f04917b218bae7adc881f";
+      movieGrid.innerHTML =
+      "Loading...";
 
-const IMG =
-"https://image.tmdb.org/t/p/original";
+      const res = await fetch(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
+      );
 
-const POSTER =
-"https://image.tmdb.org/t/p/w500";
+      const data = await res.json();
 
-const hero =
-document.getElementById("hero");
+      /* MOVIES.JSON */
 
-const heroTitle =
-document.getElementById("heroTitle");
+      const jsonRes = await fetch("movies.json");
+      const jsonMovies = await jsonRes.json();
 
-const heroOverview =
-document.getElementById("heroOverview");
+      movieGrid.innerHTML = "";
 
-const movieGrid =
-document.getElementById("movieGrid");
+      data.results.forEach(movie=>{
 
-const pagination =
-document.getElementById("pagination");
+      const manualMovie = jsonMovies.find(
+      m => m.tmdb == movie.id
+      );
 
-let currentPage = 1;
+      const watchLink = manualMovie
+      ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
+      : "#";
 
-/* HERO */
+      movieGrid.innerHTML += `
 
-async function loadHero(){
+      <a href="${watchLink}"
+      style="text-decoration:none;color:white;">
 
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id`
-);
+      <div class="movie-card">
 
-const data = await res.json();
+      <img src="${
+      movie.poster_path
+      ? POSTER + movie.poster_path
+      : 'https://via.placeholder.com/500x750?text=No+Image'
+      }"
 
-const movie = data.results[0];
+      loading="lazy">
 
-hero.style.backgroundImage =
-`url(${IMG + movie.backdrop_path})`;
+      <div class="movie-info">
 
-heroTitle.innerHTML =
-movie.title;
+      <h3>${movie.title}</h3>
 
-heroOverview.innerHTML =
-movie.overview;
+      <span>
+      ⭐ ${movie.vote_average.toFixed(1)}
+      </span>
 
-}
+      </div>
 
-/* MOVIES */
+      </div>
 
-async function loadMovies(page=1){
+      </a>
 
-currentPage = page;
+      `;
 
-movieGrid.innerHTML =
-"Loading...";
+      });
 
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
-);
+      renderPagination(data.total_pages);
 
-const data = await res.json();
+      }
 
-movieGrid.innerHTML = "";
+      /* PAGINATION */
 
-data.results.forEach(movie=>{
+      function renderPagination(totalPages){
 
-movieGrid.innerHTML += `
+      pagination.innerHTML = "";
 
-<a href="watch.html?id=${movie.id}"
-style="text-decoration:none;color:white;">
+      let start = currentPage - 2;
+      let end = currentPage + 2;
 
-<div class="movie-card">
+      if(start < 1) start = 1;
+      if(end > totalPages) end = totalPages;
 
-<img src="${
-movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image'
-}"
+      if(currentPage > 1){
 
-loading="lazy">
+      pagination.innerHTML += `
 
-<div class="movie-info">
+      <div class="page-btn"
+      onclick="loadMovies(${currentPage - 1})">
 
-<h3>${movie.title}</h3>
+      ‹
 
-<span>
-⭐ ${movie.vote_average.toFixed(1)}
-</span>
+      </div>
 
-</div>
+      `;
 
-</div>
+      }
 
-</a>
+      for(let i=start;i<=end;i++){
 
-`;
+      pagination.innerHTML += `
 
-});
+      <div class="page-btn ${currentPage===i?'active':''}"
+      onclick="loadMovies(${i})">
 
-renderPagination(data.total_pages);
+      ${i}
 
-}
+      </div>
 
-/* PAGINATION */
+      `;
 
-function renderPagination(totalPages){
+      }
 
-pagination.innerHTML = "";
+      if(currentPage < totalPages){
 
-let start = currentPage - 2;
-let end = currentPage + 2;
+      pagination.innerHTML += `
 
-if(start < 1) start = 1;
-if(end > totalPages) end = totalPages;
+      <div class="page-btn"
+      onclick="loadMovies(${currentPage + 1})">
 
-if(currentPage > 1){
+      ›
 
-pagination.innerHTML += `
+      </div>
 
-<div class="page-btn"
-onclick="loadMovies(${currentPage - 1})">
+      `;
 
-‹
+      }
 
-</div>
+      }
 
-`;
+      /* SEARCH */
 
-}
+      async function searchMovies(query){
 
-for(let i=start;i<=end;i++){
+      const res = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
+      );
 
-pagination.innerHTML += `
+      const data = await res.json();
 
-<div class="page-btn ${currentPage===i?'active':''}"
-onclick="loadMovies(${i})">
+      const jsonRes = await fetch("movies.json");
+      const jsonMovies = await jsonRes.json();
 
-${i}
+      movieGrid.innerHTML = "";
 
-</div>
+      data.results.forEach(movie=>{
 
-`;
+      if(movie.original_language === "id"){
 
-}
+      const manualMovie = jsonMovies.find(
+      m => m.tmdb == movie.id
+      );
 
-if(currentPage < totalPages){
+      const watchLink = manualMovie
+      ? `watch.html?id=${jsonMovies.indexOf(manualMovie)}`
+      : "#";
 
-pagination.innerHTML += `
+      movieGrid.innerHTML += `
 
-<div class="page-btn"
-onclick="loadMovies(${currentPage + 1})">
+      <a href="${watchLink}"
+      style="text-decoration:none;color:white;">
 
-›
+      <div class="movie-card">
 
-</div>
+      <img src="${
+      movie.poster_path
+      ? POSTER + movie.poster_path
+      : 'https://via.placeholder.com/500x750?text=No+Image'
+      }"
 
-`;
+      loading="lazy">
 
-}
+      <div class="movie-info">
 
-}
+      <h3>${movie.title}</h3>
 
-/* SEARCH */
+      <span>
+      ⭐ ${movie.vote_average.toFixed(1)}
+      </span>
 
-async function searchMovies(query){
+      </div>
 
-const res = await fetch(
-`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`
-);
+      </div>
 
-const data = await res.json();
+      </a>
 
-movieGrid.innerHTML = "";
+      `;
 
-data.results.forEach(movie=>{
+      }
 
-if(movie.original_language === "id"){
+      });
 
-movieGrid.innerHTML += `
+      pagination.innerHTML = "";
 
-<a href="watch.html?id=${movie.id}"
-style="text-decoration:none;color:white;">
+      }
 
-<div class="movie-card">
+      /* SEARCH EVENT */
 
-<img src="${
-movie.poster_path
-? POSTER + movie.poster_path
-: 'https://via.placeholder.com/500x750?text=No+Image'
-}"
+      document
+      .getElementById("searchInput")
+      .addEventListener("keyup",(e)=>{
 
-loading="lazy">
+      const value = e.target.value;
 
-<div class="movie-info">
+      if(value.length > 2){
 
-<h3>${movie.title}</h3>
+      searchMovies(value);
 
-<span>
-⭐ ${movie.vote_average.toFixed(1)}
-</span>
+      }else{
 
-</div>
+      loadMovies(1);
 
-</div>
+      }
 
-</a>
+      });
 
-`;
+      /* START */
 
-}
-
-});
-
-pagination.innerHTML = "";
-
-}
-
-/* SEARCH EVENT */
-
-document
-.getElementById("searchInput")
-.addEventListener("keyup",(e)=>{
-
-const value = e.target.value;
-
-if(value.length > 2){
-
-searchMovies(value);
-
-}else{
-
-loadMovies(1);
-
-}
-
-});
-
-/* START */
-
-loadHero();
-loadMovies();
-
-</script>
-
-</body>
+      loadHero();
+      loadMovies();
+    </script>
+  </body>
 </html>
