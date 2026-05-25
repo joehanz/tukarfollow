@@ -3,9 +3,11 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <style>
 body {margin:0;font-family:Arial}
 
+/* NAV */
 .topnav {
   overflow: hidden;
   background-color: #333;
@@ -36,7 +38,7 @@ body {margin:0;font-family:Arial}
 }
 
 .dropdown .dropbtn {
-  font-size: 17px;    
+  font-size: 17px;
   border: none;
   outline: none;
   color: white;
@@ -51,7 +53,7 @@ body {margin:0;font-family:Arial}
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
@@ -78,8 +80,10 @@ body {margin:0;font-family:Arial}
   display: block;
 }
 
+/* MOBILE */
 @media screen and (max-width: 600px) {
-  .topnav a:not(:first-child), .dropdown .dropbtn {
+  .topnav a:not(:first-child),
+  .dropdown .dropbtn {
     display: none;
   }
   .topnav a.icon {
@@ -108,14 +112,50 @@ body {margin:0;font-family:Arial}
     text-align: left;
   }
 }
+
+/* GRID MOVIES */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+
+.card {
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.card .title {
+  padding: 10px;
+  font-size: 14px;
+}
 </style>
 </head>
+
 <body>
 
+<!-- NAV -->
 <div class="topnav" id="myTopnav">
   <a href="#home" class="active">Home</a>
   <a href="#news">News</a>
   <a href="#contact">Contact</a>
+
   <div class="dropdown">
     <button class="dropbtn">Dropdown 
       <i class="fa fa-caret-down"></i>
@@ -126,15 +166,14 @@ body {margin:0;font-family:Arial}
       <a href="#">Link 3</a>
     </div>
   </div> 
+
   <a href="#about">About</a>
-  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
 
-<div style="padding-left:16px">
-  <h2>Responsive Topnav with Dropdown</h2>
-  <p>Resize the browser window to see how it works.</p>
-  <p>Hover over the dropdown button to open the dropdown menu.</p>
-</div>
+<!-- MOVIES GRID -->
+<div id="movies" class="grid"></div>
 
 <script>
 function myFunction() {
@@ -144,6 +183,26 @@ function myFunction() {
   } else {
     x.className = "topnav";
   }
+}
+
+/* LOAD movies.json */
+fetch("movies.json")
+  .then(res => res.json())
+  .then(data => {
+    const box = document.getElementById("movies");
+
+    data.forEach(movie => {
+      box.innerHTML += `
+        <div class="card" onclick="openMovie('${movie.id || movie.title}')">
+          <img src="${movie.image}">
+          <div class="title">${movie.title}</div>
+        </div>
+      `;
+    });
+  });
+
+function openMovie(id){
+  window.location.href = "watch.html?id=" + id;
 }
 </script>
 
