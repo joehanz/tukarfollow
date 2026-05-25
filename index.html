@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hybrid Stream</title>
+<title>Hybrid Stream FIX</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href='https://cdn.jsdelivr.net/gh/joehanz/csstukarfollow@main/style.css' rel='stylesheet'/>
 
 <style>
-/* ===== FIX GRID SAFE MOBILE ===== */
+/* SAFE GRID FIX */
 .grid{
   padding:15px;
 }
 
+/* mobile 2 kolom FIX */
 @media(max-width:600px){
   .grid{
     grid-template-columns:repeat(2,1fr);
@@ -25,7 +26,7 @@
   }
 }
 
-/* ===== HERO FIX ===== */
+/* HERO FIX */
 .hero{
   height:55vh;
   background:
@@ -37,150 +38,149 @@
   align-items:flex-end;
   padding:20px;
 }
+
+/* PAGER */
+.pager{
+  text-align:center;
+  padding:15px;
+}
+
+.pager button{
+  background:#222;
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  margin:2px;
+  cursor:pointer;
+  border-radius:4px;
+}
+
+.pager button.active{
+  background:red;
+}
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
+<!-- NAV (KEEP YOUR BLOG NAV SAFE) -->
 <nav id='topNav'>
-
   <a class='logo' href='/'>STREAM</a>
 
   <div class='nav-right' id='navRight'>
-
     <form action='/search' method='get'>
       <input name='q' placeholder='Cari film...' type='text'/>
       <button>GO</button>
     </form>
 
     <div class='dropdown'>
-      <span>Film ▼</span>
+      <span>Menu ▼</span>
       <div class='dropdown-menu'>
-        <a href='/'>Indonesian Movies</a>
-        <a href='/search'>Sub 🇮🇩 Movies</a>
+        <a href='#'>Home</a>
+        <a href='#'>Trending</a>
       </div>
     </div>
-
-    <div class='dropdown'>
-      <span>Genre ▼</span>
-      <div class='dropdown-menu'>
-        <a href='#' onclick="filterGenre('action')">Action</a>
-        <a href='#' onclick="filterGenre('comedy')">Comedy</a>
-        <a href='#' onclick="filterGenre('drama')">Drama</a>
-      </div>
-    </div>
-
-    <div class='dropdown'>
-      <span>Country ▼</span>
-      <div class='dropdown-menu'>
-        <a href='#'>Indonesia</a>
-        <a href='#'>USA</a>
-        <a href='#'>Korea</a>
-      </div>
-    </div>
-
-    <div class='dropdown'>
-      <span>Release ▼</span>
-      <div class='dropdown-menu'>
-        <a href='#'>2026</a>
-        <a href='#'>2025</a>
-        <a href='#'>2024</a>
-      </div>
-    </div>
-
   </div>
 
   <div class='burger' onclick='toggleNav()'>☰</div>
-
 </nav>
 
 <!-- HERO -->
 <div class="hero">
   <div>
     <h1>Unlimited Movies</h1>
-    <p>Manual + TMDB Hybrid</p>
+    <p>Manual + TMDB + JSON System</p>
   </div>
 </div>
 
 <!-- GRID -->
 <div class="grid" id="grid"></div>
 
-<!-- MODAL PLAYER -->
+<!-- PAGINATION -->
+<div class="pager" id="pager"></div>
+
+<!-- MODAL -->
 <div class="modal" id="modal">
   <iframe id="player" allowfullscreen></iframe>
 </div>
 
-<!-- SCRIPT -->
 <script>
 
 const API = "9e335d21d35f04917b218bae7adc881f";
 
-let manual = [
-  {
-    title:"Manual Film 1",
-    poster:"https://via.placeholder.com/300x450",
-    embed:"https://example.com",
-    imdb:"tt1234567"
+let movies = [];
+let page = 1;
+let perPage = 12;
+
+/* FIX: LOAD JSON + TMDB + SAFE COMBINE */
+async function loadAll(){
+
+  // 1. load movies.json (FIX ISSUE YANG KAMU BILANG)
+  let jsonData = [];
+  try{
+    const res = await fetch('movies.json');
+    jsonData = await res.json();
+  }catch(e){
+    jsonData = [];
   }
-];
 
-let tmdb = [];
-
-function toggleNav(){
-  document.getElementById("navRight").classList.toggle("active");
-}
-
-async function loadTMDB(){
-
+  // 2. load TMDB
   const url =
     "https://api.themoviedb.org/3/discover/movie?api_key="
     + API
     + "&with_original_language=id";
 
-  const res = await fetch(url);
-  const data = await res.json();
+  const res2 = await fetch(url);
+  const tmdb = await res2.json();
 
-  tmdb = data.results;
+  // 3. combine SAFE (tidak nyempil kosong)
+  movies = [
+    ...jsonData.filter(x => x && x.title && x.poster),
+    ...tmdb.results.filter(x => x && x.poster_path)
+  ];
 
   render();
 }
 
+/* RENDER WITH PAGINATION FIX */
 function render(){
 
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  let all = [...manual, ...tmdb];
+  let start = (page-1)*perPage;
+  let end = start + perPage;
 
-  all.forEach(movie => {
+  let data = movies.slice(start,end);
 
-    if(!movie.poster_path && !movie.poster) return;
+  data.forEach(m => {
+
+    const img = m.poster || ("https://image.tmdb.org/t/p/w300" + m.poster_path);
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      <img src="https://image.tmdb.org/t/p/w300${movie.poster_path || movie.poster}">
-      <div class="card-title">${movie.title}</div>
+      <img src="${img}">
+      <div class="card-title">${m.title}</div>
     `;
 
     div.onclick = async () => {
 
-      let imdb = movie.imdb;
+      let imdb = m.imdb;
 
-      if(!imdb){
+      if(!imdb && m.id){
 
         const r = await fetch(
           "https://api.themoviedb.org/3/movie/"
-          + movie.id
+          + m.id
           + "?api_key="
           + API
           + "&append_to_response=external_ids"
         );
 
         const d = await r.json();
-        imdb = d.external_ids.imdb_id;
+        imdb = d?.external_ids?.imdb_id;
       }
 
       if(!imdb) return;
@@ -192,13 +192,41 @@ function render(){
 
     grid.appendChild(div);
   });
+
+  renderPager();
 }
 
-function filterGenre(g){
-  alert("Filter: " + g);
+/* PAGINATION FIX FULL */
+function renderPager(){
+
+  const pager = document.getElementById("pager");
+  pager.innerHTML = "";
+
+  let totalPages = Math.ceil(movies.length / perPage);
+
+  for(let i=1;i<=totalPages;i++){
+
+    let btn = document.createElement("button");
+    btn.innerText = i;
+
+    if(i === page) btn.classList.add("active");
+
+    btn.onclick = () => {
+      page = i;
+      render();
+    };
+
+    pager.appendChild(btn);
+  }
 }
 
-loadTMDB();
+/* NAV BURGER */
+function toggleNav(){
+  document.getElementById("navRight").classList.toggle("active");
+}
+
+/* START */
+loadAll();
 
 </script>
 
