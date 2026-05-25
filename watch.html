@@ -92,20 +92,22 @@ body {margin:0;font-family:Arial}
   .column {width:100%;}
 }
 
-/* FIX PLAYER */
+/* PLAYER */
 #player {
   width:100%;
   height:360px;
   background:#000;
+  color:white;
 }
 
-iframe {
+#player iframe,
+#player video {
   width:100%;
   height:100%;
   border:none;
-  background:#000;
 }
 </style>
+
 </head>
 
 <body>
@@ -163,10 +165,8 @@ fetch("movies.json")
     return;
   }
 
-  // langsung pakai link (MP4 / embed / iframe)
-  document.getElementById("player").innerHTML = `
-    <iframe src="${film.video}" allowfullscreen></iframe>
-  `;
+  /* INI KUNCI: EMBED HTML LANGSUNG */
+  document.getElementById("player").innerHTML = film.video;
 
   document.getElementById("info").innerHTML = `
     <h2>${film.title || "-"}</h2>
