@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Movies Grid</title>
+<title>Movies</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -42,10 +42,9 @@ fetch('movies.json')
 
     data.forEach(movie => {
       grid.innerHTML += `
-        <a href="watch.html?id=${movie.id || ''}" class="bg-gray-900 rounded overflow-hidden hover:scale-105 transition">
+        <a href="watch.html?id=${movie.id}" class="bg-gray-900 rounded overflow-hidden hover:scale-105 transition">
           <img src="${movie.image}" class="w-full h-44 object-cover">
           <div class="p-2 text-sm font-semibold">${movie.title}</div>
-          <div class="px-2 pb-2 text-xs text-gray-400">${movie.genre}</div>
         </a>
       `;
     });
