@@ -370,27 +370,7 @@ const pagination = document.getElementById("pagination");
 
 let currentPage = 1;
 
-/* POSTING MANUAL */
-
-const customPosts = [
-
-{
-title:"Shaft (2000) Sub Indo",
-poster:"https://image.tmdb.org/t/p/w500/3kSLHwXtq6CCM8jr9J4o8XJHkZn.jpg",
-rating:"HD",
-url:"watch.html?id=shaft2000",
-manual:true
-},
-
-{
-title:"Film Indo Subtitle",
-poster:"https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg",
-rating:"SUB INDO",
-url:"watch.html?id=subindo",
-manual:true
-}
-
-];
+/* HERO */
 
 async function loadHero(){
 
@@ -415,23 +395,37 @@ document.getElementById("watchHero").href =
 
 }
 
+/* LOAD MOVIES */
+
 async function loadMovies(page=1){
 
 currentPage = page;
 
-const res = await fetch(
+movieGrid.innerHTML =
+'<div class="loader">Loading...</div>';
+
+const tmdbRes = await fetch(
 `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
 );
 
-const data = await res.json();
+const tmdbData = await tmdbRes.json();
+
+/* MOVIES.JSON */
+
+const jsonRes = await fetch("movies.json");
+const customPosts = await jsonRes.json();
 
 movieGrid.innerHTML = "";
 
-let movies = data.results.map(movie=>({
+let movies = tmdbData.results.map(movie=>({
 
 title:movie.title,
-poster:POSTER + movie.poster_path,
+poster:movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image',
+
 rating:"⭐ " + movie.vote_average.toFixed(1),
+
 url:`watch.html?id=${movie.id}`
 
 }));
@@ -440,19 +434,23 @@ url:`watch.html?id=${movie.id}`
 
 if(page === 1){
 
-movies.splice(3,0,...customPosts);
+movies.splice(4,0,...customPosts);
 
 }
+
+/* GRID */
 
 movies.forEach(movie=>{
 
 movieGrid.innerHTML += `
 
-<a href="${movie.url}" style="text-decoration:none;color:white;">
+<a href="${movie.url}"
+style="text-decoration:none;color:white;">
 
 <div class="movie-card">
 
-<img src="${movie.poster}">
+<img src="${movie.poster}"
+loading="lazy">
 
 <div class="movie-info">
 
@@ -470,15 +468,40 @@ movieGrid.innerHTML += `
 
 });
 
-renderPagination();
+/* PAGINATION */
+
+renderPagination(tmdbData.total_pages);
 
 }
 
-function renderPagination(){
+/* PAGINATION */
+
+function renderPagination(totalPages){
 
 pagination.innerHTML = "";
 
-for(let i=1;i<=5;i++){
+let start = currentPage - 2;
+let end = currentPage + 2;
+
+if(start < 1) start = 1;
+if(end > totalPages) end = totalPages;
+
+if(currentPage > 1){
+
+pagination.innerHTML += `
+
+<div class="page-btn"
+onclick="loadMovies(${currentPage - 1})">
+
+‹
+
+</div>
+
+`;
+
+}
+
+for(let i=start;i<=end;i++){
 
 pagination.innerHTML += `
 
@@ -493,7 +516,24 @@ ${i}
 
 }
 
+if(currentPage < totalPages){
+
+pagination.innerHTML += `
+
+<div class="page-btn"
+onclick="loadMovies(${currentPage + 1})">
+
+›
+
+</div>
+
+`;
+
 }
+
+}
+
+/* SEARCH */
 
 async function searchMovies(query){
 
@@ -505,15 +545,33 @@ const data = await res.json();
 
 movieGrid.innerHTML = "";
 
+if(data.results.length === 0){
+
+movieGrid.innerHTML =
+'<div class="loader">Movie not found.</div>';
+
+pagination.innerHTML = "";
+
+return;
+
+}
+
 data.results.forEach(movie=>{
 
 movieGrid.innerHTML += `
 
-<a href="watch.html?id=${movie.id}" style="text-decoration:none;color:white;">
+<a href="watch.html?id=${movie.id}"
+style="text-decoration:none;color:white;">
 
 <div class="movie-card">
 
-<img src="${POSTER + movie.poster_path}">
+<img src="${
+movie.poster_path
+? POSTER + movie.poster_path
+: 'https://via.placeholder.com/500x750?text=No+Image'
+}"
+
+loading="lazy">
 
 <div class="movie-info">
 
@@ -535,6 +593,8 @@ pagination.innerHTML = "";
 
 }
 
+/* SEARCH EVENT */
+
 document
 .getElementById("searchInput")
 .addEventListener("keyup",(e)=>{
@@ -552,6 +612,8 @@ loadMovies(1);
 }
 
 });
+
+/* START */
 
 loadHero();
 loadMovies();
