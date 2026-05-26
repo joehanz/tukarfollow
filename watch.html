@@ -7,19 +7,49 @@
     <meta id="metaDesc" name="description" content="Nonton film streaming movie sub indo gratis terlengkap dengan kualitas lancar kualitas HD terbaik.">
     <link rel="icon" type="image/png" href="https://googleusercontent.com">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Open Graph Dinamis (Diisi Otomatis Lewat watch.js) -->
+    <meta id="ogTitle" property="og:title" content="">
+    <meta id="ogDesc" property="og:description" content="">
+    <meta id="ogImage" property="og:image" content="">
+    <meta property="og:type" content="video.movie">
 </head>
 <body>
 
-    <!-- NAVBAR UTAMA (Sama Persis) -->
+    <!-- NAVBAR UTAMA (100% Identik Dengan index.html) -->
     <header class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">tukarfollow</a>
-            <button class="burger-menu" id="burgerBtn">
+            
+            <button class="burger-menu" id="burgerBtn" aria-label="Toggle Menu">
                 <span></span><span></span><span></span>
             </button>
+
             <nav class="nav-menu" id="navMenu">
                 <div class="search-wrapper">
                     <input type="text" id="searchInput" placeholder="Cari film di sini...">
+                </div>
+                
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
+                    <div class="dropdown-content" id="genreDropdown">
+                        <a href="#" data-genre="Action">Action</a>
+                        <a href="#" data-genre="Adventure">Adventure</a>
+                        <a href="#" data-genre="Comedy">Comedy</a>
+                        <a href="#" data-genre="Drama">Drama</a>
+                        <a href="#" data-genre="Horror">Horror</a>
+                        <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
+                    </div>
+                </div>
+
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
+                    <div class="dropdown-content" id="releaseDropdown">
+                        <a href="#" data-year="2026">2026</a>
+                        <a href="#" data-year="2025">2025</a>
+                        <a href="#" data-year="2024">2024</a>
+                        <a href="#" data-year="klasik">Klasik (< 2024)</a>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -33,7 +63,7 @@
             <div class="video-player-area" id="playerArea">
                 <div class="ad-overlay" id="adOverlay"></div>
                 <div id="videoContainer" class="video-container">
-                    <!-- Player Diinjeksi di Sini -->
+                    <!-- Player Diinjeksi di Sini via watch.js -->
                 </div>
             </div>
             
@@ -48,13 +78,13 @@
                 <p id="watchSinopsis">Memuat sinopsis...</p>
             </div>
 
-            <!-- FILM SERUPA CAROUSEL -->
+            <!-- FILM SERU / RELATED VIDEO CAROUSEL -->
             <section class="related-section">
                 <h3>Film Serupa</h3>
                 <div class="carousel-container">
                     <button class="carousel-btn prev-btn" id="slidePrev">❮</button>
                     <div class="movie-carousel" id="relatedGrid">
-                        <!-- Diisi Otomatis -->
+                        <!-- Diisi Otomatis via watch.js -->
                     </div>
                     <button class="carousel-btn next-btn" id="slideNext">❯</button>
                 </div>
@@ -62,98 +92,36 @@
         </div>
     </main>
 
+    <!-- FOOTER 4 KOLOM -->
     <footer class="footer-grid">
-        <div class="footer-col"><h3>tukarfollow</h3><p>Platform streaming gratis terlengkap.</p></div>
-        <div class="footer-col"><h3>Jelajahi</h3><ul><li><a href="index.html">Beranda</a></li></ul></div>
-        <div class="footer-col"><h3>Kategori</h3><ul><li><a href="#">Aksi Seru</a></li></ul></div>
-        <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak Kami</a></li></ul></div>
+        <div class="footer-col">
+            <h3>tukarfollow</h3>
+            <p>Platform streaming gratis terlengkap dengan kualitas jernih ala bioskop online.</p>
+        </div>
+        <div class="footer-col">
+            <h3>Jelajahi</h3>
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="#">Film Baru</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Kategori</h3>
+            <ul>
+                <li><a href="#">Aksi Seru</a></li>
+                <li><a href="#">Horor Mencekam</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Bantuan</h3>
+            <ul>
+                <li><a href="#">DMCA / Disclaimer</a></li>
+                <li><a href="#">Kontak Kami</a></li>
+            </ul>
+        </div>
     </footer>
 
+    <!-- Khusus halaman nonton membaca watch.js agar logika pemutar aman terisolasi -->
     <script src="watch.js"></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-    const burgerBtn = document.getElementById('burgerBtn');
-    const navMenu = document.getElementById('navMenu');
-    if (burgerBtn && navMenu) {
-        burgerBtn.addEventListener('click', () => {
-            burgerBtn.classList.toggle('open');
-            navMenu.classList.toggle('open');
-        });
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const filmId = urlParams.get('id');
-    if (!filmId) return;
-    const idx = parseInt(filmId);
-
-    fetch('movies.json')
-        .then(res => res.json())
-        .then(data => {
-            const movie = data[idx];
-            if (!movie) return;
-
-            // Suntik Data Teks
-            document.getElementById('watchTitle').innerText = movie.title;
-            document.getElementById('watchGenre').innerText = movie.genre;
-            document.getElementById('watchRelease').innerText = movie.release_date;
-            document.getElementById('watchCountry').innerText = movie.country;
-            document.getElementById('watchSinopsis').innerText = movie.sinopsis;
-
-            // Suntik Player Video
-            const container = document.getElementById('videoContainer');
-            if (container) {
-                if (movie.iframe) {
-                    container.innerHTML = `<iframe src="${movie.iframe}" allowfullscreen></iframe>`;
-                } else if (movie.video) {
-                    container.innerHTML = `<video src="${movie.video}" controls autoplay></video>`;
-                }
-            }
-
-            // Sistem Iklan 2x Klik
-            const adOverlay = document.getElementById('adOverlay');
-            const videoUrl = movie.iframe || movie.video;
-            if (adOverlay) {
-                if (videoUrl && videoUrl.includes('abyssplayer.com')) {
-                    adOverlay.classList.add('disabled');
-                } else {
-                    let clicks = 0;
-                    const ads = ["https://rajarayap.com", "https://blogspot.com", "https://blogspot.com"];
-                    adOverlay.addEventListener('click', () => {
-                        clicks++;
-                        window.open(ads[Math.floor(Math.random() * ads.length)], '_blank');
-                        if (clicks >= 2) adOverlay.classList.add('disabled');
-                    });
-                }
-            }
-
-            // Render Slider Film Serupa (Mengambil dari list json yang sama)
-            const relatedGrid = document.getElementById('relatedGrid');
-            if (relatedGrid) {
-                data.forEach((m, i) => {
-                    if (i !== idx) {
-                        const item = document.createElement('a');
-                        item.className = "movie-card";
-                        item.href = `watch.html?id=${i}`;
-                        item.innerHTML = `
-                            <div class="poster-wrapper"><img src="${m.image}" alt="${m.title}"></div>
-                            <h3>${m.title}</h3>
-                        `;
-                        relatedGrid.appendChild(item);
-                    }
-                });
-            }
-        });
-
-    // Navigasi Slider Panah Desktop
-    const prev = document.getElementById('slidePrev');
-    const next = document.getElementById('slideNext');
-    const rGrid = document.getElementById('relatedGrid');
-    if (prev && next && rGrid) {
-        prev.addEventListener('click', () => rGrid.scrollLeft -= 200);
-        next.addEventListener('click', () => rGrid.scrollLeft += 200);
-    }
-});
-
-    </script>
 </body>
 </html>
