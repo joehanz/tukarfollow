@@ -1,7 +1,7 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://themoviedb.org'; 
-const TMDB_IMAGE_URL = 'https://themoviedb.org'; 
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3'; 
+const TMDB_IMAGE_URL = 'https://themoviedb.org'; // CDN Utama Gambar Resmi TMDB
 
 const AD_DOMAINS = [
     'https://rajarayap.com',
@@ -31,7 +31,14 @@ async function loadGlobalMoviesData() {
         const res = await fetch('movies.json');
         if (res.ok) {
             const data = await res.json();
-            localData = data.map((item, idx) => ({ ...item, internalId: `LOCAL_${idx}` }));
+            // Normalisasi agar format data genre dari file lokal selalu berupa array bersih
+            localData = data.map((item, idx) => {
+                let cleanGenre = ["Uncategorized"];
+                if (item.genre) {
+                    cleanGenre = Array.isArray(item.genre) ? item.genre : item.genre.split(',').map(g => g.trim());
+                }
+                return { ...item, genre: cleanGenre, internalId: `LOCAL_${idx}` };
+            });
         }
     } catch (e) {
         console.error("Gagal membaca movies.json lokal:", e);
@@ -47,6 +54,7 @@ async function loadGlobalMoviesData() {
             if (data.results) {
                 tmdbData = data.results.map(movie => ({
                     title: movie.title,
+                    // FIX POSTER: Menjamin tanda garis miring (/) terpasang sempurna di depan path poster TMDB
                     image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
                     video: "",
                     iframe: `https://vidsrc.me{movie.id}`,
@@ -100,7 +108,6 @@ function initNavbar() {
             if (grid) {
                 renderGrid(filtered);
             } else {
-                // Jika mencari di watch.html, otomatis lempar balik ke halaman utama dengan membawa kata kunci pencarian
                 window.location.href = `index.html?search=${encodeURIComponent(keyword)}`;
             }
         });
@@ -112,7 +119,6 @@ function initNavbar() {
             const genre = link.getAttribute('data-genre');
             const year = link.getAttribute('data-year');
 
-            // FIX NAV: Jika tidak berada di index.html, buang batasan preventDefault agar tautan bisa melompat pindah halaman
             if (!grid) {
                 if (genre) window.location.href = `index.html?genre=${encodeURIComponent(genre)}`;
                 if (year) window.location.href = `index.html?year=${encodeURIComponent(year)}`;
@@ -125,11 +131,7 @@ function initNavbar() {
 
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
-                filtered = ALL_MOVIES.filter(m => {
-                    if (!m.genre) return false;
-                    const itemGenres = Array.isArray(m.genre) ? m.genre : [m.genre];
-                    return itemGenres.some(g => g.toLowerCase().trim() === genre.toLowerCase().trim());
-                });
+                filtered = ALL_MOVIES.filter(m => m.genre && m.genre.some(g => g.toLowerCase().trim() === genre.toLowerCase().trim()));
             } else if (year) {
                 if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${year === 'klasik' ? 'Klasik (<2024)' : year}`;
                 filtered = ALL_MOVIES.filter(m => {
@@ -147,7 +149,6 @@ function initNavbar() {
         });
     });
 
-    // Tangkap lemparan parameter filter dari halaman watch.html menuju index.html
     const urlParams = new URLSearchParams(window.location.search);
     const filterGenre = urlParams.get('genre');
     const filterYear = urlParams.get('year');
@@ -156,7 +157,7 @@ function initNavbar() {
     if (document.getElementById('movieGrid')) {
         if (filterGenre) {
             document.getElementById('sectionTitle').innerText = `Genre: ${filterGenre}`;
-            renderGrid(ALL_MOVIES.filter(m => m.genre && (Array.isArray(m.genre) ? m.genre.some(g => g.toLowerCase().trim() === filterGenre.toLowerCase().trim()) : m.genre.toLowerCase().trim() === filterGenre.toLowerCase().trim())));
+            renderGrid(ALL_MOVIES.filter(m => m.genre && m.genre.some(g => g.toLowerCase().trim() === filterGenre.toLowerCase().trim())));
         } else if (filterYear) {
             document.getElementById('sectionTitle').innerText = `Tahun Rilis: ${filterYear}`;
             renderGrid(ALL_MOVIES.filter(m => m.release_date && new Date(m.release_date).getFullYear() === parseInt(filterYear)));
@@ -200,6 +201,7 @@ async function loadWatchPageData() {
         return;
     }
 
+    // FIX LOGIKA DATA: Mengambil data yang sudah terisi dan ternormalisasi sempurna dari database global ALL_MOVIES
     let selectedMovie = ALL_MOVIES.find(m => m.internalId === movieId);
 
     if (!selectedMovie && movieId.startsWith("TMDB_")) {
@@ -215,6 +217,7 @@ async function loadWatchPageData() {
                     release_date: movie.release_date,
                     country: "Indonesia",
                     iframe: `https://vidsrc.me{tmdbId}`,
+                    image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
                     internalId: movieId
                 };
             }
@@ -233,56 +236,48 @@ async function loadWatchPageData() {
         const videoContainer = document.getElementById("videoContainer");
         videoContainer.innerHTML = `
             <iframe src="${selectedMovie.iframe}" allowfullscreen frameborder="0" width="100%" height="100%" 
-            sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+            sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-modals"></iframe>
         `;
 
-        // JALANKAN PROSES CAROUSEL FILM SERUPA
+        // Jalankan sistem Carousel film serupa
         generateRelatedCarousel(selectedMovie, ALL_MOVIES);
     }
 }
 
-// FIX FILTER KETAT: MENGUNCI AKURASI GENRE SEJENIS
+// FIX RELATED MOVIES: Pengunci irisan filter genre sejenis secara mutlak
 function generateRelatedCarousel(currentMovie, allMovies) {
     const carousel = document.querySelector('.movie-carousel');
     if (!carousel) return;
-    
-    // Pastikan kontainer bersih total dari cache sisa loading data utama
     carousel.innerHTML = "";
 
-    // Normalkan data genre film yang sedang ditonton menjadi array teks kecil bersih
+    // 1. Ekstrak genre film saat ini (Pastikan bertipe Array teks kecil bersih)
     const currentGenres = (Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre])
-        .map(g => g.trim().toLowerCase());
+        .map(g => g.toString().trim().toLowerCase());
 
-    // Mulai proses penyaringan film segenre
+    // 2. Filter ketat: Menjaring kecocokan genre di dalam database master
     const related = allMovies.filter(movie => {
-        // 1. Buang film yang judul atau ID internalnya sama dengan film aktif
         if (movie.internalId === currentMovie.internalId || movie.title === currentMovie.title) return false;
         if (!movie.genre) return false;
 
-        // 2. Normalkan data genre film pembanding
         const targetGenres = (Array.isArray(movie.genre) ? movie.genre : [movie.genre])
-            .map(g => g.trim().toLowerCase());
+            .map(g => g.toString().trim().toLowerCase());
 
-        // 3. Hanya loloskan film yang memiliki minimal 1 irisan genre yang sama persis
+        // Hukum Irisan: Lolos jika minimal ada 1 kesamaan kata genre
         return targetGenres.some(g => currentGenres.includes(g));
     });
 
-    // Jika tidak ada irisan genre yang cocok, hentikan proses dan tampilkan informasi teks kosong
     if (related.length === 0) {
         carousel.innerHTML = "<div style='color:#8e8e93; padding: 10px; font-size:14px;'>Tidak ada film serupa ditemukan.</div>";
         return;
     }
 
-    // Bangun ulang struktur layout kartu film di dalam baris carousel
+    // 3. Render kartu film ke dalam susunan HTML Carousel
     related.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
-        
-        // Kunci ukuran dimensi kartu agar berjejer horizontal secara konsisten tanpa meluber
         card.style.flex = "0 0 140px";
         card.style.width = "140px";
         card.style.display = "block";
-        
         card.href = `watch.html?id=${movie.internalId}`;
         card.innerHTML = `
             <div class="poster-wrapper" style="width:100%; aspect-ratio:2/3; overflow:hidden; border-radius:8px;">
