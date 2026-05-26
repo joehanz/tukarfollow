@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tukarfollow: Situs Streaming Movie Sub Indo Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton dan streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
+    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
     <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
     <link rel="icon" type="image/png" href="https://googleusercontent.com">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "tukarfollow",
+      "url": "https://github.io",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://github.ioindex.html?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 </head>
 <body>
 
@@ -26,8 +41,8 @@
                 </div>
                 
                 <div class="dropdown-wrapper">
-                    <button class="dropbtn">Genre ▾</button>
-                    <div class="dropdown-content">
+                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
+                    <div class="dropdown-content" id="genreDropdown">
                         <a href="#" data-genre="Action">Action</a>
                         <a href="#" data-genre="Adventure">Adventure</a>
                         <a href="#" data-genre="Comedy">Comedy</a>
@@ -38,8 +53,8 @@
                 </div>
 
                 <div class="dropdown-wrapper">
-                    <button class="dropbtn">Rilis ▾</button>
-                    <div class="dropdown-content">
+                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
+                    <div class="dropdown-content" id="releaseDropdown">
                         <a href="#" data-year="2026">2026</a>
                         <a href="#" data-year="2025">2025</a>
                         <a href="#" data-year="2024">2024</a>
@@ -55,7 +70,8 @@
         <section class="grid-section">
             <h2 id="sectionTitle">Semua Film Terbaru</h2>
             <div class="movie-grid" id="movieGrid">
-                <!-- Data Film JSON Akan Muncul Di Sini -->
+                <!-- Memuat status awal agar aman -->
+                <div class="loading-text">Memuat film...</div>
             </div>
         </section>
     </main>
@@ -89,65 +105,7 @@
         </div>
     </footer>
 
+    <!-- Menggunakan script.js murni untuk Otak index.html -->
     <script src="script.js"></script>
-    <script>
-        let ALL_MOVIES = [];
-
-window.addEventListener('DOMContentLoaded', () => {
-    // Navigasi Burger Mobile
-    const burgerBtn = document.getElementById('burgerBtn');
-    const navMenu = document.getElementById('navMenu');
-    if (burgerBtn && navMenu) {
-        burgerBtn.addEventListener('click', () => {
-            burgerBtn.classList.toggle('open');
-            navMenu.classList.toggle('open');
-        });
-    }
-
-    // Ambil Data murni dari movies.json
-    const grid = document.getElementById('movieGrid');
-    if (grid) {
-        fetch('movies.json')
-            .then(res => res.json())
-            .then(data => {
-                ALL_MOVIES = data;
-                renderGrid(ALL_MOVIES);
-            })
-            .catch(err => {
-                grid.innerHTML = "<div>Gagal memuat database film lokal.</div>";
-            });
-    }
-
-    // Live Search Real-time
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase();
-            const filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(keyword));
-            renderGrid(filtered);
-        });
-    }
-});
-
-function renderGrid(moviesList) {
-    const grid = document.getElementById('movieGrid');
-    if (!grid) return;
-    grid.innerHTML = "";
-    
-    moviesList.forEach((movie, idx) => {
-        const card = document.createElement('a');
-        card.className = "movie-card";
-        card.href = `watch.html?id=${idx}`;
-        card.innerHTML = `
-            <div class="poster-wrapper">
-                <img src="${movie.image}" alt="${movie.title}" loading="lazy">
-            </div>
-            <h3>${movie.title}</h3>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-    </script>
 </body>
 </html>
