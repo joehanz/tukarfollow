@@ -108,90 +108,165 @@
         <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak Kami</a></li></ul></div>
     </footer>
        
-        <!-- JAVASCRIPT TANAM LANGSUNG (VERSI FINISH 100% AMAN LOKAL) -->
+            <!-- JAVASCRIPT TANAM LANGSUNG (VERSI KEBUT JALUR RESMI TMDB) -->
     <script>
-        // STORAGE DATA GLOBAL
-        let MOVIE_POOL = [];
+        // CONFIG UTAMA GERBANG API TMDB RESMI (100% VALID)
+        const API_KEY = '9e335d21d35f04917b218bae7adc881f';
+        const BASE_URL = 'https://themoviedb.org';
+        const IMG_URL = 'https://tmdb.org'; // CDN resmi gambar TMDB berkecepatan tinggi
 
+        // STORAGE DATA GLOBAL SITE
+        let LOCAL_MOVIES_LIST = [];      
+        let TMDB_MOVIES_LIST = [];       
+        let ALL_COMBINED_MOVIES = [];   
+        let pageCounter = 1;        
+        let keywordSearch = "";    
+
+        // EKSEKUSI MUTLAK (Jalan otomatis saat kerangka HTML selesai dibaca)
         window.addEventListener('DOMContentLoaded', () => {
-            // Kontrol Navigasi Burger Menu Mobile
-            const burgerBtn = document.getElementById('burgerBtn');
-            const navMenu = document.getElementById('navMenu');
-            if (burgerBtn && navMenu) {
-                burgerBtn.addEventListener('click', () => {
-                    burgerBtn.classList.toggle('open');
-                    navMenu.classList.toggle('open');
-                });
-            }
-
-            // Jalankan penarikan database lokal aman bebas sensor
-            fetchLocalIndonesianMovies();
-
-            // Input Pencarian Real-Time Khusus Film Indonesia
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const keyword = e.target.value.toLowerCase();
-                    const filtered = MOVIE_POOL.filter(m => m.title.toLowerCase().includes(keyword));
-                    printGrid(filtered);
-                });
-            }
+            initNavbarLayout();
+            startIndonesianPlatform();
         });
 
-        // FUNGSI PENARIK DATA KEBAL SENSOR (Membaca berkas internal sendiri)
-        function fetchLocalIndonesianMovies() {
-            fetch('indonesia.json')
-                .then(res => {
-                    if (!res.ok) throw new Error("Berkas indonesia.json belum dibuat.");
-                    return res.json();
-                })
-                .then(data => {
-                    if (data && data.length > 0) {
-                        // Berikan penanda khusus internalId TMDB agar otomatis sinkron saat diklik menuju watch.html
-                        MOVIE_POOL = data.map((movie, idx) => {
-                            const urlObj = new URLSearchParams(movie.iframe.split('?')[1]);
-                            const tmdbId = urlObj.get('tmdb') || idx;
-                            return {
-                                ...movie,
-                                internalId: `TMDB_${tmdbId}`
-                            };
-                        });
+        // MEMULAI PLATFORM & MENYATUKAN DATA
+        async function startIndonesianPlatform() {
+            // 1. Ambil data lokal dari indonesia.json atau movies.json (Jika Anda sudah membuatnya)
+            try {
+                const res = await fetch('indonesia.json');
+                if (res.ok) {
+                    const data = await res.json();
+                    LOCAL_MOVIES_LIST = data.map((item, idx) => ({ ...item, internalId: `LOCAL_${idx}` }));
+                }
+            } catch (e) {
+                console.log("Membaca data murni TMDB tanpa json lokal.");
+            }
+
+            // Tampilkan tampungan awal agar layar tidak blank kosong
+            ALL_COMBINED_MOVIES = [...LOCAL_MOVIES_LIST];
+            printMoviesToGrid(ALL_COMBINED_MOVIES);
+
+            // 2. Tarik halaman 1 film Indonesia langsung dari server TMDB menggunakan jalur Popular Movie
+            await loadIndonesianPopularMovies(pageCounter);
+        }
+
+        // AMAN: Tarik data dari TMDB dengan endpoint Popular yang kebal dari sensor blokir browser
+        async function loadIndonesianPopularMovies(pageNumber) {
+            try {
+                // Menggunakan endpoint popular movie + filter region pasar Indonesia agar loading poster kilat
+                const endpoint = `${BASE_URL}/movie/popular?api_key=${API_KEY}&region=ID&with_original_language=id&page=${pageNumber}`;
+                const res = await fetch(endpoint);
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.results && data.results.length > 0) {
+                        // Filter tambahan untuk mengunci agar hanya memuat film produksi Indonesia asli saja
+                        const indonesianOnly = data.results.filter(m => m.original_language === 'id');
                         
-                        printGrid(MOVIE_POOL);
-                    } else {
-                        document.getElementById('loadingStatus').innerText = "Koleksi database film kosong.";
+                        const mappedTMDB = indonesianOnly.map(movie => ({
+                            title: movie.title,
+                            // PERBAIKAN: Memastikan tautan poster menggunakan HTTPS murni agar tidak disensor browser
+                            image: movie.poster_path ? `${IMG_URL}${movie.poster_path}` : 'https://placeholder.com',
+                            iframe: `https://vidsrc.me{movie.id}`, // Link pemutar video kebal frame-refused
+                            genre: "Indonesia Movie",
+                            release_date: movie.release_date || "2026-01-01",
+                            internalId: `TMDB_${movie.id}`
+                        }));
+
+                        // Satukan data halaman baru ke penyimpanan global tanpa menimpa film lama
+                        TMDB_MOVIES_LIST = [...TMDB_MOVIES_LIST, ...mappedTMDB];
+                        ALL_COMBINED_MOVIES = [...LOCAL_MOVIES_LIST, ...TMDB_MOVIES_LIST];
+
+                        // Cetak ulang grid poster terupdate
+                        printMoviesToGrid(ALL_COMBINED_MOVIES);
+                        injectPaginationButtonLayout();
                     }
-                })
-                .catch((err) => {
-                    document.getElementById('loadingStatus').innerText = "Gagal memuat database internal. Pastikan file indonesia.json sudah Anda buat di GitHub.";
-                });
+                }
+            } catch (e) {
+                console.error("Koneksi lambat, mencetak data lokal: ", e);
+                printMoviesToGrid(ALL_COMBINED_MOVIES);
+            }
         }
 
         // PENCETAK GRID POSTER IDENTIK (UX TUNGGAL)
-        function printGrid(list) {
-            const grid = document.getElementById('movieGrid');
-            if (!grid) return;
-            grid.innerHTML = ""; // Paksa bersihkan status teks loading awal
+        function printMoviesToGrid(arrayData) {
+            const gridContainer = document.getElementById('movieGrid');
+            if (!gridContainer) return;
+            
+            gridContainer.innerHTML = ""; // Bersihkan teks "Menghubungkan ke Server..."
 
-            if (list.length === 0) {
-                grid.innerHTML = "<div class='loading-text'>Tidak ada film Indonesia yang cocok.</div>";
+            if (!arrayData || arrayData.length === 0) {
+                gridContainer.innerHTML = "<div class='loading-text'>Tidak ada koleksi film yang ditemukan.</div>";
                 return;
             }
 
-            const fragment = document.createDocumentFragment();
-            list.forEach(movie => {
-                const card = document.createElement('a');
-                card.className = "movie-card";
-                card.href = `watch.html?id=${movie.internalId}`;
-                card.innerHTML = `
+            const fragmentContainer = document.createDocumentFragment();
+            arrayData.forEach(movie => {
+                const cardAnchor = document.createElement('a');
+                cardAnchor.className = "movie-card";
+                // Mengirimkan ID unik ke halaman watch.html agar otomatis terputar
+                cardAnchor.href = `watch.html?id=${movie.internalId || 'TMDB_' + movie.id}`;
+                cardAnchor.innerHTML = `
                     <div class="poster-wrapper">
-                        <img src="${movie.image}" alt="${movie.title}" loading="lazy">
+                        <!-- Ditambahkan crossOrigin agar browser mengizinkan pemuatan gambar dari server luar -->
+                        <img src="${movie.image}" alt="${movie.title}" crossorigin="anonymous" loading="lazy">
                     </div>
                     <h3>${movie.title}</h3>
                 `;
-                fragment.appendChild(card);
+                fragmentContainer.appendChild(cardAnchor);
             });
-            grid.appendChild(fragment);
+            gridContainer.appendChild(fragmentContainer);
+        }
+
+        // INJEKSI TOMBOL PAGINATION LIMIT 20 MANUAL
+        function injectPaginationButtonLayout() {
+            const gridElement = document.getElementById('movieGrid');
+            if (!gridElement || document.getElementById('loadMoreTmdbBtn')) return;
+
+            const btnWrapper = document.createElement('div');
+            btnWrapper.style.cssText = "grid-column: 1/-1; text-align: center; margin-top: 30px; margin-bottom: 20px;";
+            
+            const actionBtn = document.createElement('button');
+            actionBtn.id = "loadMoreTmdbBtn";
+            actionBtn.innerText = "Muat Film Indonesia Lainnya ▾";
+            actionBtn.style.cssText = "background-color: #0084ff; color: white; border: none; padding: 12px 28px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s;";
+            
+            actionBtn.addEventListener('click', async () => {
+                actionBtn.innerText = "Menghubungkan Server...";
+                actionBtn.disabled = true;
+                pageCounter++;
+                await loadIndonesianPopularMovies(pageCounter);
+                actionBtn.innerText = "Muat Film Indonesia Lainnya ▾";
+                actionBtn.disabled = false;
+            });
+
+            btnWrapper.appendChild(actionBtn);
+            gridElement.after(btnWrapper);
+        }
+
+        // NAVBAR MOBILE & LIVE SEARCH CONTROLLER
+        function initNavbarLayout() {
+            const triggerBurger = document.getElementById('burgerBtn');
+            const panelMenu = document.getElementById('navMenu');
+            
+            if (triggerBurger && panelMenu) {
+                triggerBurger.addEventListener('click', () => {
+                    triggerBurger.classList.toggle('open');
+                    panelMenu.classList.toggle('open');
+                });
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    keywordSearch = e.target.value.toLowerCase();
+                    if (keywordSearch === "") {
+                        printMoviesToGrid(ALL_COMBINED_MOVIES);
+                    } else {
+                        const filteredResults = ALL_COMBINED_MOVIES.filter(m => m.title.toLowerCase().includes(keywordSearch));
+                        printMoviesToGrid(filteredResults);
+                    }
+                });
+            }
         }
     </script>
 
