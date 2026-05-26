@@ -1,191 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body {margin:0;font-family:Arial}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-.dropdown {
-  float: left;
-  overflow: hidden;
-}
-
-.dropdown .dropbtn {
-  font-size: 17px;    
-  border: none;
-  outline: none;
-  color: white;
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-.topnav a:hover, .dropdown:hover .dropbtn {
-  background-color: #555;
-  color: white;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child), .dropdown .dropbtn {
-    display: none;
-  }
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-  .topnav.responsive .dropdown {float: none;}
-  .topnav.responsive .dropdown-content {position: relative;}
-  .topnav.responsive .dropdown .dropbtn {
-    display: block;
-    width: 100%;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="#home" class="active">Home</a>
-  <a href="#news">News</a>
-  <a href="#contact">Contact</a>
-  <div class="dropdown">
-    <button class="dropbtn">Dropdown 
-      <i class="fa fa-caret-down"></i>
-    </button>
-    <div class="dropdown-content">
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
-    </div>
-  </div> 
-  <a href="#about">About</a>
-  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
-</div>
-
-<div style="padding-left:16px">
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Koleksi Film</title>
+    <style>
+        /* Gaya Dasar Halaman */
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #141414;
             color: white;
-            margin: 20px;
         }
+
         h1 {
             text-align: center;
+            margin-top: 30px;
         }
-        /* Membuat layout grid */
+
+        /* Gaya Navigasi (Topnav) */
+        .topnav {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .topnav a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        .topnav .icon {
+            display: none;
+        }
+
+        .dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+        .dropdown .dropbtn {
+            font-size: 17px;    
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 16px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .topnav a:hover, .dropdown:hover .dropbtn {
+            background-color: #555;
+            color: white;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Gaya Grid dan Kartu Film */
+        .content-container {
+            padding: 0 16px;
+        }
+
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
-            padding: 20px;
+            padding: 20px 0;
         }
-        /* Mengatur tampilan card film */
+
         .movie-card {
             background-color: #1f1f1f;
             border-radius: 8px;
             overflow: hidden;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            text-decoration: none;
+            color: inherit;
+            display: block; 
+            transition: transform 0.2s ease; 
         }
+
+        .movie-card:hover {
+            transform: scale(1.03);
+        }
+
         .movie-card img {
             width: 100%;
             height: 300px;
             object-fit: cover;
         }
+
         .movie-card h3 {
             font-size: 1rem;
             margin: 10px;
             padding: 0 5px;
+            color: #ffffff;
+        }
+
+        /* Responsif Topnav (Layar HP) */
+        @media screen and (max-width: 600px) {
+            .topnav a:not(:first-child), .dropdown .dropbtn {
+                display: none;
+            }
+            .topnav a.icon {
+                float: right;
+                display: block;
+            }
+        }
+
+        @media screen accelerate and (max-width: 600px) {
+            .topnav.responsive { position: relative; }
+            .topnav.responsive .icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+            .topnav.responsive a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+            .topnav.responsive .dropdown { float: none; }
+            .topnav.responsive .dropdown-content { position: relative; }
+            .topnav.responsive .dropdown .dropbtn {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h1>Koleksi Film</h1>
-    <div id="movie-container" class="movie-grid"></div>
+    <!-- Menu Navigasi -->
+    <div class="topnav" id="myTopnav">
+        <a href="#home" class="active">Home</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+        <div class="dropdown">
+            <button class="dropbtn">Dropdown 
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+        </div> 
+        <a href="#about">About</a>
+        <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="toggleNav()">☰</a>
+    </div>
+
+    <!-- Konten Utama -->
+    <div class="content-container">
+        <h1>Koleksi Film</h1>
+        <div id="movie-container" class="movie-grid"></div>
+    </div>
 
     <script>
-        // Mengambil data dari movies.json
+        // 1. Mengambil data dari movies.json dan menampilkan ke Grid
         fetch('movies.json')
             .then(response => response.json())
             .then(movies => {
                 const container = document.getElementById('movie-container');
                 
-                // Looping data film
                 movies.forEach(movie => {
-                    const card = document.createElement('div');
+                    // Membuat elemen link <a> sebagai pembungkus kartu agar bisa diklik
+                    const card = document.createElement('a');
                     card.classList.add('movie-card');
                     
-                    // Hanya mengisi gambar (poster) dan judul
+                    // Mengarahkan ke watch.html dengan parameter judul film
+                    card.href = `watch.html?title=${encodeURIComponent(movie.title)}`;
+                    
+                    // Mengisi gambar (poster) dan judul saja
                     card.innerHTML = `
                         <img src="${movie.image}" alt="${movie.title}">
                         <h3>${movie.title}</h3>
@@ -194,21 +216,18 @@ body {margin:0;font-family:Arial}
                     container.appendChild(card);
                 });
             })
-            .catch(error => console.error('Gagal memuat data:', error));
+            .catch(error => console.error('Gagal memuat data film:', error));
+
+        // 2. Fungsi Aktivasi Menu Responsif Ponsel
+        function toggleNav() {
+            var x = document.getElementById("myTopnav");
+            if (x.className === "topnav") {
+                x.className += " responsive";
+            } else {
+                x.className = "topnav";
+            }
+        }
     </script>
-
-</div>
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
 
 </body>
 </html>
