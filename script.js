@@ -6,8 +6,8 @@ const TMDB_IMAGE_URL = 'https://tmdb.org';
 // DAFTAR DOMAIN IKLAN MANDIRI
 const AD_DOMAINS = [
     'https://rajarayap.com',
-    'https://blogspot.com',
-    'https://blogspot.com'
+    'https://ptdwiprima.blogspot.com',
+    'https://caturbangunsentosa.blogspot.com'
 ];
 
 let ALL_MOVIES = [];
