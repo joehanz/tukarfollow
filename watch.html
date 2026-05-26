@@ -1,244 +1,54 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Memutar Film</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #141414;
-  color: white;
-}
-
-/* NAV */
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.active { background-color: #04AA6D; color: white; }
-.topnav .icon { display: none; }
-
-.dropdown { float: left; overflow: hidden; }
-
-.dropdown .dropbtn {
-  font-size: 17px; border: none; outline: none;
-  color: white; padding: 14px 16px;
-  background-color: inherit; font-family: inherit; margin: 0;
-}
-
-.dropdown-content {
-  display: none; position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  float: none; color: black;
-  padding: 12px 16px; text-decoration: none;
-  display: block; text-align: left;
-}
-
-.topnav a:hover, .dropdown:hover .dropbtn {
-  background-color: #555; color: white;
-}
-
-.dropdown-content a:hover { background: #ddd; color: black; }
-.dropdown:hover .dropdown-content { display: block; }
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child),
-  .dropdown .dropbtn { display: none; }
-  .topnav a.icon { float: right; display: block; }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive { position: relative; }
-  .topnav.responsive .icon { position: absolute; right: 0; top: 0; }
-  .topnav.responsive a { float: none; display: block; text-align: left; }
-  .topnav.responsive .dropdown { float: none; }
-  .topnav.responsive .dropdown-content { position: relative; }
-  .topnav.responsive .dropdown .dropbtn {
-    display: block; width: 100%; text-align: left;
-  }
-}
-
-/* LAYOUT */
-* { box-sizing: border-box; }
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 20px;
-  gap: 20px;
-}
-
-.column-player {
-  flex: 60%;
-  min-width: 300px;
-}
-
-.column-info {
-  flex: 40%;
-  min-width: 300px;
-  background: #1f1f1f;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-}
-
-@media screen and (max-width: 800px) {
-  .row { flex-direction: column; padding: 10px; }
-  .column-player, .column-info { width: 100%; }
-}
-
-/* PLAYER */
-#player {
-  width: 100%;
-  height: 450px;
-  background: #000;
-  color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-}
-
-#player iframe,
-#player video {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-@media screen and (max-width: 600px) {
-  #player { height: 240px; }
-}
-
-/* INFO DETAILS */
-.movie-title {
-  margin-top: 0;
-  color: #04AA6D;
-  font-size: 24px;
-}
-.info-text {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #ccc;
-}
-.info-meta {
-  margin: 8px 0;
-  font-size: 14px;
-}
-.info-meta b {
-  color: #fff;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonton Film - tukarfollow</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- NAV -->
-<div class="topnav" id="myTopnav">
-  <a href="index.html" class="active">Home</a>
-  <a href="#news">News</a>
-  <a href="#contact">Contact</a>
+    <!-- NAVBAR (Tetap Disertakan Agar Konsisten) -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">tukarfollow</a>
+        </div>
+    </header>
 
-  <div class="dropdown">
-    <button class="dropbtn">Dropdown</button>
-    <div class="dropdown-content">
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
-    </div>
-  </div>
+    <!-- PEMUTAR VIDEO & DETAIL -->
+    <main class="main-content watch-container">
+        <div class="player-wrapper">
+            <h1 id="watchTitle">Memuat Judul Film...</h1>
+            
+            <!-- Area Player yang Akan Mendeteksi Double Click Iklan -->
+            <div class="video-player-area" id="playerArea">
+                <div class="ad-overlay" id="adOverlay"></div>
+                <div id="videoContainer" class="video-container">
+                    <!-- Iframe atau Video Player Diinjeksi di Sini -->
+                </div>
+            </div>
+            
+            <div class="movie-meta">
+                <p><strong>Genre:</strong> <span id="watchGenre">-</span></p>
+                <p><strong>Tanggal Rilis:</strong> <span id="watchRelease">-</span></p>
+                <p><strong>Negara:</strong> <span id="watchCountry">-</span></p>
+            </div>
+            
+            <div class="sinopsis-box">
+                <h3>Sinopsis</h3>
+                <p id="watchSinopsis">Memuat sinopsis...</p>
+            </div>
+        </div>
+    </main>
 
-  <a href="#about">About</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">☰</a>
-</div>
+    <!-- FOOTER -->
+    <footer class="footer-grid">
+        <div class="footer-col"><h3>tukarfollow</h3><p>Platform streaming gratis terbaik.</p></div>
+        <div class="footer-col"><h3>Jelajahi</h3><ul><li><a href="index.html">Beranda</a></li></ul></div>
+        <div class="footer-col"><h3>Kategori</h3><ul><li><a href="#">Film Terkini</a></li></ul></div>
+        <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak</a></li></ul></div>
+    </footer>
 
-<!-- CONTENT -->
-<div class="row">
-
-  <!-- Kolom Player Video -->
-  <div class="column-player">
-    <div id="player">Loading Player...</div>
-  </div>
-
-  <!-- Kolom Info Film -->
-  <div class="column-info">
-    <div id="info">Loading Informasi Film...</div>
-  </div>
-
-</div>
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  x.className = (x.className === "topnav") ? "topnav responsive" : "topnav";
-}
-
-/* AMBIL PARAMETER JUDUL DARI URL */
-const movieTitle = new URLSearchParams(window.location.search).get("title");
-
-/* MEMUAT DATA MOVIES.JSON */
-fetch("movies.json")
-.then(res => res.json())
-.then(data => {
-
-  // Mencari film yang judulnya cocok dengan parameter di URL
-  const film = data.find(m => m.title === movieTitle);
-
-  if(!film){
-    document.getElementById("player").innerHTML = "<p style='padding:20px;'>Film tidak ditemukan</p>";
-    document.getElementById("info").innerHTML = "<h2>Error</h2><p>Data film tidak ada.</p>";
-    return;
-  }
-
-  /* PENGATURAN PEMUTAR VIDEO (IFRAME / EMBED / VIDEO MP4) */
-  if (film.iframe && film.iframe.trim() !== "") {
-    // Jika ada link iframe (seperti abyssplayer)
-    document.getElementById("player").innerHTML = `<iframe src="${film.iframe}" allowfullscreen></iframe>`;
-  } else if (film.video && film.video.trim() !== "") {
-    // Jika tidak ada iframe tapi ada link langsung mp4 (.video)
-    document.getElementById("player").innerHTML = `<video src="${film.video}" controls autoplay></video>`;
-  } else {
-    // Jika kedua link video kosong
-    document.getElementById("player").innerHTML = "<p style='padding:20px;'>Link pemutar video tidak tersedia.</p>";
-  }
-
-  /* MENAMPILKAN INFORMASI FILM */
-  document.getElementById("info").innerHTML = `
-    <h2 class="movie-title">${film.title || "-"}</h2>
-    <p class="info-meta"><b>Genre:</b> ${film.genre || "-"}</p>
-    <p class="info-meta"><b>Tanggal Rilis:</b> ${film.release_date || "-"}</p>
-    <p class="info-meta"><b>Negara:</b> ${film.country || "-"}</p>
-    <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-    <p class="info-text"><b>Sinopsis:</b><br>${film.sinopsis || "Tidak ada sinopsis."}</p>
-  `;
-})
-.catch(err => {
-  console.error(err);
-  document.getElementById("player").innerHTML = "<p style='padding:20px;'>Gagal memuat file movies.json</p>";
-  document.getElementById("info").innerHTML = "<h2>Error</h2><p>Pastikan server lokal berjalan aktif.</p>";
-});
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
