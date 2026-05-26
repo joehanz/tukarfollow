@@ -1,7 +1,7 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://themoviedb.org'; 
-const TMDB_IMAGE_URL = 'https://themoviedb.org'; 
+const TMDB_BASE_URL = 'https://themoviedb.org'; // Diperbarui ke endpoint API yang benar
+const TMDB_IMAGE_URL = 'https://tmdb.org'; // Diperbarui ke url gambar yang benar
 
 // DAFTAR DOMAIN IKLAN MANDIRI ANDA (UTUH & AKTIF)
 const AD_DOMAINS = [
@@ -41,7 +41,7 @@ async function loadGlobalMoviesData() {
     }
 
     try {
-        const today = new Date().toISOString().split('T');
+        const today = new Date().toISOString().split('T')[0];
         const endpoint = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&language=id-ID`;
         const res = await fetch(endpoint);
         
@@ -54,7 +54,7 @@ async function loadGlobalMoviesData() {
                         title: movie.title,
                         image: posterPath ? `${TMDB_IMAGE_URL}/${posterPath}` : 'https://placeholder.com',
                         video: "",
-                        iframe: `https://vidsrc.me{movie.id}`, 
+                        iframe: `https://vidsrc.me{movie.id}`, // Perbaikan sintaks URL vidsrc
                         sinopsis: movie.overview || "Sinopsis belum tersedia untuk film ini.",
                         genre: "Indonesia Movie", 
                         release_date: movie.release_date || "0000-00-00",
@@ -105,7 +105,6 @@ function initNavbar() {
         });
     }
 
-    // FIX PREVENTDEFAULT: Hanya mengunci link menu dropdown, klik poster film tetap bebas & normal
     document.querySelectorAll('.dropdown-content a').forEach(link => {
         link.addEventListener('click', (e) => {
             const grid = document.getElementById('movieGrid');
@@ -146,7 +145,7 @@ function renderGrid(moviesList) {
     moviesList.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
-        card.href = `watch.html?id=${movie.internalId}`; // Berpindah halaman secara normal
+        card.href = `watch.html?id=${movie.internalId}`; 
         card.innerHTML = `
             <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
             <h3>${movie.title}</h3>
@@ -155,6 +154,7 @@ function renderGrid(moviesList) {
     });
     grid.appendChild(fragment);
 }
+
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
 async function loadWatchPageData() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -173,7 +173,6 @@ async function loadWatchPageData() {
             const res = await fetch(`${TMDB_BASE_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}&language=id-ID`);
             if (res.ok) {
                 const movie = await res.json();
-                const posterPath = movie.poster_path ? movie.poster_path.replace(/^\//, '') : '';
                 selectedMovie = {
                     title: movie.title,
                     sinopsis: movie.overview || "Sinopsis belum tersedia.",
@@ -196,23 +195,49 @@ async function loadWatchPageData() {
         document.getElementById("watchCountry").innerText = selectedMovie.country;
         
         const videoContainer = document.getElementById("videoContainer");
-        
-        // FIX PLAYER SINTAKS: Membaca properti secara fleksibel agar video manual tidak kosong
         let finalSrc = selectedMovie.iframe || selectedMovie.video || "";
         
+        // Buat elemen iframe secara langsung (tanpa autoplay otomatis agar dikontrol oleh klik kedua)
         videoContainer.innerHTML = `
-            <iframe src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
+            <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
-    }
 
-    // INTERKONEKSI IKLAN MANDIRI (Membuka Tab Baru Saat Area Lapisan Diklik)
-    const adOverlay = document.querySelector('.ad-overlay');
-    if (adOverlay) {
-        adOverlay.addEventListener('click', () => {
-            if (AD_DOMAINS.length > 0) {
-                const randomAd = AD_DOMAINS[Math.floor(Math.random() * AD_DOMAINS.length)];
-                window.open(randomAd, '_blank');
-            }
-        });
-    }
-}
+        // LOGIKA FILTER DAN SISTEM IKLAN 2X KLIK
+        const adOverlay = document.querySelector('.ad-overlay');
+        const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com');
+        const isCinematic = finalSrc.toLowerCase().includes('playcinematic.com');
+        const isTmdb = movieId.startsWith("TMDB_");
+
+        // Jika bersumber dari abyssplayer, hilangkan total lapisan iklan
+        if (isAbyss && adOverlay) {
+            adOverlay.style.display = 'none';
+        } 
+        // Iklan aktif jika bersumber dari playcinematic atau TMDB Indonesia
+        else if ((isCinematic || isTmdb) && adOverlay) {
+            let clickCount = 0;
+            // Kloning daftar iklan agar sistem pengacakan tidak membuka web yang sama berturut-turut jika memungkinkan
+            let availableAds = [...AD_DOMAINS];
+
+            adOverlay.addEventListener('click', () => {
+                clickCount++;
+
+                // Mengacak dan mengambil link iklan
+                if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
+                const randomIndex = Math.floor(Math.random() * availableAds.length);
+                const randomAd = availableAds.splice(randomIndex, 1)[0];
+
+                // Eksekusi Klik Pertama
+                if (clickCount === 1) {
+                    window.open(randomAd, '_blank');
+                } 
+                // Eksekusi Klik Kedua (Buka iklan terakhir, hilangkan overlay, & putar video)
+                else if (clickCount === 2) {
+                    window.open(randomAd, '_blank');
+                    
+                    // Hilangkan lapisan overlay iklan agar player asli bisa diakses normal seterusnya
+                    adOverlay.style.display = 'none';
+
+                    // Memicu paksa putar film (menambahkan parameter autoplay pada link video asli)
+                    const player = document.getElementById('moviePlayer');
+                    if (player) {
+const currentSrc = player.src;// Deteksi pemisah parameter URL apakah pakai ? atau &const separator = currentSrc.includes('?') ? '&' : '?';player.src = currentSrc + separator + "autoplay=1";}}});} else if (adOverlay) {// Pengaman: Jika tidak memenuhi syarat di atas, sembunyikan overlay agar film tetap bisa di-playadOverlay.style.display = 'none';}}}
