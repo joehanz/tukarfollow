@@ -107,8 +107,9 @@
         <div class="footer-col"><h3>Kategori</h3><ul><li><a href="indonesia.html">Film Indonesia</a></li></ul></div>
         <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak Kami</a></li></ul></div>
     </footer>
-        <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
+       
     <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
+        <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
     <script>
         // CONFIG UTAMA API TMDB
         const API_KEY = '9e335d21d35f04917b218bae7adc881f';
@@ -143,7 +144,7 @@
             }
         });
 
-        // FUNGSI UTAMA DENGAN JEMBATAN PROXY ANTI-BLOKIR CORS GITHUB PAGES
+        // FUNGSI UTAMA DENGAN JEMBATAN PROXY ALTERNATIF YANG JAUH LEBIH STABIL
         function fetchMoviesFromTMDB(pageNumber) {
             const d = new Date();
             const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -151,18 +152,15 @@
             // Tautan asli TMDB
             const targetEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${pageNumber}`;
             
-            // PERBAIKAN: Membungkus link asli menggunakan proxy kustom AllOrigins agar lolos sensor browser
-            const secureProxyUrl = `https://allorigins.win{encodeURIComponent(targetEndpoint)}`;
+            // PERBAIKAN CADANGAN: Menggunakan proxy alternatif 'corsproxy.io' yang jauh lebih cepat dan jarang down
+            const secureProxyUrl = `https://corsproxy.io{encodeURIComponent(targetEndpoint)}`;
 
             fetch(secureProxyUrl)
                 .then(res => {
-                    if (!res.ok) throw new Error("Server proxy sibuk.");
+                    if (!res.ok) throw new Error("HTTP Status: " + res.status);
                     return res.json();
                 })
-                .then(wrapperData => {
-                    // AllOrigins membungkus data asli di dalam properti .contents dalam bentuk teks string
-                    const data = JSON.parse(wrapperData.contents);
-                    
+                .then(data => {
                     if (data.results && data.results.length > 0) {
                         const mapped = data.results.map(movie => ({
                             title: movie.title,
@@ -175,12 +173,18 @@
                         injectPaginationButton(); 
                     } else {
                         const statusEl = document.getElementById('loadingStatus');
-                        if (statusEl) statusEl.innerText = "Data kosong dari server.";
+                        if (statusEl) statusEl.innerText = "Data kosong dari server TMDB.";
                     }
                 })
                 .catch((err) => {
+                    console.error("Detail Eror:", err);
                     const statusEl = document.getElementById('loadingStatus');
-                    if (statusEl) statusEl.innerText = "Gagal memuat data TMDB. Hubungkan ulang jaringan hulu.";
+                    if (statusEl) {
+                        statusEl.innerHTML = `
+                            Gagal memuat data TMDB.<br>
+                            <small style="color:#ff4a4a;">Penyebab: ${err.message}. Hubungkan ulang jaringan hulu atau periksa status API Key Anda.</small>
+                        `;
+                    }
                 });
         }
 
@@ -232,12 +236,14 @@
                 const d = new Date();
                 const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
                 const nextEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
-                const proxyNextUrl = `https://allorigins.win{encodeURIComponent(nextEndpoint)}`;
+                const proxyNextUrl = `https://corsproxy.io{encodeURIComponent(nextEndpoint)}`;
 
                 fetch(proxyNextUrl)
-                    .then(res => res.json())
-                    .then(wrapperData => {
-                        const data = JSON.parse(wrapperData.contents);
+                    .then(res => {
+                        if (!res.ok) throw new Error();
+                        return res.json();
+                    })
+                    .then(data => {
                         if (data.results && data.results.length > 0) {
                             const mapped = data.results.map(movie => ({
                                 title: movie.title,
@@ -259,7 +265,6 @@
             grid.after(btnWrapper);
         }
     </script>
-
 
 </body>
         
