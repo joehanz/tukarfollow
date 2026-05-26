@@ -109,7 +109,8 @@
     </footer>
        
     <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
-        <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
+        
+    <!-- JAVASCRIPT TANAM LANGSUNG (VERSI FINISH ANTI-BLOKIR BROWSER) -->
     <script>
         // CONFIG UTAMA API TMDB
         const API_KEY = '9e335d21d35f04917b218bae7adc881f';
@@ -120,8 +121,9 @@
         let MOVIE_POOL = [];
         let page = 1;
 
-        // EKSEKUSI UTAMA
+        // EKSEKUSI UTAMA (Otomatis saat halaman siap)
         window.addEventListener('DOMContentLoaded', () => {
+            // Kontrol Navigasi Burger Menu Mobile
             const burgerBtn = document.getElementById('burgerBtn');
             const navMenu = document.getElementById('navMenu');
             if (burgerBtn && navMenu) {
@@ -131,9 +133,10 @@
                 });
             }
 
-            // Jalankan penarikan data halaman 1
+            // Jalankan penarikan data halaman pertama
             fetchMoviesFromTMDB(page);
 
+            // Input Pencarian Real-Time Khusus Film Indonesia
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
@@ -144,23 +147,26 @@
             }
         });
 
-        // FUNGSI UTAMA DENGAN JEMBATAN PROXY ALTERNATIF YANG JAUH LEBIH STABIL
+        // FUNGSI PENARIK DATA DENGAN JEMBATAN PROXY DEVELOPE RESMI STABIL
         function fetchMoviesFromTMDB(pageNumber) {
             const d = new Date();
             const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             
-            // Tautan asli TMDB
+            // Tautkan endpoint asli ke server TMDB
             const targetEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${pageNumber}`;
             
-            // PERBAIKAN CADANGAN: Menggunakan proxy alternatif 'corsproxy.io' yang jauh lebih cepat dan jarang down
-            const secureProxyUrl = `https://corsproxy.io{encodeURIComponent(targetEndpoint)}`;
+            // PERBAIKAN UTAMA: Menggunakan proxy bypass khusus untuk meloloskan aturan sensor HTTPS GitHub Pages
+            const secureBypassProxy = `https://allorigins.win{encodeURIComponent(targetEndpoint)}`;
 
-            fetch(secureProxyUrl)
+            fetch(secureBypassProxy)
                 .then(res => {
-                    if (!res.ok) throw new Error("HTTP Status: " + res.status);
+                    if (!res.ok) throw new Error("Jaringan hulu sibuk");
                     return res.json();
                 })
-                .then(data => {
+                .then(wrapper => {
+                    // Ekstrak string data murni dari dalam bungkus proxy
+                    const data = JSON.parse(wrapper.contents);
+                    
                     if (data.results && data.results.length > 0) {
                         const mapped = data.results.map(movie => ({
                             title: movie.title,
@@ -168,31 +174,43 @@
                             id: movie.id
                         }));
 
+                        // Satukan data halaman baru ke penyimpanan tanpa membuang data lama
                         MOVIE_POOL = [...MOVIE_POOL, ...mapped];
                         printGrid(MOVIE_POOL);
                         injectPaginationButton(); 
                     } else {
-                        const statusEl = document.getElementById('loadingStatus');
-                        if (statusEl) statusEl.innerText = "Data kosong dari server TMDB.";
+                        document.getElementById('loadingStatus').innerText = "Data kosong dari server.";
                     }
                 })
                 .catch((err) => {
-                    console.error("Detail Eror:", err);
-                    const statusEl = document.getElementById('loadingStatus');
-                    if (statusEl) {
-                        statusEl.innerHTML = `
-                            Gagal memuat data TMDB.<br>
-                            <small style="color:#ff4a4a;">Penyebab: ${err.message}. Hubungkan ulang jaringan hulu atau periksa status API Key Anda.</small>
-                        `;
-                    }
+                    // JALUR PENYELAMATAN CADANGAN: Jika proxy 1 down, tembak langsung menggunakan proxy cadangan 2 agar anti-gagal!
+                    const fallbackProxy = `https://corsproxy.io{encodeURIComponent(targetEndpoint)}`;
+                    fetch(fallbackProxy)
+                        .then(r => r.json())
+                        .then(data => {
+                            if(data.results) {
+                                const mapped = data.results.map(m => ({
+                                    title: m.title,
+                                    image: m.poster_path ? `${IMG_URL}${m.poster_path}` : 'https://placeholder.com',
+                                    id: m.id
+                                }));
+                                MOVIE_POOL = [...MOVIE_POOL, ...mapped];
+                                printGrid(MOVIE_POOL);
+                                injectPaginationButton();
+                            }
+                        })
+                        .catch(() => {
+                            const statusEl = document.getElementById('loadingStatus');
+                            if (statusEl) statusEl.innerText = "Gagal menembus sensor browser. Muat ulang halaman beberapa saat lagi.";
+                        });
                 });
         }
 
-        // PENCETAK GRID POSTER IDENTIK
+        // PENCETAK GRID POSTER IDENTIK (UX TUNGGAL)
         function printGrid(list) {
             const grid = document.getElementById('movieGrid');
             if (!grid) return;
-            grid.innerHTML = ""; 
+            grid.innerHTML = ""; // Hapus teks loading dari layar
 
             if (list.length === 0) {
                 grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
@@ -215,7 +233,7 @@
             grid.appendChild(fragment);
         }
 
-        // SISTEM GENERATOR PAGINATION PROXY COOPERATIVE
+        // SISTEM GENERATOR PAGINATION MANUAL (LIMIT 20 KEBALS CRASH)
         function injectPaginationButton() {
             const grid = document.getElementById('movieGrid');
             if (!grid || document.getElementById('moreBtn')) return;
@@ -226,7 +244,7 @@
             const btn = document.createElement('button');
             btn.id = "moreBtn";
             btn.innerText = "Muat Film Indonesia Lainnya ▾";
-            btn.style.cssText = "background-color: #0084ff; color: white; border: none; padding: 12px 28px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer;";
+            btn.style.cssText = "background-color: #0084ff; color: white; border: none; padding: 12px 28px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s;";
             
             btn.addEventListener('click', () => {
                 btn.innerText = "Memuat...";
@@ -236,14 +254,12 @@
                 const d = new Date();
                 const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
                 const nextEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
-                const proxyNextUrl = `https://corsproxy.io{encodeURIComponent(nextEndpoint)}`;
+                const proxyNextUrl = `https://allorigins.win{encodeURIComponent(nextEndpoint)}`;
 
                 fetch(proxyNextUrl)
-                    .then(res => {
-                        if (!res.ok) throw new Error();
-                        return res.json();
-                    })
-                    .then(data => {
+                    .then(res => res.json())
+                    .then(wrapper => {
+                        const data = JSON.parse(wrapper.contents);
                         if (data.results && data.results.length > 0) {
                             const mapped = data.results.map(movie => ({
                                 title: movie.title,
@@ -254,7 +270,18 @@
                             printGrid(MOVIE_POOL);
                         }
                     })
-                    .catch(err => console.error(err))
+                    .catch(() => {
+                        // Fallback pagination jika proxy 1 lambat
+                        fetch(`https://corsproxy.io{encodeURIComponent(nextEndpoint)}`)
+                            .then(r => r.json())
+                            .then(data => {
+                                if(data.results) {
+                                    const mapped = data.results.map(m => ({ title: m.title, image: m.poster_path ? `${IMG_URL}${m.poster_path}` : 'https://placeholder.com', id: m.id }));
+                                    MOVIE_POOL = [...MOVIE_POOL, ...mapped];
+                                    printGrid(MOVIE_POOL);
+                                }
+                            });
+                    })
                     .finally(() => {
                         btn.innerText = "Muat Film Indonesia Lainnya ▾";
                         btn.disabled = false;
@@ -267,4 +294,5 @@
     </script>
 
 </body>
+</html>
         
