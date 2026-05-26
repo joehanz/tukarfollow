@@ -1,9 +1,9 @@
 [
   {
     "title": "The Punisher: One Last Kill (2026)",
-    "image": "https://githubusercontent.com",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/7b4da699d7b5efc08d52db3fb77a47fd40f8684a/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
     "video": "",
-    "iframe": "https://abyssplayer.com_",
+    "iframe": "https://abyssplayer.com/S4FLBP5d_",
     "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
     "genre": ["Action", "Adventure", "Crime", "Drama", "Thriller"],
     "release_date": "18-05-2026",
@@ -11,9 +11,9 @@
   },
   {
     "title": "Couples Weekend (2025)",
-    "image": "https://githubusercontent.com",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/couples%20weekend.png",
     "video": "",
-    "iframe": "https://playcinematic.com",
+    "iframe": "https://playcinematic.com/video/Ci8TpCF0AN0sijr",
     "sinopsis": "Liburan tahun baru 2 pasangan berubah kacau saat rahasia perselingkuhan & kebohongan mulai terungkap.",
     "genre": ["Comedy", "Drama"],
     "release_date": "08-05-2026",
@@ -21,9 +21,9 @@
   },
   {
     "title": "Broad Trip (2026)",
-    "image": "https://githubusercontent.com",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film%20broad%20trip.webp",
     "video": "",
-    "iframe": "https://playcinematic.com",
+    "iframe": "https://playcinematic.com/video/7ubq8zQM49eYYEI",
     "sinopsis": "Empat sahabat nekat road trip liar lintas kota, tapi rahasia dan kekacauan bikin liburan berubah kacau.",
     "genre": ["Comedy", "Drama"],
     "release_date": "8-05-2026",
@@ -33,7 +33,7 @@
     "title": "My Dearest Assassin (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-my-dearest-assassin-2026.webp",
     "video": "",
-    "iframe": "https://abyssplayer.com",
+    "iframe": "https://abyssplayer.com/n0CHy0vP5",
     "sinopsis": "Gadis berdarah langka diburu musuh, lalu dilatih keluarga pembunuh demi membalas dendam.",
     "genre": ["Action", "Drama", "Romance", "Thriller"],
     "release_date": "07-05-2026",
@@ -43,20 +43,20 @@
     "title": "Swapped (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-swapped-2026.webp",
     "video": "",
-    "iframe": "https://abyssplayer.com",
+    "iframe": "https://abyssplayer.com/40XNx0ov4m",
     "sinopsis": "Dua satwa bermusuhan bertukar tubuh dan harus kompak bekerja sama demi bertahan hidup.",
     "genre": ["Adventure", "Animation", "Comedy", "Family", "Fantasy"],
     "release_date": "04-05-2026",
     "country": "China"
   },
   {
-    "title": "Film Comedy 5",
-    "image": "https://placeholder.com",
-    "video": "https://example.com",
-    "iframe": "https://abyssplayer.com",
-    "sinopsis": "Film komedi ringan dan lucu.",
-    "genre": ["Comedy"],
-    "release_date": "2025-03-15",
-    "country": "Indonesia"
+    "title": "Lee Cronin's The Mummy (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lee%20Cronin's%20The%20Mummy%20(2026).webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/hMvK1rYaa",
+    "sinopsis": "Anak perempuan yang hilang 8 tahun kembali membawa teror kutukan mumi kuno ke rumah keluarganya.",
+    "genre": ["Horor"],
+    "release_date": "30-04-2026",
+    "country": "Irlandia, Amerika Serikat, Spanyol, Kanada"
   }
 ]
