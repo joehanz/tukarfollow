@@ -71,8 +71,10 @@ body {
 }
 
 /* MENU DROPDOWN DENGAN VISUALISASI SMOOTH */
+/* MENU DROPDOWN DENGAN VISUALISASI SMOOTH */
 .dropdown-wrapper { 
     position: relative; 
+    display: inline-block;
 }
 
 .dropbtn { 
@@ -82,13 +84,13 @@ body {
     font-size: 15px; 
     font-weight: 500;
     cursor: pointer; 
-    padding: 10px 5px; 
+    padding: 24px 10px; /* Diperlebar ke atas-bawah agar area deteksi kursor menyatu dengan navbar */
 }
 
 .dropdown-content { 
     display: block; 
     position: absolute; 
-    top: 45px; /* Didekatkan dari 50px ke 45px untuk membuang jeda kosong */
+    top: 100%; /* Otomatis menempel tepat di bawah area pembungkus tanpa celah kosong */
     right: 0; 
     background-color: #141417; 
     min-width: 160px; 
@@ -96,15 +98,16 @@ body {
     border-radius: 6px; 
     opacity: 0; 
     pointer-events: none; 
-    transform: translateY(-10px); 
-    transition: opacity 0.3s ease, transform 0.3s ease; 
+    transform: translateY(5px); /* Jarak visual saat tertutup */
+    transition: opacity 0.2s ease, transform 0.2s ease; 
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    margin-top: -5px; /* Menghilangkan celah kosong tak kasat mata agar kursor tidak loss */
 }
 
 .dropdown-wrapper:hover .dropdown-content { 
     opacity: 1; 
     pointer-events: auto; 
-    transform: translateY(0); 
+    transform: translateY(0); /* Bergerak mulus menempel ke menu */
 }
 
 .dropdown-content a { 
@@ -120,6 +123,7 @@ body {
     background-color: #1c1c21; 
     color: #fff; 
 }
+
 
 /* IKON BURGER MENU STRUKTUR */
 .burger-menu { 
