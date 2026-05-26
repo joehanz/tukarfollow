@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nonton Film - tukarfollow</title>
+    <title id="metaTitle">Nonton Streaming Movie Sub Indo Gratis - tukarfollow</title>
+    <meta id="metaDesc" name="description" content="Nonton film streaming movie sub indo gratis terlengkap dengan kualitas lancar kualitas HD terbaik.">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph Dinamis -->
+    <meta id="ogTitle" property="og:title" content="">
+    <meta id="ogDesc" property="og:description" content="">
+    <meta id="ogImage" property="og:image" content="">
+    <meta property="og:type" content="video.movie">
+    <link rel="icon" type="image/png" href="https://githubusercontent.com">
     <link rel="stylesheet" href="style.css">
+
     <style>
         /* CONTAINER CAROUSEL FILM SERUPA */
 .related-section {
@@ -253,6 +262,16 @@ if (btnPrev && btnNext && carousel) {
     btnNext.addEventListener('click', () => {
         carousel.scrollLeft += 300; // Jarak geser ke kanan
     });
+}
+
+        if (document.getElementById('metaTitle') && typeof currentMovie !== 'undefined') {
+    const seoTitle = `Nonton ${currentMovie.title} Sub Indo Streaming Gratis - tukarfollow`;
+    const seoDesc = `Streaming Movie ${currentMovie.title} Sub Indo. Sinopsis: ${currentMovie.sinopsis.substring(0, 150)}... Nonton gratis bioskop online terupdate kualitas jernih.`;
+    document.title = seoTitle;
+    document.getElementById('metaDesc').setAttribute('content', seoDesc);
+    if(document.getElementById('ogTitle')) document.getElementById('ogTitle').setAttribute('content', seoTitle);
+    if(document.getElementById('ogDesc')) document.getElementById('ogDesc').setAttribute('content', seoDesc);
+    if(document.getElementById('ogImage')) document.getElementById('ogImage').setAttribute('content', currentMovie.image);
 }
 
     </script>
