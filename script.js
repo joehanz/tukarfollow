@@ -1,7 +1,7 @@
-// KONFIGURASI PARAMETER RESMI API TMDB
+// KONFIGURASI PARAMETER RESMI API TMDB (SUDAH DIPERBAIKI)
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://themoviedb.org';
-const TMDB_IMAGE_URL = 'https://tmdb.org'; // Resolusi w300 agar poster super ringan dimuat
+const TMDB_BASE_URL = 'https://themoviedb.org'; // GERBANG DATA RESMI
+const TMDB_IMAGE_URL = 'https://tmdb.org'; // GERBANG GAMBAR POSTER RESMI
 
 // Global Data Storage
 let ALL_MOVIES = [];
@@ -99,7 +99,7 @@ async function loadAllMoviesData() {
 
     // 2. Ambil data dari API TMDB Resmi (Khusus Film Indonesia & Sudah Rilis)
     try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split('T')[0]; // Format tanggal murni YYYY-MM-DD
         const endpoint = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}`;
         const res = await fetch(endpoint);
         
