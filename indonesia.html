@@ -107,7 +107,6 @@
         <div class="footer-col"><h3>Kategori</h3><ul><li><a href="indonesia.html">Film Indonesia</a></li></ul></div>
         <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak Kami</a></li></ul></div>
     </footer>
-
         <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
     <script>
         // CONFIG UTAMA API TMDB
@@ -147,12 +146,15 @@
 
         // FUNGSI PENARIKAN DATA TERBATAS 20 ITEM PER HALAMAN DARI TMDB
         function fetchMoviesFromTMDB(pageNumber) {
-            const today = new Date().toISOString().split('T')[0];
+            // PERBAIKAN FATAL: Menghasilkan string teks tanggal murni YYYY-MM-DD yang valid untuk TMDB
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            
             const endpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${pageNumber}`;
             
             fetch(endpoint)
                 .then(res => {
-                    if (!res.ok) throw new Error("Respon API Bermasalah");
+                    if (!res.ok) throw new Error("Status HTTP Eror: " + res.status);
                     return res.json();
                 })
                 .then(data => {
@@ -166,12 +168,15 @@
                         // Tumpuk data baru tanpa membuang data halaman sebelumnya
                         MOVIE_POOL = [...MOVIE_POOL, ...mapped];
                         printGrid(MOVIE_POOL);
-                        injectLoadMoreButton();
+                        injectPaginationButton(); // PERBAIKAN: Memanggil nama fungsi yang sinkron
+                    } else {
+                        const statusEl = document.getElementById('loadingStatus');
+                        if (statusEl) statusEl.innerText = "Tidak ada film Indonesia baru yang ditemukan dari server.";
                     }
                 })
-                .catch(() => {
+                .catch((err) => {
                     const statusEl = document.getElementById('loadingStatus');
-                    if (statusEl) statusEl.innerText = "Gagal memuat data dari server TMDB.";
+                    if (statusEl) statusEl.innerText = "Gagal memuat data dari server TMDB. (Detail: " + err.message + ")";
                 });
         }
 
@@ -179,7 +184,7 @@
         function printGrid(list) {
             const grid = document.getElementById('movieGrid');
             if (!grid) return;
-            grid.innerHTML = ""; // Bersihkan teks "Menghubungkan ke Server..."
+            grid.innerHTML = ""; // Bersihkan teks pemuat awal
 
             if (list.length === 0) {
                 grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
@@ -202,7 +207,7 @@
             grid.appendChild(fragment);
         }
 
-        // SISTEM GENERATOR PAGINATION MANUAL (LIMIT 20 KEBALS CRASH)
+        // SISTEM GENERATOR PAGINATION MANUAL (LIMIT 20 KEBAL CRASH)
         function injectPaginationButton() {
             const grid = document.getElementById('movieGrid');
             if (!grid || document.getElementById('moreBtn')) return;
@@ -220,12 +225,16 @@
                 btn.disabled = true;
                 page++;
                 
-                // Panggil halaman berikutnya secara asinkron terisolasi
-                const today = new Date().toISOString().split('T')[0];
+                // Panggil halaman berikutnya secara asinkron terisolasi menggunakan format tanggal terperbaiki
+                const d = new Date();
+                const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
                 const endpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
                 
                 fetch(endpoint)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) throw new Error("Gagal halaman selanjutnya");
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.results && data.results.length > 0) {
                             const mapped = data.results.map(movie => ({
@@ -248,3 +257,6 @@
             grid.after(btnWrapper);
         }
     </script>
+
+</body>
+        
