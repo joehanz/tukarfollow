@@ -1,7 +1,7 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3'; 
-const TMDB_IMAGE_URL = 'https://themoviedb.org'; // CDN Utama Gambar Resmi TMDB
+const TMDB_IMAGE_URL = 'https://themoviedb.org'; 
 
 const AD_DOMAINS = [
     'https://rajarayap.com',
@@ -11,7 +11,9 @@ const AD_DOMAINS = [
 
 let ALL_MOVIES = [];
 
+// Inisialisasi Utama Halaman Web dengan Kunci Asynchronous Sempurna
 document.addEventListener("DOMContentLoaded", async () => {
+    // FIX TMDB GRID: Menunggu database global terisi 100% penuh sebelum menggambar halaman utama
     await loadGlobalMoviesData();
     initNavbar();
     
@@ -31,13 +33,17 @@ async function loadGlobalMoviesData() {
         const res = await fetch('movies.json');
         if (res.ok) {
             const data = await res.json();
-            // Normalisasi agar format data genre dari file lokal selalu berupa array bersih
+            // FIX RELATED MANUAL: Memaksa pembersihan struktur genre sejak pertama kali data dibaca browser
             localData = data.map((item, idx) => {
-                let cleanGenre = ["Uncategorized"];
+                let cleanGenre = ["uncategorized"];
                 if (item.genre) {
                     cleanGenre = Array.isArray(item.genre) ? item.genre : item.genre.split(',').map(g => g.trim());
                 }
-                return { ...item, genre: cleanGenre, internalId: `LOCAL_${idx}` };
+                return { 
+                    ...item, 
+                    genre: cleanGenre.map(g => g.toLowerCase()), // Simpan dalam huruf kecil seragam
+                    internalId: `LOCAL_${idx}` 
+                };
             });
         }
     } catch (e) {
@@ -54,12 +60,11 @@ async function loadGlobalMoviesData() {
             if (data.results) {
                 tmdbData = data.results.map(movie => ({
                     title: movie.title,
-                    // FIX POSTER: Menjamin tanda garis miring (/) terpasang sempurna di depan path poster TMDB
-                    image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
+                    image: movie.poster_path ? `${TMDB_IMAGE_URL}/${movie.poster_path.replace(/^\//, '')}` : 'https://placeholder.com',
                     video: "",
                     iframe: `https://vidsrc.me{movie.id}`,
                     sinopsis: movie.overview || "Sinopsis belum tersedia untuk film ini.",
-                    genre: ["Indonesia Movie"], 
+                    genre: ["indonesia movie"], 
                     release_date: movie.release_date || "0000-00-00",
                     country: "Indonesia",
                     internalId: `TMDB_${movie.id}`
@@ -131,7 +136,7 @@ function initNavbar() {
 
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
-                filtered = ALL_MOVIES.filter(m => m.genre && m.genre.some(g => g.toLowerCase().trim() === genre.toLowerCase().trim()));
+                filtered = ALL_MOVIES.filter(m => m.genre && m.genre.includes(genre.toLowerCase().trim()));
             } else if (year) {
                 if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${year === 'klasik' ? 'Klasik (<2024)' : year}`;
                 filtered = ALL_MOVIES.filter(m => {
@@ -157,7 +162,7 @@ function initNavbar() {
     if (document.getElementById('movieGrid')) {
         if (filterGenre) {
             document.getElementById('sectionTitle').innerText = `Genre: ${filterGenre}`;
-            renderGrid(ALL_MOVIES.filter(m => m.genre && m.genre.some(g => g.toLowerCase().trim() === filterGenre.toLowerCase().trim())));
+            renderGrid(ALL_MOVIES.filter(m => m.genre && m.genre.includes(filterGenre.toLowerCase().trim())));
         } else if (filterYear) {
             document.getElementById('sectionTitle').innerText = `Tahun Rilis: ${filterYear}`;
             renderGrid(ALL_MOVIES.filter(m => m.release_date && new Date(m.release_date).getFullYear() === parseInt(filterYear)));
@@ -201,7 +206,7 @@ async function loadWatchPageData() {
         return;
     }
 
-    // FIX LOGIKA DATA: Mengambil data yang sudah terisi dan ternormalisasi sempurna dari database global ALL_MOVIES
+    // FIX LOGIKA DATA CAROUSEL: Membaca murni dari data master global ALL_MOVIES yang sudah ternormalisasi array
     let selectedMovie = ALL_MOVIES.find(m => m.internalId === movieId);
 
     if (!selectedMovie && movieId.startsWith("TMDB_")) {
@@ -213,11 +218,11 @@ async function loadWatchPageData() {
                 selectedMovie = {
                     title: movie.title,
                     sinopsis: movie.overview || "Sinopsis belum tersedia.",
-                    genre: ["Indonesia Movie"],
+                    genre: ["indonesia movie"],
                     release_date: movie.release_date,
                     country: "Indonesia",
                     iframe: `https://vidsrc.me{tmdbId}`,
-                    image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
+                    image: movie.poster_path ? `${TMDB_IMAGE_URL}/${movie.poster_path.replace(/^\//, '')}` : 'https://placeholder.com',
                     internalId: movieId
                 };
             }
@@ -229,7 +234,10 @@ async function loadWatchPageData() {
     if (selectedMovie) {
         document.getElementById("watchTitle").innerText = selectedMovie.title;
         document.getElementById("watchSinopsis").innerText = selectedMovie.sinopsis;
-        document.getElementById("watchGenre").innerText = Array.isArray(selectedMovie.genre) ? selectedMovie.genre.join(", ") : selectedMovie.genre;
+        
+        // Menampilkan teks genre kapital yang rapi untuk mata pengunjung
+        const displayGenres = selectedMovie.genre.map(g => g.charAt(0).toUpperCase() + g.slice(1));
+        document.getElementById("watchGenre").innerText = displayGenres.join(", ");
         document.getElementById("watchRelease").innerText = selectedMovie.release_date;
         document.getElementById("watchCountry").innerText = selectedMovie.country;
         
@@ -239,31 +247,26 @@ async function loadWatchPageData() {
             sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-modals"></iframe>
         `;
 
-        // Jalankan sistem Carousel film serupa
         generateRelatedCarousel(selectedMovie, ALL_MOVIES);
     }
 }
 
-// FIX RELATED MOVIES: Pengunci irisan filter genre sejenis secara mutlak
+// FIX RELATED MOVIES MUTLAK: Mengunci keakuratan 100% filter segenre tanpa bocor
 function generateRelatedCarousel(currentMovie, allMovies) {
     const carousel = document.querySelector('.movie-carousel');
     if (!carousel) return;
     carousel.innerHTML = "";
 
-    // 1. Ekstrak genre film saat ini (Pastikan bertipe Array teks kecil bersih)
-    const currentGenres = (Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre])
-        .map(g => g.toString().trim().toLowerCase());
+    // Data genre saat ini dipastikan sudah array huruf kecil rapi
+    const currentGenres = currentMovie.genre;
 
-    // 2. Filter ketat: Menjaring kecocokan genre di dalam database master
     const related = allMovies.filter(movie => {
+        // Singkirkan film aktif dari baris rekomendasi
         if (movie.internalId === currentMovie.internalId || movie.title === currentMovie.title) return false;
         if (!movie.genre) return false;
 
-        const targetGenres = (Array.isArray(movie.genre) ? movie.genre : [movie.genre])
-            .map(g => g.toString().trim().toLowerCase());
-
-        // Hukum Irisan: Lolos jika minimal ada 1 kesamaan kata genre
-        return targetGenres.some(g => currentGenres.includes(g));
+        // Cari irisan kesamaan kata kunci genre
+        return movie.genre.some(g => currentGenres.includes(g));
     });
 
     if (related.length === 0) {
@@ -271,7 +274,7 @@ function generateRelatedCarousel(currentMovie, allMovies) {
         return;
     }
 
-    // 3. Render kartu film ke dalam susunan HTML Carousel
+    // Bangun kartu film dengan CSS terisolasi
     related.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
