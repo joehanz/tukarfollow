@@ -108,20 +108,11 @@
         <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak Kami</a></li></ul></div>
     </footer>
        
-    <!-- JAVASCRIPT TANAM LANGSUNG (ANTI-TABRAKAN FILE) -->
-        
-    <!-- JAVASCRIPT TANAM LANGSUNG (VERSI FINISH ANTI-BLOKIR BROWSER) -->
+        <!-- JAVASCRIPT TANAM LANGSUNG (VERSI FINISH 100% AMAN LOKAL) -->
     <script>
-        // CONFIG UTAMA API TMDB
-        const API_KEY = '9e335d21d35f04917b218bae7adc881f';
-        const BASE_URL = 'https://themoviedb.org';
-        const IMG_URL = 'https://tmdb.org'; 
-
         // STORAGE DATA GLOBAL
         let MOVIE_POOL = [];
-        let page = 1;
 
-        // EKSEKUSI UTAMA (Otomatis saat halaman siap)
         window.addEventListener('DOMContentLoaded', () => {
             // Kontrol Navigasi Burger Menu Mobile
             const burgerBtn = document.getElementById('burgerBtn');
@@ -133,8 +124,8 @@
                 });
             }
 
-            // Jalankan penarikan data halaman pertama
-            fetchMoviesFromTMDB(page);
+            // Jalankan penarikan database lokal aman bebas sensor
+            fetchLocalIndonesianMovies();
 
             // Input Pencarian Real-Time Khusus Film Indonesia
             const searchInput = document.getElementById('searchInput');
@@ -147,62 +138,32 @@
             }
         });
 
-        // FUNGSI PENARIK DATA DENGAN JEMBATAN PROXY DEVELOPE RESMI STABIL
-        function fetchMoviesFromTMDB(pageNumber) {
-            const d = new Date();
-            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            
-            // Tautkan endpoint asli ke server TMDB
-            const targetEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${pageNumber}`;
-            
-            // PERBAIKAN UTAMA: Menggunakan proxy bypass khusus untuk meloloskan aturan sensor HTTPS GitHub Pages
-            const secureBypassProxy = `https://allorigins.win{encodeURIComponent(targetEndpoint)}`;
-
-            fetch(secureBypassProxy)
+        // FUNGSI PENARIK DATA KEBAL SENSOR (Membaca berkas internal sendiri)
+        function fetchLocalIndonesianMovies() {
+            fetch('indonesia.json')
                 .then(res => {
-                    if (!res.ok) throw new Error("Jaringan hulu sibuk");
+                    if (!res.ok) throw new Error("Berkas indonesia.json belum dibuat.");
                     return res.json();
                 })
-                .then(wrapper => {
-                    // Ekstrak string data murni dari dalam bungkus proxy
-                    const data = JSON.parse(wrapper.contents);
-                    
-                    if (data.results && data.results.length > 0) {
-                        const mapped = data.results.map(movie => ({
-                            title: movie.title,
-                            image: movie.poster_path ? `${IMG_URL}${movie.poster_path}` : 'https://placeholder.com',
-                            id: movie.id
-                        }));
-
-                        // Satukan data halaman baru ke penyimpanan tanpa membuang data lama
-                        MOVIE_POOL = [...MOVIE_POOL, ...mapped];
+                .then(data => {
+                    if (data && data.length > 0) {
+                        // Berikan penanda khusus internalId TMDB agar otomatis sinkron saat diklik menuju watch.html
+                        MOVIE_POOL = data.map((movie, idx) => {
+                            const urlObj = new URLSearchParams(movie.iframe.split('?')[1]);
+                            const tmdbId = urlObj.get('tmdb') || idx;
+                            return {
+                                ...movie,
+                                internalId: `TMDB_${tmdbId}`
+                            };
+                        });
+                        
                         printGrid(MOVIE_POOL);
-                        injectPaginationButton(); 
                     } else {
-                        document.getElementById('loadingStatus').innerText = "Data kosong dari server.";
+                        document.getElementById('loadingStatus').innerText = "Koleksi database film kosong.";
                     }
                 })
                 .catch((err) => {
-                    // JALUR PENYELAMATAN CADANGAN: Jika proxy 1 down, tembak langsung menggunakan proxy cadangan 2 agar anti-gagal!
-                    const fallbackProxy = `https://corsproxy.io{encodeURIComponent(targetEndpoint)}`;
-                    fetch(fallbackProxy)
-                        .then(r => r.json())
-                        .then(data => {
-                            if(data.results) {
-                                const mapped = data.results.map(m => ({
-                                    title: m.title,
-                                    image: m.poster_path ? `${IMG_URL}${m.poster_path}` : 'https://placeholder.com',
-                                    id: m.id
-                                }));
-                                MOVIE_POOL = [...MOVIE_POOL, ...mapped];
-                                printGrid(MOVIE_POOL);
-                                injectPaginationButton();
-                            }
-                        })
-                        .catch(() => {
-                            const statusEl = document.getElementById('loadingStatus');
-                            if (statusEl) statusEl.innerText = "Gagal menembus sensor browser. Muat ulang halaman beberapa saat lagi.";
-                        });
+                    document.getElementById('loadingStatus').innerText = "Gagal memuat database internal. Pastikan file indonesia.json sudah Anda buat di GitHub.";
                 });
         }
 
@@ -210,10 +171,10 @@
         function printGrid(list) {
             const grid = document.getElementById('movieGrid');
             if (!grid) return;
-            grid.innerHTML = ""; // Hapus teks loading dari layar
+            grid.innerHTML = ""; // Paksa bersihkan status teks loading awal
 
             if (list.length === 0) {
-                grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
+                grid.innerHTML = "<div class='loading-text'>Tidak ada film Indonesia yang cocok.</div>";
                 return;
             }
 
@@ -221,7 +182,7 @@
             list.forEach(movie => {
                 const card = document.createElement('a');
                 card.className = "movie-card";
-                card.href = `watch.html?id=TMDB_${movie.id}`;
+                card.href = `watch.html?id=${movie.internalId}`;
                 card.innerHTML = `
                     <div class="poster-wrapper">
                         <img src="${movie.image}" alt="${movie.title}" loading="lazy">
@@ -232,66 +193,8 @@
             });
             grid.appendChild(fragment);
         }
-
-        // SISTEM GENERATOR PAGINATION MANUAL (LIMIT 20 KEBALS CRASH)
-        function injectPaginationButton() {
-            const grid = document.getElementById('movieGrid');
-            if (!grid || document.getElementById('moreBtn')) return;
-
-            const btnWrapper = document.createElement('div');
-            btnWrapper.style.cssText = "grid-column: 1/-1; text-align: center; margin: 30px 0;";
-            
-            const btn = document.createElement('button');
-            btn.id = "moreBtn";
-            btn.innerText = "Muat Film Indonesia Lainnya ▾";
-            btn.style.cssText = "background-color: #0084ff; color: white; border: none; padding: 12px 28px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s;";
-            
-            btn.addEventListener('click', () => {
-                btn.innerText = "Memuat...";
-                btn.disabled = true;
-                page++;
-                
-                const d = new Date();
-                const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-                const nextEndpoint = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
-                const proxyNextUrl = `https://allorigins.win{encodeURIComponent(nextEndpoint)}`;
-
-                fetch(proxyNextUrl)
-                    .then(res => res.json())
-                    .then(wrapper => {
-                        const data = JSON.parse(wrapper.contents);
-                        if (data.results && data.results.length > 0) {
-                            const mapped = data.results.map(movie => ({
-                                title: movie.title,
-                                image: movie.poster_path ? `${IMG_URL}${movie.poster_path}` : 'https://placeholder.com',
-                                id: movie.id
-                            }));
-                            MOVIE_POOL = [...MOVIE_POOL, ...mapped];
-                            printGrid(MOVIE_POOL);
-                        }
-                    })
-                    .catch(() => {
-                        // Fallback pagination jika proxy 1 lambat
-                        fetch(`https://corsproxy.io{encodeURIComponent(nextEndpoint)}`)
-                            .then(r => r.json())
-                            .then(data => {
-                                if(data.results) {
-                                    const mapped = data.results.map(m => ({ title: m.title, image: m.poster_path ? `${IMG_URL}${m.poster_path}` : 'https://placeholder.com', id: m.id }));
-                                    MOVIE_POOL = [...MOVIE_POOL, ...mapped];
-                                    printGrid(MOVIE_POOL);
-                                }
-                            });
-                    })
-                    .finally(() => {
-                        btn.innerText = "Muat Film Indonesia Lainnya ▾";
-                        btn.disabled = false;
-                    });
-            });
-
-            btnWrapper.appendChild(btn);
-            grid.after(btnWrapper);
-        }
     </script>
+
 
 </body>
 </html>
