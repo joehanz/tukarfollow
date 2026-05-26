@@ -1,6 +1,6 @@
 // KONFIGURASI PARAMETER UTAMA
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://themoviedb.org';
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_URL = 'https://tmdb.org';
 
 // STORAGE DATA GLOBAL
@@ -48,16 +48,18 @@ async function startStreamingPlatform() {
     });
 }
 
-// FUNGSI PENARIKAN DATA AUTOMATIC DARI SERVER TMDB
+// FUNGSI PENARIKAN DATA DARI SERVER TMDB (PERBAIKAN: FORMAT TANGGAL VALID)
 async function loadMoreTMDBMovies(page) {
     isLoading = true;
-    const today = new Date().toISOString().split('T')[0];
+    
+    // Perbaikan: Ambil string tanggal murni YYYY-MM-DD yang dimengerti oleh TMDB
+    const d = new Date();
+    const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
     try {
+        // PERBAIKAN ENDPOINT: Menggunakan parameter release_date.lte yang tepat tanpa crash
         const urlEndpoint = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
         const res = await fetch(urlEndpoint);
-        if (!res.ok) throw new Error("Respon server API bermasalah");
-        
         const data = await res.json();
         
         if (data.results && data.results.length > 0) {
@@ -73,17 +75,20 @@ async function loadMoreTMDBMovies(page) {
                 internalId: `TMDB_${movie.id}`
             }));
 
-            // Tumpuk data TMDB baru ke penyimpanan global
+            // Tumpuk data baru ke dalam database global
             TMDB_MOVIES = [...TMDB_MOVIES, ...mappedTMDB];
-            
-            // Satukan kembali dengan data lokal buatan Anda
             ALL_MOVIES_DATA = [...LOCAL_MOVIES, ...TMDB_MOVIES];
 
             renderGrid(ALL_MOVIES_DATA);
+        } else {
+            // Jika halaman berikutnya kosong dari TMDB, pastikan halaman 1 tidak kosong
+            if(page === 1) {
+                ALL_MOVIES_DATA = [...LOCAL_MOVIES];
+                renderGrid(ALL_MOVIES_DATA);
+            }
         }
     } catch (e) {
         console.error("Gagal sinkronisasi data dengan server TMDB", e);
-        // Fallback: Jika TMDB down/gagal terhubung, pastikan film lokal Anda tetap tampil
         if(page === 1) {
             ALL_MOVIES_DATA = [...LOCAL_MOVIES];
             renderGrid(ALL_MOVIES_DATA);
@@ -98,8 +103,7 @@ function renderGrid(moviesList) {
     const grid = document.getElementById('movieGrid');
     if (!grid) return;
     
-    // Hapus elemen pemuat/loading text pada renderan pertama kali
-    grid.innerHTML = "";
+    grid.innerHTML = ""; // Menghilangkan teks "Memuat film..."
 
     if (moviesList.length === 0) {
         grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
@@ -207,7 +211,7 @@ async function initWatchPage() {
         console.error(e);
     }
 
-    // 2. Jika tidak ada di lokal, tembak API TMDB secara langsung bypass loading
+    // 2. Jika tidak ada di lokal, tembak API TMDB secara langsung bypass loading global
     if (!currentMovie && filmId && filmId.startsWith('TMDB_')) {
         const tmdbId = filmId.replace('TMDB_', '');
         try {
@@ -231,31 +235,22 @@ async function initWatchPage() {
         }
     }
 
-    // Pastikan status loading dihentikan dengan menyuntikkan konten teks fungsional
+    // Jika film tidak valid/tidak ditemukan hancurkan status macet
     if (!currentMovie) {
-        document.getElementById('watchTitle').innerText = "Film Tidak Ditemukan";
+        const titleEl = document.getElementById('watchTitle');
+        if(titleEl) titleEl.innerText = "Film Tidak Ditemukan";
         return;
     }
 
-    // Cetak data ke DOM komponen watch.html
-    document.getElementById('watchTitle').innerText = currentMovie.title;
-    document.getElementById('watchGenre').innerText = currentMovie.genre;
-    document.getElementById('watchRelease').innerText = currentMovie.release_date;
-    document.getElementById('watchCountry').innerText = currentMovie.country;
-    document.getElementById('watchSinopsis').innerText = currentMovie.sinopsis;
+    // Pengisian elemen teks ke file watch.html (Proteksi elemen Null)
+    if(document.getElementById('watchTitle')) document.getElementById('watchTitle').innerText = currentMovie.title;
+    if(document.getElementById('watchGenre')) document.getElementById('watchGenre').innerText = currentMovie.genre;
+    if(document.getElementById('watchRelease')) document.getElementById('watchRelease').innerText = currentMovie.release_date;
+    if(document.getElementById('watchCountry')) document.getElementById('watchCountry').innerText = currentMovie.country;
+    if(document.getElementById('watchSinopsis')) document.getElementById('watchSinopsis').innerText = currentMovie.sinopsis;
 
     const container = document.getElementById('videoContainer');
     const adOverlay = document.getElementById('adOverlay');
     
-    if (currentMovie.iframe) {
-        container.innerHTML = `<iframe src="${currentMovie.iframe}" allowfullscreen></iframe>`;
-    } else if (currentMovie.video) {
-        container.innerHTML = `<video id="nativeVideo" src="${currentMovie.video}" controls></video>`;
-    }
-
-    const videoSourceUrl = currentMovie.iframe || currentMovie.video;
-    if (videoSourceUrl.includes('abyssplayer.com')) {
-        if(adOverlay) adOverlay.classList.add('disabled');
-    } else if (adOverlay) {
-        let clickCount = 0;
-const targetAds = ["https://rajarayap.com", "blogspot.com", "blogspot.com"];adOverlay.addEventListener('click', () => {clickCount++;window.open(targetAds[Math.floor(Math.random() * targetAds.length)], '_blank');if (clickCount >= 2) {adOverlay.classList.add('disabled');const nVid = document.getElementById('nativeVideo');if (nVid) nVid.play();}});}loadRelatedCarousel(currentMovie, filmId);}// HANDLING LOAD CAROUSEL FILM SERUPAasync function loadRelatedCarousel(currentMovie, filmId) {const relatedGrid = document.getElementById('relatedGrid');if (!relatedGrid) return;try {const res = await fetch(${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=popularity.desc&page=1);if (res.ok) {const data = await res.json();if (data.results) {const carouselData = data.results.map(m => ({title: m.title,image: m.poster_path ? ${TMDB_IMAGE_URL}${m.poster_path} : 'placeholder.com',internalId: TMDB_${m.id}})).filter(m => m.internalId !== filmId);carouselData.slice(0, 10).forEach(movie => {const item = document.createElement('a');item.className = "movie-card";item.href = watch.html?id=${movie.internalId};item.innerHTML = <div class="poster-wrapper"> <img src="${movie.image}" alt="${movie.title}" loading="lazy"> </div> <h3>${movie.title}</h3>;relatedGrid.appendChild(item);});}}} catch(e) {console.error(e);}const btnPrev = document.getElementById('slidePrev');const btnNext = document.getElementById('slideNext');if (btnPrev && btnNext) {btnPrev.addEventListener('click', () => relatedGrid.scrollLeft -= 250);btnNext.addEventListener('click', () => relatedGrid.scrollLeft += 250);}}
+    if (container) {
+if (currentMovie.iframe) {container.innerHTML = <iframe src="${currentMovie.iframe}" allowfullscreen></iframe>;} else if (currentMovie.video) {container.innerHTML = <video id="nativeVideo" src="${currentMovie.video}" controls></video>;}}// Logika Pemutus Iklan Popunderconst videoSourceUrl = currentMovie.iframe || currentMovie.video;if (videoSourceUrl && videoSourceUrl.includes('abyssplayer.com')) {if(adOverlay) adOverlay.classList.add('disabled');} else if (adOverlay) {let clickCount = 0;const targetAds = ["https://rajarayap.com", "blogspot.com", "blogspot.com"];adOverlay.addEventListener('click', () => {clickCount++;window.open(targetAds[Math.floor(Math.random() * targetAds.length)], '_blank');if (clickCount >= 2) {adOverlay.classList.add('disabled');const nVid = document.getElementById('nativeVideo');if (nVid) nVid.play();}});}loadRelatedCarousel(currentMovie, filmId);}// HANDLING LOAD CAROUSEL FILM SERUPAasync function loadRelatedCarousel(currentMovie, filmId) {const relatedGrid = document.getElementById('relatedGrid');if (!relatedGrid) return;try {const res = await fetch(${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=popularity.desc&page=1);if (res.ok) {const data = await res.json();if (data.results) {const carouselData = data.results.map(m => ({title: m.title,image: m.poster_path ? ${TMDB_IMAGE_URL}${m.poster_path} : 'placeholder.com',internalId: TMDB_${m.id}})).filter(m => m.internalId !== filmId);carouselData.slice(0, 10).forEach(movie => {const item = document.createElement('a');item.className = "movie-card";item.href = watch.html?id=${movie.internalId};item.innerHTML = <div class="poster-wrapper"> <img src="${movie.image}" alt="${movie.title}" loading="lazy"> </div> <h3>${movie.title}</h3>;relatedGrid.appendChild(item);});}}} catch(e) {console.error(e);}const btnPrev = document.getElementById('slidePrev');const btnNext = document.getElementById('slideNext');if (btnPrev && btnNext) {btnPrev.addEventListener('click', () => relatedGrid.scrollLeft -= 250);btnNext.addEventListener('click', () => relatedGrid.scrollLeft += 250);}}
