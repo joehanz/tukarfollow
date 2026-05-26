@@ -162,6 +162,7 @@ function renderGrid(moviesList) {
     });
     grid.appendChild(fragment);
 }
+
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
 async function loadWatchPageData() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -233,34 +234,52 @@ async function loadWatchPageData() {
 }
 
 // LOGIKA UTAMA CAROUSEL FILM SERUPA (RELATED MOVIES)
+// FIX LOGIKA FILTER & UKURAN CAROUSEL FILM SERUPA
 function generateRelatedCarousel(currentMovie, allMovies) {
     const carousel = document.querySelector('.movie-carousel');
     if (!carousel) return;
     carousel.innerHTML = "";
 
+    // 1. Saring secara ketat: Hanya film dengan GENRE yang sama (dan bukan film itu sendiri)
     const related = allMovies.filter(movie => {
         if (movie.title === currentMovie.title) return false;
         if (!movie.genre || !currentMovie.genre) return false;
 
-        const currentGenres = Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre];
-        const targetGenres = Array.isArray(movie.genre) ? movie.genre : [movie.genre];
+        // Ubah data genre film saat ini menjadi bentuk array huruf kecil
+        const currentGenres = (Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre])
+            .map(g => g.trim().toLowerCase());
 
-        return targetGenres.some(g => currentGenres.map(cg => cg.toLowerCase()).includes(g.toLowerCase()));
+        // Ubah data genre film target menjadi bentuk array huruf kecil
+        const targetGenres = (Array.isArray(movie.genre) ? movie.genre : [movie.genre])
+            .map(g => g.trim().toLowerCase());
+
+        // Cek apakah ada minimal satu genre yang sama persis
+        return targetGenres.some(g => currentGenres.includes(g));
     });
 
+    // 2. Jika tidak ada film dengan genre seragam, tampilkan pesan kosong
     if (related.length === 0) {
-        carousel.innerHTML = "<div style='color:#8e8e93; padding: 10px;'>Tidak ada film serupa ditemukan.</div>";
+        carousel.innerHTML = "<div style='color:#8e8e93; padding: 10px; font-size:14px;'>Tidak ada film serupa ditemukan.</div>";
         return;
     }
 
+    // 3. Masukkan film hasil filter ke dalam HTML Carousel dengan ukuran dikunci (Kunci CSS Flex)
     related.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
+        
+        // Trik CSS langsung: Memaksa kartu berukuran sama rata (140px) dan tidak rusak di dalam carousel
+        card.style.flex = "0 0 140px";
+        card.style.width = "140px";
+        
         card.href = `watch.html?id=${movie.internalId}`;
         card.innerHTML = `
-            <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
-            <h3>${movie.title}</h3>
+            <div class="poster-wrapper" style="width:100%; aspect-ratio:2/3;">
+                <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <h3 style="margin-top:8px; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${movie.title}</h3>
         `;
         carousel.appendChild(card);
     });
 }
+
