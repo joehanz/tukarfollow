@@ -6,8 +6,8 @@ const TMDB_IMAGE_URL = 'https://themoviedb.org'; // FIX: Menggunakan server gamb
 // DAFTAR DOMAIN IKLAN MANDIRI
 const AD_DOMAINS = [
     'https://rajarayap.com',
-    'https://ptdwiprima.blogspot.com',
-    'https://caturbangunsentosa.blogspot.com'
+    'https://blogspot.com',
+    'https://blogspot.com'
 ];
 
 let ALL_MOVIES = [];
@@ -66,7 +66,6 @@ function initNavbar() {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
                 filtered = ALL_MOVIES.filter(m => {
                     if (!m.genre) return false;
-                    // FIX: Mengatasi pengecekan jika genre berbentuk array maupun string biasa
                     if (Array.isArray(m.genre)) {
                         return m.genre.some(g => g.toLowerCase().includes(genre.toLowerCase()));
                     }
@@ -107,7 +106,7 @@ async function loadAllMoviesData() {
 
     try {
         const today = new Date().toISOString().split('T')[0];
-        // FIX: Menggunakan TMDB_BASE_URL resmi & parameter regional Indonesia yang tepat
+        // FIX: Perbaikan tanda dollar pada endpoint TMDB dan regional Indonesia
         const endpoint = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&language=id-ID`;
         const res = await fetch(endpoint);
         
@@ -118,9 +117,9 @@ async function loadAllMoviesData() {
                     title: movie.title,
                     image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
                     video: "",
-                    iframe: `https://vidsrc.me{movie.id}`, // FIX: Memperbaiki format string interpolasi vidsrc
+                    iframe: `https://vidsrc.me{movie.id}`, // FIX: Memperbaiki format panggil ID vidsrc
                     sinopsis: movie.overview || "Sinopsis belum tersedia untuk film ini.",
-                    genre: ["Indonesia Movie"], // FIX: Diubah menjadi array agar seragam dengan movies.json
+                    genre: ["Indonesia Movie"], 
                     release_date: movie.release_date || "0000-00-00",
                     country: "Indonesia",
                     internalId: `TMDB_${movie.id}`
@@ -163,7 +162,6 @@ function renderGrid(moviesList) {
     });
     grid.appendChild(fragment);
 }
-
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
 async function loadWatchPageData() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -177,7 +175,7 @@ async function loadWatchPageData() {
     let selectedMovie = null;
     let allMoviesList = [];
 
-    // Ambil basis data master film terlebih dahulu untuk sistem carousel
+    // Ambil basis data master film lokal dahulu untuk referensi carousel film terkait
     try {
         const res = await fetch('movies.json');
         if (res.ok) {
@@ -197,7 +195,7 @@ async function loadWatchPageData() {
     else if (movieId.startsWith("TMDB_")) {
         const tmdbId = movieId.replace("TMDB_", "");
         try {
-            // FIX: Perbaikan format string interpolasi pemanggilan API detail TMDB
+            // FIX: Perbaikan interpolasi tanda dollar $ pada pemanggilan detail TMDB
             const res = await fetch(`${TMDB_BASE_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}&language=id-ID`);
             if (res.ok) {
                 const movie = await res.json();
@@ -207,7 +205,7 @@ async function loadWatchPageData() {
                     genre: ["Indonesia Movie"],
                     release_date: movie.release_date,
                     country: "Indonesia",
-                    iframe: `https://vidsrc.me{tmdbId}` // FIX: String interpolasi vidsrc
+                    iframe: `https://vidsrc.me{tmdbId}` // FIX: Penulisan URL vidsrc TMDB
                 };
             }
         } catch (e) {
@@ -218,33 +216,51 @@ async function loadWatchPageData() {
     if (selectedMovie) {
         document.getElementById("watchTitle").innerText = selectedMovie.title;
         document.getElementById("watchSinopsis").innerText = selectedMovie.sinopsis;
-        
-        // Menampilkan teks genre secara rapi di HTML
         document.getElementById("watchGenre").innerText = Array.isArray(selectedMovie.genre) ? selectedMovie.genre.join(", ") : selectedMovie.genre;
         document.getElementById("watchRelease").innerText = selectedMovie.release_date;
         document.getElementById("watchCountry").innerText = selectedMovie.country;
         
         const videoContainer = document.getElementById("videoContainer");
+        // FIX: Menutup kode tag sandbox iframe yang sempat terputus sebelumnya
         videoContainer.innerHTML = `
             <iframe src="${selectedMovie.iframe}" allowfullscreen frameborder="0" width="100%" height="100%" 
             sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
         `;
 
-        // FIX: MENAYANGKAN CAROUSEL FILM SERUPA (RELATED MOVIES)
+        // FIX AKTIVASI: Jalankan carousel film serupa
         generateRelatedCarousel(selectedMovie, allMoviesList);
     }
 }
 
-// FIX LOGIKA UTAMA CAROUSEL FILM SERUPA
+// LOGIKA UTAMA CAROUSEL FILM SERUPA (RELATED MOVIES)
 function generateRelatedCarousel(currentMovie, allMovies) {
     const carousel = document.querySelector('.movie-carousel');
     if (!carousel) return;
     carousel.innerHTML = "";
 
-    // Saring film yang memiliki irisan genre yang sama
     const related = allMovies.filter(movie => {
         if (movie.title === currentMovie.title) return false;
         if (!movie.genre || !currentMovie.genre) return false;
 
         const currentGenres = Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre];
-const targetGenres = Array.isArray(movie.genre) ? movie.genre : [movie.genre];return targetGenres.some(g => currentGenres.map(cg => cg.toLowerCase()).includes(g.toLowerCase()));});if (related.length === 0) {carousel.innerHTML = "Tidak ada film serupa ditemukan.";return;}related.forEach(movie => {const card = document.createElement('a');card.className = "movie-card";card.href = watch.html?id=${movie.internalId};card.innerHTML = <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div> <h3>${movie.title}</h3>;carousel.appendChild(card);});}
+        const targetGenres = Array.isArray(movie.genre) ? movie.genre : [movie.genre];
+
+        return targetGenres.some(g => currentGenres.map(cg => cg.toLowerCase()).includes(g.toLowerCase()));
+    });
+
+    if (related.length === 0) {
+        carousel.innerHTML = "<div style='color:#8e8e93; padding: 10px;'>Tidak ada film serupa ditemukan.</div>";
+        return;
+    }
+
+    related.forEach(movie => {
+        const card = document.createElement('a');
+        card.className = "movie-card";
+        card.href = `watch.html?id=${movie.internalId}`;
+        card.innerHTML = `
+            <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
+            <h3>${movie.title}</h3>
+        `;
+        carousel.appendChild(card);
+    });
+}
