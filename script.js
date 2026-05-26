@@ -1,9 +1,9 @@
-// KONFIGURASI PARAMETER UTAMA
+// KONFIGURASI PARAMETER UTAMA (API KEY ANDA)
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_BASE_URL = 'https://themoviedb.org';
 const TMDB_IMAGE_URL = 'https://tmdb.org';
 
-// STORAGE DATA GLOBAL
+// STORAGE DATA GLOBAL SITE
 let LOCAL_MOVIES = [];      
 let TMDB_MOVIES = [];       
 let ALL_MOVIES_DATA = [];   
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// MEMULAI PLATFORM & MENGAMBIL DATA AWAL
+// MEMULAI PLATFORM & MENGAMBIL DATA UTAMA
 async function startStreamingPlatform() {
     // 1. Ambil data lokal dari movies.json
     try {
@@ -31,10 +31,10 @@ async function startStreamingPlatform() {
             LOCAL_MOVIES = data.map((item, idx) => ({ ...item, internalId: `LOCAL_${idx}` }));
         }
     } catch (e) {
-        console.error("Gagal membaca movies.json", e);
+        console.error("Gagal membaca database lokal movies.json", e);
     }
 
-    // 2. Ambil halaman pertama dari TMDB
+    // 2. Ambil halaman pertama dari TMDB (Jalur Cepat Now Playing Indonesia)
     await loadMoreTMDBMovies(currentPage);
 
     // 3. Pasang Fitur Infinite Scroll Otomatis
@@ -48,44 +48,43 @@ async function startStreamingPlatform() {
     });
 }
 
-// FUNGSI PENARIKAN DATA DARI SERVER TMDB (PERBAIKAN: FORMAT TANGGAL VALID)
+// FUNGSI PENARIKAN DATA TERUPDATE DARI SERVER TMDB (JALUR BIOSKOP INDONESIA)
 async function loadMoreTMDBMovies(page) {
     isLoading = true;
-    
-    // Perbaikan: Ambil string tanggal murni YYYY-MM-DD yang dimengerti oleh TMDB
-    const d = new Date();
-    const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
     try {
-        // PERBAIKAN ENDPOINT: Menggunakan parameter release_date.lte yang tepat tanpa crash
-        const urlEndpoint = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=primary_release_date.desc&release_date.lte=${today}&page=${page}`;
+        // PERBAIKAN FATAL: Menggunakan endpoint /movie/now_playing?region=ID yang super ringan dan instan update
+        const urlEndpoint = `${TMDB_BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&region=ID&page=${page}`;
         const res = await fetch(urlEndpoint);
         const data = await res.json();
         
         if (data.results && data.results.length > 0) {
-            const mappedTMDB = data.results.map(movie => ({
+            // Filter ketat agar yang masuk ke grid hanya film produksi Indonesia asli saja
+            const indonesianOnly = data.results.filter(movie => movie.original_language === 'id');
+            
+            const mappedTMDB = indonesianOnly.map(movie => ({
                 title: movie.title,
                 image: movie.poster_path ? `${TMDB_IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com',
                 video: "",
                 iframe: `https://vidsrc.to{movie.id}`, 
                 sinopsis: movie.overview || "Sinopsis untuk film ini belum tersedia.",
                 genre: "Indonesia Movie", 
-                release_date: movie.release_date || "0000-00-00",
+                release_date: movie.release_date || "2026-01-01",
                 country: "Indonesia",
                 internalId: `TMDB_${movie.id}`
             }));
 
-            // Tumpuk data baru ke dalam database global
+            // Tumpuk data baru ke penyimpanan global situs Anda
             TMDB_MOVIES = [...TMDB_MOVIES, ...mappedTMDB];
+            
+            // Postingan manual Anda disatukan dan otomatis dikunci tetap di posisi atas grid
             ALL_MOVIES_DATA = [...LOCAL_MOVIES, ...TMDB_MOVIES];
 
             renderGrid(ALL_MOVIES_DATA);
-        } else {
-            // Jika halaman berikutnya kosong dari TMDB, pastikan halaman 1 tidak kosong
-            if(page === 1) {
-                ALL_MOVIES_DATA = [...LOCAL_MOVIES];
-                renderGrid(ALL_MOVIES_DATA);
-            }
+        } else if (page === 1) {
+            // Jika TMDB halaman 1 gagal, tampilkan data lokal saja agar tidak macet loading
+            ALL_MOVIES_DATA = [...LOCAL_MOVIES];
+            renderGrid(ALL_MOVIES_DATA);
         }
     } catch (e) {
         console.error("Gagal sinkronisasi data dengan server TMDB", e);
@@ -98,12 +97,12 @@ async function loadMoreTMDBMovies(page) {
     }
 }
 
-// PENCETAK GRID POSTER IDENTIK
+// PENCETAK GRID POSTER IDENTIK (UX TUNGGAL)
 function renderGrid(moviesList) {
     const grid = document.getElementById('movieGrid');
     if (!grid) return;
     
-    grid.innerHTML = ""; // Menghilangkan teks "Memuat film..."
+    grid.innerHTML = ""; // Bersihkan teks "Memuat film..." dari layar
 
     if (moviesList.length === 0) {
         grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
@@ -148,7 +147,7 @@ function initNavbar() {
         });
     });
 
-    // Real-Time Search Input Handler
+    // Real-Time Search Input Handler (Membaca seluruh isi judul film di grid)
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -235,14 +234,14 @@ async function initWatchPage() {
         }
     }
 
-    // Jika film tidak valid/tidak ditemukan hancurkan status macet
+    // Pengaman jika data tidak valid / ID rusak
     if (!currentMovie) {
         const titleEl = document.getElementById('watchTitle');
         if(titleEl) titleEl.innerText = "Film Tidak Ditemukan";
         return;
     }
 
-    // Pengisian elemen teks ke file watch.html (Proteksi elemen Null)
+    // Cetak data film ke elemen DOM komponen watch.html
     if(document.getElementById('watchTitle')) document.getElementById('watchTitle').innerText = currentMovie.title;
     if(document.getElementById('watchGenre')) document.getElementById('watchGenre').innerText = currentMovie.genre;
     if(document.getElementById('watchRelease')) document.getElementById('watchRelease').innerText = currentMovie.release_date;
@@ -250,7 +249,4 @@ async function initWatchPage() {
     if(document.getElementById('watchSinopsis')) document.getElementById('watchSinopsis').innerText = currentMovie.sinopsis;
 
     const container = document.getElementById('videoContainer');
-    const adOverlay = document.getElementById('adOverlay');
-    
-    if (container) {
-if (currentMovie.iframe) {container.innerHTML = <iframe src="${currentMovie.iframe}" allowfullscreen></iframe>;} else if (currentMovie.video) {container.innerHTML = <video id="nativeVideo" src="${currentMovie.video}" controls></video>;}}// Logika Pemutus Iklan Popunderconst videoSourceUrl = currentMovie.iframe || currentMovie.video;if (videoSourceUrl && videoSourceUrl.includes('abyssplayer.com')) {if(adOverlay) adOverlay.classList.add('disabled');} else if (adOverlay) {let clickCount = 0;const targetAds = ["https://rajarayap.com", "blogspot.com", "blogspot.com"];adOverlay.addEventListener('click', () => {clickCount++;window.open(targetAds[Math.floor(Math.random() * targetAds.length)], '_blank');if (clickCount >= 2) {adOverlay.classList.add('disabled');const nVid = document.getElementById('nativeVideo');if (nVid) nVid.play();}});}loadRelatedCarousel(currentMovie, filmId);}// HANDLING LOAD CAROUSEL FILM SERUPAasync function loadRelatedCarousel(currentMovie, filmId) {const relatedGrid = document.getElementById('relatedGrid');if (!relatedGrid) return;try {const res = await fetch(${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=id&region=ID&sort_by=popularity.desc&page=1);if (res.ok) {const data = await res.json();if (data.results) {const carouselData = data.results.map(m => ({title: m.title,image: m.poster_path ? ${TMDB_IMAGE_URL}${m.poster_path} : 'placeholder.com',internalId: TMDB_${m.id}})).filter(m => m.internalId !== filmId);carouselData.slice(0, 10).forEach(movie => {const item = document.createElement('a');item.className = "movie-card";item.href = watch.html?id=${movie.internalId};item.innerHTML = <div class="poster-wrapper"> <img src="${movie.image}" alt="${movie.title}" loading="lazy"> </div> <h3>${movie.title}</h3>;relatedGrid.appendChild(item);});}}} catch(e) {console.error(e);}const btnPrev = document.getElementById('slidePrev');const btnNext = document.getElementById('slideNext');if (btnPrev && btnNext) {btnPrev.addEventListener('click', () => relatedGrid.scrollLeft -= 250);btnNext.addEventListener('click', () => relatedGrid.scrollLeft += 250);}}
+const adOverlay = document.getElementById('adOverlay');if (container) {if (currentMovie.iframe) {container.innerHTML = <iframe src="${currentMovie.iframe}" allowfullscreen></iframe>;} else if (currentMovie.video) {container.innerHTML = <video id="nativeVideo" src="${currentMovie.video}" controls></video>;}}// Logika Pemutus Iklan Popunderconst videoSourceUrl = currentMovie.iframe || currentMovie.video;if (videoSourceUrl && videoSourceUrl.includes('abyssplayer.com')) {if(adOverlay) adOverlay.classList.add('disabled');} else if (adOverlay) {let clickCount = 0;const targetAds = ["https://rajarayap.com", "blogspot.com", "blogspot.com"];adOverlay.addEventListener('click', () => {clickCount++;window.open(targetAds[Math.floor(Math.random() * targetAds.length)], '_blank');if (clickCount >= 2) {adOverlay.classList.add('disabled');const nVid = document.getElementById('nativeVideo');if (nVid) nVid.play();}});}loadRelatedCarousel(currentMovie, filmId);}// HANDLING LOAD CAROUSEL FILM SERUPAasync function loadRelatedCarousel(currentMovie, filmId) {const relatedGrid = document.getElementById('relatedGrid');if (!relatedGrid) return;try {const res = await fetch(${TMDB_BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&region=ID&page=1);if (res.ok) {const data = await res.json();if (data.results) {const indonesianOnly = data.results.filter(m => m.original_language === 'id');const carouselData = indonesianOnly.map(m => ({title: m.title,image: m.poster_path ? ${TMDB_IMAGE_URL}${m.poster_path} : 'placeholder.com',internalId: TMDB_${m.id}})).filter(m => m.internalId !== filmId);carouselData.slice(0, 10).forEach(movie => {const item = document.createElement('a');item.className = "movie-card";item.href = watch.html?id=${movie.internalId};item.innerHTML = <div class="poster-wrapper"> <img src="${movie.image}" alt="${movie.title}" loading="lazy"> </div> <h3>${movie.title}</h3>;relatedGrid.appendChild(item);});}}} catch(e) {console.error(e);}const btnPrev = document.getElementById('slidePrev');const btnNext = document.getElementById('slideNext');if (btnPrev && btnNext) {btnPrev.addEventListener('click', () => relatedGrid.scrollLeft -= 250);btnNext.addEventListener('click', () => relatedGrid.scrollLeft += 250);}}
