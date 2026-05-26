@@ -3,155 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="metaTitle">Nonton Streaming Movie Sub Indo Gratis - tukarfollow</title>
-    <meta id="metaDesc" name="description" content="Nonton film streaming movie sub indo gratis terlengkap dengan kualitas lancar kualitas HD terbaik.">
-    <meta name="robots" content="index, follow">
-    <!-- Open Graph Dinamis -->
-    <meta id="ogTitle" property="og:title" content="">
-    <meta id="ogDesc" property="og:description" content="">
-    <meta id="ogImage" property="og:image" content="">
-    <meta property="og:type" content="video.movie">
-    <link rel="icon" type="image/png" href="https://githubusercontent.com">
+    <title>Nonton Film - tukarfollow</title>
     <link rel="stylesheet" href="style.css">
-
-    <style>
-        /* CONTAINER CAROUSEL FILM SERUPA */
-.related-section {
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
-
-.related-section h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-weight: 600;
-}
-
-.carousel-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-/* CAROUSEL GRID HORIZONTAL */
-.movie-carousel {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    width: 100%;
-    padding: 10px 5px;
-    /* Menyembunyikan scrollbar bawaan di browser modern */
-    scrollbar-width: none; 
-}
-
-.movie-carousel::-webkit-scrollbar {
-    display: none; /* Menyembunyikan scrollbar di Chrome/Safari */
-}
-
-/* Item kartu di dalam Carousel */
-.movie-carousel .movie-card {
-    flex: 0 0 140px; /* Lebar statis kartu saat digeser menyamping */
-    text-decoration: none;
-    color: inherit;
-}
-
-/* TOMBOL PANAH NAVIGASI (DESKTOP ONLY) */
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(20, 20, 23, 0.85);
-    border: 1px solid #232329;
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.carousel-btn:hover {
-    background-color: #0084ff;
-    border-color: #0084ff;
-}
-
-.prev-btn { left: -15px; }
-.next-btn { right: -15px; }
-
-/* Sembunyikan panah di perangkat touch screen (mobile) */
-@media (max-width: 768px) {
-    .carousel-btn {
-        display: none;
-    }
-    .movie-carousel {
-        /* Mengizinkan gesekan jari yang sangat halus pada iOS/Android */
-        -webkit-overflow-scrolling: touch; 
-    }
-}
-
-    </style>
 </head>
 <body>
 
-    <!-- NAVBAR UTAMA (Sama Persis Dengan index.html) -->
+    <!-- NAVBAR (Tetap Disertakan Agar Konsisten) -->
     <header class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">tukarfollow</a>
-            
-            <button class="burger-menu" id="burgerBtn" aria-label="Toggle Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
-            <nav class="nav-menu" id="navMenu">
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Cari film di sini...">
-                </div>
-                
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
-                    <div class="dropdown-content" id="genreDropdown">
-                        <a href="#" data-genre="Action">Action</a>
-                        <a href="#" data-genre="Adventure">Adventure</a>
-                        <a href="#" data-genre="Comedy">Comedy</a>
-                        <a href="#" data-genre="Drama">Drama</a>
-                        <a href="#" data-genre="Horror">Horror</a>
-                        <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
-                        <a href="#" data-genre="Thriller">Thriller</a>
-                    </div>
-                </div>
-
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
-                    <div class="dropdown-content" id="releaseDropdown">
-                        <a href="#" data-year="2026">2026</a>
-                        <a href="#" data-year="2025">2025</a>
-                        <a href="#" data-year="2024">2024</a>
-                        <a href="#" data-year="klasik">Klasik (< 2024)</a>
-                    </div>
-                </div>
-            </nav>
         </div>
     </header>
 
-    <!-- KONTEN UTAMA PEMUTAR VIDEO -->
+    <!-- PEMUTAR VIDEO & DETAIL -->
     <main class="main-content watch-container">
         <div class="player-wrapper">
             <h1 id="watchTitle">Memuat Judul Film...</h1>
             
-            <!-- Area Player dengan Deteksi Klik Iklan -->
+            <!-- Area Player yang Akan Mendeteksi Double Click Iklan -->
             <div class="video-player-area" id="playerArea">
                 <div class="ad-overlay" id="adOverlay"></div>
                 <div id="videoContainer" class="video-container">
-                    <!-- Iframe / Video Player via JS -->
+                    <!-- Iframe atau Video Player Diinjeksi di Sini -->
                 </div>
             </div>
             
@@ -165,115 +38,17 @@
                 <h3>Sinopsis</h3>
                 <p id="watchSinopsis">Memuat sinopsis...</p>
             </div>
-
-            <!-- Tambahan: SECTION FILM TERKAIT (SLIDER CAROUSEL) -->
-            <section class="related-section">
-                <h3>Film Serupa</h3>
-                <div class="carousel-container">
-                    <button class="carousel-btn prev-btn" id="slidePrev" aria-label="Previous">❮</button>
-                    <div class="movie-carousel" id="relatedGrid">
-                        <!-- Diisi otomatis oleh JavaScript berdasarkan kesamaan Genre / Negara -->
-                    </div>
-                    <button class="carousel-btn next-btn" id="slideNext" aria-label="Next">❯</button>
-                </div>
-            </section>
         </div>
     </main>
 
-    <!-- FOOTER RESPONSIF 4 KOLOM -->
+    <!-- FOOTER -->
     <footer class="footer-grid">
-        <div class="footer-col">
-            <h3>tukarfollow</h3>
-            <p>Platform streaming gratis terlengkap dengan kualitas super jernih ala bioskop.</p>
-        </div>
-        <div class="footer-col">
-            <h3>Jelajahi</h3>
-            <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="#">Film Baru</a></li>
-                <li><a href="#">Trending</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h3>Kategori</h3>
-            <ul>
-                <li><a href="#">Aksi Seru</a></li>
-                <li><a href="#">Drama Romantis</a></li>
-                <li><a href="#">Horor Mencekam</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h3>Bantuan</h3>
-            <ul>
-                <li><a href="#">DMCA / Disclaimer</a></li>
-                <li><a href="#">Kontak Kami</a></li>
-                <li><a href="#">Kebijakan Privasi</a></li>
-            </ul>
-        </div>
+        <div class="footer-col"><h3>tukarfollow</h3><p>Platform streaming gratis terbaik.</p></div>
+        <div class="footer-col"><h3>Jelajahi</h3><ul><li><a href="index.html">Beranda</a></li></ul></div>
+        <div class="footer-col"><h3>Kategori</h3><ul><li><a href="#">Film Terkini</a></li></ul></div>
+        <div class="footer-col"><h3>Bantuan</h3><ul><li><a href="#">Kontak</a></li></ul></div>
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Tambahkan kode penanganan slider ini di dalam fungsi initWatchPage() setelah data film ditemukan:
-
-// 1. Logika Pengarah Pencarian Navbar Khusus di Halaman Nonton
-const watchSearch = document.getElementById('searchInput');
-if (watchSearch) {
-    watchSearch.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            // Jika user mengetik pencarian di halaman nonton lalu menekan enter, lempar ke index dengan query bawaan
-            window.location.href = `index.html?search=${encodeURIComponent(watchSearch.value)}`;
-        }
-    });
-}
-
-// 2. Tampilkan List Film Serupa Berdasarkan Genre / Negara yang sama
-const relatedGrid = document.getElementById('relatedGrid');
-if (relatedGrid && ALL_MOVIES.length > 0) {
-    // Filter film lain yang memiliki genre serupa, kecualikan film yang sedang diputar saat ini
-    const relatedMovies = ALL_MOVIES.filter(m => m.internalId !== filmId && m.genre.split(',')[0] === currentMovie.genre.split(',')[0]);
-    
-    // Ambil maksimal 8 film sebagai rekomendasi terkait
-    const displayLimit = relatedMovies.slice(0, 8);
-    
-    displayLimit.forEach(movie => {
-        const item = document.createElement('a');
-        item.className = "movie-card";
-        item.href = `watch.html?id=${movie.internalId}`;
-        item.innerHTML = `
-            <div class="poster-wrapper">
-                <img src="${movie.image}" alt="${movie.title}" loading="lazy">
-            </div>
-            <h3>${movie.title}</h3>
-        `;
-        relatedGrid.appendChild(item);
-    });
-}
-
-// 3. Tombol Handler Geser Klik Kanan Kiri Desktop Carousel
-const btnPrev = document.getElementById('slidePrev');
-const btnNext = document.getElementById('slideNext');
-const carousel = document.getElementById('relatedGrid');
-
-if (btnPrev && btnNext && carousel) {
-    btnPrev.addEventListener('click', () => {
-        carousel.scrollLeft -= 300; // Jarak geser ke kiri
-    });
-    btnNext.addEventListener('click', () => {
-        carousel.scrollLeft += 300; // Jarak geser ke kanan
-    });
-}
-
-        if (document.getElementById('metaTitle') && typeof currentMovie !== 'undefined') {
-    const seoTitle = `Nonton ${currentMovie.title} Sub Indo Streaming Gratis - tukarfollow`;
-    const seoDesc = `Streaming Movie ${currentMovie.title} Sub Indo. Sinopsis: ${currentMovie.sinopsis.substring(0, 150)}... Nonton gratis bioskop online terupdate kualitas jernih.`;
-    document.title = seoTitle;
-    document.getElementById('metaDesc').setAttribute('content', seoDesc);
-    if(document.getElementById('ogTitle')) document.getElementById('ogTitle').setAttribute('content', seoTitle);
-    if(document.getElementById('ogDesc')) document.getElementById('ogDesc').setAttribute('content', seoDesc);
-    if(document.getElementById('ogImage')) document.getElementById('ogImage').setAttribute('content', currentMovie.image);
-}
-
-    </script>
 </body>
 </html>
