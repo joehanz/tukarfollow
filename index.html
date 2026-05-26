@@ -90,5 +90,64 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        let ALL_MOVIES = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Navigasi Burger Mobile
+    const burgerBtn = document.getElementById('burgerBtn');
+    const navMenu = document.getElementById('navMenu');
+    if (burgerBtn && navMenu) {
+        burgerBtn.addEventListener('click', () => {
+            burgerBtn.classList.toggle('open');
+            navMenu.classList.toggle('open');
+        });
+    }
+
+    // Ambil Data murni dari movies.json
+    const grid = document.getElementById('movieGrid');
+    if (grid) {
+        fetch('movies.json')
+            .then(res => res.json())
+            .then(data => {
+                ALL_MOVIES = data;
+                renderGrid(ALL_MOVIES);
+            })
+            .catch(err => {
+                grid.innerHTML = "<div>Gagal memuat database film lokal.</div>";
+            });
+    }
+
+    // Live Search Real-time
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            const filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(keyword));
+            renderGrid(filtered);
+        });
+    }
+});
+
+function renderGrid(moviesList) {
+    const grid = document.getElementById('movieGrid');
+    if (!grid) return;
+    grid.innerHTML = "";
+    
+    moviesList.forEach((movie, idx) => {
+        const card = document.createElement('a');
+        card.className = "movie-card";
+        card.href = `watch.html?id=${idx}`;
+        card.innerHTML = `
+            <div class="poster-wrapper">
+                <img src="${movie.image}" alt="${movie.title}" loading="lazy">
+            </div>
+            <h3>${movie.title}</h3>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+    </script>
 </body>
 </html>
