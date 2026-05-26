@@ -1,9 +1,9 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 const TMDB_API_KEY = '9e335d21d35f04917b218bae7adc881f'; 
-const TMDB_BASE_URL = 'https://themoviedb.org'; // Menggunakan endpoint resmi agar data stabil
+const TMDB_BASE_URL = 'https://themoviedb.org'; 
 const TMDB_IMAGE_URL = 'https://themoviedb.org'; 
 
-// DAFTAR DOMAIN IKLAN MANDIRI ANDA (DIKEMBALIKAN UTUH)
+// DAFTAR DOMAIN IKLAN MANDIRI ANDA (UTUH & AKTIF)
 const AD_DOMAINS = [
     'https://rajarayap.com',
     'https://blogspot.com',
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// MENGGABUNGKAN DATA JSON LOKAL & API TMDB
+// MENGGABUNGKAN DATA JSON LOKAL & API TMDB INDONESIA
 async function loadGlobalMoviesData() {
     let localData = [];
     let tmdbData = [];
@@ -54,7 +54,7 @@ async function loadGlobalMoviesData() {
                         title: movie.title,
                         image: posterPath ? `${TMDB_IMAGE_URL}/${posterPath}` : 'https://placeholder.com',
                         video: "",
-                        iframe: `https://vidsrc.me{movie.id}`, // FIX: Memperbaiki string penulisan ID TMDB
+                        iframe: `https://vidsrc.me{movie.id}`, 
                         sinopsis: movie.overview || "Sinopsis belum tersedia untuk film ini.",
                         genre: "Indonesia Movie", 
                         release_date: movie.release_date || "0000-00-00",
@@ -105,10 +105,11 @@ function initNavbar() {
         });
     }
 
+    // FIX PREVENTDEFAULT: Hanya mengunci link menu dropdown, klik poster film tetap bebas & normal
     document.querySelectorAll('.dropdown-content a').forEach(link => {
         link.addEventListener('click', (e) => {
             const grid = document.getElementById('movieGrid');
-            if (!grid) return; // Mengizinkan perpindahan halaman jika di luar index.html
+            if (!grid) return; 
 
             e.preventDefault();
             let filtered = [...ALL_MOVIES];
@@ -118,7 +119,7 @@ function initNavbar() {
 
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
-                filtered = ALL_MOVIES.filter(m => m.genre && m.genre.toLowerCase().includes(genre.toLowerCase()));
+                filtered = ALL_MOVIES.filter(m => m.genre && m.genre.toString().toLowerCase().includes(genre.toLowerCase()));
             } else if (year) {
                 if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${year === 'klasik' ? 'Klasik (<2024)' : year}`;
                 filtered = ALL_MOVIES.filter(m => {
@@ -145,7 +146,7 @@ function renderGrid(moviesList) {
     moviesList.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
-        card.href = `watch.html?id=${movie.internalId}`;
+        card.href = `watch.html?id=${movie.internalId}`; // Berpindah halaman secara normal
         card.innerHTML = `
             <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
             <h3>${movie.title}</h3>
@@ -172,13 +173,14 @@ async function loadWatchPageData() {
             const res = await fetch(`${TMDB_BASE_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}&language=id-ID`);
             if (res.ok) {
                 const movie = await res.json();
+                const posterPath = movie.poster_path ? movie.poster_path.replace(/^\//, '') : '';
                 selectedMovie = {
                     title: movie.title,
                     sinopsis: movie.overview || "Sinopsis belum tersedia.",
                     genre: "Indonesia Movie",
                     release_date: movie.release_date,
                     country: "Indonesia",
-                    iframe: `https://vidsrc.me{tmdbId}` // FIX: String interpolasi terintegrasi sempurna
+                    iframe: `https://vidsrc.me{tmdbId}`
                 };
             }
         } catch (e) {
@@ -195,15 +197,15 @@ async function loadWatchPageData() {
         
         const videoContainer = document.getElementById("videoContainer");
         
-        // FIX SINTAKS PLAYER: Menghilangkan error bracket token '{' agar video berputar mulus tanpa mogok
-        let finalIframeSrc = selectedMovie.iframe || selectedMovie.video || "";
+        // FIX PLAYER SINTAKS: Membaca properti secara fleksibel agar video manual tidak kosong
+        let finalSrc = selectedMovie.iframe || selectedMovie.video || "";
         
         videoContainer.innerHTML = `
-            <iframe src="${finalIframeSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
+            <iframe src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
     }
 
-    // SISTEM IKLAN DIKEMBALIKAN AKTIF (Memicu tab baru saat area .ad-overlay disentuh)
+    // INTERKONEKSI IKLAN MANDIRI (Membuka Tab Baru Saat Area Lapisan Diklik)
     const adOverlay = document.querySelector('.ad-overlay');
     if (adOverlay) {
         adOverlay.addEventListener('click', () => {
