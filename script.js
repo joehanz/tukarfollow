@@ -1,8 +1,8 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 const AD_DOMAINS = [
     'https://rajarayap.com',
-    'https://blogspot.com',
-    'https://blogspot.com'
+    'https://ptdwiprima.blogspot.com',
+    'https://caturbangunsentosa.blogspot.com'
 ];
 
 let ALL_MOVIES = [];
