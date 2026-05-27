@@ -31,52 +31,52 @@
     <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'></script>
     <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'></script>
     <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js'></script>
-
-    <script>
+  
+ <script>
       if (!firebase.apps.length) {
         firebase.initializeApp({
-          apiKey: "AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y",
-          authDomain: "tukarfollow-32e80.firebaseapp.com",
-          databaseURL: "https://tukarfollow-32e80-default-rtdb.firebaseio.com",
-          projectId: "tukarfollow-32e80",
-          storageBucket: "tukarfollow-32e80.appspot.com",
-          messagingSenderId: "488828752907",
-          appId: "1:488828752907:web:8fa92415553e16d672e30e"
+          apiKey: &quot;AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y&quot;,
+          authDomain: &quot;tukarfollow-32e80.firebaseapp.com&quot;,
+          databaseURL: &quot;https://tukarfollow-32e80-default-rtdb.firebaseio.com&quot;,
+          projectId: &quot;tukarfollow-32e80&quot;,
+          storageBucket: &quot;tukarfollow-32e80.appspot.com&quot;,
+          messagingSenderId: &quot;488828752907&quot;,
+          appId: &quot;1:488828752907:web:8fa92415553e16d672e30e&quot;
         });
       }
 
       const messaging = firebase.messaging();
 
       function showPushModal() {
-        if (Notification.permission === "default") {
-          document.getElementById("pushModal").style.display = "block";
+        if (Notification.permission === &quot;default&quot;) {
+          document.getElementById(&quot;pushModal&quot;).style.display = &quot;block&quot;;
         }
       }
 
       function closePushModal() {
-        document.getElementById("pushModal").style.display = "none";
+        document.getElementById(&quot;pushModal&quot;).style.display = &quot;none&quot;;
       }
 
-      document.getElementById("allowPush").onclick = function () {
+      document.getElementById(&quot;allowPush&quot;).onclick = function () {
 
         Notification.requestPermission().then(function (permission) {
-          if (permission === "granted") {
+          if (permission === &quot;granted&quot;) {
 
             // Gunakan GitHub raw URL supaya bisa diakses dari Blogger
             navigator.serviceWorker.register(
-              "https://raw.githubusercontent.com/joehanz/push-worker/main/firebase-messaging-sw.js"
+              &quot;https://raw.githubusercontent.com/joehanz/push-worker/main/firebase-messaging-sw.js&quot;
             ).then(function (reg) {
 
               messaging.useServiceWorker(reg);
 
               messaging.getToken({
-                vapidKey: "BI_BLjd8mygV4myAwDUZq2x3g19Hj5_enuWbET2b0Cpsvh88lBaiCgdV58pbHxI5efW3QSmY6iFZBoxsL4TawPs"
+                vapidKey: &quot;BI_BLjd8mygV4myAwDUZq2x3g19Hj5_enuWbET2b0Cpsvh88lBaiCgdV58pbHxI5efW3QSmY6iFZBoxsL4TawPs&quot;
               }).then(function (token) {
 
-                console.log("🔥 TOKEN:", token);
+                console.log(&quot;🔥 TOKEN:&quot;, token);
 
                 // SIMPAN TOKEN KE FIREBASE (OPSIONAL)
-                firebase.database().ref("tokens/" + token).set({
+                firebase.database().ref(&quot;tokens/&quot; + token).set({
                   token: token,
                   time: Date.now()
                 });
@@ -85,7 +85,7 @@
               });
 
             }).catch(function(err){
-              console.error("Service Worker register error:", err);
+              console.error(&quot;Service Worker register error:&quot;, err);
             });
 
           }
@@ -93,13 +93,10 @@
       };
 
       // tampilkan modal setelah halaman kebuka
-      window.addEventListener("load", function () {
+      window.addEventListener(&quot;load&quot;, function () {
         setTimeout(showPushModal, 3000);
       });
     </script>
-
-   
-
 
 </head>
 <body>
