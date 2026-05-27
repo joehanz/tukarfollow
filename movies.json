@@ -158,6 +158,16 @@
     "genre": ["Comedy", "Horor"],
     "release_date": "23-04-2026",
     "country": "India"
+  },
+  {
+    "title": "To Philly With Love (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/to-philly-with-love.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/ccXQIvoT_",
+    "sinopsis": "Perjalanan ke Philadelphia membuka luka lama dan menghadirkan cinta yang tak terduga.",
+    "genre": ["Drama", "Romance"],
+    "release_date": "23-04-2026",
+    "country": "Kanada"
   }
 
 
