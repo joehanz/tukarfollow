@@ -193,31 +193,28 @@ async function loadWatchPageData() {
             <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
 
-        // INJEKSI DAN PEMBUATAN LIST FILM SERUPA (RELATED VIDEOS)
+        // INJEKSI DAN PEMBUATAN LIST SEMUA VIDEO (ABAIKAN FILTER GENRE)
         const relatedGrid = document.getElementById('relatedGrid');
         if (relatedGrid) {
             relatedGrid.innerHTML = "";
-            let relatedMovies = [];
+            
+            // Menampilkan semua video dari database selain film yang sedang ditonton
+            let allOtherMovies = ALL_MOVIES.filter(m => m.internalId !== movieId);
 
-            // Memecah semua kata genre film lokal agar terbaca utuh dan fleksibel
-            const currentGenres = (selectedMovie.genre || "").toString().toLowerCase().split(/[\s,]+/);
-            relatedMovies = ALL_MOVIES.filter(m => {
-                const isDifferentMovie = m.internalId !== movieId;
-                if (!isDifferentMovie || !m.genre) return false;
-                
-                const movieGenreText = m.genre.toString().toLowerCase();
-                // Mencocokkan apakah ada salah satu kata genre yang sesuai di database lokal
-                return currentGenres.some(g => g.trim() && movieGenreText.includes(g.trim()));
-            });
-
-            // Memasukkan hasil filter ke dalam grid visual
-            if (relatedMovies.length === 0) {
-                relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
+            if (allOtherMovies.length === 0) {
+                relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
             } else {
+                // ACAK URUTAN VIDEO (RANDOM SHUFFLE)
+                allOtherMovies.sort(() => Math.random() - 0.5);
+
+                // BATASI MAKSIMAL HANYA 10 VIDEO SAJA
+                let limitedMovies = allOtherMovies.slice(0, 10);
+
                 const fragment = document.createDocumentFragment();
-                relatedMovies.forEach(movie => {
+                limitedMovies.forEach(movie => {
                     const card = document.createElement('a');
-                    card.className = "movie-card"; 
+                    // MENGGUNAKAN CLASS BARU AGAR UKURAN GRID RATA DAN SAMA BESAR
+                    card.className = "related-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
                     card.innerHTML = `
                         <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
@@ -259,7 +256,7 @@ async function loadWatchPageData() {
 
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
-                const randomAd = availableAds.splice(randomIndex, 1)[0]; 
+                const randomAd = availableAds.splice(randomIndex, 1); 
 
                 if (clickCount === 1) {
                     window.open(randomAd, '_blank');
