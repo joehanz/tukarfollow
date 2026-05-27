@@ -174,15 +174,32 @@
 
           var data = snapshot.val();
 
-          var val =
-            data.rating || data;
+          var val;
 
-          setStar(val);
+          // FORMAT BARU
+          if(typeof data === 'object'){
 
-          userRatingText.innerHTML =
-            'Rating kamu: ' +
-            val +
-            ' ⭐';
+            val = Number(data.rating);
+
+          }
+
+          // FORMAT LAMA
+          else{
+
+            val = Number(data);
+
+          }
+
+          if(val){
+
+            setStar(val);
+
+            userRatingText.innerHTML =
+              'Rating kamu: ' +
+              val +
+              ' ⭐';
+
+          }
 
         }
 
@@ -205,11 +222,28 @@
 
           var data = child.val();
 
-          var rating =
-            data.rating || data;
+          var rating = 0;
 
-          total += Number(rating);
-          jumlah++;
+          // FORMAT BARU
+          if(typeof data === 'object'){
+
+            rating = Number(data.rating);
+
+          }
+
+          // FORMAT LAMA
+          else{
+
+            rating = Number(data);
+
+          }
+
+          if(rating > 0){
+
+            total += rating;
+            jumlah++;
+
+          }
 
         });
 
