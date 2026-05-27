@@ -17,10 +17,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     initNavbar();
     await loadGlobalMoviesData();
     
-    if (document.getElementById('movieGrid')) {
+    // Perilaku default saat pertama kali masuk ke masing-masing halaman
+    if (document.getElementById('movieGrid') && !document.getElementById('videoContainer')) {
+        // Jika di index.html, langsung tampilkan grid utama
+        const grid = document.getElementById('movieGrid');
+        grid.style.display = 'grid';
         renderGrid(ALL_MOVIES);
     }
     if (document.getElementById('videoContainer')) {
+        // Jika di watch.html, muat data pemutar film
         loadWatchPageData();
     }
 });
@@ -100,6 +105,28 @@ function initNavbar() {
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
+            const grid = document.getElementById('movieGrid');
+            const watchArea = document.getElementById('watchContentArea');
+            const sectionTitle = document.getElementById('sectionTitle');
+
+            // JIKA SEDANG MENGETIK DI HALAMAN WATCH.HTML (Aktivasi Sakelar Tampilan)
+            if (watchArea) {
+                if (keyword.length > 0) {
+                    watchArea.style.display = 'none'; // Sembunyikan player & detail film
+                    if (grid) grid.style.display = 'grid'; // Munculkan wadah grid rahasia
+                    if (sectionTitle) {
+                        sectionTitle.style.display = 'block';
+                        sectionTitle.innerText = `Hasil Pencarian: "${e.target.value}"`;
+                    }
+                } else {
+                    // Jika teks kolom pencarian dihapus habis, kembalikan ke player film semula
+                    watchArea.style.style.display = 'block';
+                    if (grid) grid.style.display = 'none';
+                    if (sectionTitle) sectionTitle.style.display = 'none';
+                    return;
+                }
+            }
+
             const filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(keyword));
             renderGrid(filtered);
         });
@@ -107,14 +134,21 @@ function initNavbar() {
 
     document.querySelectorAll('.dropdown-content a').forEach(link => {
         link.addEventListener('click', (e) => {
-            const grid = document.getElementById('movieGrid');
-            if (!grid) return; 
-
             e.preventDefault();
-            let filtered = [...ALL_MOVIES];
+            const grid = document.getElementById('movieGrid');
+            const watchArea = document.getElementById('watchContentArea');
             const genre = link.getAttribute('data-genre');
             const year = link.getAttribute('data-year');
             const sectionTitle = document.getElementById('sectionTitle');
+
+            // JIKA MENU DIKLIK DI HALAMAN WATCH.HTML (Aktivasi Sakelar Tampilan)
+            if (watchArea) {
+                watchArea.style.display = 'none'; // Sembunyikan player film total
+                if (grid) grid.style.display = 'grid'; // Hidupkan sistem grid film
+                if (sectionTitle) sectionTitle.style.display = 'block';
+            }
+
+            let filtered = [...ALL_MOVIES];
 
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
@@ -137,7 +171,7 @@ function renderGrid(moviesList) {
     
     grid.innerHTML = "";
     if (!moviesList || moviesList.length === 0) {
-        grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
+        grid.innerHTML = "<div class='loading-text' style='grid-column: 1/-1; text-align: center; padding: 40px 0;'>Tidak ada film ditemukan.</div>";
         return;
     }
 
@@ -200,12 +234,11 @@ async function loadWatchPageData() {
             <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
 
-        // INJEKSI DAN PEMBUATAN LIST FILM SERUPA (RELATED VIDEOS)
+        // INJEKSI DAN PEMBUATAN LIST FILM SERUKA (RELATED VIDEOS)
         const relatedGrid = document.getElementById('relatedGrid');
         if (relatedGrid) {
             relatedGrid.innerHTML = "";
             
-            // Filter film yang bergenre sama, tapi kecualikan film yang sedang ditonton saat ini
             const currentGenre = (selectedMovie.genre || "").toString().toLowerCase();
             const relatedMovies = ALL_MOVIES.filter(m => {
                 const isDifferentMovie = m.internalId !== movieId;
@@ -219,7 +252,6 @@ async function loadWatchPageData() {
                 const fragment = document.createDocumentFragment();
                 relatedMovies.forEach(movie => {
                     const card = document.createElement('a');
-                    // Menggunakan class movie-card yang sama agar ukuran grid sama rata dan konsisten
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
                     card.innerHTML = `
@@ -285,3 +317,15 @@ async function loadWatchPageData() {
         }
     }
 }
+
+// Tambahan perbaikan kecil penyeimbang logika dari Bagian 1 agar saat input kosong player langsung tampil kembali normal
+document.addEventListener("input", (e) => {
+    if (e.target && e.target.id === "searchInput" && e.target.value.length === 0) {
+        const watchArea = document.getElementById('watchContentArea');
+        const grid = document.getElementById('movieGrid');
+        const sectionTitle = document.getElementById('sectionTitle');
+        if (watchArea) watchArea.style.display = 'block';
+        if (grid) grid.style.display = 'none';
+        if (sectionTitle) sectionTitle.style.display = 'none';
+    }
+});
