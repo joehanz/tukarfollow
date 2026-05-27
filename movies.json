@@ -128,8 +128,16 @@
     "genre": ["Romance", "Thriller"],
     "release_date": "24-04-2026",
     "country": "Amerika Serikat"
+  },
+  {
+    "title": "A Single Christian (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/a-single-christian.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/FIC2WgbES",
+    "sinopsis": "Pria Kristen lajang mencari cinta sejati sambil menjaga iman dan prinsip hidupnya.",
+    "genre": ["Thriller"],
+    "release_date": "23-04-2026",
+    "country": "Nigeria"
   }
-
-
 
 ]
