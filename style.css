@@ -461,3 +461,36 @@ body {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Mengoptimalkan baris poster untuk layar HP sangat kecil */
     }
 }
+
+/* =========================================================
+   ONLINE FLOAT
+========================================================= */
+#globalOnlineFloating{
+  position:fixed;
+  top:50%;
+  right:14px;
+  transform:translateY(-50%);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:30px;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(6px);
+}
+
+#globalOnlineFloating .dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#00ff6a;
+  animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+  50%{
+    transform:scale(1.5);
+    opacity:.6;
+  }
+}
