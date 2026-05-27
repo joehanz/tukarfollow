@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Film Indonesia TMDB</title>
 <meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
-<link rel="preconnect" href="https://image.tmdb.org">
-<link rel="preconnect" href="https://api.themoviedb.org">
+<link rel="preconnect" href="https://tmdb.org">
+<link rel="preconnect" href="https://themoviedb.org">
 
 <style>
 *{
@@ -64,17 +64,19 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* GAYA AREA VIDEO PLAYER UTAMA (FIXED INTEGRASI) */
+/* =========================================================
+   GAYA VISUAL LAYAR PEMUTAR VIDEO (PLAYER AREA)
+========================================================= */
 .player-container {
 max-width: 1000px;
 margin: 20px auto 0 auto;
 padding: 0 20px;
-display: none; /* Sembunyi default, muncul saat film diklik */
+display: none; /* Sembunyi secara default, muncul saat film diklik */
 }
 
 .video-wrapper {
 position: relative;
-padding-bottom: 56.25%; /* Rasio Bioskop 16:9 */
+padding-bottom: 56.25%; /* Rasio Bioskop Layar Lebar 16:9 */
 height: 0;
 background: #000;
 border-radius: 16px;
@@ -114,7 +116,7 @@ border-radius:16px;
 overflow:hidden;
 transition:0.3s;
 position:relative;
-cursor:pointer; /* Penanda poster bisa diklik */
+cursor:pointer; /* Mengubah kursor jadi tangan penanda bisa diklik */
 }
 
 .card:hover{
@@ -208,10 +210,10 @@ height:240px;
 </div>
 </header>
 
-<!-- AREA EM_BED LAYAR VIDEO PLAYER (FIXED: DIINJEKSI DI SINI) -->
+<!-- AREA EM_BED PLAYER VIDEO (AKAN OTOMATIS JALAN DI SINI) -->
 <div class="player-container" id="playerContainer">
 <div class="video-wrapper" id="videoWrapper">
-<!-- Elemen Iframe Pemutar Diisi via Javascript -->
+<!-- Iframe Player Disuntikkan Lewat Javascript di Sini -->
 </div>
 <div class="player-title" id="playerTitle">Memuat Layar Nonton...</div>
 </div>
@@ -229,8 +231,8 @@ height:240px;
 
 <script>
 const API_KEY = '9e335d21d35f04917b218bae7adc881f';
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG = 'https://image.tmdb.org/t/p/w500';
+const BASE_URL = 'https://themoviedb.org/3';
+const IMG = 'https://tmdb.org/t/p/w500';
 
 let currentPage = 1;
 let currentQuery = '';
@@ -266,7 +268,7 @@ const card = document.createElement('div');
 card.className = 'card';
 
 card.innerHTML = `
-<img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://via.placeholder.com/500x750?text=No+Image'}">
+<img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://placeholder.com'}">
 
 <div class="info">
 <div class="title">${movie.title}</div>
@@ -278,23 +280,23 @@ card.innerHTML = `
 </div>
 `;
 
-// FIXED: Klik poster langsung menyuntikkan player vidsrc.su di dalam halaman tanpa window.open keluar
+// FIXED OPTIMIZATION: Klik poster langsung memicu em_bed player vidsrc.me di tempat tanpa lempar keluar
 card.onclick = () => {
 const playerArea = document.getElementById('playerContainer');
 const videoWrapper = document.getElementById('videoWrapper');
 const playerTitle = document.getElementById('playerTitle');
 
-// Pasang tautan vidsrc.su (atau ganti ke vidsrc.ru sesuai kenyamanan Anda)
-const finalEmbedUrl = `https://vidsrc.su{movie.id}`;
+// Menggunakan server cadangan vidsrc.me resmi dan aktif anti-down
+const finalEmbedUrl = `https://vidsrc.me{movie.id}`;
 
 videoWrapper.innerHTML = `
-<iframe src="${finalEmbedUrl}" allowfullscreen frameborder="0" referrerpolicy="origin"></iframe>
+<iframe src="${finalEmbedUrl}" allowfullscreen frameborder="0" referrerpolicy="origin" width="100%" height="100%"></iframe>
 `;
 
 playerTitle.innerText = `Nonton: ${movie.title}`;
 playerArea.style.display = 'block';
 
-// Gulir otomatis layar ke arah pemutar video agar pengunjung langsung fokus menonton
+// Layar otomatis digulir ke area video player agar penonton langsung siap memutar film
 playerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
