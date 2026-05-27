@@ -302,41 +302,45 @@
     //]]>
 </script>
 
-    <!-- FLOATING COUNTER ONLINE (FIXED STRUCTURE) -->
-<div id="globalOnlineFloating">
+    <div id="globalOnlineFloating">
   <span class="dot"></span>
   <span id="globalOnlineCounter">0 online</span>
 </div>
 
-
 <script>
   /* =====================================================
      SCRIPT NAME : firebase_global_realtime_online_counter
-     FUNCTION    : Hitung pengunjung ONLINE AKTIF saja
-     METHOD     : onDisconnect + heartbeat + auto cleanup
-     DATABASE   : Firebase Realtime Database
+     FIXED TYPE  : Jalur Mandiri Anti-Crash GitHub Pages
      ===================================================== */
-
   (function(){
-
+    // Jika Firebase gagal dimuat oleh skrip atas, buat inisialisasi mandiri khusus counter
     if(!window.firebase) return;
 
-    var el = document.getElementById(&#39;globalOnlineCounter&#39;);
+    var el = document.getElementById('globalOnlineCounter');
     if(!el) return;
 
-    var db = firebase.database();
-    var ref = db.ref(&#39;online_global&#39;);
+    // HUBUNGKAN LANGSUNG KE DATABASE UTUH ANDA (Abaikan eror skrip notifikasi)
+    var counterApp;
+    if (firebase.apps.length <= 1) {
+       // Membuat koneksi database cadangan jika koneksi utama tersumbat
+       counterApp = firebase.initializeApp({
+          databaseURL: "https://firebaseio.com"
+       }, "CounterApp");
+    } else {
+       counterApp = firebase.app();
+    }
 
-    // === 1 DEVICE = 1 ID ===
-    var id = localStorage.getItem(&#39;global_online_id&#39;);
+    var db = counterApp.database();
+    var ref = db.ref('online_global');
+
+    var id = localStorage.getItem('global_online_id');
     if(!id){
-      id = &#39;v_&#39; + Date.now() + &#39;_&#39; + Math.floor(Math.random()*9999);
-      localStorage.setItem(&#39;global_online_id&#39;, id);
+      id = 'v_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+      localStorage.setItem('global_online_id', id);
     }
 
     var myRef = ref.child(id);
 
-    // === TANDA ONLINE + TIMESTAMP ===
     function heartbeat(){
       myRef.set({
         online: true,
@@ -345,35 +349,28 @@
     }
 
     heartbeat();
-
-    // update tiap 10 detik
     setInterval(heartbeat, 10000);
-
-    // hapus otomatis kalau koneksi mati
     myRef.onDisconnect().remove();
 
-    // === AUTO CLEANUP USER MATI ===
-    var TIMEOUT = 30000; // 30 detik dianggap offline
+    var TIMEOUT = 30000; 
 
-    ref.on(&#39;value&#39;, function(snapshot){
+    ref.on('value', function(snapshot){
       var now = Date.now();
       var count = 0;
 
       snapshot.forEach(function(child){
         var data = child.val();
-
-        // kalau user sudah mati &#8594; hapus
-        if(!data || !data.lastActive || now - data.lastActive &gt; TIMEOUT){
+        if(!data || !data.lastActive || now - data.lastActive > TIMEOUT){
           ref.child(child.key).remove();
         } else {
           count++;
         }
       });
 
-      el.textContent = count + &#39; online&#39;;
+      el.textContent = count + ' online';
     });
-
   })();
 </script>
+
 </body>
 </html>
