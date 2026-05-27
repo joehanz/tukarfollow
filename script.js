@@ -109,6 +109,7 @@ async function loadGlobalMoviesData() {
     }
 
 }
+-------------------------------------------------------
 async function loadWatchPageData() {
 
     const urlParams =
