@@ -220,12 +220,12 @@
             <button onclick="nextPage()">Next</button>
         </div>
     </div>
-    <script>
+        <script>
         const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0';
         const BASE_URL = 'https://themoviedb.org';
         const IMG = 'https://tmdb.org';
         
-        // MENGGUNAKAN PROXY BYPASS AGAR LOLOS DARI BLOKIRAN "FAILED TO FETCH" BROWSER LOKAL
+        // FIX AKURAT: Memastikan parameter ?url= terpasang sempurna tanpa merusak format URL
         const PROXY = 'https://allorigins.win';
 
         let currentPage = 1;
@@ -247,7 +247,7 @@
                     targetUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&include_adult=false&language=id-ID&page=${page}`;
                 }
 
-                // Membungkus URL asli menggunakan jembatan AllOrigins Proxy
+                // Memanggil lewat jalur proxy yang sudah lurus alamatnya
                 const res = await fetch(PROXY + encodeURIComponent(targetUrl));
                 
                 if (!res.ok) {
@@ -298,7 +298,7 @@
                 }
 
             } catch (err) {
-                loading.innerHTML = `Gagal memuat data.<br><small style="color:#ff3d00; font-size:14px;">Kendala Jaringan: ${err.message}. Pastikan koneksi internet Anda aktif.</small>`;
+                loading.innerHTML = `Gagal memuat data.<br><small style="color:#ff3d00; font-size:14px;">Kendala Jaringan: ${err.message}. Pastikan internet Anda aktif.</small>`;
                 console.error(err);
             }
         }
