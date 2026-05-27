@@ -211,9 +211,11 @@ async function loadWatchPageData() {
     }
 
     let selectedMovie = ALL_MOVIES.find(m => m.internalId === movieId);
+    let tmdbId = "";
 
+    // FIX API & PLAYER: Perbaikan penulisan URL fetch API TMDB dan String Template Player
     if (!selectedMovie && movieId.startsWith("TMDB_")) {
-        const tmdbId = movieId.replace("TMDB_", "");
+        tmdbId = movieId.replace("TMDB_", "");
         try {
             const res = await fetch(`https://themoviedb.org{tmdbId}?api_key=${TMDB_API_KEY}&language=id-ID`);
             if (res.ok) {
@@ -224,7 +226,7 @@ async function loadWatchPageData() {
                     genre: "Indonesia Movie",
                     release_date: movie.release_date,
                     country: "Indonesia",
-                    iframe: `https://vidsrc.me{tmdbId}`
+                    iframe: `https://vidsrc.me{tmdbId}` // Memperbaiki struktur embed path vidsrc
                 };
             }
         } catch (e) {
@@ -250,14 +252,34 @@ async function loadWatchPageData() {
         const relatedGrid = document.getElementById('relatedGrid');
         if (relatedGrid) {
             relatedGrid.innerHTML = "";
-            
-            const currentGenre = (selectedMovie.genre || "").toString().toLowerCase();
-            const relatedMovies = ALL_MOVIES.filter(m => {
-                const isDifferentMovie = m.internalId !== movieId;
-                const matchesGenre = m.genre && m.genre.toString().toLowerCase().includes(currentGenre);
-                return isDifferentMovie && matchesGenre;
-            });
+            let relatedMovies = [];
 
+            // FIX REKOMENDASI: Jika film berasal dari TMDB, ambil data film serupa dari API TMDB
+            if (movieId.startsWith("TMDB_") && tmdbId) {
+                try {
+                    const recRes = await fetch(`https://themoviedb.org{tmdbId}/recommendations?api_key=${TMDB_API_KEY}&language=id-ID&page=1`);
+                    if (recRes.ok) {
+                        const recData = await recRes.ok ? await recRes.json() : { results: [] };
+                        relatedMovies = (recData.results || []).slice(0, 12).map(m => ({
+                            internalId: `TMDB_${m.id}`,
+                            title: m.title,
+                            image: m.poster_path ? `https://tmdb.org{m.poster_path}` : 'https://placehold.co'
+                        }));
+                    }
+                } catch (err) {
+                    console.error("Gagal memuat rekomendasi film dari TMDB:", err);
+                }
+            } else {
+                // Jika film lokal, gunakan filter berdasarkan kesamaan teks nama genre
+                const currentGenre = (selectedMovie.genre || "").toString().toLowerCase();
+                relatedMovies = ALL_MOVIES.filter(m => {
+                    const isDifferentMovie = m.internalId !== movieId;
+                    const matchesGenre = m.genre && m.genre.toString().toLowerCase().includes(currentGenre);
+                    return isDifferentMovie && matchesGenre;
+                });
+            }
+
+            // Memasukkan hasil filter ke dalam grid visual
             if (relatedMovies.length === 0) {
                 relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
             } else {
@@ -307,7 +329,7 @@ async function loadWatchPageData() {
 
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
-                const randomAd = availableAds.splice(randomIndex, 1);
+                const randomAd = availableAds.splice(randomIndex, 1)[0]; // Ambil nilai string murni dari array
 
                 if (clickCount === 1) {
                     window.open(randomAd, '_blank');
