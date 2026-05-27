@@ -32,7 +32,7 @@
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 
-    <script>
+        <script>
       if (!firebase.apps.length) {
         firebase.initializeApp({
           apiKey: "AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y",
@@ -54,7 +54,9 @@
       }
 
       function closePushModal() {
-        document.getElementById("pushModal").style.none = "none";
+        // FIX: Koreksi sintaks pengubah gaya tampilan elemen dari .style.none menjadi .style.display
+        const modal = document.getElementById("pushModal");
+        if (modal) modal.style.display = "none";
       }
 
       const allowPushEl = document.getElementById("allowPush");
@@ -62,8 +64,9 @@
         allowPushEl.onclick = function () {
           Notification.requestPermission().then(function (permission) {
             if (permission === "granted") {
+              // SISIPAN FIXED: Mengganti link mentah githubusercontent ke jalur resmi CDN jsDelivr JavaScript
               navigator.serviceWorker.register(
-                "https://githubusercontent.com"
+                "https://jsdelivr.net"
               ).then(function (reg) {
                 messaging.useServiceWorker(reg);
                 messaging.getToken({
@@ -88,6 +91,7 @@
         setTimeout(showPushModal, 3000);
       });
     </script>
+
 
 </head>
 <body>
