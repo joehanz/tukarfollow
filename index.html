@@ -28,9 +28,9 @@
     <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779'/>
 
     <!-- FIREBASE SDK v9 COMPAT -->
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'/>
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'/>
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js'/>
+    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'></script>
+    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'></script>
+    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js'></script>
 
     <script>
       if (!firebase.apps.length) {
@@ -306,10 +306,12 @@
     //]]>
 </script>
 
-    <div id='globalOnlineFloating'>
-  <span class='dot'/>
-  <span id='globalOnlineCounter'>0 online</span>
+    <!-- FLOATING COUNTER ONLINE (FIXED STRUCTURE) -->
+<div id="globalOnlineFloating">
+  <span class="dot"></span>
+  <span id="globalOnlineCounter">0 online</span>
 </div>
+
 
 <script>
   /* =====================================================
