@@ -12,9 +12,9 @@ let ALL_MOVIES = [];
 function generateSlug(title) {
     if (!title) return '';
     return title.toLowerCase()
-        .replace(/[^a-z0-9\s()-]/g, '') // Mempertahankan huruf, angka, tanda kurung, dan strip
+        .replace(/[^a-z0-9\s()-]/g, '')
         .trim()
-        .replace(/\s+/g, '-'); // Mengubah spasi menjadi strip
+        .replace(/\s+/g, '-');
 }
 
 // Inisialisasi Utama Halaman Web
@@ -172,7 +172,7 @@ function renderGrid(moviesList) {
         card.className = "movie-card";
         card.href = `watch.html?id=${movie.internalId}`; 
         
-        // REVISI: Menempatkan judul film (h3) di DEPAN poster-wrapper
+        // Judul film (h3) diletakkan di depan poster-wrapper
         card.innerHTML = `
             <h3>${movie.title}</h3>
             <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
@@ -237,7 +237,7 @@ async function loadWatchPageData() {
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
                     
-                    // REVISI: Judul DIDEPAN poster & Pengunci Dimensi Poster Grid (panjang-lebar seragam 2:3)
+                    // Judul di depan poster & pembatas dimensi visual aspect-ratio agar seragam
                     card.innerHTML = `
                         <h3>${movie.title}</h3>
                         <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
@@ -281,7 +281,7 @@ async function loadWatchPageData() {
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
                 
-                // PERBAIKAN FATAL: Menambahkan [0] untuk mengambil nilai string dari metode splice
+                // Menarik string URL murni dari array pemotongan domain iklan
                 const randomAd = availableAds.splice(randomIndex, 1)[0]; 
 
                 if (clickCount === 1) {
