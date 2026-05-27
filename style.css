@@ -513,3 +513,31 @@ body {
     opacity: 1;
   }
 }
+
+.rating-box{
+  display:inline-block;
+  margin-top:5px;
+}
+
+.rating-box #stars{
+  display:flex;
+  gap:5px;
+}
+
+.rating-box .star{
+  font-size:30px;
+  cursor:pointer;
+  color:white;
+  transition:color .2s;
+}
+
+.rating-box .star.active,
+.rating-box .star.hover{
+  color:gold;
+}
+
+@media screen and (max-width:600px){
+  .rating-box .star{
+    font-size:24px;
+  }
+}
