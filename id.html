@@ -6,7 +6,6 @@
     <title>Film Indonesia TMDB</title>
     <meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
     <link rel="preconnect" href="https://tmdb.org">
-    <link rel="preconnect" href="https://themoviedb.org">
 
     <style>
         * {
@@ -225,6 +224,9 @@
         const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0';
         const BASE_URL = 'https://themoviedb.org';
         const IMG = 'https://tmdb.org';
+        
+        // MENGGUNAKAN PROXY BYPASS AGAR LOLOS DARI BLOKIRAN "FAILED TO FETCH" BROWSER LOKAL
+        const PROXY = 'https://allorigins.win';
 
         let currentPage = 1;
         let currentQuery = '';
@@ -237,18 +239,19 @@
             grid.innerHTML = '';
 
             try {
-                let url = '';
+                let targetUrl = '';
 
                 if (currentQuery) {
-                    url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
+                    targetUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
                 } else {
-                    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&include_adult=false&language=id-ID&page=${page}`;
+                    targetUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&include_adult=false&language=id-ID&page=${page}`;
                 }
 
-                const res = await fetch(url, { method: 'GET', mode: 'cors' });
+                // Membungkus URL asli menggunakan jembatan AllOrigins Proxy
+                const res = await fetch(PROXY + encodeURIComponent(targetUrl));
                 
                 if (!res.ok) {
-                    throw new Error(`Koneksi ditolak server (Status: ${res.status})`);
+                    throw new Error(`Server Proxy Sibuk (Status: ${res.status})`);
                 }
 
                 const data = await res.json();
@@ -295,7 +298,7 @@
                 }
 
             } catch (err) {
-                loading.innerHTML = `Gagal memuat data dari TMDB.<br><small style="color:#ff3d00; font-size:14px;">Kendala: ${err.message}. Harap jalankan file ini lewat localhost / web server agar tidak diblokir browser.</small>`;
+                loading.innerHTML = `Gagal memuat data.<br><small style="color:#ff3d00; font-size:14px;">Kendala Jaringan: ${err.message}. Pastikan koneksi internet Anda aktif.</small>`;
                 console.error(err);
             }
         }
