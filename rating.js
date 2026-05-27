@@ -1,3 +1,4 @@
+<script>
 (function(){
 
   function startRatingSystem(){
@@ -7,7 +8,7 @@
     var filmId =
       location.pathname.replace(/\W/g,'');
 
-    // USER ID
+    // USER ID TETAP
     function getUserId(){
 
       var userId =
@@ -60,6 +61,12 @@
       );
 
     if(!stars.length) return false;
+
+    // CEK LOCAL RATING
+    var currentRating =
+      localStorage.getItem(
+        'rated_' + filmId
+      );
 
     // SET STAR
     function setStar(nilai){
@@ -121,6 +128,21 @@
 
     });
 
+    // LOAD LOCAL DULU
+    if(currentRating){
+
+      currentRating =
+        Number(currentRating);
+
+      setStar(currentRating);
+
+      userRatingText.innerHTML =
+        'Rating kamu: ' +
+        currentRating +
+        ' ⭐';
+
+    }
+
     // CLICK RATE
     stars.forEach(function(star){
 
@@ -131,17 +153,12 @@
           var nilai =
             Number(this.dataset.value);
 
-          // CEK LOCAL STORAGE
-          var savedRating =
-            localStorage.getItem(
-              'rated_' + filmId
-            );
-
-          if(savedRating){
+          // SUDAH PERNAH RATE
+          if(currentRating){
 
             alert(
               'Kamu sudah memberi rating ' +
-              savedRating +
+              currentRating +
               ' ⭐ di film ini!'
             );
 
@@ -149,12 +166,15 @@
 
           }
 
+          // SIMPAN DATABASE
           userRef.set({
             rating: nilai,
             time: Date.now()
           });
 
-          // SIMPAN LOCAL
+          // UPDATE LOCAL
+          currentRating = nilai;
+
           localStorage.setItem(
             'rated_' + filmId,
             nilai
@@ -167,82 +187,61 @@
             nilai +
             ' ⭐';
 
+          // NOTIF HASIL
+          alert(
+            'Terima kasih! Kamu memberi rating ' +
+            nilai +
+            ' ⭐'
+          );
+
         }
       );
 
     });
 
-    // LOAD USER RATING
-    (function(){
+    // FALLBACK DATABASE
+    userRef.once(
+      'value',
+      function(snapshot){
 
-      var savedRating =
-        localStorage.getItem(
-          'rated_' + filmId
-        );
+        if(snapshot.exists()){
 
-      // PRIORITAS LOCAL
-      if(savedRating){
+          var data = snapshot.val();
 
-        savedRating = Number(savedRating);
+          var val = 0;
 
-        setStar(savedRating);
+          if(typeof data === 'object'){
 
-        userRatingText.innerHTML =
-          'Rating kamu: ' +
-          savedRating +
-          ' ⭐';
+            val = Number(data.rating);
 
-        return;
+          }else{
 
-      }
+            val = Number(data);
 
-      // FALLBACK DATABASE
-      userRef.once(
-        'value',
-        function(snapshot){
+          }
 
-          if(snapshot.exists()){
+          if(val){
 
-            var data = snapshot.val();
+            currentRating = val;
 
-            var val;
+            localStorage.setItem(
+              'rated_' + filmId,
+              val
+            );
 
-            // FORMAT BARU
-            if(typeof data === 'object'){
+            setStar(val);
 
-              val = Number(data.rating);
-
-            }
-
-            // FORMAT LAMA
-            else{
-
-              val = Number(data);
-
-            }
-
-            if(val){
-
-              localStorage.setItem(
-                'rated_' + filmId,
-                val
-              );
-
-              setStar(val);
-
-              userRatingText.innerHTML =
-                'Rating kamu: ' +
-                val +
-                ' ⭐';
-
-            }
+            userRatingText.innerHTML =
+              'Rating kamu: ' +
+              val +
+              ' ⭐';
 
           }
 
         }
-      );
 
-    })();
+      }
+    );
 
     // REALTIME RESULT
     db.ref(
@@ -262,15 +261,11 @@
 
           var rating = 0;
 
-          // FORMAT BARU
           if(typeof data === 'object'){
 
             rating = Number(data.rating);
 
-          }
-
-          // FORMAT LAMA
-          else{
+          }else{
 
             rating = Number(data);
 
@@ -331,3 +326,4 @@
   },100);
 
 })();
+</script>
