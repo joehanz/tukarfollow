@@ -1,6 +1,6 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
 
-// DAFTAR DOMAIN IKLAN MANDIRI ANDA
+// DAFTAR DOMAIN IKLAN
 const AD_DOMAINS = [
     'https://rajarayap.com',
     'https://ptdwiprima.blogspot.com',
@@ -9,14 +9,13 @@ const AD_DOMAINS = [
 
 let ALL_MOVIES = [];
 
-// Inisialisasi Utama Halaman Web
+// Inisialisasi Utama
 document.addEventListener("DOMContentLoaded", async () => {
 
     initNavbar();
 
     await loadGlobalMoviesData();
 
-    // Membaca parameter URL
     const urlParams = new URLSearchParams(window.location.search);
 
     const filterGenre = urlParams.get('filterGenre');
@@ -30,53 +29,74 @@ document.addEventListener("DOMContentLoaded", async () => {
         const sectionTitle =
             document.getElementById('sectionTitle');
 
+        // FILTER GENRE
         if (filterGenre) {
 
-            if (sectionTitle)
-                sectionTitle.innerText = `Genre: ${filterGenre}`;
-
-            filtered = ALL_MOVIES.filter(m =>
-                m.genre &&
-                m.genre.toString().toLowerCase()
-                .includes(filterGenre.toLowerCase())
-            );
-
-        } else if (filterYear) {
-
-            if (sectionTitle)
+            if (sectionTitle) {
                 sectionTitle.innerText =
-                `Tahun Rilis: ${filterYear}`;
+                    `Genre: ${filterGenre}`;
+            }
 
             filtered = ALL_MOVIES.filter(m => {
 
-                if (!m.release_date) return false;
+                if (!m.genre) return false;
+
+                return m.genre
+                    .toLowerCase()
+                    .includes(filterGenre.toLowerCase());
+
+            });
+
+        }
+
+        // FILTER TAHUN
+        else if (filterYear) {
+
+            if (sectionTitle) {
+                sectionTitle.innerText =
+                    `Tahun Rilis: ${filterYear}`;
+            }
+
+            filtered = ALL_MOVIES.filter(m => {
+
+                if (!m.release_date)
+                    return false;
 
                 return new Date(m.release_date)
                     .getFullYear() === parseInt(filterYear);
 
             });
 
-        } else if (filterSearch) {
+        }
 
-            if (sectionTitle)
+        // FILTER SEARCH
+        else if (filterSearch) {
+
+            if (sectionTitle) {
                 sectionTitle.innerText =
-                `Hasil Pencarian: "${filterSearch}"`;
+                    `Hasil Pencarian: "${filterSearch}"`;
+            }
 
             filtered = ALL_MOVIES.filter(m =>
-                m.title.toLowerCase()
+                m.title
+                .toLowerCase()
                 .includes(filterSearch.toLowerCase())
             );
 
             const searchInput =
                 document.getElementById('searchInput');
 
-            if (searchInput)
+            if (searchInput) {
                 searchInput.value = filterSearch;
+            }
+
         }
 
         renderGrid(filtered);
+
     }
 
+    // HALAMAN WATCH
     if (document.getElementById('videoContainer')) {
         loadWatchPageData();
     }
@@ -90,32 +110,35 @@ async function loadGlobalMoviesData() {
 
         const res = await fetch('movies.json');
 
-        if (!res.ok) return;
+        if (!res.ok) {
+            console.error("movies.json gagal dibaca");
+            return;
+        }
 
         const data = await res.json();
 
         ALL_MOVIES = data.map((item, idx) => ({
             ...item,
-            internalId: `MOVIE_${idx}`
+            internalId: `LOCAL_${idx}`
         }));
 
-    } catch (e) {
+    } catch (err) {
 
         console.error(
-            "Gagal membaca movies.json:",
-            e
+            "Gagal load movies.json:",
+            err
         );
 
     }
 
 }
--------------------------------------------------------
 async function loadWatchPageData() {
 
     const urlParams =
         new URLSearchParams(window.location.search);
 
-    const movieId = urlParams.get('id');
+    const movieId =
+        urlParams.get('id');
 
     if (!movieId) {
 
@@ -125,9 +148,11 @@ async function loadWatchPageData() {
         return;
     }
 
-    // cari film dari database lokal
+    // cari film lokal
     const selectedMovie =
-        ALL_MOVIES.find(m => m.internalId === movieId);
+        ALL_MOVIES.find(m =>
+            m.internalId === movieId
+        );
 
     if (!selectedMovie) {
 
@@ -139,7 +164,7 @@ async function loadWatchPageData() {
 
     // isi detail
     document.getElementById("watchTitle")
-        .innerText = selectedMovie.title;
+        .innerText = selectedMovie.title || "-";
 
     document.getElementById("watchSinopsis")
         .innerText = selectedMovie.sinopsis || "-";
@@ -182,7 +207,7 @@ async function loadWatchPageData() {
 
         relatedGrid.innerHTML = "";
 
-        // baca genre film aktif
+        // genre film aktif
         const currentGenres =
             (selectedMovie.genre || "")
             .toLowerCase()
@@ -190,33 +215,34 @@ async function loadWatchPageData() {
             .map(g => g.trim())
             .filter(Boolean);
 
-        // filter film segenre
-        let relatedMovies = ALL_MOVIES.filter(movie => {
+        // filter segenre
+        let relatedMovies =
+            ALL_MOVIES.filter(movie => {
 
-            // jangan tampilkan film yg sama
-            if (movie.internalId === movieId)
-                return false;
+                // jangan tampilkan film sendiri
+                if (movie.internalId === movieId)
+                    return false;
 
-            if (!movie.genre)
-                return false;
+                if (!movie.genre)
+                    return false;
 
-            const movieGenres =
-                movie.genre
-                .toLowerCase()
-                .split(/[,|]/)
-                .map(g => g.trim());
+                const movieGenres =
+                    movie.genre
+                    .toLowerCase()
+                    .split(/[,|]/)
+                    .map(g => g.trim());
 
-            // cocokkan genre
-            return currentGenres.some(g =>
-                movieGenres.includes(g)
-            );
+                return currentGenres.some(g =>
+                    movieGenres.includes(g)
+                );
 
-        });
+            });
 
-        // batasi 12 film
-        relatedMovies = relatedMovies.slice(0, 12);
+        // maksimal 12
+        relatedMovies =
+            relatedMovies.slice(0, 12);
 
-        // render
+        // tampilkan
         if (relatedMovies.length === 0) {
 
             relatedGrid.innerHTML =
@@ -244,7 +270,6 @@ async function loadWatchPageData() {
                 card.href =
                     `watch.html?id=${movie.internalId}`;
 
-                // ukuran sama rata
                 card.style.cssText = `
                     position:relative;
                     display:block;
@@ -315,34 +340,6 @@ async function loadWatchPageData() {
         }
     }
 
-    // tombol slider
-    const slidePrev =
-        document.getElementById('slidePrev');
-
-    const slideNext =
-        document.getElementById('slideNext');
-
-    if (slidePrev && slideNext && relatedGrid) {
-
-        slidePrev.addEventListener('click', () => {
-
-            relatedGrid.scrollBy({
-                left: -300,
-                behavior: 'smooth'
-            });
-
-        });
-
-        slideNext.addEventListener('click', () => {
-
-            relatedGrid.scrollBy({
-                left: 300,
-                behavior: 'smooth'
-            });
-
-        });
-    }
-
     // ================= IKLAN =================
 
     const adOverlay =
@@ -358,12 +355,14 @@ async function loadWatchPageData() {
 
             clickCount++;
 
-            if (availableAds.length === 0)
+            if (availableAds.length === 0) {
                 availableAds = [...AD_DOMAINS];
+            }
 
             const randomIndex =
                 Math.floor(
-                    Math.random() * availableAds.length
+                    Math.random() *
+                    availableAds.length
                 );
 
             const randomAd =
@@ -373,7 +372,9 @@ async function loadWatchPageData() {
 
                 window.open(randomAd, '_blank');
 
-            } else if (clickCount === 2) {
+            }
+
+            else if (clickCount === 2) {
 
                 window.open(randomAd, '_blank');
 
