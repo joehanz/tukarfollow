@@ -1,0 +1,294 @@
+# Template Grid TMDB Film Indonesia
+
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film Indonesia TMDB</title>
+<meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
+<link rel="preconnect" href="https://image.tmdb.org">
+<link rel="preconnect" href="https://api.themoviedb.org">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#0b0b0b;
+font-family:Arial,sans-serif;
+color:#fff;
+}
+
+header{
+padding:25px;
+background:#111;
+position:sticky;
+top:0;
+z-index:100;
+border-bottom:1px solid #222;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+letter-spacing:2px;
+color:#ff3d00;
+}
+
+.search-box{
+margin-top:15px;
+display:flex;
+gap:10px;
+}
+
+.search-box input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#1a1a1a;
+color:#fff;
+font-size:16px;
+outline:none;
+}
+
+.search-box button{
+padding:14px 20px;
+border:none;
+border-radius:10px;
+background:#ff3d00;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.container{
+padding:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:20px;
+}
+
+.card{
+background:#121212;
+border-radius:16px;
+overflow:hidden;
+transition:0.3s;
+position:relative;
+}
+
+.card:hover{
+transform:translateY(-6px);
+}
+
+.poster{
+width:100%;
+height:270px;
+object-fit:cover;
+background:#1a1a1a;
+}
+
+.info{
+padding:12px;
+}
+
+.title{
+font-size:15px;
+font-weight:bold;
+line-height:1.4;
+height:42px;
+overflow:hidden;
+}
+
+.meta{
+margin-top:10px;
+display:flex;
+justify-content:space-between;
+font-size:13px;
+color:#aaa;
+}
+
+.rating{
+background:#ff3d00;
+padding:4px 8px;
+border-radius:50px;
+font-size:12px;
+font-weight:bold;
+color:#fff;
+}
+
+.loading{
+text-align:center;
+padding:40px;
+font-size:18px;
+color:#999;
+}
+
+.pagination{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:40px 0;
+}
+
+.pagination button{
+padding:12px 18px;
+border:none;
+background:#1a1a1a;
+color:#fff;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.pagination button.active{
+background:#ff3d00;
+}
+
+@media(max-width:600px){
+.grid{
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.poster{
+height:240px;
+}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">FILM INDONESIA</div>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Cari film Indonesia...">
+<button onclick="searchMovies()">Cari</button>
+</div>
+</header>
+
+<div class="container">
+<div class="grid" id="movieGrid"></div>
+<div class="loading" id="loading">Memuat film Indonesia...</div>
+
+<div class="pagination">
+<button onclick="prevPage()">Prev</button>
+<button class="active" id="pageNumber">1</button>
+<button onclick="nextPage()">Next</button>
+</div>
+</div>
+
+<script>
+const API_KEY = '9e335d21d35f04917b218bae7adc881f';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG = 'https://image.tmdb.org/t/p/w500';
+
+let currentPage = 1;
+let currentQuery = '';
+
+async function fetchMovies(page = 1){
+const grid = document.getElementById('movieGrid');
+const loading = document.getElementById('loading');
+
+loading.style.display = 'block';
+grid.innerHTML = '';
+
+try{
+let url = '';
+
+if(currentQuery){
+url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
+}else{
+url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&language=id-ID&page=${page}`;
+}
+
+const res = await fetch(url);
+const data = await res.json();
+
+loading.style.display = 'none';
+
+if(data.results.length === 0){
+grid.innerHTML = '<h2>Tidak ada film ditemukan</h2>';
+return;
+}
+
+for(const movie of data.results){
+const card = document.createElement('div');
+card.className = 'card';
+
+card.innerHTML = `
+<img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://via.placeholder.com/500x750?text=No+Image'}">
+
+<div class="info">
+<div class="title">${movie.title}</div>
+
+<div class="meta">
+<span>${movie.release_date ? movie.release_date.slice(0,4) : 'N/A'}</span>
+<span class="rating">⭐ ${movie.vote_average.toFixed(1)}</span>
+</div>
+</div>
+`;
+
+card.onclick = () => {
+window.open(`https://www.themoviedb.org/movie/${movie.id}`,'_blank');
+};
+
+grid.appendChild(card);
+}
+
+}catch(err){
+loading.innerHTML = 'Gagal memuat data';
+console.log(err);
+}
+}
+
+function searchMovies(){
+const input = document.getElementById('searchInput');
+currentQuery = input.value.trim();
+currentPage = 1;
+document.getElementById('pageNumber').innerText = currentPage;
+fetchMovies(currentPage);
+}
+
+function nextPage(){
+currentPage++;
+document.getElementById('pageNumber').innerText = currentPage;
+fetchMovies(currentPage);
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevPage(){
+if(currentPage > 1){
+currentPage--;
+document.getElementById('pageNumber').innerText = currentPage;
+fetchMovies(currentPage);
+window.scrollTo({top:0,behavior:'smooth'});
+}
+}
+
+fetchMovies();
+</script>
+
+</body>
+</html>
+```
+
+## Fitur
+
+* Grid responsive
+* Auto ambil film Indonesia dari TMDB
+* Search film
+* Pagination
+* Dark mode cinematic
+* Responsive mobile
+* Klik poster langsung ke halaman TMDB
+* Cocok untuk GitHub Pages
