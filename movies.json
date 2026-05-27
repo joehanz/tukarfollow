@@ -1,15 +1,5 @@
 [
   {
-    "title": "The Punisher: One Last Kill (2026)",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
-    "video": "",
-    "iframe": "https://abyssplayer.com/S4FLBP5d_",
-    "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
-    "genre": ["Action", "Adventure", "Crime", "Drama", "Thriller"],
-    "release_date": "18-05-2026",
-    "country": "Inggris"
-  },
-  {
     "title": "Kartavya (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kartavya.webp",
     "video": "",
@@ -18,6 +8,16 @@
     "genre": ["Crime", "Drama", "Thriller"],
     "release_date": "15-05-2026",
     "country": "India"
+  },
+  {
+    "title": "The Punisher: One Last Kill (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/S4FLBP5d_",
+    "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
+    "genre": ["Action", "Adventure", "Crime", "Drama", "Thriller"],
+    "release_date": "12-05-2026",
+    "country": "Inggris"
   },
   {
     "title": "Couples Weekend (2025)",
