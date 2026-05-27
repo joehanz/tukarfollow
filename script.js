@@ -277,12 +277,15 @@ async function loadWatchPageData() {
                     console.error("Gagal memuat rekomendasi film dari TMDB:", err);
                 }
             } else {
-                // Jika film lokal, gunakan filter berdasarkan kesamaan teks nama genre
-                const currentGenre = (selectedMovie.genre || "").toString().toLowerCase();
+                // DIPERBAIKI: Memecah semua kata genre film lokal agar terbaca utuh dan fleksibel
+                const currentGenres = (selectedMovie.genre || "").toString().toLowerCase().split(/[\s,]+/);
                 relatedMovies = ALL_MOVIES.filter(m => {
                     const isDifferentMovie = m.internalId !== movieId;
-                    const matchesGenre = m.genre && m.genre.toString().toLowerCase().includes(currentGenre);
-                    return isDifferentMovie && matchesGenre;
+                    if (!isDifferentMovie || !m.genre) return false;
+                    
+                    const movieGenreText = m.genre.toString().toLowerCase();
+                    // Mencocokkan apakah ada salah satu genre yang sesuai di database lokal
+                    return currentGenres.some(g => g.trim() && movieGenreText.includes(g.trim()));
                 });
             }
 
