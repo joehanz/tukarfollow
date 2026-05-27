@@ -211,24 +211,91 @@ async function loadWatchPageData() {
             });
 
             // Memasukkan hasil filter ke dalam grid visual
-            if (relatedMovies.length === 0) {
-                relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
-            } else {
-                const fragment = document.createDocumentFragment();
-                relatedMovies.forEach(movie => {
-                    const card = document.createElement('a');
-                    card.className = "movie-card"; 
-                    card.href = `watch.html?id=${movie.internalId}`;
-                    card.innerHTML = `
-                        <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
-                        <h3>${movie.title}</h3>
-                    `;
-                    fragment.appendChild(card);
-                });
-                relatedGrid.appendChild(fragment);
-            }
-        }
+if (relatedMovies.length === 0) {
 
+    relatedGrid.innerHTML =
+        "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
+
+} else {
+
+    const fragment = document.createDocumentFragment();
+
+    relatedMovies.forEach(movie => {
+
+        const card = document.createElement('a');
+
+        card.className = "movie-card";
+
+        card.href = `watch.html?id=${movie.internalId}`;
+
+        // ukuran card sama rata
+        card.style.cssText = `
+            position:relative;
+            display:block;
+            aspect-ratio:2/3;
+            overflow:hidden;
+            border-radius:12px;
+            background:#111;
+            text-decoration:none;
+        `;
+
+        card.innerHTML = `
+            <div style="
+                width:100%;
+                height:100%;
+                position:relative;
+            ">
+
+                <img
+                    src="${movie.image}"
+                    alt="${movie.title}"
+                    loading="lazy"
+                    style="
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                        display:block;
+                    "
+                >
+
+                <div style="
+                    position:absolute;
+                    left:0;
+                    right:0;
+                    bottom:0;
+                    padding:35px 10px 10px;
+                    background:linear-gradient(
+                        to top,
+                        rgba(0,0,0,.95),
+                        rgba(0,0,0,0)
+                    );
+                ">
+
+                    <h3 style="
+                        margin:0;
+                        color:#fff;
+                        font-size:14px;
+                        line-height:1.3;
+                        overflow:hidden;
+                        display:-webkit-box;
+                        -webkit-line-clamp:2;
+                        -webkit-box-orient:vertical;
+                    ">
+                        ${movie.title}
+                    </h3>
+
+                </div>
+
+            </div>
+        `;
+
+        fragment.appendChild(card);
+
+    });
+
+    relatedGrid.appendChild(fragment);
+
+}
         // KONTROL TOMBOL PANAH CAROUSEL SLIDER (DESKTOP)
         const slidePrev = document.getElementById('slidePrev');
         const slideNext = document.getElementById('slideNext');
