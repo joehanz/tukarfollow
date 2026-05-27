@@ -1,344 +1,327 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Film Indonesia TMDB</title>
-<meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
-<link rel="preconnect" href="https://tmdb.org">
-<link rel="preconnect" href="https://api.themoviedb.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Indonesia TMDB</title>
+    <meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
+    <link rel="preconnect" href="https://tmdb.org">
+    <link rel="preconnect" href="https://themoviedb.org">
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body{
-background:#0b0b0b;
-font-family:Arial,sans-serif;
-color:#fff;
-}
+        body {
+            background: #0b0b0b;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
 
-header{
-padding:25px;
-background:#111;
-position:sticky;
-top:0;
-z-index:100;
-border-bottom:1px solid #222;
-}
+        header {
+            padding: 25px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #222;
+        }
 
-.logo{
-font-size:28px;
-font-weight:bold;
-letter-spacing:2px;
-color:#ff3d00;
-}
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ff3d00;
+        }
 
-.search-box{
-margin-top:15px;
-display:flex;
-gap:10px;
-}
+        .search-box {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
 
-.search-box input{
-flex:1;
-padding:14px;
-border:none;
-border-radius:10px;
-background:#1a1a1a;
-color:#fff;
-font-size:16px;
-outline:none;
-}
+        .search-box input {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
 
-.search-box button{
-padding:14px 20px;
-border:none;
-border-radius:10px;
-background:#ff3d00;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
-}
+        .search-box button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #ff3d00;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-/* =========================================================
-   GAYA VISUAL LAYAR PEMUTAR VIDEO (PLAYER AREA)
-========================================================= */
-.player-container {
-max-width: 1000px;
-margin: 20px auto 0 auto;
-padding: 0 20px;
-display: none; /* Sembunyi default, muncul saat poster diklik */
-}
+        /* AREA PEMUTAR VIDEO (PLAYER AREA) */
+        .player-container {
+            max-width: 1000px;
+            margin: 20px auto 0 auto;
+            padding: 0 20px;
+            display: none;
+        }
 
-.video-wrapper {
-position: relative;
-padding-bottom: 56.25%; /* Rasio Bioskop 16:9 */
-height: 0;
-background: #000;
-border-radius: 16px;
-overflow: hidden;
-border: 2px solid #ff3d00;
-}
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #ff3d00;
+        }
 
-.video-wrapper iframe {
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-border: 0;
-}
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
-.player-title {
-font-size: 22px;
-font-weight: bold;
-margin-top: 15px;
-color: #fff;
-}
+        .player-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #fff;
+        }
 
-.container{
-padding:20px;
-}
+        .container {
+            padding: 20px;
+        }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:20px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
 
-.card{
-background:#121212;
-border-radius:16px;
-overflow:hidden;
-transition:0.3s;
-position:relative;
-cursor:pointer;
-}
+        .card {
+            background: #121212;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
 
-.card:hover{
-transform:translateY(-6px);
-}
+        .card:hover {
+            transform: translateY(-6px);
+        }
 
-.poster{
-width:100%;
-height:270px;
-object-fit:cover;
-background:#1a1a1a;
-}
+        .poster {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
 
-.info{
-padding:12px;
-}
+        .info {
+            padding: 12px;
+        }
 
-.title{
-font-size:15px;
-font-weight:bold;
-line-height:1.4;
-height:42px;
-overflow:hidden;
-}
+        .title {
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.4;
+            height: 42px;
+            overflow: hidden;
+        }
 
-.meta{
-margin-top:10px;
-display:flex;
-justify-content:space-between;
-font-size:13px;
-color:#aaa;
-}
+        .meta {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #aaa;
+        }
 
-.rating{
-background:#ff3d00;
-padding:4px 8px;
-border-radius:50px;
-font-size:12px;
-font-weight:bold;
-color:#fff;
-}
+        .rating {
+            background: #ff3d00;
+            padding: 4px 8px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
 
-.loading{
-text-align:center;
-padding:40px;
-font-size:18px;
-color:#999;
-}
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #999;
+        }
 
-.pagination{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:40px 0;
-}
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px 0;
+        }
 
-.pagination button{
-padding:12px 18px;
-border:none;
-background:#1a1a1a;
-color:#fff;
-border-radius:10px;
-cursor:pointer;
-font-weight:bold;
-}
+        .pagination button {
+            padding: 12px 18px;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-.pagination button.active{
-background:#ff3d00;
-}
+        .pagination button.active {
+            background: #ff3d00;
+        }
 
-@media(max-width:600px){
-.grid{
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
-
-.poster{
-height:240px;
-}
-}
-</style>
+        @media(max-width:600px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .poster {
+                height: 240px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-<div class="logo">FILM INDONESIA</div>
+    <header>
+        <div class="logo">FILM INDONESIA</div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari film Indonesia...">
+            <button onclick="searchMovies()">Cari</button>
+        </div>
+    </header>
 
-<div class="search-box">
-<input type="text" id="searchInput" placeholder="Cari film Indonesia...">
-<button onclick="searchMovies()">Cari</button>
-</div>
-</header>
+    <div class="player-container" id="playerContainer">
+        <div class="video-wrapper" id="videoWrapper"></div>
+        <div class="player-title" id="playerTitle">Memuat Layar Nonton...</div>
+    </div>
 
-<!-- AREA PEMUTAR VIDEO DI TEMPAT -->
-<div class="player-container" id="playerContainer">
-<div class="video-wrapper" id="videoWrapper">
-<!-- Iframe Player Disuntikkan via Javascript -->
-</div>
-<div class="player-title" id="playerTitle">Memuat Layar Nonton...</div>
-</div>
+    <div class="container">
+        <div class="grid" id="movieGrid"></div>
+        <div class="loading" id="loading">Memuat film Indonesia...</div>
 
-<div class="container">
-<div class="grid" id="movieGrid"></div>
-<div class="loading" id="loading">Memuat film Indonesia...</div>
+        <div class="pagination">
+            <button onclick="prevPage()">Prev</button>
+            <button class="active" id="pageNumber">1</button>
+            <button onclick="nextPage()">Next</button>
+        </div>
+    </div>
+    <script>
+        const API_KEY = '9e335d21d35f04917b218bae7adc881f';
+        const BASE_URL = 'https://themoviedb.org';
+        const IMG = 'https://tmdb.org';
 
-<div class="pagination">
-<button onclick="prevPage()">Prev</button>
-<button class="active" id="pageNumber">1</button>
-<button onclick="nextPage()">Next</button>
-</div>
-</div>
+        let currentPage = 1;
+        let currentQuery = '';
 
-<script>
-const API_KEY = '9e335d21d35f04917b218bae7adc881f';
-// FIX ALAMAT ENDPOINT: Memperbaiki tautan domain dasar agar sinkronisasi data API TMDB lolos total
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG = 'https://tmdb.org/t/p/w500';
+        async function fetchMovies(page = 1) {
+            const grid = document.getElementById('movieGrid');
+            const loading = document.getElementById('loading');
 
-let currentPage = 1;
-let currentQuery = '';
+            loading.style.display = 'block';
+            grid.innerHTML = '';
 
-async function fetchMovies(page = 1){
-const grid = document.getElementById('movieGrid');
-const loading = document.getElementById('loading');
+            try {
+                let url = '';
 
-loading.style.display = 'block';
-grid.innerHTML = '';
+                if (currentQuery) {
+                    url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
+                } else {
+                    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&language=id-ID&page=${page}`;
+                }
 
-try{
-let url = '';
+                const res = await fetch(url);
+                const data = await res.json();
 
-// FIX PARAMETER: Memastikan susunan query pemanggilan data tersusun rapi tanpa salah huruf
-if(currentQuery){
-url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
-}else{
-url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&language=id-ID&page=${page}`;
-}
+                loading.style.display = 'none';
 
-const res = await fetch(url);
-const data = await res.json();
+                if (!data.results || data.results.length === 0) {
+                    grid.innerHTML = '<h2 style="grid-column:1/-1; text-align:center;">Tidak ada film ditemukan</h2>';
+                    return;
+                }
 
-loading.style.display = 'none';
+                for (const movie of data.results) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
 
-if(!data.results || data.results.length === 0){
-grid.innerHTML = '<h2 style="grid-column:1/-1; text-align:center;">Tidak ada film ditemukan</h2>';
-return;
-}
+                    card.innerHTML = `
+                        <img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://placehold.co'}">
+                        <div class="info">
+                            <div class="title">${movie.title}</div>
+                            <div class="meta">
+                                <span>${movie.release_date ? movie.release_date.slice(0, 4) : 'N/A'}</span>
+                                <span class="rating">⭐ ${movie.vote_average.toFixed(1)}</span>
+                            </div>
+                        </div>
+                    `;
 
-for(const movie of data.results){
-const card = document.createElement('div');
-card.className = 'card';
+                    // LOGIKA FIX UTAMA: Menggabungkan ID film ke struktur string embed vidsrc.ru secara sempurna
+                    card.onclick = () => {
+                        const playerArea = document.getElementById('playerContainer');
+                        const videoWrapper = document.getElementById('videoWrapper');
+                        const playerTitle = document.getElementById('playerTitle');
 
-card.innerHTML = `
-<img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://placeholder.com'}">
+                        const finalEmbedUrl = `https://vidsrc.ru{movie.id}`;
 
-<div class="info">
-<div class="title">${movie.title}</div>
+                        videoWrapper.innerHTML = `
+                            <iframe src="${finalEmbedUrl}" allowfullscreen frameborder="0" referrerpolicy="origin" width="100%" height="100%"></iframe>
+                        `;
 
-<div class="meta">
-<span>${movie.release_date ? movie.release_date.slice(0,4) : 'N/A'}</span>
-<span class="rating">⭐ ${movie.vote_average.toFixed(1)}</span>
-</div>
-</div>
-`;
+                        playerTitle.innerText = `Nonton: ${movie.title}`;
+                        playerArea.style.display = 'block';
 
-// FIXED PLAYER: Klik poster langsung menyuntikkan player vidsrc.ru secara lokal di dalam iframe
-card.onclick = () => {
-const playerArea = document.getElementById('playerContainer');
-const videoWrapper = document.getElementById('videoWrapper');
-const playerTitle = document.getElementById('playerTitle');
+                        playerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    };
 
-// Menggunakan server vidsrc.ru sesuai instruksi request Anda
-const finalEmbedUrl = `https://vidsrc.ru{movie.id}`;
+                    grid.appendChild(card);
+                }
 
-videoWrapper.innerHTML = `
-<iframe src="${finalEmbedUrl}" allowfullscreen frameborder="0" referrerpolicy="origin" width="100%" height="100%"></iframe>
-`;
+            } catch (err) {
+                loading.innerHTML = 'Gagal memuat data dari TMDB. Periksa koneksi atau API Key Anda.';
+                console.log(err);
+            }
+        }
 
-playerTitle.innerText = `Nonton: ${movie.title}`;
-playerArea.style.display = 'block';
+        function searchMovies() {
+            const input = document.getElementById('searchInput');
+            currentQuery = input.value.trim();
+            currentPage = 1;
+            document.getElementById('pageNumber').innerText = currentPage;
+            fetchMovies(currentPage);
+        }
 
-// Layar otomatis bergeser lembut ke arah player video
-playerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
+        function nextPage() {
+            currentPage++;
+            document.getElementById('pageNumber').innerText = currentPage;
+            fetchMovies(currentPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-grid.appendChild(card);
-}
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                document.getElementById('pageNumber').innerText = currentPage;
+                fetchMovies(currentPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
 
-}catch(err){
-// Menyingkirkan eror "gagal memuat data" karena pipa pemanggil data di atas sudah lurus dan bersih
-loading.innerHTML = 'Gagal memuat data dari TMDB. Periksa koneksi atau API Key Anda.';
-console.log(err);
-}
-}
-
-function searchMovies(){
-const input = document.getElementById('searchInput');
-currentQuery = input.value.trim();
-currentPage = 1;
-document.getElementById('pageNumber').innerText = currentPage;
-fetchMovies(currentPage);
-}
-
-function nextPage(){
-currentPage++;
-document.getElementById('pageNumber').innerText = currentPage;
-fetchMovies(currentPage);
-window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function prevPage(){
-if(currentPage > 1){
-currentPage--;
-document.getElementById('pageNumber').innerText = currentPage;
-fetchMovies(currentPage);
-window.scrollTo({top:0,behavior:'smooth'});
-}
-}
-
-// Menjalankan fungsi panggil utama saat web dibuka
-fetchMovies();
-</script>
-
+        fetchMovies();
+    </script>
 </body>
 </html>
