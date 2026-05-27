@@ -1,5 +1,4 @@
 // ==================== BAGIAN 1: KONFIGURASI & HALAMAN UTAMA ====================
-// DAFTAR DOMAIN IKLAN MANDIRI ANDA (UTUH & AKTIF)
 const AD_DOMAINS = [
     'https://rajarayap.com',
     'https://blogspot.com',
@@ -8,7 +7,6 @@ const AD_DOMAINS = [
 
 let ALL_MOVIES = [];
 
-// Fungsi pembantu untuk mengubah judul film menjadi slug URL yang bersih
 function generateSlug(title) {
     if (!title) return '';
     return title.toLowerCase()
@@ -17,12 +15,10 @@ function generateSlug(title) {
         .replace(/\s+/g, '-');
 }
 
-// Inisialisasi Utama Halaman Web
 document.addEventListener("DOMContentLoaded", async () => {
     initNavbar();
     await loadGlobalMoviesData();
     
-    // Membaca parameter URL kiriman operan dari halaman lain (jika ada)
     const urlParams = new URLSearchParams(window.location.search);
     const filterGenre = urlParams.get('filterGenre');
     const filterYear = urlParams.get('filterYear');
@@ -45,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (sectionTitle) sectionTitle.innerText = `Hasil Pencarian: "${filterSearch}"`;
             filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(filterSearch.toLowerCase()));
             
-            // Set kolom input agar tetap terisi teks pencariannya
             const searchInput = document.getElementById('searchInput');
             if (searchInput) searchInput.value = filterSearch;
         }
@@ -57,16 +52,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// MENGGABUNGKAN DATA JSON LOKAL
 async function loadGlobalMoviesData() {
     let localData = [];
-
     try {
         const res = await fetch('movies.json');
         if (res.ok) {
             const data = await res.json();
             localData = data.map((item) => {
-                // Membuat internalId berbasis slug judul film agar URL ramah SEO
                 const slugId = generateSlug(item.title);
                 return { ...item, internalId: slugId };
             });
@@ -109,7 +101,6 @@ function initNavbar() {
             const keyword = e.target.value.toLowerCase();
             const grid = document.getElementById('movieGrid');
 
-            // OPER KE INDEX: Jika mencari film saat berada di watch.html, langsung lempar ke index.html
             if (!grid) {
                 if (keyword.length > 1) {
                     window.location.href = `index.html?filterSearch=${encodeURIComponent(e.target.value)}`;
@@ -129,7 +120,6 @@ function initNavbar() {
             const genre = link.getAttribute('data-genre');
             const year = link.getAttribute('data-year');
 
-            // OPER KE INDEX: Jika memilih kategori saat berada di watch.html, langsung lempar ke index.html beserta datanya
             if (!grid) {
                 if (genre) {
                     window.location.href = `index.html?filterGenre=${encodeURIComponent(genre)}`;
@@ -172,12 +162,16 @@ function renderGrid(moviesList) {
         card.className = "movie-card";
         card.href = `watch.html?id=${movie.internalId}`; 
         
-        // Judul film (h3) diletakkan di depan poster-wrapper
+        // Mengunci ukuran card & menaruh judul didepan gambar poster bagian bawah secara penuh
+        card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; margin: 10px; text-decoration: none;");
+        
         card.innerHTML = `
-            <h3>${movie.title}</h3>
-            <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
-                <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="poster-wrapper" style="width: 100%; height: 100%;">
+                <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;">
             </div>
+            <h3 style="position: absolute; bottom: 0; left: 0; width: 100%; margin: 0; padding: 10px; background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 13px; text-align: center; box-sizing: border-box; white-space: normal; overflow: visible; word-wrap: break-word;">
+                ${movie.title}
+            </h3>
         `;
         fragment.appendChild(card);
     });
@@ -194,7 +188,6 @@ async function loadWatchPageData() {
         return;
     }
 
-    // Mencari film berdasarkan slug ID yang tertera di URL
     let selectedMovie = ALL_MOVIES.find(m => m.internalId === movieId);
 
     if (selectedMovie) {
@@ -211,13 +204,11 @@ async function loadWatchPageData() {
             <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
 
-        // INJEKSI DAN PEMBUATAN LIST FILM SERUPA (RELATED VIDEOS)
         const relatedGrid = document.getElementById('relatedGrid');
         if (relatedGrid) {
             relatedGrid.innerHTML = "";
             let relatedMovies = [];
 
-            // Memecah semua kata genre film lokal agar terbaca utuh dan fleksibel
             const currentGenres = (selectedMovie.genre || "").toString().toLowerCase().split(/[\s,]+/);
             relatedMovies = ALL_MOVIES.filter(m => {
                 const isDifferentMovie = m.internalId !== movieId;
@@ -227,7 +218,6 @@ async function loadWatchPageData() {
                 return currentGenres.some(g => g.trim() && movieGenreText.includes(g.trim()));
             });
 
-            // Memasukkan hasil filter ke dalam grid visual
             if (relatedMovies.length === 0) {
                 relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
             } else {
@@ -237,12 +227,16 @@ async function loadWatchPageData() {
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
                     
-                    // Judul di depan poster & pembatas dimensi visual aspect-ratio agar seragam
+                    // Mengunci ukuran card di area related agar seragam dan teks judul membungkus sempurna
+                    card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; flex-shrink: 0; margin-right: 15px; text-decoration: none;");
+                    
                     card.innerHTML = `
-                        <h3>${movie.title}</h3>
-                        <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
-                            <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="poster-wrapper" style="width: 100%; height: 100%;">
+                            <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         </div>
+                        <h3 style="position: absolute; bottom: 0; left: 0; width: 100%; margin: 0; padding: 10px; background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 13px; text-align: center; box-sizing: border-box; white-space: normal; overflow: visible; word-wrap: break-word;">
+                            ${movie.title}
+                        </h3>
                     `;
                     fragment.appendChild(card);
                 });
@@ -250,7 +244,6 @@ async function loadWatchPageData() {
             }
         }
 
-        // KONTROL TOMBOL PANAH CAROUSEL SLIDER (DESKTOP)
         const slidePrev = document.getElementById('slidePrev');
         const slideNext = document.getElementById('slideNext');
         
@@ -263,7 +256,6 @@ async function loadWatchPageData() {
             });
         }
 
-        // SISTEM IKLAN SENSOR FILTER DAN 2X KLIK
         const adOverlay = document.querySelector('.ad-overlay');
         const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com');
         const isCinematic = finalSrc.toLowerCase().includes('playcinematic.com');
@@ -280,8 +272,6 @@ async function loadWatchPageData() {
 
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
-                
-                // Menarik string URL murni dari array pemotongan domain iklan
                 const randomAd = availableAds.splice(randomIndex, 1)[0]; 
 
                 if (clickCount === 1) {
