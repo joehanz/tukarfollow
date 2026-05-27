@@ -101,6 +101,7 @@ if (!firebase.apps.length) {
             </div>
 
             <div class='rating-box'>
+                <br>
   <span>
     <div id='userRatingText' style='margin-top:5px;font-weight:bold;color:white;'>
       Belum memberi rating
@@ -481,267 +482,170 @@ if (!firebase.apps.length) {
 </script>
 
     <script>
-(function(){
+var filmId = location.pathname.replace(/\W/g,&#39;&#39;);
 
-  function startRatingSystem(){
+// USER ID
+function getUserId(){
 
-    if(typeof firebase === 'undefined') return false;
+  let userId = localStorage.getItem(&quot;userId&quot;);
 
-    var filmId =
-      location.pathname.replace(/\W/g,'');
+  if(!userId){
 
-    // USER ID
-    function getUserId(){
+    userId =
+      &quot;user_&quot; +
+      Math.random().toString(36).substr(2,9);
 
-      var userId =
-        localStorage.getItem('userId');
-
-      if(!userId){
-
-        userId =
-          'user_' +
-          Math.random()
-          .toString(36)
-          .substr(2,9);
-
-        localStorage.setItem(
-          'userId',
-          userId
-        );
-
-      }
-
-      return userId;
-
-    }
-
-    var userId = getUserId();
-
-    var db = firebase.database();
-
-    var userRef =
-      db.ref(
-        'ratings/' +
-        filmId +
-        '/users/' +
-        userId
-      );
-
-    var stars =
-      document.querySelectorAll(
-        '.rating-box .star'
-      );
-
-    var userRatingText =
-      document.getElementById(
-        'userRatingText'
-      );
-
-    var ratingResult =
-      document.getElementById(
-        'ratingResult'
-      );
-
-    if(!stars.length) return false;
-
-    // SET STAR
-    function setStar(nilai){
-
-      stars.forEach(function(star){
-
-        if(
-          Number(star.dataset.value)
-          <= nilai
-        ){
-
-          star.classList.add('active');
-
-        }else{
-
-          star.classList.remove('active');
-
-        }
-
-      });
-
-    }
-
-    // HOVER
-    stars.forEach(function(star){
-
-      star.addEventListener(
-        'mouseenter',
-        function(){
-
-          var val =
-            Number(this.dataset.value);
-
-          stars.forEach(function(s){
-
-            s.classList.toggle(
-              'hover',
-              Number(s.dataset.value)
-              <= val
-            );
-
-          });
-
-        }
-      );
-
-      star.addEventListener(
-        'mouseleave',
-        function(){
-
-          stars.forEach(function(s){
-
-            s.classList.remove('hover');
-
-          });
-
-        }
-      );
-
-    });
-
-    // CLICK RATE
-    stars.forEach(function(star){
-
-      star.addEventListener(
-        'click',
-        function(){
-
-          var nilai =
-            Number(this.dataset.value);
-
-          userRef.once(
-            'value',
-            function(snapshot){
-
-              if(snapshot.exists()){
-
-                alert(
-                  'Kamu sudah memberi rating!'
-                );
-
-                return;
-
-              }
-
-              userRef.set({
-                rating: nilai,
-                time: Date.now()
-              });
-
-              setStar(nilai);
-
-              userRatingText.innerHTML =
-                'Rating kamu: ' +
-                nilai +
-                ' ⭐';
-
-            }
-          );
-
-        }
-      );
-
-    });
-
-    // LOAD USER RATING
-    userRef.once(
-      'value',
-      function(snapshot){
-
-        if(snapshot.exists()){
-
-          var data = snapshot.val();
-
-          var val =
-            data.rating || data;
-
-          setStar(val);
-
-          userRatingText.innerHTML =
-            'Rating kamu: ' +
-            val +
-            ' ⭐';
-
-        }
-
-      }
-    );
-
-    // REALTIME RESULT
-    db.ref(
-      'ratings/' +
-      filmId +
-      '/users'
-    ).on(
-      'value',
-      function(snapshot){
-
-        var total = 0;
-        var jumlah = 0;
-
-        snapshot.forEach(function(child){
-
-          var data = child.val();
-
-          var rating =
-            data.rating || data;
-
-          total += Number(rating);
-          jumlah++;
-
-        });
-
-        if(jumlah > 0){
-
-          var rata =
-            (total / jumlah)
-            .toFixed(1);
-
-          ratingResult.innerHTML =
-            '⭐ ' +
-            rata +
-            ' dari ' +
-            jumlah +
-            ' vote';
-
-        }else{
-
-          ratingResult.innerHTML =
-            'Belum ada rating';
-
-        }
-
-      }
-    );
-
-    return true;
+    localStorage.setItem(&quot;userId&quot;, userId);
 
   }
 
-  // RETRY FIREBASE READY
-  var tries = 0;
+  return userId;
 
-  var timer = setInterval(function(){
+}
 
-    tries++;
+let userId = getUserId();
 
-    if(
-      startRatingSystem()
-      || tries > 50
-    ){
+let userRef =
+firebase.database().ref(
+  &quot;ratings/&quot; + filmId + &quot;/users/&quot; + userId
+);
 
-      clearInterval(timer);
+let stars =
+document.querySelectorAll(&quot;.rating-box .star&quot;);
 
+let userRatingText =
+document.getElementById(&quot;userRatingText&quot;);
+
+// SET STAR
+function setStar(nilai){
+
+  stars.forEach(star =&gt; {
+
+    if(star.dataset.value &lt;= nilai){
+      star.classList.add(&quot;active&quot;);
+    }else{
+      star.classList.remove(&quot;active&quot;);
     }
 
-  },100);
+  });
 
-})();
+}
+
+// HOVER
+stars.forEach(star =&gt; {
+
+  star.addEventListener(&quot;mouseenter&quot;, () =&gt; {
+
+    let val = star.dataset.value;
+
+    stars.forEach(s =&gt; {
+
+      s.classList.toggle(
+        &quot;hover&quot;,
+        s.dataset.value &lt;= val
+      );
+
+    });
+
+  });
+
+  star.addEventListener(&quot;mouseleave&quot;, () =&gt; {
+
+    stars.forEach(s =&gt; s.classList.remove(&quot;hover&quot;));
+
+  });
+
+});
+
+// CLICK
+stars.forEach(star =&gt; {
+
+  star.addEventListener(&quot;click&quot;, function(){
+
+    let nilai = Number(this.dataset.value);
+
+    userRef.once(&quot;value&quot;, snapshot =&gt; {
+
+      if(snapshot.exists()){
+
+        alert(&quot;Kamu sudah memberi rating!&quot;);
+
+      }else{
+
+        userRef.set(nilai);
+
+        setStar(nilai);
+
+        userRatingText.innerHTML =
+          &quot;Rating kamu: &quot; +
+          nilai +
+          &quot; &#11088;&quot;;
+
+      }
+
+    });
+
+  });
+
+});
+
+// LOAD USER RATING
+userRef.once(&quot;value&quot;, snapshot =&gt; {
+
+  if(snapshot.exists()){
+
+    let val = snapshot.val();
+
+    setStar(val);
+
+    userRatingText.innerHTML =
+      &quot;Rating kamu: &quot; +
+      val +
+      &quot; &#11088;&quot;;
+
+  }
+
+});
+
+// REALTIME RATING
+firebase.database()
+.ref(&quot;ratings/&quot; + filmId + &quot;/users&quot;)
+.on(&quot;value&quot;, snapshot =&gt; {
+
+  let total = 0;
+  let jumlah = 0;
+
+  snapshot.forEach(child =&gt; {
+
+    total += child.val();
+    jumlah++;
+
+  });
+
+  if(jumlah &gt; 0){
+
+    let rata =
+      (total / jumlah).toFixed(1);
+
+    document.getElementById(
+      &quot;ratingResult&quot;
+    ).innerHTML =
+      &quot;&#11088; &quot; +
+      rata +
+      &quot; dari &quot; +
+      jumlah +
+      &quot; vote&quot;;
+
+  }else{
+
+    document.getElementById(
+      &quot;ratingResult&quot;
+    ).innerHTML =
+      &quot;Belum ada rating&quot;;
+
+  }
+
+});
 </script>
 </body>
 </html>
