@@ -6,8 +6,8 @@ const TMDB_IMAGE_URL = 'https://themoviedb.org';
 // DAFTAR DOMAIN IKLAN MANDIRI ANDA (UTUH & AKTIF)
 const AD_DOMAINS = [
     'https://rajarayap.com',
-    'https://blogspot.com',
-    'https://blogspot.com'
+    'https://ptdwiprima.blogspot.com',
+    'https://caturbangunsentosa.blogspot.com'
 ];
 
 let ALL_MOVIES = [];
