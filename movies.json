@@ -168,6 +168,26 @@
     "genre": ["Drama", "Romance"],
     "release_date": "23-04-2026",
     "country": "Kanada"
+  },
+  {
+    "title": "Candy And The Pizza Girl (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/candy-and-the-pizza-ggirl.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/SteVGMEsM",
+    "sinopsis": "Gadis pengantar pizza dan Candy terjebak petualangan liar penuh cinta dan kekacauan kota.",
+    "genre": ["Fantasy"],
+    "release_date": "23-04-2026",
+    "country": "India"
+  },
+  {
+    "title": "Brothers Under Fire (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-brothers-under-fire-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/HwyikKBj1",
+    "sinopsis": "Dua saudara terpisah perang harus bersatu demi bertahan hidup dan menyelamatkan keluarga.",
+    "genre": ["Action", "Mistery", "Drama", "Thriller"],
+    "release_date": "23-04-2026",
+    "country": "Kolombia, Amerika Serikat"
   }
 
 
