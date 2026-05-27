@@ -463,34 +463,53 @@ body {
 }
 
 /* =========================================================
-   ONLINE FLOAT
+   ONLINE FLOAT (FIXED VISUAL & LAYOUT)
 ========================================================= */
-#globalOnlineFloating{
-  position:fixed;
-  top:50%;
-  right:14px;
-  transform:translateY(-50%);
-  z-index:9999;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:30px;
-  background:rgba(0,0,0,.78);
-  backdrop-filter:blur(6px);
+#globalOnlineFloating {
+  position: fixed;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 30px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Tambahan aksen list tipis agar elegan */
+  pointer-events: none; /* Supaya kotak melayang ini tidak menghalangi klik mouse penonton */
 }
 
-#globalOnlineFloating .dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#00ff6a;
-  animation:pulse 1.4s infinite;
+#globalOnlineFloating span {
+  color: #ffffff !important; /* Memastikan teks tulisan online berwarna putih bersih */
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
 }
 
-@keyframes pulse{
-  50%{
-    transform:scale(1.5);
-    opacity:.6;
+#globalOnlineFloating .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff6a;
+  display: inline-block; /* Memastikan dot hijau berbentuk bulat sempurna */
+  animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
