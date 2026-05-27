@@ -17,15 +17,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     initNavbar();
     await loadGlobalMoviesData();
     
-    // Perilaku default saat pertama kali masuk ke masing-masing halaman
-    if (document.getElementById('movieGrid') && !document.getElementById('videoContainer')) {
-        // Jika di index.html, langsung tampilkan grid utama
-        const grid = document.getElementById('movieGrid');
-        grid.style.display = 'grid';
-        renderGrid(ALL_MOVIES);
+    // Membaca parameter URL kiriman operan dari halaman lain (jika ada)
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterGenre = urlParams.get('filterGenre');
+    const filterYear = urlParams.get('filterYear');
+    const filterSearch = urlParams.get('filterSearch');
+
+    if (document.getElementById('movieGrid')) {
+        let filtered = [...ALL_MOVIES];
+        const sectionTitle = document.getElementById('sectionTitle');
+
+        if (filterGenre) {
+            if (sectionTitle) sectionTitle.innerText = `Genre: ${filterGenre}`;
+            filtered = ALL_MOVIES.filter(m => m.genre && m.genre.toString().toLowerCase().includes(filterGenre.toLowerCase()));
+        } else if (filterYear) {
+            if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${filterYear === 'klasik' ? 'Klasik (<2024)' : filterYear}`;
+            filtered = ALL_MOVIES.filter(m => {
+                if (!m.release_date) return false;
+                return new Date(m.release_date).getFullYear() === parseInt(filterYear);
+            });
+        } else if (filterSearch) {
+            if (sectionTitle) sectionTitle.innerText = `Hasil Pencarian: "${filterSearch}"`;
+            filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(filterSearch.toLowerCase()));
+            
+            // Set kolom input agar tetap terisi teks pencariannya
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = filterSearch;
+        }
+
+        renderGrid(filtered);
     }
     if (document.getElementById('videoContainer')) {
-        // Jika di watch.html, muat data pemutar film
         loadWatchPageData();
     }
 });
@@ -106,25 +128,13 @@ function initNavbar() {
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             const grid = document.getElementById('movieGrid');
-            const watchArea = document.getElementById('watchContentArea');
-            const sectionTitle = document.getElementById('sectionTitle');
 
-            // JIKA SEDANG MENGETIK DI HALAMAN WATCH.HTML (Aktivasi Sakelar Tampilan)
-            if (watchArea) {
-                if (keyword.length > 0) {
-                    watchArea.style.display = 'none'; // Sembunyikan player & detail film
-                    if (grid) grid.style.display = 'grid'; // Munculkan wadah grid rahasia
-                    if (sectionTitle) {
-                        sectionTitle.style.display = 'block';
-                        sectionTitle.innerText = `Hasil Pencarian: "${e.target.value}"`;
-                    }
-                } else {
-                    // Jika teks kolom pencarian dihapus habis, kembalikan ke player film semula
-                    watchArea.style.style.display = 'block';
-                    if (grid) grid.style.display = 'none';
-                    if (sectionTitle) sectionTitle.style.display = 'none';
-                    return;
+            // OPER KE INDEX: Jika mencari film saat berada di watch.html, langsung lempar ke index.html
+            if (!grid) {
+                if (keyword.length > 1) {
+                    window.location.href = `index.html?filterSearch=${encodeURIComponent(e.target.value)}`;
                 }
+                return;
             }
 
             const filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(keyword));
@@ -136,19 +146,21 @@ function initNavbar() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const grid = document.getElementById('movieGrid');
-            const watchArea = document.getElementById('watchContentArea');
             const genre = link.getAttribute('data-genre');
             const year = link.getAttribute('data-year');
-            const sectionTitle = document.getElementById('sectionTitle');
 
-            // JIKA MENU DIKLIK DI HALAMAN WATCH.HTML (Aktivasi Sakelar Tampilan)
-            if (watchArea) {
-                watchArea.style.display = 'none'; // Sembunyikan player film total
-                if (grid) grid.style.display = 'grid'; // Hidupkan sistem grid film
-                if (sectionTitle) sectionTitle.style.display = 'block';
+            // OPER KE INDEX: Jika memilih kategori saat berada di watch.html, langsung lempar ke index.html beserta datanya
+            if (!grid) {
+                if (genre) {
+                    window.location.href = `index.html?filterGenre=${encodeURIComponent(genre)}`;
+                } else if (year) {
+                    window.location.href = `index.html?filterYear=${encodeURIComponent(year)}`;
+                }
+                return;
             }
 
             let filtered = [...ALL_MOVIES];
+            const sectionTitle = document.getElementById('sectionTitle');
 
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
@@ -171,7 +183,7 @@ function renderGrid(moviesList) {
     
     grid.innerHTML = "";
     if (!moviesList || moviesList.length === 0) {
-        grid.innerHTML = "<div class='loading-text' style='grid-column: 1/-1; text-align: center; padding: 40px 0;'>Tidak ada film ditemukan.</div>";
+        grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
         return;
     }
 
@@ -234,7 +246,7 @@ async function loadWatchPageData() {
             <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
 
-        // INJEKSI DAN PEMBUATAN LIST FILM SERUKA (RELATED VIDEOS)
+        // INJEKSI DAN PEMBUATAN LIST FILM SERUPA (RELATED VIDEOS)
         const relatedGrid = document.getElementById('relatedGrid');
         if (relatedGrid) {
             relatedGrid.innerHTML = "";
@@ -317,15 +329,3 @@ async function loadWatchPageData() {
         }
     }
 }
-
-// Tambahan perbaikan kecil penyeimbang logika dari Bagian 1 agar saat input kosong player langsung tampil kembali normal
-document.addEventListener("input", (e) => {
-    if (e.target && e.target.id === "searchInput" && e.target.value.length === 0) {
-        const watchArea = document.getElementById('watchContentArea');
-        const grid = document.getElementById('movieGrid');
-        const sectionTitle = document.getElementById('sectionTitle');
-        if (watchArea) watchArea.style.display = 'block';
-        if (grid) grid.style.display = 'none';
-        if (sectionTitle) sectionTitle.style.display = 'none';
-    }
-});
