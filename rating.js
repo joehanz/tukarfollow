@@ -131,34 +131,41 @@
           var nilai =
             Number(this.dataset.value);
 
-          userRef.once(
-            'value',
-            function(snapshot){
+          // CEK LOCAL STORAGE
+          var savedRating =
+            localStorage.getItem(
+              'rated_' + filmId
+            );
 
-              if(snapshot.exists()){
+          if(savedRating){
 
-                alert(
-                  'Kamu sudah memberi rating!'
-                );
+            alert(
+              'Kamu sudah memberi rating ' +
+              savedRating +
+              ' ⭐ di film ini!'
+            );
 
-                return;
+            return;
 
-              }
+          }
 
-              userRef.set({
-                rating: nilai,
-                time: Date.now()
-              });
+          userRef.set({
+            rating: nilai,
+            time: Date.now()
+          });
 
-              setStar(nilai);
-
-              userRatingText.innerHTML =
-                'Rating kamu: ' +
-                nilai +
-                ' ⭐';
-
-            }
+          // SIMPAN LOCAL
+          localStorage.setItem(
+            'rated_' + filmId,
+            nilai
           );
+
+          setStar(nilai);
+
+          userRatingText.innerHTML =
+            'Rating kamu: ' +
+            nilai +
+            ' ⭐';
 
         }
       );
@@ -166,45 +173,76 @@
     });
 
     // LOAD USER RATING
-    userRef.once(
-      'value',
-      function(snapshot){
+    (function(){
 
-        if(snapshot.exists()){
+      var savedRating =
+        localStorage.getItem(
+          'rated_' + filmId
+        );
 
-          var data = snapshot.val();
+      // PRIORITAS LOCAL
+      if(savedRating){
 
-          var val;
+        savedRating = Number(savedRating);
 
-          // FORMAT BARU
-          if(typeof data === 'object'){
+        setStar(savedRating);
 
-            val = Number(data.rating);
+        userRatingText.innerHTML =
+          'Rating kamu: ' +
+          savedRating +
+          ' ⭐';
 
-          }
+        return;
 
-          // FORMAT LAMA
-          else{
+      }
 
-            val = Number(data);
+      // FALLBACK DATABASE
+      userRef.once(
+        'value',
+        function(snapshot){
 
-          }
+          if(snapshot.exists()){
 
-          if(val){
+            var data = snapshot.val();
 
-            setStar(val);
+            var val;
 
-            userRatingText.innerHTML =
-              'Rating kamu: ' +
-              val +
-              ' ⭐';
+            // FORMAT BARU
+            if(typeof data === 'object'){
+
+              val = Number(data.rating);
+
+            }
+
+            // FORMAT LAMA
+            else{
+
+              val = Number(data);
+
+            }
+
+            if(val){
+
+              localStorage.setItem(
+                'rated_' + filmId,
+                val
+              );
+
+              setStar(val);
+
+              userRatingText.innerHTML =
+                'Rating kamu: ' +
+                val +
+                ' ⭐';
+
+            }
 
           }
 
         }
+      );
 
-      }
-    );
+    })();
 
     // REALTIME RESULT
     db.ref(
