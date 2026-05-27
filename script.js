@@ -156,7 +156,6 @@ function initNavbar() {
         });
     });
 }
-
 function renderGrid(moviesList) {
     const grid = document.getElementById('movieGrid');
     if (!grid) return;
@@ -173,10 +172,12 @@ function renderGrid(moviesList) {
         card.className = "movie-card";
         card.href = `watch.html?id=${movie.internalId}`; 
         
-        // PERUBAHAN: Menempatkan elemen judul (h3) DIDEPAN / DI ATAS poster-wrapper
+        // REVISI: Menempatkan judul film (h3) di DEPAN poster-wrapper
         card.innerHTML = `
             <h3>${movie.title}</h3>
-            <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;"><img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"></div>
+            <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
+                <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
         `;
         fragment.appendChild(card);
     });
@@ -223,7 +224,6 @@ async function loadWatchPageData() {
                 if (!isDifferentMovie || !m.genre) return false;
                 
                 const movieGenreText = m.genre.toString().toLowerCase();
-                // Mencocokkan apakah ada salah satu genre yang sesuai di database lokal
                 return currentGenres.some(g => g.trim() && movieGenreText.includes(g.trim()));
             });
 
@@ -237,4 +237,70 @@ async function loadWatchPageData() {
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
                     
-// PERUBAHAN: Judul DIDEPAN poster & Ditambahkan Inline CSS Pengunci Rasio Dimensi Poster Grid (panjang-lebar seragam)card.innerHTML = <h3>${movie.title}</h3> <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;"> <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"> </div>;fragment.appendChild(card);});relatedGrid.appendChild(fragment);}}// KONTROL TOMBOL PANAH CAROUSEL SLIDER (DESKTOP)const slidePrev = document.getElementById('slidePrev');const slideNext = document.getElementById('slideNext');if (slidePrev && slideNext && relatedGrid) {slidePrev.addEventListener('click', () => {relatedGrid.scrollBy({ left: -300, behavior: 'smooth' });});slideNext.addEventListener('click', () => {relatedGrid.scrollBy({ left: 300, behavior: 'smooth' });});}// SISTEM IKLAN SENSOR FILTER DAN 2X KLIKconst adOverlay = document.querySelector('.ad-overlay');const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com');const isCinematic = finalSrc.toLowerCase().includes('playcinematic.com');if (isAbyss && adOverlay) {adOverlay.style.display = 'none';}else if (isCinematic && adOverlay) {let clickCount = 0;let availableAds = [...AD_DOMAINS];adOverlay.addEventListener('click', () => {clickCount++;if (availableAds.length === 0) availableAds = [...AD_DOMAINS];const randomIndex = Math.floor(Math.random() * availableAds.length);const randomAd = availableAds.splice(randomIndex, 1)[0];if (clickCount === 1) {window.open(randomAd, '_blank');}else if (clickCount === 2) {window.open(randomAd, '_blank');adOverlay.style.display = 'none';const player = document.getElementById('moviePlayer');if (player) {const currentSrc = player.src;const separator = currentSrc.includes('?') ? '&' : '?';player.src = currentSrc + separator + "autoplay=1";}}});} else if (adOverlay) {adOverlay.style.display = 'none';}}}
+                    // REVISI: Judul DIDEPAN poster & Pengunci Dimensi Poster Grid (panjang-lebar seragam 2:3)
+                    card.innerHTML = `
+                        <h3>${movie.title}</h3>
+                        <div class="poster-wrapper" style="aspect-ratio: 2/3; width: 100%; overflow: hidden;">
+                            <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    `;
+                    fragment.appendChild(card);
+                });
+                relatedGrid.appendChild(fragment);
+            }
+        }
+
+        // KONTROL TOMBOL PANAH CAROUSEL SLIDER (DESKTOP)
+        const slidePrev = document.getElementById('slidePrev');
+        const slideNext = document.getElementById('slideNext');
+        
+        if (slidePrev && slideNext && relatedGrid) {
+            slidePrev.addEventListener('click', () => {
+                relatedGrid.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+            slideNext.addEventListener('click', () => {
+                relatedGrid.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+        }
+
+        // SISTEM IKLAN SENSOR FILTER DAN 2X KLIK
+        const adOverlay = document.querySelector('.ad-overlay');
+        const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com');
+        const isCinematic = finalSrc.toLowerCase().includes('playcinematic.com');
+
+        if (isAbyss && adOverlay) {
+            adOverlay.style.display = 'none';
+        } 
+        else if (isCinematic && adOverlay) {
+            let clickCount = 0;
+            let availableAds = [...AD_DOMAINS];
+
+            adOverlay.addEventListener('click', () => {
+                clickCount++;
+
+                if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
+                const randomIndex = Math.floor(Math.random() * availableAds.length);
+                
+                // PERBAIKAN FATAL: Menambahkan [0] untuk mengambil nilai string dari metode splice
+                const randomAd = availableAds.splice(randomIndex, 1)[0]; 
+
+                if (clickCount === 1) {
+                    window.open(randomAd, '_blank');
+                } 
+                else if (clickCount === 2) {
+                    window.open(randomAd, '_blank');
+                    adOverlay.style.display = 'none';
+
+                    const player = document.getElementById('moviePlayer');
+                    if (player) {
+                        const currentSrc = player.src;
+                        const separator = currentSrc.includes('?') ? '&' : '?';
+                        player.src = currentSrc + separator + "autoplay=1";
+                    }
+                }
+            });
+        } else if (adOverlay) {
+            adOverlay.style.display = 'none';
+        }
+    }
+}
