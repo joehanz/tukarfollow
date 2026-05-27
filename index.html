@@ -306,60 +306,12 @@
     //]]>
 </script>
 
-<script>
-  /* =====================================================
-     SCRIPT NAME : firebase_online_viewer_counter
-     FUNCTION    : Menghitung jumlah pengunjung yang
-                   sedang ONLINE di halaman ini
-                   (berdasarkan URL halaman)
-     TYPE        : Realtime Page Viewer Counter
-     DATABASE    : Firebase Realtime Database
-     ELEMENT     : #onlineCounter
-     ===================================================== */
-
-  (function(){
-
-    function startOnlineViewerCounter(){
-      if(typeof firebase === &#39;undefined&#39;) return false;
-
-      var counterEl = document.getElementById(&#39;onlineCounter&#39;);
-      if(!counterEl) return false;
-
-      // Key unik per halaman
-      var postKey = location.pathname.replace(/\W+/g,&#39;_&#39;);
-      var ref = firebase.database().ref(&#39;online/&#39; + postKey);
-
-      // Daftarkan user sebagai online
-      var userRef = ref.push(true);
-
-      // Hapus otomatis saat tab ditutup / koneksi putus
-      userRef.onDisconnect().remove();
-
-      // Update counter realtime
-      ref.on(&#39;value&#39;, function(snap){
-        counterEl.innerHTML =
-          &#39;👁&#65039; &#39; + snap.numChildren() + &#39; menonton&#39;;
-      });
-
-      return true;
-    }
-
-    // Retry maksimal &#177;5 detik
-    var tries = 0;
-    var timer = setInterval(function(){
-      tries++;
-      if(startOnlineViewerCounter() || tries &gt; 50){
-        clearInterval(timer);
-      }
-    }, 100);
-
-  })();
-</script>
-
-<div id='globalOnlineFloating'>
-  <span class='dot'/>
-  <span id='globalOnlineCounter'>0 online</span>
+    <!-- FLOATING COUNTER ONLINE (FIXED STRUCTURE) -->
+<div id="globalOnlineFloating">
+  <span class="dot"></span>
+  <span id="globalOnlineCounter">0 online</span>
 </div>
+
 
 <script>
   /* =====================================================
@@ -427,7 +379,5 @@
 
   })();
 </script>
-
-
 </body>
 </html>
