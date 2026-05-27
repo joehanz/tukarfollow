@@ -78,5 +78,165 @@
     "genre": ["Action", "Adventrure", "War", "History"],
     "release_date": "27-04-2026",
     "country": "Amerika Serikat"
+  },
+  {
+    "title": "The Punisher: One Last Kill (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/S4FLBP5d_",
+    "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
+    "genre": ["Action", "Adventure", "Crime", "Drama", "Thriller"],
+    "release_date": "18-05-2026",
+    "country": "Inggris"
+  },
+  {
+    "title": "Couples Weekend (2025)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/couples%20weekend.png",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/Ci8TpCF0AN0sijr",
+    "sinopsis": "Liburan tahun baru 2 pasangan berubah kacau saat rahasia perselingkuhan & kebohongan mulai terungkap.",
+    "genre": ["Comedy", "Drama"],
+    "release_date": "08-05-2026",
+    "country": "Amerika Serikat"
+  },
+  {
+    "title": "Broad Trip (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film%20broad%20trip.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/7ubq8zQM49eYYEI",
+    "sinopsis": "Empat sahabat nekat road trip liar lintas kota, tapi rahasia dan kekacauan bikin liburan berubah kacau.",
+    "genre": ["Comedy", "Drama"],
+    "release_date": "08-05-2026",
+    "country": "Kanada, Amerika Serikat"
+  },
+  {
+    "title": "My Dearest Assassin (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-my-dearest-assassin-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/n0CHy0vP5",
+    "sinopsis": "Gadis berdarah langka diburu musuh, lalu dilatih keluarga pembunuh demi membalas dendam.",
+    "genre": ["Action", "Drama", "Romance", "Thriller"],
+    "release_date": "07-05-2026",
+    "country": "Thailand"
+  },
+  {
+    "title": "Swapped (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-swapped-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/40XNx0ov4m",
+    "sinopsis": "Dua satwa bermusuhan bertukar tubuh dan harus kompak bekerja sama demi bertahan hidup.",
+    "genre": ["Adventure", "Animation", "Comedy", "Family", "Fantasy"],
+    "release_date": "04-05-2026",
+    "country": "China"
+  },
+  {
+    "title": "Lee Cronin's The Mummy (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lee%20Cronin's%20The%20Mummy%20(2026).webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/hMvK1rYaa",
+    "sinopsis": "Anak perempuan yang hilang 8 tahun kembali membawa teror kutukan mumi kuno ke rumah keluarganya.",
+    "genre": ["Horor"],
+    "release_date": "17-04-2026",
+    "country": "Irlandia, Amerika Serikat, Spanyol, Kanada"
+  },
+  {
+    "title": "Panda Plan 2: The Magical Tribe (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/panda-plan.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/cm1Zimajo",
+    "sinopsis": "Jackie Chan dan panda Hu Hu terjebak di suku primitif misterius demi menyelamatkan mereka dari bencana kuno.",
+    "genre": ["Action", "Comedy", "Family"],
+    "release_date": "28-04-2026",
+    "country": "China"
+  },
+  {
+    "title": "Rise of the Conqueror (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rise-of-the-conqueror.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/n8hdfyxb1",
+    "sinopsis": "Timur Barlas bangkit dari pengasingan demi menyatukan kerajaan Asia Tengah yang pecah akibat runtuhnya Mongol.",
+    "genre": ["Action", "Adventrure", "War", "History"],
+    "release_date": "27-04-2026",
+    "country": "Amerika Serikat"
+  },
+  {
+    "title": "The Punisher: One Last Kill (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/S4FLBP5d_",
+    "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
+    "genre": ["Action", "Adventure", "Crime", "Drama", "Thriller"],
+    "release_date": "18-05-2026",
+    "country": "Inggris"
+  },
+  {
+    "title": "Couples Weekend (2025)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/couples%20weekend.png",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/Ci8TpCF0AN0sijr",
+    "sinopsis": "Liburan tahun baru 2 pasangan berubah kacau saat rahasia perselingkuhan & kebohongan mulai terungkap.",
+    "genre": ["Comedy", "Drama"],
+    "release_date": "08-05-2026",
+    "country": "Amerika Serikat"
+  },
+  {
+    "title": "Broad Trip (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film%20broad%20trip.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/7ubq8zQM49eYYEI",
+    "sinopsis": "Empat sahabat nekat road trip liar lintas kota, tapi rahasia dan kekacauan bikin liburan berubah kacau.",
+    "genre": ["Comedy", "Drama"],
+    "release_date": "08-05-2026",
+    "country": "Kanada, Amerika Serikat"
+  },
+  {
+    "title": "My Dearest Assassin (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-my-dearest-assassin-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/n0CHy0vP5",
+    "sinopsis": "Gadis berdarah langka diburu musuh, lalu dilatih keluarga pembunuh demi membalas dendam.",
+    "genre": ["Action", "Drama", "Romance", "Thriller"],
+    "release_date": "07-05-2026",
+    "country": "Thailand"
+  },
+  {
+    "title": "Swapped (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-swapped-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/40XNx0ov4m",
+    "sinopsis": "Dua satwa bermusuhan bertukar tubuh dan harus kompak bekerja sama demi bertahan hidup.",
+    "genre": ["Adventure", "Animation", "Comedy", "Family", "Fantasy"],
+    "release_date": "04-05-2026",
+    "country": "China"
+  },
+  {
+    "title": "Lee Cronin's The Mummy (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lee%20Cronin's%20The%20Mummy%20(2026).webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/hMvK1rYaa",
+    "sinopsis": "Anak perempuan yang hilang 8 tahun kembali membawa teror kutukan mumi kuno ke rumah keluarganya.",
+    "genre": ["Horor"],
+    "release_date": "17-04-2026",
+    "country": "Irlandia, Amerika Serikat, Spanyol, Kanada"
+  },
+  {
+    "title": "Panda Plan 2: The Magical Tribe (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/panda-plan.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/cm1Zimajo",
+    "sinopsis": "Jackie Chan dan panda Hu Hu terjebak di suku primitif misterius demi menyelamatkan mereka dari bencana kuno.",
+    "genre": ["Action", "Comedy", "Family"],
+    "release_date": "28-04-2026",
+    "country": "China"
+  },
+  {
+    "title": "Rise of the Conqueror (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rise-of-the-conqueror.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/n8hdfyxb1",
+    "sinopsis": "Timur Barlas bangkit dari pengasingan demi menyatukan kerajaan Asia Tengah yang pecah akibat runtuhnya Mongol.",
+    "genre": ["Action", "Adventrure", "War", "History"],
+    "release_date": "27-04-2026",
+    "country": "Amerika Serikat"
   }
 ]
