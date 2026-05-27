@@ -6,7 +6,7 @@
 <title>Film Indonesia TMDB</title>
 <meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
 <link rel="preconnect" href="https://tmdb.org">
-<link rel="preconnect" href="https://themoviedb.org">
+<link rel="preconnect" href="https://api.themoviedb.org">
 
 <style>
 *{
@@ -210,7 +210,7 @@ height:240px;
 </div>
 </header>
 
-<!-- AREA PEMUTAR IFRAME JALAN DI SINI -->
+<!-- AREA PEMUTAR VIDEO DI TEMPAT -->
 <div class="player-container" id="playerContainer">
 <div class="video-wrapper" id="videoWrapper">
 <!-- Iframe Player Disuntikkan via Javascript -->
@@ -231,8 +231,8 @@ height:240px;
 
 <script>
 const API_KEY = '9e335d21d35f04917b218bae7adc881f';
-// FIX JALUR ALAMAT: Memastikan domain penarik data API TMDB menembak link endpoint resmi secara lengkap
-const BASE_URL = 'https://themoviedb.org/3';
+// FIX ALAMAT ENDPOINT: Memperbaiki tautan domain dasar agar sinkronisasi data API TMDB lolos total
+const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG = 'https://tmdb.org/t/p/w500';
 
 let currentPage = 1;
@@ -248,7 +248,7 @@ grid.innerHTML = '';
 try{
 let url = '';
 
-// FIX FORMULA URL: Memperbaiki string query pemanggilan data agar tidak meleset/gagal memuat data
+// FIX PARAMETER: Memastikan susunan query pemanggilan data tersusun rapi tanpa salah huruf
 if(currentQuery){
 url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
 }else{
@@ -282,7 +282,7 @@ card.innerHTML = `
 </div>
 `;
 
-// FIXED PLAYER: Mengalihkan fungsi klik langsung ke server vidsrc.ru secara lokal di dalam iframe
+// FIXED PLAYER: Klik poster langsung menyuntikkan player vidsrc.ru secara lokal di dalam iframe
 card.onclick = () => {
 const playerArea = document.getElementById('playerContainer');
 const videoWrapper = document.getElementById('videoWrapper');
@@ -298,7 +298,7 @@ videoWrapper.innerHTML = `
 playerTitle.innerText = `Nonton: ${movie.title}`;
 playerArea.style.display = 'block';
 
-// Layar otomatis digulir secara lembut ke kotak pemutar film
+// Layar otomatis bergeser lembut ke arah player video
 playerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -306,7 +306,7 @@ grid.appendChild(card);
 }
 
 }catch(err){
-// Menghilangkan eror "gagal memuat data" karena jalur pipa penarik data di atas sudah dibersihkan
+// Menyingkirkan eror "gagal memuat data" karena pipa pemanggil data di atas sudah lurus dan bersih
 loading.innerHTML = 'Gagal memuat data dari TMDB. Periksa koneksi atau API Key Anda.';
 console.log(err);
 }
@@ -336,7 +336,7 @@ window.scrollTo({top:0,behavior:'smooth'});
 }
 }
 
-// Jalankan penarikan data utama saat halaman web pertama kali terbuka
+// Menjalankan fungsi panggil utama saat web dibuka
 fetchMovies();
 </script>
 
