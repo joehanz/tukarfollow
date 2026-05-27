@@ -138,6 +138,17 @@
     "genre": ["Thriller"],
     "release_date": "23-04-2026",
     "country": "Nigeria"
+  },
+  {
+    "title": "Bhanupriya Bhooter Hotel (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/bhanupriya-bhooter-hotel.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/BAGI_hxkM",
+    "sinopsis": "Hotel angker warisan keluarga berubah kacau saat hantu jahil mulai meneror tamu.",
+    "genre": ["Comedy", "Horor"],
+    "release_date": "23-04-2026",
+    "country": "India"
   }
+
 
 ]
