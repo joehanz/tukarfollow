@@ -15,78 +15,28 @@
     <meta property="og:type" content="video.movie">
     
     <!-- GOOGLE ADS -->
-    <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779'/>
+<script async="async" crossorigin="anonymous"
+src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779"></script>
 
-    <!-- FIREBASE SDK v9 COMPAT -->
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'></script>
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'></script>
-    <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js'></script>
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <script>
-      if (!firebase.apps.length) {
-        firebase.initializeApp({
-          apiKey: &quot;AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y&quot;,
-          authDomain: &quot;tukarfollow-32e80.firebaseapp.com&quot;,
-          databaseURL: &quot;https://tukarfollow-32e80-default-rtdb.firebaseio.com&quot;,
-          projectId: &quot;tukarfollow-32e80&quot;,
-          storageBucket: &quot;tukarfollow-32e80.appspot.com&quot;,
-          messagingSenderId: &quot;488828752907&quot;,
-          appId: &quot;1:488828752907:web:8fa92415553e16d672e30e&quot;
-        });
-      }
+<script>
+if (!firebase.apps.length) {
 
-      const messaging = firebase.messaging();
+  firebase.initializeApp({
+    apiKey: "AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y",
+    authDomain: "tukarfollow-32e80.firebaseapp.com",
+    databaseURL: "https://tukarfollow-32e80-default-rtdb.firebaseio.com",
+    projectId: "tukarfollow-32e80",
+    storageBucket: "tukarfollow-32e80.appspot.com",
+    messagingSenderId: "488828752907",
+    appId: "1:488828752907:web:8fa92415553e16d672e30e"
+  });
 
-      function showPushModal() {
-        if (Notification.permission === &quot;default&quot;) {
-          document.getElementById(&quot;pushModal&quot;).style.display = &quot;block&quot;;
-        }
-      }
-
-      function closePushModal() {
-        document.getElementById(&quot;pushModal&quot;).style.display = &quot;none&quot;;
-      }
-
-      document.getElementById(&quot;allowPush&quot;).onclick = function () {
-
-        Notification.requestPermission().then(function (permission) {
-          if (permission === &quot;granted&quot;) {
-
-            // Gunakan GitHub raw URL supaya bisa diakses dari Blogger
-            navigator.serviceWorker.register(
-              &quot;https://raw.githubusercontent.com/joehanz/push-worker/main/firebase-messaging-sw.js&quot;
-            ).then(function (reg) {
-
-              messaging.useServiceWorker(reg);
-
-              messaging.getToken({
-                vapidKey: &quot;BI_BLjd8mygV4myAwDUZq2x3g19Hj5_enuWbET2b0Cpsvh88lBaiCgdV58pbHxI5efW3QSmY6iFZBoxsL4TawPs&quot;
-              }).then(function (token) {
-
-                console.log(&quot;🔥 TOKEN:&quot;, token);
-
-                // SIMPAN TOKEN KE FIREBASE (OPSIONAL)
-                firebase.database().ref(&quot;tokens/&quot; + token).set({
-                  token: token,
-                  time: Date.now()
-                });
-
-                closePushModal();
-              });
-
-            }).catch(function(err){
-              console.error(&quot;Service Worker register error:&quot;, err);
-            });
-
-          }
-        });
-      };
-
-      // tampilkan modal setelah halaman kebuka
-      window.addEventListener(&quot;load&quot;, function () {
-        setTimeout(showPushModal, 3000);
-      });
-    </script>
+}
+</script>
 </head>
 <body>
 
@@ -334,78 +284,73 @@
     //]]>
 </script>
 
-    <!-- FLOATING COUNTER ONLINE (FIXED STRUCTURE) -->
+<!-- FLOATING COUNTER ONLINE -->
 <div id="globalOnlineFloating">
   <span class="dot"></span>
   <span id="globalOnlineCounter">0 online</span>
 </div>
 
-
 <script>
-  /* =====================================================
-     SCRIPT NAME : firebase_global_realtime_online_counter
-     FUNCTION    : Hitung pengunjung ONLINE AKTIF saja
-     METHOD     : onDisconnect + heartbeat + auto cleanup
-     DATABASE   : Firebase Realtime Database
-     ===================================================== */
+(function(){
 
-  (function(){
+  if(!window.firebase) return;
 
-    if(!window.firebase) return;
+  var el = document.getElementById('globalOnlineCounter');
+  if(!el) return;
 
-    var el = document.getElementById(&#39;globalOnlineCounter&#39;);
-    if(!el) return;
+  var db = firebase.database();
+  var ref = db.ref('online_global');
 
-    var db = firebase.database();
-    var ref = db.ref(&#39;online_global&#39;);
+  var id = localStorage.getItem('global_online_id');
 
-    // === 1 DEVICE = 1 ID ===
-    var id = localStorage.getItem(&#39;global_online_id&#39;);
-    if(!id){
-      id = &#39;v_&#39; + Date.now() + &#39;_&#39; + Math.floor(Math.random()*9999);
-      localStorage.setItem(&#39;global_online_id&#39;, id);
-    }
+  if(!id){
+    id = 'v_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    localStorage.setItem('global_online_id', id);
+  }
 
-    var myRef = ref.child(id);
+  var myRef = ref.child(id);
 
-    // === TANDA ONLINE + TIMESTAMP ===
-    function heartbeat(){
-      myRef.set({
-        online: true,
-        lastActive: Date.now()
-      });
-    }
+  function heartbeat(){
+    myRef.set({
+      online: true,
+      lastActive: Date.now()
+    });
+  }
 
-    heartbeat();
+  heartbeat();
 
-    // update tiap 10 detik
-    setInterval(heartbeat, 10000);
+  setInterval(heartbeat, 10000);
 
-    // hapus otomatis kalau koneksi mati
-    myRef.onDisconnect().remove();
+  myRef.onDisconnect().remove();
 
-    // === AUTO CLEANUP USER MATI ===
-    var TIMEOUT = 30000; // 30 detik dianggap offline
+  var TIMEOUT = 30000;
 
-    ref.on(&#39;value&#39;, function(snapshot){
-      var now = Date.now();
-      var count = 0;
+  ref.on('value', function(snapshot){
 
-      snapshot.forEach(function(child){
-        var data = child.val();
+    var now = Date.now();
+    var count = 0;
 
-        // kalau user sudah mati &#8594; hapus
-        if(!data || !data.lastActive || now - data.lastActive &gt; TIMEOUT){
-          ref.child(child.key).remove();
-        } else {
-          count++;
-        }
-      });
+    snapshot.forEach(function(child){
 
-      el.textContent = count + &#39; online&#39;;
+      var data = child.val();
+
+      if(!data || !data.lastActive || (now - data.lastActive > TIMEOUT)){
+
+        ref.child(child.key).remove();
+
+      } else {
+
+        count++;
+
+      }
+
     });
 
-  })();
+    el.textContent = count + ' online';
+
+  });
+
+})();
 </script>
 </body>
 </html>
