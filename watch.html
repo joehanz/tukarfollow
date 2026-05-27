@@ -333,5 +333,77 @@
     })();
     //]]>
 </script>
+
+    <div id='globalOnlineFloating'>
+  <span class='dot'/>
+  <span id='globalOnlineCounter'>0 online</span>
+</div>
+
+<script>
+  /* =====================================================
+     SCRIPT NAME : firebase_global_realtime_online_counter
+     FUNCTION    : Hitung pengunjung ONLINE AKTIF saja
+     METHOD     : onDisconnect + heartbeat + auto cleanup
+     DATABASE   : Firebase Realtime Database
+     ===================================================== */
+
+  (function(){
+
+    if(!window.firebase) return;
+
+    var el = document.getElementById(&#39;globalOnlineCounter&#39;);
+    if(!el) return;
+
+    var db = firebase.database();
+    var ref = db.ref(&#39;online_global&#39;);
+
+    // === 1 DEVICE = 1 ID ===
+    var id = localStorage.getItem(&#39;global_online_id&#39;);
+    if(!id){
+      id = &#39;v_&#39; + Date.now() + &#39;_&#39; + Math.floor(Math.random()*9999);
+      localStorage.setItem(&#39;global_online_id&#39;, id);
+    }
+
+    var myRef = ref.child(id);
+
+    // === TANDA ONLINE + TIMESTAMP ===
+    function heartbeat(){
+      myRef.set({
+        online: true,
+        lastActive: Date.now()
+      });
+    }
+
+    heartbeat();
+
+    // update tiap 10 detik
+    setInterval(heartbeat, 10000);
+
+    // hapus otomatis kalau koneksi mati
+    myRef.onDisconnect().remove();
+
+    // === AUTO CLEANUP USER MATI ===
+    var TIMEOUT = 30000; // 30 detik dianggap offline
+
+    ref.on(&#39;value&#39;, function(snapshot){
+      var now = Date.now();
+      var count = 0;
+
+      snapshot.forEach(function(child){
+        var data = child.val();
+
+        // kalau user sudah mati &#8594; hapus
+        if(!data || !data.lastActive || now - data.lastActive &gt; TIMEOUT){
+          ref.child(child.key).remove();
+        } else {
+          count++;
+        }
+      });
+
+      el.textContent = count + &#39; online&#39;;
+    });
+
+  })();
+</script>
 </body>
 </html>
