@@ -200,6 +200,51 @@ async function loadWatchPageData() {
             <iframe id="moviePlayer" src="${finalSrc}" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
         `;
 
+        // INJEKSI DAN PEMBUATAN LIST FILM SERUPA (RELATED VIDEOS)
+        const relatedGrid = document.getElementById('relatedGrid');
+        if (relatedGrid) {
+            relatedGrid.innerHTML = "";
+            
+            // Filter film yang bergenre sama, tapi kecualikan film yang sedang ditonton saat ini
+            const currentGenre = (selectedMovie.genre || "").toString().toLowerCase();
+            const relatedMovies = ALL_MOVIES.filter(m => {
+                const isDifferentMovie = m.internalId !== movieId;
+                const matchesGenre = m.genre && m.genre.toString().toLowerCase().includes(currentGenre);
+                return isDifferentMovie && matchesGenre;
+            });
+
+            if (relatedMovies.length === 0) {
+                relatedGrid.innerHTML = "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
+            } else {
+                const fragment = document.createDocumentFragment();
+                relatedMovies.forEach(movie => {
+                    const card = document.createElement('a');
+                    // Menggunakan class movie-card yang sama agar ukuran grid sama rata dan konsisten
+                    card.className = "movie-card"; 
+                    card.href = `watch.html?id=${movie.internalId}`;
+                    card.innerHTML = `
+                        <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
+                        <h3>${movie.title}</h3>
+                    `;
+                    fragment.appendChild(card);
+                });
+                relatedGrid.appendChild(fragment);
+            }
+        }
+
+        // KONTROL TOMBOL PANAH CAROUSEL SLIDER (DESKTOP)
+        const slidePrev = document.getElementById('slidePrev');
+        const slideNext = document.getElementById('slideNext');
+        
+        if (slidePrev && slideNext && relatedGrid) {
+            slidePrev.addEventListener('click', () => {
+                relatedGrid.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+            slideNext.addEventListener('click', () => {
+                relatedGrid.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+        }
+
         // SISTEM IKLAN SENSOR FILTER DAN 2X KLIK
         const adOverlay = document.querySelector('.ad-overlay');
         const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com');
@@ -218,7 +263,7 @@ async function loadWatchPageData() {
 
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
-                const randomAd = availableAds.splice(randomIndex, 1)[0];
+                const randomAd = availableAds.splice(randomIndex, 1);
 
                 if (clickCount === 1) {
                     window.open(randomAd, '_blank');
