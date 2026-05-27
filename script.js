@@ -210,13 +210,19 @@ async function loadWatchPageData() {
                 return currentGenres.some(g => g.trim() && movieGenreText.includes(g.trim()));
             });
 
-            // Memasukkan hasil filter ke dalam grid visual
+// Memasukkan hasil filter ke dalam grid visual
 if (relatedMovies.length === 0) {
 
     relatedGrid.innerHTML =
         "<div class='loading-text'>Tidak ada film serupa ditemukan.</div>";
 
 } else {
+
+    // bikin grid rata
+    relatedGrid.style.display = "grid";
+    relatedGrid.style.gridTemplateColumns =
+        "repeat(auto-fill,minmax(160px,1fr))";
+    relatedGrid.style.gap = "16px";
 
     const fragment = document.createDocumentFragment();
 
@@ -228,10 +234,11 @@ if (relatedMovies.length === 0) {
 
         card.href = `watch.html?id=${movie.internalId}`;
 
-        // ukuran card sama rata
+        // ukuran semua card sama
         card.style.cssText = `
             position:relative;
             display:block;
+            width:100%;
             aspect-ratio:2/3;
             overflow:hidden;
             border-radius:12px;
