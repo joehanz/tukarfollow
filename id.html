@@ -1,7 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Indonesia TMDB</title>
+    <meta name="description" content="Template grid film Indonesia otomatis dari TMDB">
+    <link rel="preconnect" href="https://tmdb.org">
+    <link rel="preconnect" href="https://themoviedb.org">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b0b0b;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        header {
+            padding: 25px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ff3d00;
+        }
+
+        .search-box {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #ff3d00;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* AREA PEMUTAR VIDEO (PLAYER AREA) */
+        .player-container {
+            max-width: 1000px;
+            margin: 20px auto 0 auto;
+            padding: 0 20px;
+            display: none;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #ff3d00;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .player-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #fff;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #121212;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+        }
+
+        .poster {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
+
+        .info {
+            padding: 12px;
+        }
+
+        .title {
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.4;
+            height: 42px;
+            overflow: hidden;
+        }
+
+        .meta {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .rating {
+            background: #ff3d00;
+            padding: 4px 8px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #999;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px 0;
+        }
+
+        .pagination button {
+            padding: 12px 18px;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .pagination button.active {
+            background: #ff3d00;
+        }
+
+        @media(max-width:600px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .poster {
+                height: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">FILM INDONESIA</div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari film Indonesia...">
+            <button onclick="searchMovies()">Cari</button>
+        </div>
+    </header>
+
+    <div class="player-container" id="playerContainer">
+        <div class="video-wrapper" id="videoWrapper"></div>
+        <div class="player-title" id="playerTitle">Memuat Layar Nonton...</div>
+    </div>
+
+    <div class="container">
+        <div class="grid" id="movieGrid"></div>
+        <div class="loading" id="loading">Memuat film Indonesia...</div>
+
+        <div class="pagination">
+            <button onclick="prevPage()">Prev</button>
+            <button class="active" id="pageNumber">1</button>
+            <button onclick="nextPage()">Next</button>
+        </div>
+    </div>
     <script>
-        // API Key baru Anda yang sudah teruji aktif
         const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0';
-        const BASE_URL = 'https://api.themoviedb.org/3';
+        const BASE_URL = 'https://themoviedb.org';
         const IMG = 'https://tmdb.org';
 
         let currentPage = 1;
@@ -20,15 +242,13 @@
                 if (currentQuery) {
                     url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&language=id-ID&page=${page}`;
                 } else {
-                    // MENGOPTIMALKAN QUERY: Menambahkan parameter keamanan agar lolos dari proteksi ketat browser
                     url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&include_adult=false&language=id-ID&page=${page}`;
                 }
 
-                // Melakukan pemanggilan data dengan mode CORS eksplisit
                 const res = await fetch(url, { method: 'GET', mode: 'cors' });
                 
                 if (!res.ok) {
-                    throw new Error(`HTTP error! Status: ${res.status}`);
+                    throw new Error(`Koneksi ditolak server (Status: ${res.status})`);
                 }
 
                 const data = await res.json();
@@ -44,7 +264,7 @@
                     card.className = 'card';
 
                     card.innerHTML = `
-                        <img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://placehold.co'}">
+                        <img class="poster" src="${movie.poster_path ? IMG + movie.poster_path : 'https://placehold.co'}" alt="${movie.title}">
                         <div class="info">
                             <div class="title">${movie.title}</div>
                             <div class="meta">
@@ -67,6 +287,7 @@
 
                         playerTitle.innerText = `Nonton: ${movie.title}`;
                         playerArea.style.display = 'block';
+
                         playerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     };
 
@@ -74,8 +295,7 @@
                 }
 
             } catch (err) {
-                // Memberikan detail eror asli di layar untuk memudahkan pelacakan masalah internet Anda
-                loading.innerHTML = `Gagal memuat data dari TMDB.<br><small style="color:#ff3d00;">Detail: ${err.message}. Pastikan internet stabil atau jalankan file lewat localhost.</small>`;
+                loading.innerHTML = `Gagal memuat data dari TMDB.<br><small style="color:#ff3d00; font-size:14px;">Kendala: ${err.message}. Harap jalankan file ini lewat localhost / web server agar tidak diblokir browser.</small>`;
                 console.error(err);
             }
         }
@@ -104,7 +324,9 @@
             }
         }
 
-        fetchMovies();
+        window.onload = () => {
+            fetchMovies();
+        };
     </script>
 </body>
 </html>
