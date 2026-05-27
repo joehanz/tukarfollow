@@ -216,7 +216,7 @@ async function loadWatchPageData() {
                     // DIPERBAIKI: Menggunakan class asli halaman utama agar panjang lebar sama persis
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
-                    // DIPERBAIKI: Judul dipindahkan ke bagian atas sebelum elemen gambar poster
+                    // DIPERBAIKI: Judul ditaruh di depan poster (di atas pembungkus gambar)
                     card.innerHTML = `
                         <h3>${movie.title}</h3>
                         <div class="poster-wrapper"><img src="${movie.image}" alt="${movie.title}" loading="lazy"></div>
@@ -248,7 +248,7 @@ async function loadWatchPageData() {
         if (isAbyss && adOverlay) {
             adOverlay.style.display = 'none';
         } 
-        else if ((isCinematic) && adOverlay) {
+        else if (isCinematic && adOverlay) {
             let clickCount = 0;
             let availableAds = [...AD_DOMAINS];
 
@@ -279,4 +279,3 @@ async function loadWatchPageData() {
         }
     }
 }
-
