@@ -6,6 +6,8 @@ const AD_DOMAINS = [
 ];
 
 let ALL_MOVIES = [];
+let CURRENT_PAGE = 1;
+const ITEMS_PER_PAGE = 26;
 
 function generateSlug(title) {
     if (!title) return '';
@@ -45,7 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (searchInput) searchInput.value = filterSearch;
         }
 
-        renderGrid(filtered);
+        CURRENT_PAGE = 1;
+        renderPaginationGrid(filtered);
     }
     if (document.getElementById('videoContainer')) {
         loadWatchPageData();
@@ -109,7 +112,8 @@ function initNavbar() {
             }
 
             const filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(keyword));
-            renderGrid(filtered);
+            CURRENT_PAGE = 1;
+            renderPaginationGrid(filtered);
         });
     }
 
@@ -142,27 +146,35 @@ function initNavbar() {
                     return new Date(m.release_date).getFullYear() === parseInt(year);
                 });
             }
-            renderGrid(filtered);
+            CURRENT_PAGE = 1;
+            renderPaginationGrid(filtered);
         });
     });
 }
-function renderGrid(moviesList) {
+function renderPaginationGrid(moviesList) {
     const grid = document.getElementById('movieGrid');
     if (!grid) return;
-    
+
+    // Hapus kontainer tombol pagination lama jika ada
+    const oldPager = document.getElementById('paginationContainer');
+    if (oldPager) oldPager.remove();
+
     grid.innerHTML = "";
     if (!moviesList || moviesList.length === 0) {
         grid.innerHTML = "<div class='loading-text'>Tidak ada film ditemukan.</div>";
         return;
     }
 
+    // Kalkulasi index pemotongan data film (26 per halaman)
+    const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedItems = moviesList.slice(startIndex, endIndex);
+
     const fragment = document.createDocumentFragment();
-    moviesList.forEach(movie => {
+    paginatedItems.forEach(movie => {
         const card = document.createElement('a');
         card.className = "movie-card";
         card.href = `watch.html?id=${movie.internalId}`; 
-        
-        // Mengunci ukuran card & menaruh judul didepan gambar poster bagian bawah secara penuh
         card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; margin: 10px; text-decoration: none;");
         
         card.innerHTML = `
@@ -176,6 +188,56 @@ function renderGrid(moviesList) {
         fragment.appendChild(card);
     });
     grid.appendChild(fragment);
+
+    // Membuat elemen tombol Navigasi Halaman (Pagination UI)
+    const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
+    if (totalPages > 1) {
+        const pager = document.createElement('div');
+        pager.id = 'paginationContainer';
+        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
+
+        // Tombol Sebelumnya
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = "Sebelumnya";
+        prevBtn.disabled = CURRENT_PAGE === 1;
+        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
+        prevBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE > 1) {
+                CURRENT_PAGE--;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        // Info Halaman Aktif
+        const pageInfo = document.createElement('span');
+        pageInfo.innerText = `Halaman ${CURRENT_PAGE} dari ${totalPages}`;
+        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
+
+        // Tombol Selanjutnya
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = "Selanjutnya";
+        nextBtn.disabled = CURRENT_PAGE === totalPages;
+        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
+        nextBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE < totalPages) {
+                CURRENT_PAGE++;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        pager.appendChild(prevBtn);
+        pager.appendChild(pageInfo);
+        pager.appendChild(nextBtn);
+        grid.parentNode.insertBefore(pager, grid.nextSibling);
+    }
+}
+
+// Untuk mempertahankan kompatibilitas fungsi renderGrid bawaan tema
+function renderGrid(moviesList) {
+    CURRENT_PAGE = 1;
+    renderPaginationGrid(moviesList);
 }
 
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
@@ -226,8 +288,6 @@ async function loadWatchPageData() {
                     const card = document.createElement('a');
                     card.className = "movie-card"; 
                     card.href = `watch.html?id=${movie.internalId}`;
-                    
-                    // Mengunci ukuran card di area related agar seragam dan teks judul membungkus sempurna
                     card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; flex-shrink: 0; margin-right: 15px; text-decoration: none;");
                     
                     card.innerHTML = `
@@ -272,7 +332,7 @@ async function loadWatchPageData() {
 
                 if (availableAds.length === 0) availableAds = [...AD_DOMAINS];
                 const randomIndex = Math.floor(Math.random() * availableAds.length);
-                const randomAd = availableAds.splice(randomIndex, 1)[0]; 
+                const randomAd = availableAds.splice(randomIndex, 1); 
 
                 if (clickCount === 1) {
                     window.open(randomAd, '_blank');
