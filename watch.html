@@ -55,8 +55,16 @@
         </div>
     </header>
 
-    <!-- VIDEO PLAYER & DETAIL -->
-    <main class="main-content watch-container">
+    <!-- AREA GRID PASIF (Akan Muncul Menggantikan Player Jika Navigasi/Pencarian Digunakan) -->
+    <main class="main-content">
+        <h2 id="sectionTitle" style="padding: 0 20px; margin-top: 20px; display: none;">Hasil Pencarian</h2>
+        <div id="movieGrid" class="movie-grid" style="display: none; padding: 20px;">
+            <!-- Grid Film Mirip index.html Muncul Di Sini -->
+        </div>
+    </main>
+
+    <!-- VIDEO PLAYER & DETAIL CONTENT AREA -->
+    <main class="main-content watch-container" id="watchContentArea">
         <div class="player-wrapper">
             <h1 id="watchTitle">Memuat Judul...</h1>
             
@@ -121,7 +129,6 @@
         </div>
     </footer>
 
-    <!-- Menjalankan seluruh fungsi lewat satu script utama -->
     <script src="script.js"></script>
 </body>
 </html>
