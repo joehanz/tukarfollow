@@ -32,71 +32,65 @@
     <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'></script>
     <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js'></script>
 
-    <script>
+        <script>
       if (!firebase.apps.length) {
         firebase.initializeApp({
-          apiKey: &quot;AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y&quot;,
-          authDomain: &quot;tukarfollow-32e80.firebaseapp.com&quot;,
-          databaseURL: &quot;https://tukarfollow-32e80-default-rtdb.firebaseio.com&quot;,
-          projectId: &quot;tukarfollow-32e80&quot;,
-          storageBucket: &quot;tukarfollow-32e80.appspot.com&quot;,
-          messagingSenderId: &quot;488828752907&quot;,
-          appId: &quot;1:488828752907:web:8fa92415553e16d672e30e&quot;
+          apiKey: "AIzaSyChFHaSTVkZnlxuOwKrDC5cA_cViICQe8Y",
+          // FIX UTUH: Mengembalikan nama ID proyek Anda agar browser tahu arah pengiriman data
+          authDomain: "://firebaseapp.com",
+          databaseURL: "https://firebaseio.com",
+          projectId: "tukarfollow-32e80",
+          storageBucket: "://appspot.com",
+          messagingSenderId: "488828752907",
+          appId: "1:488828752907:web:8fa92415553e16d672e30e"
         });
       }
 
       const messaging = firebase.messaging();
 
       function showPushModal() {
-        if (Notification.permission === &quot;default&quot;) {
-          document.getElementById(&quot;pushModal&quot;).style.display = &quot;block&quot;;
+        if (Notification.permission === "default") {
+          document.getElementById("pushModal").style.display = "block";
         }
       }
 
       function closePushModal() {
-        document.getElementById(&quot;pushModal&quot;).style.display = &quot;none&quot;;
+        const modal = document.getElementById("pushModal");
+        if (modal) modal.style.display = "none";
       }
 
-      document.getElementById(&quot;allowPush&quot;).onclick = function () {
-
-        Notification.requestPermission().then(function (permission) {
-          if (permission === &quot;granted&quot;) {
-
-            // Gunakan GitHub raw URL supaya bisa diakses dari Blogger
-            navigator.serviceWorker.register(
-              &quot;https://raw.githubusercontent.com/joehanz/push-worker/main/firebase-messaging-sw.js&quot;
-            ).then(function (reg) {
-
-              messaging.useServiceWorker(reg);
-
-              messaging.getToken({
-                vapidKey: &quot;BI_BLjd8mygV4myAwDUZq2x3g19Hj5_enuWbET2b0Cpsvh88lBaiCgdV58pbHxI5efW3QSmY6iFZBoxsL4TawPs&quot;
-              }).then(function (token) {
-
-                console.log(&quot;🔥 TOKEN:&quot;, token);
-
-                // SIMPAN TOKEN KE FIREBASE (OPSIONAL)
-                firebase.database().ref(&quot;tokens/&quot; + token).set({
-                  token: token,
-                  time: Date.now()
+      const allowPushEl = document.getElementById("allowPush");
+      if (allowPushEl) {
+        allowPushEl.onclick = function () {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+              navigator.serviceWorker.register(
+                "./firebase-messaging-sw.js"
+              ).then(function (reg) {
+                messaging.useServiceWorker(reg);
+                messaging.getToken({
+                  vapidKey: "BI_BLjd8mygV4myAwDUZq2x3g19Hj5_enuWbET2b0Cpsvh88lBaiCgdV58pbHxI5efW3QSmY6iFZBoxsL4TawPs"
+                }).then(function (token) {
+                  console.log("🔥 TOKEN:", token);
+                  firebase.database().ref("tokens/" + token).set({
+                    token: token,
+                    time: Date.now()
+                  });
+                  closePushModal();
                 });
-
-                closePushModal();
+              }).catch(function(err){
+                console.error("Service Worker register error:", err);
               });
+            }
+          });
+        };
+      }
 
-            }).catch(function(err){
-              console.error(&quot;Service Worker register error:&quot;, err);
-            });
-
-          }
-        });
-      };
-
-      // tampilkan modal setelah halaman kebuka
-      window.addEventListener(&quot;load&quot;, function () {
+      window.addEventListener("load", function () {
         setTimeout(showPushModal, 3000);
       });
     </script>
+
 </head>
 <body>
 
