@@ -118,7 +118,18 @@
     "genre": ["Action", "Thriller"],
     "release_date": "24-04-2026",
     "country": "Kanada, Australia, Amerika Serikat"
+  },
+  {
+    "title": "Disolution (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-disolution-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/eIW2qw7wo",
+    "sinopsis": "Istri pendendam pakai ilmu hitam memindahkan kanker kekasih ke suami brutalnya.",
+    "genre": ["Romance", "Thriller"],
+    "release_date": "24-04-2026",
+    "country": "Amerika Serikat"
   }
+
 
 
 ]
