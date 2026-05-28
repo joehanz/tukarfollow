@@ -174,41 +174,45 @@ var modal = document.getElementById("myModal");
 var iframe = document.getElementById("modalTVFrame");
 
 // Mengambil elemen <span> (x) untuk menutup modal
-var span = document.getElementsByClassName("close")[0];
+var span = document.getElementsByClassName("close")[0]; // Ditambahkan [0] agar mengunci elemen pertama dengan tepat
 
-// FUNGSI BARU: Membuka modal, mengisi link TV, dan MENGUNCI scroll latar belakang
+// FUNGSI: Membuka modal dan MELENYAPKAN total bar scroll dari layar
 function openTVModal(url) {
     if (modal && iframe) {
-        iframe.src = url; // Mengisi link streaming TV
-        modal.style.display = "block"; // Menampilkan modal
+        iframe.src = url; 
+        modal.style.display = "block"; 
         
-        // Kunci scroll halaman utama biar tidak double scroll
+        // Trik jitu: Matikan dan sembunyikan total bar scroll dari seluruh browser (HTML & Body)
+        document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden"; 
     }
 }
 
-// Logika menutup modal saat tombol (x) diklik & mengaktifkan kembali scroll
+// Logika menutup modal saat tombol (x) diklik & mengembalikan scrollbar
 if (span) {
     span.onclick = function() {
         modal.style.display = "none";
-        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+        iframe.src = ""; 
         
-        // Buka kembali kunci scroll halaman utama
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
         document.body.style.overflow = "auto"; 
     }
 }
 
-// Logika menutup modal jika pengguna mengklik area luar modal & mengaktifkan kembali scroll
+// Logika menutup modal jika klik area luar & mengembalikan scrollbar
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
-        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+        iframe.src = ""; 
         
-        // Buka kembali kunci scroll halaman utama
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
         document.body.style.overflow = "auto"; 
     }
 }
 </script>
+
 
     </main>
 
