@@ -241,6 +241,113 @@ window.onclick = function(event) {
 
 
     <script src="script.js"></script>
+    <script>
+        (function(){
+
+  function startOnlineViewerCounter(){
+
+    if(typeof firebase === 'undefined') return false;
+
+    var counterEl = document.getElementById('onlineCounter');
+    if(!counterEl) return false;
+
+    var postKey = location.pathname.replace(/\W+/g,'_');
+
+    var ref = firebase.database().ref('online/' + postKey);
+
+    // 1 DEVICE = 1 ID
+    var viewerId =
+      sessionStorage.getItem('viewer_' + postKey);
+
+    if(!viewerId){
+
+      viewerId =
+        'u_' + Date.now() + '_' +
+        Math.floor(Math.random()*9999);
+
+      sessionStorage.setItem(
+        'viewer_' + postKey,
+        viewerId
+      );
+
+    }
+
+    var userRef = ref.child(viewerId);
+
+    // HEARTBEAT
+    function heartbeat(){
+
+      userRef.set({
+        online: true,
+        lastActive: Date.now()
+      });
+
+    }
+
+    heartbeat();
+
+    // update tiap 10 detik
+    setInterval(heartbeat, 10000);
+
+    // hapus saat disconnect normal
+    userRef.onDisconnect().remove();
+
+    // cleanup user mati
+    var TIMEOUT = 30000;
+
+    ref.on('value', function(snap){
+
+      var now = Date.now();
+      var count = 0;
+
+      snap.forEach(function(child){
+
+        var data = child.val();
+
+        if(
+          !data ||
+          !data.lastActive ||
+          (now - data.lastActive > TIMEOUT)
+        ){
+
+          ref.child(child.key).remove();
+
+        } else {
+
+          count++;
+
+        }
+
+      });
+
+      counterEl.innerHTML =
+        '👁️ ' + count + ' menonton';
+
+    });
+
+    return true;
+
+  }
+
+  // retry firebase ready
+  var tries = 0;
+
+  var timer = setInterval(function(){
+
+    tries++;
+
+    if(startOnlineViewerCounter() || tries > 50){
+
+      clearInterval(timer);
+
+    }
+
+  },100);
+
+})();
+
+
+    </script>
 
 </body>
 </html>
