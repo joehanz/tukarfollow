@@ -112,13 +112,33 @@ body {font-family: Arial, Helvetica, sans-serif;}
 }
 
 /* Modal Content */
+j/* Pembungkus luar modal */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 99999; /* Memastikan di atas elemen lain */
+  
+  /* Atur jarak sesuai permintaan Anda */
+  top: 70px;      /* Jarak dari atas 70px */
+  left: 0px;      /* Kiri rapat 0px */
+  right: 0px;     /* Kanan rapat 0px */
+  bottom: 0px;    /* Bawah rapat 0px */
+  
+  width: 100%;
+  height: calc(100% - 70px); /* Tinggi otomatis terpotong 70px atas */
+  overflow: hidden; 
+  background-color: rgba(0,0,0,0.9); /* Latar belakang hitam transparan */
+}
+
+/* Isi dalam modal (Iframe TV) */
 .modal-content {
-  background-color: none;
-  margin: auto;
-  padding: 20px;
+  background-color: transparent; /* Mengganti 'none' ke 'transparent' agar valid */
+  margin: 0;
+  padding: 0px;
   border: none;
   width: 100%;
-  height:100%;
+  height: 100%;
+  position: relative;
 }
 
 /* The Close Button */
