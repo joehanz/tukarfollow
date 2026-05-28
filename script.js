@@ -316,7 +316,21 @@ async function loadWatchPageData() {
             });
         }
 
-        const adOverlay = document.querySelector('.ad-overlay'); const isAbyss = finalSrc.toLowerCase().includes('abyssplayer.com'); const isCinematic = finalSrc.toLowerCase().includes('playcinematic.com'); if (isAbyss && adOverlay) { adOverlay.style.display = 'none'; } else if (isCinematic && adOverlay) { let clickCount = 0; let availableAds = [...AD_DOMAINS];
+        const safeSrc = (finalSrc || '').toLowerCase();
+
+const adOverlay = document.querySelector('.ad-overlay');
+
+const isAbyss = safeSrc.includes('abyssplayer.com');
+
+const isCinematic =
+  safeSrc.includes('playcinematic.com') ||
+  safeSrc.includes('vsembed.ru') ||
+  safeSrc.includes('vsembed.su');
+        
+        if (isAbyss && adOverlay) { adOverlay.style.display = 'none'; } 
+        else if (isCinematic && adOverlay) { 
+            let clickCount = 0; 
+            let availableAds = [...AD_DOMAINS];
 
             adOverlay.addEventListener('click', () => {
                 clickCount++;
