@@ -35,49 +35,80 @@
                 <span></span><span></span><span></span>
             </button>
 
-            <nav class="nav-menu" id="navMenu">
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Cari film di sini...">
-                </div>
-                
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
-                    <div class="dropdown-content" id="genreDropdown">
-                        <a href="#" data-genre="Action">Action</a>
-                        <a href="#" data-genre="Adventure">Adventure</a>
-                        <a href="#" data-genre="Comedy">Comedy</a>
-                        <a href="#" data-genre="Drama">Drama</a>
-                        <a href="#" data-genre="Horror">Horror</a>
-                        <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
-                    </div>
-                </div>
+         <nav class="nav-menu" id="navMenu">
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Cari film di sini...">
+    </div>
+    
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="genreBtn">Genre ▾</button>
+        <div class="dropdown-content" id="genreDropdown">
+            <a href="#" data-genre="Action">Action</a>
+            <a href="#" data-genre="Adventure">Adventure</a>
+            <a href="#" data-genre="Comedy">Comedy</a>
+            <a href="#" data-genre="Drama">Drama</a>
+            <a href="#" data-genre="Horror">Horror</a>
+            <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
+        </div>
+    </div>
 
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
-                    <div class="dropdown-content" id="releaseDropdown">
-                        <a href="#" data-year="2026">2026</a>
-                        <a href="#" data-year="2025">2025</a>
-                        <a href="#" data-year="2024">2024</a>
-                        <a href="#" data-year="klasik">Klasik (< 2024)</a>
-                    </div>
-                </div>
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
+        <div class="dropdown-content" id="releaseDropdown">
+            <a href="#" data-year="2026">2026</a>
+            <a href="#" data-year="2025">2025</a>
+            <a href="#" data-year="2024">2024</a>
+            <a href="#" data-year="klasik">Klasik (< 2024)</a>
+        </div>
+    </div>
 
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
-                    <div class="dropdown-content" id="genreDropdown">
-                        <a href="#" data-genre="Action">RCTI</a>
-                        <a href="#" data-genre="Adventure">GTV</a>
-                        <a href="#" data-genre="Comedy">I News</a>
-                        <a href="#" data-genre="Drama">MNC TV</a>
-                        <a href="#" data-genre="Horror">IDX</a>
-                        <a href="#" data-genre="Sci-Fi">MNC News</a>
-                        <a href="#" data-genre="Action">Trans TV</a>
-                        <a href="#" data-genre="Adventure">Trans7</a>
-                        <a href="#" data-genre="Comedy">CNN</a>
-                    </div>
-                </div>
-                
-            </nav>
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
+        <div class="dropdown-content" id="genreDropdown">
+            <a href="#" data-genre="Action" onclick="openTV('https://inews.id')">RCTI</a>
+            <a href="#" data-genre="Adventure" onclick="openTV('https://inews.id')">GTV</a>
+            <a href="#" data-genre="Comedy" onclick="openTV('https://inews.id')">I News</a>
+            <a href="#" data-genre="Drama" onclick="openTV('https://inews.id')">MNC TV</a>
+            <a href="#" data-genre="Horror" onclick="openTV('https://inews.id')">IDX</a>
+            <a href="#" data-genre="Sci-Fi" onclick="openTV('https://inews.id')">MNC News</a>
+            <a href="#" data-genre="Action" onclick="openTV('https://detik.com')">Trans TV</a>
+            <a href="#" data-genre="Adventure" onclick="openTV('https://detik.com')">Trans7</a>
+            <a href="#" data-genre="Comedy" onclick="openTV('https://cnnindonesia.com')">CNN</a>
+        </div>
+    </div>
+</nav>
+
+<!-- STRUKTUR POP-UP MINIMALIS (Gunakan ID yang sama untuk JS) -->
+<div id="tvPopup" style="display: none;">
+    <button onclick="closeTV()">✕</button>
+    <div>
+        <iframe id="tvFrame" src="" allowfullscreen></iframe>
+    </div>
+</div>
+<script>
+    // Fungsi memunculkan pop-up layar penuh dan memutar TV
+function openTV(url) {
+    const popup = document.getElementById('tvPopup');
+    const iframe = document.getElementById('tvFrame');
+    
+    if (popup && iframe) {
+        iframe.src = url; // Memasukkan link streaming ke iframe
+        popup.style.display = 'flex'; // Mengubah display jadi 'flex' agar tampil penuh
+    }
+}
+
+// Fungsi menutup pop-up dan mematikan suara TV
+function closeTV() {
+    const popup = document.getElementById('tvPopup');
+    const iframe = document.getElementById('tvFrame');
+    
+    if (popup && iframe) {
+        popup.style.display = 'none'; // Sembunyikan kembali pop-up
+        iframe.src = ''; // Mengosongkan link agar streaming berhenti total
+    }
+}
+
+</script>
         </div>
     </header>
 
