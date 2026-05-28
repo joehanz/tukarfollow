@@ -505,7 +505,51 @@ const isCinematic =
     })();
     //]]>
 
-// ==================== PENGHITUNG JUMLAH PENGUNJUNG ONLINE DI HALAMAN ITU ====================
+// ==================== BAGIAN 4: BERKAITAN DENGAN TV ====================
+// Mengambil elemen modal berdasarkan ID template Anda
+var modal = document.getElementById("myModal");
+
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
+
+// Mengambil elemen <span> (x) untuk menutup modal
+var span = document.getElementsByClassName("close")[0]; // Ditambahkan [0] agar mengunci elemen pertama dengan tepat
+
+// FUNGSI: Membuka modal dan MELENYAPKAN total bar scroll dari layar
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; 
+        modal.style.display = "block"; 
+        
+        // Trik jitu: Matikan dan sembunyikan total bar scroll dari seluruh browser (HTML & Body)
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; 
+    }
+}
+
+// Logika menutup modal saat tombol (x) diklik & mengembalikan scrollbar
+if (span) {
+    span.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
+
+// Logika menutup modal jika klik area luar & mengembalikan scrollbar
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
 
 
 
