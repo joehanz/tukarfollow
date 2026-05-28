@@ -49,7 +49,7 @@ if (!firebase.apps.length) {
                 <span></span><span></span><span></span>
             </button>
 
-            <nav class="nav-menu" id="navMenu">
+           <nav class="nav-menu" id="navMenu">
                 <div class="search-wrapper">
                     <input type="text" id="searchInput" placeholder="Cari film di sini...">
                 </div>
@@ -75,6 +75,23 @@ if (!firebase.apps.length) {
                         <a href="#" data-year="klasik">Klasik (< 2024)</a>
                     </div>
                 </div>
+
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
+                    <div class="dropdown-content" id="genreDropdown">
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGcmN0aSUyRmluZXdzaWQmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU='); return false;">RCTI</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGZ3R2JTJGaW5ld3NpZCZoZWlnaHQ9MTAwJTI1JndpZHRoPTEwMCUyNQ=='); return false;">GTV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGaW5ld3MlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">INEWS</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">MNC TV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">IDX TV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZjZG4tbGl2ZXR2LXN0dWRpby5tZXR1YmUuaWQlMkZtbmNuZXdzLm0zdTgmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU='); return false;">MNC News</a>
+                        <a href="#" onclick="openTVModal('https://20.detik.com/watch/livestreaming-transtv'); return false;">TRANS TV</a>
+                        <a href="#" onclick="openTVModal('https://20.detik.com/watch/livestreaming-trans7'); return false;">TRANS7</a>
+                        <a href="#" onclick="openTVModal('https://www.cnnindonesia.com/tv/embed?smartautoplay=true'); return false;">CNN</a>
+
+                    </div>
+                </div>
+                
             </nav>
         </div>
     </header>
@@ -119,6 +136,126 @@ if (!firebase.apps.length) {
                 </div>
             </section>
         </div>
+
+                <style>
+/* ==========================================
+   PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
+   ========================================== */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 99999; /* Memastikan berada di atas elemen apa pun */
+  
+  /* Rapat 0px di semua sisi layar */
+  top: 0px;       
+  left: 0px;      
+  right: 0px;     
+  bottom: 0px;    
+  
+  width: 100vw;  /* Paksa lebar penuh memotong sisa ruang scrollbar kanan */
+  height: 100vh; /* Paksa tinggi penuh satu layar */
+  
+  overflow: hidden; /* Mencegah modal membuat scrollbar baru */
+  background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
+}
+
+/* ==========================================
+   ISI DALAM MODAL (KONTEN IFRAME TV)
+   ========================================== */
+.modal-content {
+  background-color: transparent; /* Transparan agar menyatu dengan background hitam */
+  margin: 0;
+  padding: 0px;
+  border: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ==========================================
+   TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
+   ========================================== */
+.close {
+  color: #ffffff; /* Warna putih agar kontras dengan layar hitam */
+  position: absolute; /* Melayang bebas di atas video */
+  top: 20px; /* Jarak dari atas layar */
+  right: 25px; /* Jarak dari kanan layar */
+  font-size: 35px; /* Ukuran besar agar mudah diklik */
+  font-weight: bold;
+  z-index: 100000; /* Berada di lapisan paling atas melampaui iframe video */
+  cursor: pointer;
+  user-select: none;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
+  text-decoration: none;
+}
+
+
+</style>
+
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
+  </div>
+
+</div>
+
+<script>
+// Mengambil elemen modal berdasarkan ID template Anda
+var modal = document.getElementById("myModal");
+
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
+
+// Mengambil elemen <span> (x) untuk menutup modal
+var span = document.getElementsByClassName("close")[0]; // Ditambahkan [0] agar mengunci elemen pertama dengan tepat
+
+// FUNGSI: Membuka modal dan MELENYAPKAN total bar scroll dari layar
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; 
+        modal.style.display = "block"; 
+        
+        // Trik jitu: Matikan dan sembunyikan total bar scroll dari seluruh browser (HTML & Body)
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; 
+    }
+}
+
+// Logika menutup modal saat tombol (x) diklik & mengembalikan scrollbar
+if (span) {
+    span.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
+
+// Logika menutup modal jika klik area luar & mengembalikan scrollbar
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
+</script>
     </main>
 
     <!-- BANNER IKLAN 300x300 -->
