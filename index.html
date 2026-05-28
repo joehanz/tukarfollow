@@ -35,49 +35,101 @@
                 <span></span><span></span><span></span>
             </button>
 
-            <nav class="nav-menu" id="navMenu">
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Cari film di sini...">
-                </div>
-                
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
-                    <div class="dropdown-content" id="genreDropdown">
-                        <a href="#" data-genre="Action">Action</a>
-                        <a href="#" data-genre="Adventure">Adventure</a>
-                        <a href="#" data-genre="Comedy">Comedy</a>
-                        <a href="#" data-genre="Drama">Drama</a>
-                        <a href="#" data-genre="Horror">Horror</a>
-                        <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
-                    </div>
-                </div>
+            <!-- ===== NAVIGASI UTAMA ===== -->
+<nav class="nav-menu" id="navMenu">
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Cari film di sini...">
+    </div>
+    
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="genreBtn">Genre ▾</button>
+        <div class="dropdown-content" id="genreDropdown">
+            <a href="#" data-genre="Action">Action</a>
+            <a href="#" data-genre="Adventure">Adventure</a>
+            <a href="#" data-genre="Comedy">Comedy</a>
+            <a href="#" data-genre="Drama">Drama</a>
+            <a href="#" data-genre="Horror">Horror</a>
+            <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
+        </div>
+    </div>
 
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
-                    <div class="dropdown-content" id="releaseDropdown">
-                        <a href="#" data-year="2026">2026</a>
-                        <a href="#" data-year="2025">2025</a>
-                        <a href="#" data-year="2024">2024</a>
-                        <a href="#" data-year="klasik">Klasik (< 2024)</a>
-                    </div>
-                </div>
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
+        <div class="dropdown-content" id="releaseDropdown">
+            <a href="#" data-year="2026">2026</a>
+            <a href="#" data-year="2025">2025</a>
+            <a href="#" data-year="2024">2024</a>
+            <a href="#" data-year="klasik">Klasik (< 2024)</a>
+        </div>
+    </div>
 
-                <div class="dropdown-wrapper">
-                    <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
-                    <div class="dropdown-content" id="genreDropdown">
-                        <span id="myBtn">RCTI</span>
-                        <a href="#" data-genre="Adventure">GTV</a>
-                        <a href="#" data-genre="Comedy">I News</a>
-                        <a href="#" data-genre="Drama">MNC TV</a>
-                        <a href="#" data-genre="Horror">IDX</a>
-                        <a href="#" data-genre="Sci-Fi">MNC News</a>
-                        <a href="#" data-genre="Action">Trans TV</a>
-                        <a href="#" data-genre="Adventure">Trans7</a>
-                        <a href="#" data-genre="Comedy">CNN</a>
-                    </div>
-                </div>
-                
-            </nav>
+    <!-- TOMBOL TV LOKAL DENGAN STRUKTUR PEMANGGIL MODAL -->
+    <div class="dropdown-wrapper">
+        <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
+        <div class="dropdown-content" id="genreDropdown">
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">RCTI</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">GTV</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">I News</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">MNC TV</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">IDX</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">MNC News</span>
+            <span class="tv-link" onclick="openTVModal('https://detik.com')">Trans TV</span>
+            <span class="tv-link" onclick="openTVModal('https://detik.com')">Trans7</span>
+            <span class="tv-link" onclick="openTVModal('https://cnnindonesia.com')">CNN</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== STRUKTUR MODAL DASAR ===== -->
+<!-- Menggunakan ID 'myModal' sesuai fungsi template Anda -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <!-- Tombol Tutup (X) -->
+        <span class="close">&times;</span>
+        
+        <!-- Frame Tempat Video Memutar -->
+        <div class="modal-video-container">
+            <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SCRIPT UTAMA (LOGIKA TEMPLATE) ===== -->
+<script>
+// Mengambil elemen modal berdasarkan ID template Anda
+var modal = document.getElementById("myModal");
+
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
+
+// Mengambil elemen <span> (x) untuk menutup modal
+var span = document.getElementsByClassName("close")[0];
+
+// FUNGSI BARU: Membuka modal sekaligus memasukkan tautan TV spesifik ke iframe
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; // Mengisi link streaming TV
+        modal.style.display = "block"; // Menampilkan modal (Logika template)
+    }
+}
+
+// Logika menutup modal saat tombol (x) diklik (Logika template)
+span.onclick = function() {
+    modal.style.display = "none";
+    iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+}
+
+// Logika menutup modal jika pengguna mengklik area luar modal (Logika template)
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+    }
+}
+</script>
+
+
+            
         </div>
     </header>
 
@@ -90,92 +142,6 @@
                 <div class="loading-text">Memuat film...</div>
             </div>
         </section>
-
-
-        <style>
-body {font-family: Arial, Helvetica, sans-serif;}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-}
-
-/* The Close Button */
-.close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-</style>
-
-
-
-
-<!-- The Modal -->
-<div id="myModal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>jjjjjjjjjj Some text in the Modal..</p>
-  </div>
-
-</div>
-
-<script>
-// Get the modal
-var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-</script>
     </main>
 
         <!-- FOOTER 4 KOLOM -->
