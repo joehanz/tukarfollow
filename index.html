@@ -94,45 +94,31 @@
 
 
         <style>
-body {font-family: Arial, Helvetica, sans-serif;}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-j/* Pembungkus luar modal */
+/* ==========================================
+   PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
+   ========================================== */
 .modal {
   display: none; 
   position: fixed; 
-  z-index: 99999; /* Memastikan di atas elemen lain */
+  z-index: 99999; /* Memastikan di atas elemen navigasi atau konten lain */
   
-  /* Atur jarak sesuai permintaan Anda */
-  top: 70px;      /* Jarak dari atas 70px */
-  left: 0px;      /* Kiri rapat 0px */
-  right: 0px;     /* Kanan rapat 0px */
-  bottom: 0px;    /* Bawah rapat 0px */
+  /* Rapat 0px di semua sisi layar */
+  top: 0px;       
+  left: 0px;      
+  right: 0px;     
+  bottom: 0px;    
   
   width: 100%;
-  height: calc(100% - 70px); /* Tinggi otomatis terpotong 70px atas */
-  overflow: hidden; 
-  background-color: rgba(0,0,0,0.9); /* Latar belakang hitam transparan */
+  height: 100%; /* Mengisi layar penuh secara vertikal */
+  overflow: hidden; /* Mengunci scroll agar tidak meluber */
+  background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
 }
 
-/* Isi dalam modal (Iframe TV) */
+/* ==========================================
+   ISI DALAM MODAL (KONTEN IFRAME TV)
+   ========================================== */
 .modal-content {
-  background-color: transparent; /* Mengganti 'none' ke 'transparent' agar valid */
+  background-color: transparent; /* Transparan agar menyatu dengan background hitam */
   margin: 0;
   padding: 0px;
   border: none;
@@ -141,20 +127,27 @@ j/* Pembungkus luar modal */
   position: relative;
 }
 
-/* The Close Button */
+/* ==========================================
+   TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
+   ========================================== */
 .close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
+  color: #ffffff; /* Mengganti abu-abu ke putih agar kontras dengan layar hitam */
+  position: absolute; /* Membuat tombol melayang bebas di atas video */
+  top: 20px; /* Jarak dari atas layar */
+  right: 25px; /* Jarak dari kanan layar */
+  font-size: 35px; /* Diperbesar sedikit agar mudah disentuh/diklik */
   font-weight: bold;
+  z-index: 100000; /* Berada di atas lapisan video iframe */
+  cursor: pointer;
+  user-select: none;
 }
 
 .close:hover,
 .close:focus {
-  color: #000;
+  color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
   text-decoration: none;
-  cursor: pointer;
 }
+
 </style>
 
 
