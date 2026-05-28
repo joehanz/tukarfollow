@@ -137,68 +137,6 @@ if (!firebase.apps.length) {
             </section>
         </div>
 
-                <style>
-/* ==========================================
-   PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
-   ========================================== */
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 99999; /* Memastikan berada di atas elemen apa pun */
-  
-  /* Rapat 0px di semua sisi layar */
-  top: 0px;       
-  left: 0px;      
-  right: 0px;     
-  bottom: 0px;    
-  
-  width: 100vw;  /* Paksa lebar penuh memotong sisa ruang scrollbar kanan */
-  height: 100vh; /* Paksa tinggi penuh satu layar */
-  
-  overflow: hidden; /* Mencegah modal membuat scrollbar baru */
-  background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
-}
-
-/* ==========================================
-   ISI DALAM MODAL (KONTEN IFRAME TV)
-   ========================================== */
-.modal-content {
-  background-color: transparent; /* Transparan agar menyatu dengan background hitam */
-  margin: 0;
-  padding: 0px;
-  border: none;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-/* ==========================================
-   TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
-   ========================================== */
-.close {
-  color: #ffffff; /* Warna putih agar kontras dengan layar hitam */
-  position: absolute; /* Melayang bebas di atas video */
-  top: 20px; /* Jarak dari atas layar */
-  right: 25px; /* Jarak dari kanan layar */
-  font-size: 35px; /* Ukuran besar agar mudah diklik */
-  font-weight: bold;
-  z-index: 100000; /* Berada di lapisan paling atas melampaui iframe video */
-  cursor: pointer;
-  user-select: none;
-}
-
-.close:hover,
-.close:focus {
-  color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
-  text-decoration: none;
-}
-
-
-</style>
-
-
-
-
 <!-- The Modal -->
 <div id="myModal" class="modal">
 
