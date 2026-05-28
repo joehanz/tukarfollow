@@ -34,11 +34,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (sectionTitle) sectionTitle.innerText = `Genre: ${filterGenre}`;
             filtered = ALL_MOVIES.filter(m => m.genre && m.genre.toString().toLowerCase().includes(filterGenre.toLowerCase()));
         } else if (filterYear) {
-            if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${filterYear === 'klasik' ? 'Klasik (<2024)' : filterYear}`;
-            filtered = ALL_MOVIES.filter(m => {
-                if (!m.release_date) return false;
-                return new Date(m.release_date).getFullYear() === parseInt(filterYear);
-            });
+    if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${filterYear === 'klasik' ? 'Klasik (< 2024)' : filterYear}`;
+    
+    filtered = ALL_MOVIES.filter(m => {
+        if (!m.release_date) return false;
+        
+        // Memotong string "15-05-2026" berdasarkan tanda "-" dan mengambil bagian tahun (paling belakang)
+        const dateParts = m.release_date.split('-');
+        const movieYear = parseInt(dateParts[2]); // Mengambil angka tahun saja
+        
+        if (filterYear === 'klasik') {
+            // Jika memilih klasik, tampilkan film yang tahunnya di bawah 2024
+            return movieYear < 2024;
+        } else {
+            // Jika memilih tahun spesifik, cocokkan tahunnya secara pas
+            return movieYear === parseInt(filterYear);
+        }
+    });
+
         } else if (filterSearch) {
             if (sectionTitle) sectionTitle.innerText = `Hasil Pencarian: "${filterSearch}"`;
             filtered = ALL_MOVIES.filter(m => m.title.toLowerCase().includes(filterSearch.toLowerCase()));
