@@ -541,3 +541,87 @@ body {
     font-size:24px;
   }
 }
+
+
+/* ==========================================
+   PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
+   ========================================== */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 99999; /* Memastikan berada di atas elemen apa pun */
+  
+  /* Rapat 0px di semua sisi layar */
+  top: 0px;       
+  left: 0px;      
+  right: 0px;     
+  bottom: 0px;    
+  
+  width: 100vw;  /* Paksa lebar penuh memotong sisa ruang scrollbar kanan */
+  height: 100vh; /* Paksa tinggi penuh satu layar */
+  
+  overflow: hidden; /* Mencegah modal membuat scrollbar baru */
+  background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
+}
+
+/* ==========================================
+   ISI DALAM MODAL (KONTEN IFRAME TV)
+   ========================================== */
+.modal-content {
+  background-color: transparent; /* Transparan agar menyatu dengan background hitam */
+  margin: 0;
+  padding: 0px;
+  border: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ==========================================
+   TEKS JALAN MELAYANG (DI SAMPING TOMBOL X)
+   ========================================== */
+.running-text {
+  position: absolute;
+  top: 40px; /* Menyelaraskan posisi tengah vertikal dengan tanda X */
+  right: 85px; /* Jarak aman sejauh 85px agar terpisah jauh dari tombol X */
+  width: 80%; /* Membatasi lebar teks jalan agar tetap rapi */
+  color: #ffcc00; /* Warna kuning emas estetik */
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  pointer-events: none; /* Supaya teks tidak bisa diklik secara tidak sengaja */
+  z-index: 100000;
+}
+
+/* ==========================================
+   TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
+   ========================================== */
+.close {
+  color: #ffffff; /* Warna putih agar kontras dengan layar hitam */
+  position: absolute; /* Melayang bebas di atas video */
+  top: 20px; /* Jarak dari atas layar */
+  right: 25px; /* Jarak dari kanan layar */
+  font-size: 35px; /* Ukuran besar agar mudah diklik */
+  font-weight: bold;
+  z-index: 100000; /* Berada di lapisan paling atas melampaui iframe video */
+  cursor: pointer;
+  user-select: none;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
+  text-decoration: none;
+}
+
+/* ==========================================
+   PENYESUAIAN RESPONSID DI LAYAR HP / KECIL
+   ========================================== */
+@media (max-width: 768px) {
+  .running-text {
+    top: 33px;
+    right: 65px;
+    width: 270px;
+    font-size: 12px;
+  }
+}
