@@ -218,6 +218,16 @@
     "genre": ["Adventure", "Animation", "Comedy", "Family", "Fantasy"],
     "release_date": "18-04-2026",
     "country": "Jepang, Amerika Serikat"
+  },
+  {
+    "title": "Kill Code (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kill-code.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/XvTGf69O45QGnA9",
+    "sinopsis": "Program pembunuh rahasia lepas kendali, memaksa agen elit bertarung demi menghentikannya.",
+    "genre": ["Action", "Science", "Fiction", "Thriller"],
+    "release_date": "16-04-2026",
+    "country": "Amerika Serikat"
   }
 
 
