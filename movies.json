@@ -191,15 +191,23 @@
   },
   {
     "title": "Kaa : The Forest (2026)",
-    "image": https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kaa-the-forest.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kaa-the-forest.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/FQsmS5zpg",
     "sinopsis": "Hutan terlarang menyimpan teror mematikan saat sekelompok pemuda nekat memasukinya.",
     "genre": ["Adventure", "Thriller"],
     "release_date": "23-04-2026",
     "country": "India"
+  },
+  {
+    "title": "Bhartha Mahasayulaku Wignyapthi (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-bhartha-mahasayulaku-wignyapthi-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/xX8fNs-db",
+    "sinopsis": "Kehidupan para suami berubah kacau setelah rahasia besar mulai terbongkar satu per satu.",
+    "genre": ["Comedy"],
+    "release_date": "23-04-2026",
+    "country": "India"
   }
-
-
 
 ]
