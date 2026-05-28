@@ -92,8 +92,7 @@
             </div>
         </section>
 
-
-        <style>
+k        <style>
 /* ==========================================
    PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
    ========================================== */
@@ -129,6 +128,22 @@
 }
 
 /* ==========================================
+   TEKS JALAN MELAYANG (DI SAMPING TOMBOL X)
+   ========================================== */
+.running-text {
+  position: absolute;
+  top: 30px; /* Menyelaraskan posisi tengah vertikal dengan tanda X */
+  right: 85px; /* Jarak aman sejauh 85px agar terpisah jauh dari tombol X */
+  width: 250px; /* Membatasi lebar teks jalan agar tetap rapi */
+  color: #ffcc00; /* Warna kuning emas estetik */
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  pointer-events: none; /* Supaya teks tidak bisa diklik secara tidak sengaja */
+  z-index: 100000;
+}
+
+/* ==========================================
    TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
    ========================================== */
 .close {
@@ -149,8 +164,19 @@
   text-decoration: none;
 }
 
-
+/* ==========================================
+   PENYESUAIAN RESPONSID DI LAYAR HP / KECIL
+   ========================================== */
+@media (max-width: 768px) {
+  .running-text {
+    top: 22px;
+    right: 65px;
+    width: 150px;
+    font-size: 12px;
+  }
+}
 </style>
+
 
 
 
@@ -160,7 +186,9 @@
 
   <!-- Modal content -->
   <div class="modal-content">
-    <span class="close"><marquee>dicoba</marquee> &times;</span>
+    <marquee class="running-text" scrollamount="3">Teks jalan Anda di sini...</marquee>
+<span class="close">&times;</span>
+
     <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
   </div>
 
