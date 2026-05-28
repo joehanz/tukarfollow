@@ -100,7 +100,7 @@
 .modal {
   display: none; 
   position: fixed; 
-  z-index: 99999; /* Memastikan di atas elemen navigasi atau konten lain */
+  z-index: 99999; /* Memastikan berada di atas elemen apa pun */
   
   /* Rapat 0px di semua sisi layar */
   top: 0px;       
@@ -108,9 +108,10 @@
   right: 0px;     
   bottom: 0px;    
   
-  width: 100%;
-  height: 100%; /* Mengisi layar penuh secara vertikal */
-  overflow: hidden; /* Mengunci scroll agar tidak meluber */
+  width: 100vw;  /* Paksa lebar penuh memotong sisa ruang scrollbar kanan */
+  height: 100vh; /* Paksa tinggi penuh satu layar */
+  
+  overflow: hidden; /* Mencegah modal membuat scrollbar baru */
   background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
 }
 
@@ -131,13 +132,13 @@
    TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
    ========================================== */
 .close {
-  color: #ffffff; /* Mengganti abu-abu ke putih agar kontras dengan layar hitam */
-  position: absolute; /* Membuat tombol melayang bebas di atas video */
+  color: #ffffff; /* Warna putih agar kontras dengan layar hitam */
+  position: absolute; /* Melayang bebas di atas video */
   top: 20px; /* Jarak dari atas layar */
   right: 25px; /* Jarak dari kanan layar */
-  font-size: 35px; /* Diperbesar sedikit agar mudah disentuh/diklik */
+  font-size: 35px; /* Ukuran besar agar mudah diklik */
   font-weight: bold;
-  z-index: 100000; /* Berada di atas lapisan video iframe */
+  z-index: 100000; /* Berada di lapisan paling atas melampaui iframe video */
   cursor: pointer;
   user-select: none;
 }
@@ -147,6 +148,7 @@
   color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
   text-decoration: none;
 }
+
 
 </style>
 
@@ -174,28 +176,40 @@ var iframe = document.getElementById("modalTVFrame");
 // Mengambil elemen <span> (x) untuk menutup modal
 var span = document.getElementsByClassName("close")[0];
 
-// FUNGSI BARU: Membuka modal sekaligus memasukkan tautan TV spesifik ke iframe
+// FUNGSI BARU: Membuka modal, mengisi link TV, dan MENGUNCI scroll latar belakang
 function openTVModal(url) {
     if (modal && iframe) {
         iframe.src = url; // Mengisi link streaming TV
-        modal.style.display = "block"; // Menampilkan modal (Logika template)
+        modal.style.display = "block"; // Menampilkan modal
+        
+        // Kunci scroll halaman utama biar tidak double scroll
+        document.body.style.overflow = "hidden"; 
     }
 }
 
-// Logika menutup modal saat tombol (x) diklik (Logika template)
-span.onclick = function() {
-    modal.style.display = "none";
-    iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+// Logika menutup modal saat tombol (x) diklik & mengaktifkan kembali scroll
+if (span) {
+    span.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+        
+        // Buka kembali kunci scroll halaman utama
+        document.body.style.overflow = "auto"; 
+    }
 }
 
-// Logika menutup modal jika pengguna mengklik area luar modal (Logika template)
+// Logika menutup modal jika pengguna mengklik area luar modal & mengaktifkan kembali scroll
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
         iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+        
+        // Buka kembali kunci scroll halaman utama
+        document.body.style.overflow = "auto"; 
     }
 }
 </script>
+
     </main>
 
         <!-- FOOTER 4 KOLOM -->
