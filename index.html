@@ -65,15 +65,67 @@
                 <div class="dropdown-wrapper">
                     <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
                     <div class="dropdown-content" id="genreDropdown">
-                        <span id="myBtn">RCTI</span>
-                        <a href="#" data-genre="Adventure">GTV</a>
-                        <a href="#" data-genre="Comedy">I News</a>
-                        <a href="#" data-genre="Drama">MNC TV</a>
-                        <a href="#" data-genre="Horror">IDX</a>
-                        <a href="#" data-genre="Sci-Fi">MNC News</a>
-                        <a href="#" data-genre="Action">Trans TV</a>
-                        <a href="#" data-genre="Adventure">Trans7</a>
-                        <a href="#" data-genre="Comedy">CNN</a>
+                        <span class="tv-link" onclick="openTVModal('https://inews.id')">RCTI</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">GTV</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">I News</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">MNC TV</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">IDX</span>
+            <span class="tv-link" onclick="openTVModal('https://inews.id')">MNC News</span>
+            <span class="tv-link" onclick="openTVModal('https://detik.com')">Trans TV</span>
+            <span class="tv-link" onclick="openTVModal('https://detik.com')">Trans7</span>
+            <span class="tv-link" onclick="openTVModal('https://cnnindonesia.com')">CNN</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== STRUKTUR MODAL DASAR ===== -->
+<!-- Menggunakan ID 'myModal' sesuai fungsi template Anda -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <!-- Tombol Tutup (X) -->
+        <span class="close">&times;</span>
+        
+        <!-- Frame Tempat Video Memutar -->
+        <div class="modal-video-container">
+            <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SCRIPT UTAMA (LOGIKA TEMPLATE) ===== -->
+<script>
+// Mengambil elemen modal berdasarkan ID template Anda
+var modal = document.getElementById("myModal");
+
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
+
+// Mengambil elemen <span> (x) untuk menutup modal
+var span = document.getElementsByClassName("close")[0];
+
+// FUNGSI BARU: Membuka modal sekaligus memasukkan tautan TV spesifik ke iframe
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; // Mengisi link streaming TV
+        modal.style.display = "block"; // Menampilkan modal (Logika template)
+    }
+}
+
+// Logika menutup modal saat tombol (x) diklik (Logika template)
+span.onclick = function() {
+    modal.style.display = "none";
+    iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+}
+
+// Logika menutup modal jika pengguna mengklik area luar modal (Logika template)
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+    }
+}
+</script>
+Gunakan kode dengan hati-hati.Cara Kerja Kode Gabungan Ini:Ketika salah satu stasiun TV di menu diklik, fungsi openTVModal('LINK_TV') akan dipicu.Link TV tersebut langsung dimasukkan ke dalam elemen iframe ber-ID modalTVFrame.Perintah modal.style.display = "block" dijalankan untuk memunculkan modal ke layar.Saat ditutup menggunakan tombol &times; (x) atau klik area luar modal, perintah iframe.src = "" otomatis memutus streaming agar suara TV tidak bocor di latar belakang halaman.Silakan dicoba pada project Anda, Bos. Beri tahu saya jika ada bagian responsivitas video atau aspek fungsionalitas skrip lain yang ingin disesuaikan kembali.
                     </div>
                 </div>
                 
@@ -144,36 +196,41 @@ body {font-family: Arial, Helvetica, sans-serif;}
   <!-- Modal content -->
   <div class="modal-content">
     <span class="close">&times;</span>
-    <p>jjjjjjjjjj Some text in the Modal..</p>
+    <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
   </div>
 
 </div>
 
 <script>
-// Get the modal
+// Mengambil elemen modal berdasarkan ID template Anda
 var modal = document.getElementById("myModal");
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
 
-// Get the <span> element that closes the modal
+// Mengambil elemen <span> (x) untuk menutup modal
 var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
+// FUNGSI BARU: Membuka modal sekaligus memasukkan tautan TV spesifik ke iframe
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; // Mengisi link streaming TV
+        modal.style.display = "block"; // Menampilkan modal (Logika template)
+    }
 }
 
-// When the user clicks on <span> (x), close the modal
+// Logika menutup modal saat tombol (x) diklik (Logika template)
 span.onclick = function() {
-  modal.style.display = "none";
+    modal.style.display = "none";
+    iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
 }
 
-// When the user clicks anywhere outside of the modal, close it
+// Logika menutup modal jika pengguna mengklik area luar modal (Logika template)
 window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; // Mengosongkan iframe agar streaming TV berhenti total
+    }
 }
 </script>
     </main>
