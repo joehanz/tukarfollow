@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tukarfollow: Situs Streaming Movie Sub Indo Terlengkap & Bioskop Keren Gratis</title>
+    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
+    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "tukarfollow",
+      "url": "https://github.io",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://github.ioindex.html?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- NAVBAR UTAMA -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">tukarfollow</a>
+            
+            <button class="burger-menu" id="burgerBtn" aria-label="Toggle Menu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav class="nav-menu" id="navMenu">
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Cari film di sini...">
+                </div>
+                
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="genreBtn">Genre ▾</button>
+                    <div class="dropdown-content" id="genreDropdown">
+                        <a href="#" data-genre="Action">Action</a>
+                        <a href="#" data-genre="Adventure">Adventure</a>
+                        <a href="#" data-genre="Comedy">Comedy</a>
+                        <a href="#" data-genre="Drama">Drama</a>
+                        <a href="#" data-genre="Horror">Horror</a>
+                        <a href="#" data-genre="Sci-Fi">Sci-Fi</a>
+                    </div>
+                </div>
+
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="releaseBtn">Rilis ▾</button>
+                    <div class="dropdown-content" id="releaseDropdown">
+                        <a href="#" data-year="2026">2026</a>
+                        <a href="#" data-year="2025">2025</a>
+                        <a href="#" data-year="2024">2024</a>
+                        <a href="#" data-year="klasik">Klasik (< 2024)</a>
+                    </div>
+                </div>
+
+                <div class="dropdown-wrapper">
+                    <button class="dropbtn" id="genreBtn">TV Lokal ▾</button>
+                    <div class="dropdown-content" id="genreDropdown">
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGcmN0aSUyRmluZXdzaWQmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU='); return false;">RCTI</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGZ3R2JTJGaW5ld3NpZCZoZWlnaHQ9MTAwJTI1JndpZHRoPTEwMCUyNQ=='); return false;">GTV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGaW5ld3MlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">INEWS</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">MNC TV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1'); return false;">IDX TV</a>
+                        <a href="#" onclick="openTVModal('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZjZG4tbGl2ZXR2LXN0dWRpby5tZXR1YmUuaWQlMkZtbmNuZXdzLm0zdTgmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU='); return false;">MNC News</a>
+                        <a href="#" onclick="openTVModal('https://20.detik.com/watch/livestreaming-transtv'); return false;">TRANS TV</a>
+                        <a href="#" onclick="openTVModal('https://20.detik.com/watch/livestreaming-trans7'); return false;">TRANS7</a>
+                        <a href="#" onclick="openTVModal('https://www.cnnindonesia.com/tv/embed?smartautoplay=true'); return false;">CNN</a>
+
+                    </div>
+                </div>
+                
+            </nav>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main class="main-content">
+        <section class="grid-section">
+            <h2 id="sectionTitle">Semua Film</h2>
+            <div class="movie-grid" id="movieGrid">
+                <!-- Memuat status awal agar aman -->
+                <div class="loading-text">Memuat film...</div>
+            </div>
+        </section>
+
+        <style>
+/* ==========================================
+   PEMBUNGKUS LUAR MODAL (FULL LAYAR 100%)
+   ========================================== */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 99999; /* Memastikan berada di atas elemen apa pun */
+  
+  /* Rapat 0px di semua sisi layar */
+  top: 0px;       
+  left: 0px;      
+  right: 0px;     
+  bottom: 0px;    
+  
+  width: 100vw;  /* Paksa lebar penuh memotong sisa ruang scrollbar kanan */
+  height: 100vh; /* Paksa tinggi penuh satu layar */
+  
+  overflow: hidden; /* Mencegah modal membuat scrollbar baru */
+  background-color: rgba(0, 0, 0, 0.95); /* Latar belakang hitam bioskop pekat */
+}
+
+/* ==========================================
+   ISI DALAM MODAL (KONTEN IFRAME TV)
+   ========================================== */
+.modal-content {
+  background-color: transparent; /* Transparan agar menyatu dengan background hitam */
+  margin: 0;
+  padding: 0px;
+  border: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ==========================================
+   TEKS JALAN MELAYANG (DI SAMPING TOMBOL X)
+   ========================================== */
+.running-text {
+  position: absolute;
+  top: 40px; /* Menyelaraskan posisi tengah vertikal dengan tanda X */
+  right: 85px; /* Jarak aman sejauh 85px agar terpisah jauh dari tombol X */
+  width: 80%; /* Membatasi lebar teks jalan agar tetap rapi */
+  color: #ffcc00; /* Warna kuning emas estetik */
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  pointer-events: none; /* Supaya teks tidak bisa diklik secara tidak sengaja */
+  z-index: 100000;
+}
+
+/* ==========================================
+   TOMBOL TUTUP (X) MELAYANG DI POJOK KANAN
+   ========================================== */
+.close {
+  color: #ffffff; /* Warna putih agar kontras dengan layar hitam */
+  position: absolute; /* Melayang bebas di atas video */
+  top: 20px; /* Jarak dari atas layar */
+  right: 25px; /* Jarak dari kanan layar */
+  font-size: 35px; /* Ukuran besar agar mudah diklik */
+  font-weight: bold;
+  z-index: 100000; /* Berada di lapisan paling atas melampaui iframe video */
+  cursor: pointer;
+  user-select: none;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff3333; /* Berubah menjadi merah menyala saat kursor di atasnya */
+  text-decoration: none;
+}
+
+/* ==========================================
+   PENYESUAIAN RESPONSID DI LAYAR HP / KECIL
+   ========================================== */
+@media (max-width: 768px) {
+  .running-text {
+    top: 33px;
+    right: 65px;
+    width: 270px;
+    font-size: 12px;
+  }
+}
+</style>
+
+
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <marquee class="running-text" scrollamount="4">Selamat menikmati seluruh tayangan di situs ini</marquee>
+<span class="close">&times;</span>
+
+    <iframe id="modalTVFrame" src="" allowfullscreen width="100%" height="100%"></iframe>
+  </div>
+
+</div>
+
+<script>
+// Mengambil elemen modal berdasarkan ID template Anda
+var modal = document.getElementById("myModal");
+
+// Mengambil elemen iframe di dalam modal
+var iframe = document.getElementById("modalTVFrame");
+
+// Mengambil elemen <span> (x) untuk menutup modal
+var span = document.getElementsByClassName("close")[0]; // Ditambahkan [0] agar mengunci elemen pertama dengan tepat
+
+// FUNGSI: Membuka modal dan MELENYAPKAN total bar scroll dari layar
+function openTVModal(url) {
+    if (modal && iframe) {
+        iframe.src = url; 
+        modal.style.display = "block"; 
+        
+        // Trik jitu: Matikan dan sembunyikan total bar scroll dari seluruh browser (HTML & Body)
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; 
+    }
+}
+
+// Logika menutup modal saat tombol (x) diklik & mengembalikan scrollbar
+if (span) {
+    span.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
+
+// Logika menutup modal jika klik area luar & mengembalikan scrollbar
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        iframe.src = ""; 
+        
+        // Munculkan kembali bar scroll seperti semula
+        document.documentElement.style.overflow = "auto";
+        document.body.style.overflow = "auto"; 
+    }
+}
+</script>
+
+
+    </main>
+
+        <!-- FOOTER 4 KOLOM -->
+    <footer class="footer-grid">
+        <div class="footer-col">
+            <h3>Genre</h3>
+            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
+            <p>
+                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
+            </p>
+        </div>
+        <div class="footer-col">
+            <h3>About</h3>
+            <p>
+                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
+                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
+            </p>
+        </div>
+        <div class="footer-col">
+            <h3>Ads Disclosure</h3>
+            <p>
+                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
+                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
+            </p>
+        </div>
+        <div class="footer-col">
+            <h3>Disclaimer</h3>
+            <p>
+                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
+                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
+            </p>
+        </div>
+    </footer>
+
+
+    <!-- Menggunakan script.js murni untuk Otak index.html -->
+    <script src="script.js"></script>
+    <script type='text/javascript'>
+    //<![CDATA[
+    (function () {
+
+      /* ===============================
+         KONFIGURASI
+      =============================== */
+      var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
+      var DETECT_DELAY = 1200; // ms
+
+      /* ===============================
+         OVERLAY WARNING
+      =============================== */
+      function showWarning(msg){
+        if(document.getElementById('antiWarn')) return;
+        var d = document.createElement('div');
+        d.id = 'antiWarn';
+        d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
+        d.style = `
+          position:fixed;
+          top:0;left:0;
+          width:100%;height:100%;
+          background:rgba(0,0,0,.92);
+          color:#fff;
+          z-index:999999;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          font-size:22px;
+          font-family:Arial,sans-serif
+        `;
+        document.body.appendChild(d);
+
+        setTimeout(function(){
+          location.href = REDIRECT_URL;
+        }, 2500);
+      }
+
+      /* ===============================
+         DISABLE KLIK KANAN
+      =============================== */
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        showWarning('🚫 Klik kanan dinonaktifkan');
+      });
+
+      /* ===============================
+         DISABLE SHORTCUT KEY
+      =============================== */
+      document.addEventListener('keydown', function (e) {
+
+        if (
+          (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
+          (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
+          e.keyCode === 123 // F12
+        ) {
+          e.preventDefault();
+          showWarning('🚫 Akses developer tidak diizinkan');
+        }
+
+      });
+
+      /* ===============================
+         DETEKSI DEVTOOLS (TRICK CONSOLE)
+      =============================== */
+      setInterval(function(){
+        var t = new Image();
+        Object.defineProperty(t,'id',{
+          get:function(){
+            showWarning('🛑 DevTools terdeteksi');
+            throw 'DevTools Blocked';
+          }
+        });
+        console.log(t);
+      }, DETECT_DELAY);
+
+      /* ===============================
+         DISABLE SELECT & DRAG
+      =============================== */
+      var css = document.createElement('style');
+      css.innerHTML = `
+        body {
+          -webkit-user-select:none;
+          -moz-user-select:none;
+          -ms-user-select:none;
+          user-select:none;
+        }
+        img {
+          pointer-events:none;
+        }
+      `;
+      document.head.appendChild(css);
+
+      /* ===============================
+         WATERMARK HALUS
+      =============================== */
+     var wm = document.createElement('div');
+
+  wm.innerHTML = 'Web design by joehanz';
+
+  wm.title = 'Providing website creation services at affordable prices';
+
+  wm.onclick = function(){
+    window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
+  };
+
+  wm.style.position = 'fixed';
+  wm.style.bottom = '6px';
+  wm.style.right = '5%';
+  wm.style.opacity = '.25';
+  wm.style.fontSize = '11px';
+  wm.style.zIndex = '999999';
+  wm.style.color = '#fff';
+  wm.style.cursor = 'pointer';
+
+  document.body.appendChild(wm);
+    })();
+    //]]>
+</script>
+</body>
+</html>
