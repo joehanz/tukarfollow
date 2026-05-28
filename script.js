@@ -152,11 +152,22 @@ function initNavbar() {
             if (genre) {
                 if (sectionTitle) sectionTitle.innerText = `Genre: ${genre}`;
                 filtered = ALL_MOVIES.filter(m => m.genre && m.genre.toString().toLowerCase().includes(genre.toLowerCase()));
-            } else if (year) {
-                if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${year === 'klasik' ? 'Klasik (<2024)' : year}`;
+                       } else if (year) {
+                if (sectionTitle) sectionTitle.innerText = `Tahun Rilis: ${year === 'klasik' ? 'Klasik (< 2024)' : year}`;
                 filtered = ALL_MOVIES.filter(m => {
                     if (!m.release_date) return false;
-                    return new Date(m.release_date).getFullYear() === parseInt(year);
+                    
+                    // Mengambil 4 angka paling belakang dari string tanggal (Sangat Aman)
+                    const cleanDate = m.release_date.toString().trim();
+                    const movieYear = parseInt(cleanDate.slice(-4));
+                    
+                    if (isNaN(movieYear)) return false;
+
+                    if (year === 'klasik') {
+                        return movieYear < 2024; // Mengambil tahun di bawah 2024
+                    } else {
+                        return movieYear === parseInt(year); // Mengambil tahun yang cocok persis
+                    }
                 });
             }
             CURRENT_PAGE = 1;
@@ -164,6 +175,7 @@ function initNavbar() {
         });
     });
 }
+
 function renderPaginationGrid(moviesList) {
     const grid = document.getElementById('movieGrid');
     if (!grid) return;
