@@ -250,7 +250,7 @@
     "country": "Amerika Serikat"
   },
   {
-    "title": "The Highest Stakes (2026))",
+    "title": "The Highest Stakes (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/the-highest-stakes.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/7pb4G4FRQy756fb",
@@ -258,6 +258,16 @@
     "genre": ["Thriller"],
     "release_date": "14-04-2026",
     "country": "Amerika Serikat"
+  },
+  {
+    "title": "Beast (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/beast-2026.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/jBo1Uqq4AWzHklh",
+    "sinopsis": "Pria yang terjebak di kekacauan kota saat ancaman brutal tak dikenal mulai memangsa manusia tanpa ampun.",
+    "genre": ["Action", "Drama"],
+    "release_date": "10-04-2026",
+    "country": "Amerika Serikat, Australia"
   },
   {
     "title": "The Raid 2: Berandal (2014)",
