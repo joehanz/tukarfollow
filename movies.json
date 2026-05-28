@@ -228,6 +228,16 @@
     "genre": ["Action", "Science", "Fiction", "Thriller"],
     "release_date": "16-04-2026",
     "country": "Amerika Serikat"
+  },
+  {
+    "title": "The Raid 2: Berandal (2014)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/raid%20berandal.webp",
+    "video": "",
+    "iframe": "https://vsembed.ru/embed/movie?tmdb=180299",
+    "sinopsis": "Polisi menyusup ke mafia brutal Jakarta demi membalas darah dan menghancurkan penguasa gelap.",
+    "genre": ["Action", "Crime"],
+    "release_date": "28-03-2014",
+    "country": "Indonesia"
   }
 
 
