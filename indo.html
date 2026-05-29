@@ -3,162 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streaming Film Indonesia</title>
+    <title>Bioskop Indonesia - Streaming Terpopuler</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #141414;
-            color: #ffffff;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            padding: 20px;
-        }
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        h1 {
-            color: #e50914;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .movie-card {
-            background-color: #1f1f1f;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            color: inherit;
-        }
-        .movie-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .movie-poster {
-            width: 100%;
-            height: 270px;
-            object-fit: cover;
-            background-color: #333;
-        }
-        .movie-info {
-            padding: 12px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .movie-title {
-            font-size: 0.95rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .movie-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #aaaaaa;
-        }
-        .rating {
-            color: #ffb400;
-            font-weight: bold;
-        }
-        .loading {
-            text-align: center;
-            grid-column: 1 / -1;
-            font-size: 1.2rem;
-            padding: 40px;
-        }
+        body { background-color: #141414; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #e50914; margin-bottom: 30px; }
+        
+        /* Layout Grid Film */
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .movie-card { background: #1f1f1f; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; }
+        .movie-card:hover { transform: scale(1.05); }
+        .movie-card img { width: 100%; height: 240px; object-fit: cover; display: block; }
+        .movie-info { padding: 10px; }
+        .movie-title { font-size: 14px; font-weight: bold; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-year { font-size: 12px; color: #aaaaaa; }
+        
+        /* Container Player Video Overlay */
+        .player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+        .player-box { width: 90%; max-width: 800px; aspect-ratio: 16/9; background: #000; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .close-btn { position: absolute; top: -40px; right: 0; background: #e50914; color: white; border: none; padding: 8px 16px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        
+        .error-msg { text-align: center; color: #ff3333; font-size: 18px; width: 100%; grid-column: 1/-1; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Bioskop Indonesia</h1>
-        <p>Streaming Film Indonesia Terpopuler</p>
-    </header>
+    <h1>Bioskop Indonesia</h1>
+    
+    <!-- Tempat Grid Film Muncul -->
+    <div class="movie-grid" id="movieGrid">
+        <p style="text-align: center; grid-column: 1/-1;">Memuat film...</p>
+    </div>
 
-    <main class="grid-container" id="movie-grid">
-        <div class="loading">Memuat film...</div>
-    </main>
+    <!-- Pop-up Player Video -->
+    <div class="player-container" id="playerContainer">
+        <div class="player-box">
+            <button class="close-btn" onclick="closePlayer()">TUTUP X</button>
+            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <script>
-        // Konfigurasi API
-        const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0';
-        const BASE_URL = 'https://themoviedb.org';
-        const IMAGE_URL = 'https://tmdb.org';
-        const PLAYER_URL = 'https://vsembed.ru/embed/movie?tmdb=';
+        // GANTI TEKS DI BAWAH INI DENGAN API KEY TMDB ANDA
+        const TMDB_API_KEY = 'MASUKKAN_API_KEY_TMDB_ANDA_DI_SINI';
+        
+        const GRID_CONTAINER = document.getElementById('movieGrid');
+        const PLAYER_CONTAINER = document.getElementById('playerContainer');
+        const VIDEO_PLAYER = document.getElementById('videoPlayer');
 
-        // Fungsi mengambil data film Indonesia dari TMDB
-        async function fetchIndonesianMovies() {
-            const gridContainer = document.getElementById('movie-grid');
-            
+        // Mengambil data film Indonesia terpopuler
+        async function loadMovies() {
             try {
-                // Menampilkan film dengan bahasa asli Indonesia (id) dan negara asal Indonesia (ID)
-                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=id&region=ID&sort_by=popularity.desc`);
+                const url = `https://themoviedb.org{TMDB_API_KEY}&with_original_language=id&sort_by=popularity.desc`;
+                const response = await fetch(url);
                 const data = await response.json();
-                
-                // Bersihkan pesan loading
-                gridContainer.innerHTML = '';
 
                 if (data.results && data.results.length > 0) {
+                    GRID_CONTAINER.innerHTML = '';
                     data.results.forEach(movie => {
-                        // Validasi gambar poster, jika tidak ada gunakan placeholder
-                        const posterPath = movie.poster_path ? `${IMAGE_URL}${movie.poster_path}` : 'https://placeholder.com';
-                        const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
-                        const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '0.0';
+                        const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+                        const poster = movie.poster_path ? `https://tmdb.org{movie.poster_path}` : 'https://placeholder.com';
                         
-                        // Membuat link tujuan dinamis hanya mengambil ID TMDB saja
-                        const targetPlayerUrl = `${PLAYER_URL}${movie.id}`;
-
-                        // Struktur elemen Card HTML
-                        const movieCard = document.createElement('a');
-                        movieCard.className = 'movie-card';
-                        movieCard.href = targetPlayerUrl;
-                        movieCard.target = '_blank'; // Membuka pemutar video di tab baru
-
-                        movieCard.innerHTML = `
-                            <img class="movie-poster" src="${posterPath}" alt="${movie.title}" loading="lazy">
+                        const card = document.createElement('div');
+                        card.className = 'movie-card';
+                        card.setAttribute('onclick', `playMovie('${movie.id}')`);
+                        card.innerHTML = `
+                            <img src="${poster}" alt="${movie.title}">
                             <div class="movie-info">
-                                <div class="movie-title">${movie.title}</div>
-                                <div class="movie-meta">
-                                    <span>${releaseYear}</span>
-                                    <span class="rating">⭐ ${rating}</span>
-                                </div>
+                                <p class="movie-title">${movie.title}</p>
+                                <p class="movie-year">${year}</p>
                             </div>
                         `;
-
-                        gridContainer.appendChild(movieCard);
+                        GRID_CONTAINER.appendChild(card);
                     });
                 } else {
-                    gridContainer.innerHTML = '<div class="loading">Film tidak ditemukan.</div>';
+                    GRID_CONTAINER.innerHTML = '<p class="error-msg">Film tidak ditemukan.</p>';
                 }
-
             } catch (error) {
-                console.error('Error fetching data:', error);
-                gridContainer.innerHTML = '<div class="loading">Gagal memuat data film. Coba lagi nanti.</div>';
+                GRID_CONTAINER.innerHTML = '<p class="error-msg">Gagal memuat data film. Coba lagi nanti.</p>';
             }
         }
 
-        // Jalankan fungsi saat halaman selesai dimuat
-        document.addEventListener('DOMContentLoaded', fetchIndonesianMovies);
+        // Fungsi memutar video dengan vsembed.ru
+        function playMovie(tmdbId) {
+            VIDEO_PLAYER.src = `https://vsembed.ru{tmdbId}`;
+            PLAYER_CONTAINER.style.display = 'flex';
+        }
+
+        // Fungsi menutup video player
+        function closePlayer() {
+            PLAYER_CONTAINER.style.display = 'none';
+            VIDEO_PLAYER.src = '';
+        }
+
+        // Jalankan saat halaman dibuka
+        loadMovies();
     </script>
 </body>
 </html>
