@@ -98,10 +98,20 @@
 }
              
 .indo-movie-grid{
-  display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Mengecilkan sedikit grid agar pas di layar kecil */
-    gap: 25px 18px; 
-    width: 100%;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:25px 18px;
+
+  width:100%;
+  max-width:1400px;
+
+  margin:auto;
+
+  padding:
+    100px   /* atas */
+    50px    /* kanan */
+    40px    /* bawah */
+    50px;   /* kiri */
 }
 
 
