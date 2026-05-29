@@ -209,15 +209,45 @@ let allMovies = [];
 let currentPage = 1;
 const itemsPerPage = 26;
 
-// AMBIL FILM
+// AMBIL BANYAK PAGE FILM INDONESIA
 async function fetchMovies(){
 
-  const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&page=1`;
+  allMovies = [];
 
-  const res = await fetch(url);
-  const data = await res.json();
+  // JUMLAH PAGE YANG DIAMBIL
+  // 1 PAGE ≈ 20 FILM
+  // 50 PAGE ≈ 1000 FILM
+  const totalPages = 50;
 
-  allMovies = data.results;
+  for(let page = 1; page <= totalPages; page++){
+
+    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&page=${page}`;
+
+    try{
+
+      const res = await fetch(url);
+
+      const data = await res.json();
+
+      if(data.results){
+
+        allMovies.push(...data.results);
+
+      }
+
+    }catch(err){
+
+      console.log("Error page", page);
+
+    }
+
+  }
+
+  // HAPUS DUPLIKAT
+  allMovies = allMovies.filter(
+    (movie, index, self) =>
+      index === self.findIndex(m => m.id === movie.id)
+  );
 
   renderMovies();
   renderPagination();
