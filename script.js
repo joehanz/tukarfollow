@@ -217,98 +217,50 @@ paginatedItems.forEach(movie => {
 grid.appendChild(fragment);
 
 // ==================== BAGIAN 3: SISTEM PAGINATION (UI NAVIGASI HALAMAN) ====================
-// GOBOT: Perbaikan Bug DOM Isolation. Timpa fungsi render pagination index Anda dengan ini:
-
-function renderIndexPagination() {
-    // 1. ISOLASI SCRIPT: Cari elemen grid index.html secara spesifik
-    // Ganti 'movieGridIndex' dengan ID container grid film asli di index.html Anda jika berbeda
-    const gridIndex = document.getElementById('movieGridIndex') || document.querySelector('.grid'); 
-    
-    // Jika tidak berada di halaman index.html, keluar dari fungsi agar tidak merusak halaman indo.html
-    if (!gridIndex) return;
-
-    // 2. Hitung total halaman berdasarkan data manual
+// Membuat elemen tombol Navigasi Halaman (Pagination UI)
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
-    
-    // 3. Manajemen Container Pagination khusus Index
-    let pager = document.getElementById('paginationContainerIndex');
-    if (pager) {
-        pager.innerHTML = ""; // Bersihkan isi tombol lama saja, jangan hapus container-nya
-    } else {
-        pager = document.createElement('div');
-        pager.id = 'paginationContainerIndex';
-        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 8px; clear: both;");
-        // Selipkan tepat di bawah grid index
-        gridIndex.parentNode.insertBefore(pager, gridIndex.nextSibling);
-    }
+    if (totalPages > 1) {
+        const pager = document.createElement('div');
+        pager.id = 'paginationContainer';
+        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
 
-    // Jika film kosong atau hanya 1 halaman, sembunyikan pagination container
-    if (totalPages <= 1) {
-        pager.style.display = 'none';
-        return;
-    } else {
-        pager.style.display = 'flex';
-    }
+        // Tombol Sebelumnya
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = "Prev";
+        prevBtn.disabled = CURRENT_PAGE === 1;
+        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
+        prevBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE > 1) {
+                CURRENT_PAGE--;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
 
-    // 4. Hitung batas angka (Sistem Range Indo)
-    let start = CURRENT_PAGE - 2;
-    let end = CURRENT_PAGE + 2;
+        // Info Halaman Aktif
+        const pageInfo = document.createElement('span');
+        pageInfo.innerText = ` ${CURRENT_PAGE} / ${totalPages}`;
+        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
 
-    if (start < 1) start = 1;
-    if (end > totalPages) end = totalPages;
+        // Tombol Selanjutnya
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = "Next";
+        nextBtn.disabled = CURRENT_PAGE === totalPages;
+        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
+        nextBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE < totalPages) {
+                CURRENT_PAGE++;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
 
-    // 5. Tombol Sebelumnya (‹)
-    if (CURRENT_PAGE > 1) {
-        const prev = document.createElement("button");
-        prev.innerText = "‹";
-        prev.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;");
-        prev.onclick = () => {
-            CURRENT_PAGE--;
-            renderPaginationGrid(moviesList);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        pager.appendChild(prev);
-    }
-
-    // 6. Deretan Tombol Angka Dinamis
-    for (let i = start; i <= end; i++) {
-        const btn = document.createElement("button");
-        btn.innerText = i;
-
-        let btnStyle = "padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; ";
-
-        if (i === CURRENT_PAGE) {
-            btn.classList.add("active");
-            btnStyle += "background: #007bff; color: #fff;"; // Warna tombol aktif
-        } else {
-            btnStyle += "background: #333; color: #fff;";
-        }
-
-        btn.setAttribute("style", btnStyle);
-
-        btn.onclick = () => {
-            CURRENT_PAGE = i;
-            renderPaginationGrid(moviesList);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        pager.appendChild(btn);
-    }
-
-    // 7. Tombol Selanjutnya (›)
-    if (CURRENT_PAGE < totalPages) {
-        const next = document.createElement("button");
-        next.innerText = "›";
-        next.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;");
-        next.onclick = () => {
-            CURRENT_PAGE++;
-            renderPaginationGrid(moviesList);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        pager.appendChild(next);
+        pager.appendChild(prevBtn);
+        pager.appendChild(pageInfo);
+        pager.appendChild(nextBtn);
+        grid.parentNode.insertBefore(pager, grid.nextSibling);
     }
 }
-
 
 
 
