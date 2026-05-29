@@ -218,14 +218,14 @@ function renderPaginationGrid(moviesList) {
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
     if (totalPages > 1) {
         const pager = document.createElement('div');
-        pager.id = 'paginationContainer';
-        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
-
+        pager.id = 'indoPagination';
+        pager.className = 'indo-pagination';
+        
         // Tombol Sebelumnya
         const prevBtn = document.createElement('button');
         prevBtn.innerText = "Sebelumnya";
         prevBtn.disabled = CURRENT_PAGE === 1;
-        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
+        prevBtn.style.opacity = CURRENT_PAGE === 1 ? "0.5" : "1";
         prevBtn.addEventListener('click', () => {
             if (CURRENT_PAGE > 1) {
                 CURRENT_PAGE--;
@@ -237,13 +237,14 @@ function renderPaginationGrid(moviesList) {
         // Info Halaman Aktif
         const pageInfo = document.createElement('span');
         pageInfo.innerText = `Halaman ${CURRENT_PAGE} dari ${totalPages}`;
-        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
-
+        pageInfo.className = "indo-page-info";
+        
         // Tombol Selanjutnya
         const nextBtn = document.createElement('button');
         nextBtn.innerText = "Selanjutnya";
         nextBtn.disabled = CURRENT_PAGE === totalPages;
-        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
+        nextBtn.style.opacity =
+  CURRENT_PAGE === totalPages ? "0.5" : "1";
         nextBtn.addEventListener('click', () => {
             if (CURRENT_PAGE < totalPages) {
                 CURRENT_PAGE++;
