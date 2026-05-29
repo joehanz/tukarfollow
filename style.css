@@ -390,8 +390,10 @@ body {
     color: #0084ff;
 }
 
-bs tolong editkan disini. kirim balik full siap copas /* RESPONSIVE MOBILE MEDIA QUERIES */
+
+/* RESPONSIVE MOBILE MEDIA QUERIES */
 @media (max-width: 768px) {
+
     .burger-menu { 
         display: flex; 
     }
@@ -403,23 +405,45 @@ bs tolong editkan disini. kirim balik full siap copas /* RESPONSIVE MOBILE MEDIA
         width: 80%; 
         max-width: 300px; 
         height: calc(100vh - 70px); 
+
         background-color: #141417; 
+
         flex-direction: column; 
         align-items: flex-start; 
-        padding: 30px 20px; 
-        gap: 10px; 
+
+        padding: 20px 20px; 
+
+        gap: 4px; 
+
         border-left: 1px solid #232329; 
+
         transition: right 0.3s ease; 
     }
     
     .nav-menu.open { 
         right: 0; 
     }
-    
-    .search-wrapper, .search-wrapper input { 
+
+    /* WRAPPER MENU BIAR RAPAT */
+    .dropdown-wrapper{
+        margin:0;
+        padding:0;
+        width:100%;
+    }
+
+    /* TOMBOL MENU */
+    .dropbtn{
+        padding:8px 0;
+        line-height:1.2;
+    }
+
+    /* SEARCH */
+    .search-wrapper,
+    .search-wrapper input { 
         width: 100%; 
     }
     
+    /* DROPDOWN */
     .dropdown-content { 
         position: static; 
         opacity: 1; 
@@ -430,7 +454,11 @@ bs tolong editkan disini. kirim balik full siap copas /* RESPONSIVE MOBILE MEDIA
         display: none; 
         box-shadow: none;
         border: none;
-        margin-top: 10px;
+        margin-top: 4px;
+    }
+
+    .dropdown-content a{
+        padding:8px 12px;
     }
     
     .dropdown-content.open-mobile { 
@@ -445,7 +473,7 @@ bs tolong editkan disini. kirim balik full siap copas /* RESPONSIVE MOBILE MEDIA
         -webkit-overflow-scrolling: touch;
     }
     
-    /* Perbaikan Kolom Grid Footer agar tidak memanjang keluar di Mobile */
+    /* FOOTER */
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
@@ -453,12 +481,18 @@ bs tolong editkan disini. kirim balik full siap copas /* RESPONSIVE MOBILE MEDIA
 }
 
 @media (max-width: 480px) {
+
     .footer-grid {
         grid-template-columns: 1fr;
     }
+
     .movie-grid { 
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Mengoptimalkan baris poster untuk layar HP sangat kecil */
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(120px, 1fr)
+        );
     }
+
 }
 
 /* =========================================================
