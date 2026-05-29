@@ -390,12 +390,14 @@ body {
     color: #0084ff;
 }
 
+```css
 /* RESPONSIVE MOBILE MEDIA QUERIES */
 @media (max-width: 768px) {
+
     .burger-menu { 
         display: flex; 
     }
-    
+
     .nav-menu { 
         position: fixed; 
         top: 70px; 
@@ -403,63 +405,117 @@ body {
         width: 80%; 
         max-width: 300px; 
         height: calc(100vh - 70px); 
+
         background-color: #141417; 
+
         flex-direction: column; 
         align-items: flex-start; 
-        padding: 30px 20px; 
-        gap: 10px; 
+
+        padding: 20px 20px;
+
+        gap: 8px;
+
         border-left: 1px solid #232329; 
+
         transition: right 0.3s ease; 
     }
-    
+
     .nav-menu.open { 
         right: 0; 
     }
-    
-    .search-wrapper, .search-wrapper input { 
+
+    /* SEMUA ITEM MENU FULL WIDTH */
+    .nav-menu > div{
+        width:100%;
+    }
+
+    .dropdown-wrapper{
+        width:100%;
+    }
+
+    /* INPUT SEARCH */
+    .search-wrapper,
+    .search-wrapper input { 
         width: 100%; 
     }
-    
+
+    /* TOMBOL MENU DROPDOWN */
+    .dropbtn{
+        width:100%;
+        text-align:left;
+
+        padding:10px 0;
+
+        font-size:15px;
+    }
+
+    /* DROPDOWN MOBILE */
     .dropdown-content { 
         position: static; 
+
         opacity: 1; 
+
         pointer-events: auto; 
+
         transform: none; 
+
         background-color: #1c1c21; 
+
         width: 100%; 
+
         display: none; 
+
         box-shadow: none;
+
         border: none;
-        margin-top: 10px;
+
+        margin-top: 5px;
+
+        border-radius:8px;
     }
-    
+
+    .dropdown-content a{
+        padding:10px 14px;
+        font-size:14px;
+    }
+
     .dropdown-content.open-mobile { 
         display: block; 
     }
-    
+
+    /* HILANGKAN TOMBOL CAROUSEL */
     .carousel-btn { 
         display: none; 
     }
-    
+
     .movie-carousel {
         -webkit-overflow-scrolling: touch;
     }
-    
-    /* Perbaikan Kolom Grid Footer agar tidak memanjang keluar di Mobile */
+
+    /* FOOTER */
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
 }
 
+/* MOBILE KECIL */
 @media (max-width: 480px) {
+
     .footer-grid {
         grid-template-columns: 1fr;
     }
+
     .movie-grid { 
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Mengoptimalkan baris poster untuk layar HP sangat kecil */
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(120px, 1fr)
+        );
     }
+
 }
+```
+
 
 /* =========================================================
    ONLINE FLOAT (FIXED VISUAL & LAYOUT)
