@@ -218,6 +218,12 @@ function renderPaginationGrid(moviesList) {
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
 
     // hapus pagination lama kalau ada
+// PAGINATION STYLE TMDB (FIX MINIMAL)
+function renderPaginationGrid(moviesList) {
+
+    const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
+
+    // hapus pagination lama
     const old = document.getElementById("paginationContainer");
     if (old) old.remove();
 
@@ -225,14 +231,7 @@ function renderPaginationGrid(moviesList) {
 
     const pager = document.createElement("div");
     pager.id = "paginationContainer";
-    pager.style.cssText = `
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:6px;
-        margin:20px 0;
-        flex-wrap:wrap;
-    `;
+    pager.style.cssText = "display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0;";
 
     let start = CURRENT_PAGE - 2;
     let end = CURRENT_PAGE + 2;
@@ -240,72 +239,52 @@ function renderPaginationGrid(moviesList) {
     if (start < 1) start = 1;
     if (end > totalPages) end = totalPages;
 
-    // tombol prev ‹
+    // PREV
     if (CURRENT_PAGE > 1) {
         const prev = document.createElement("button");
         prev.innerText = "‹";
-        prev.style.cssText = baseBtnStyle();
-
         prev.onclick = () => {
             CURRENT_PAGE--;
             renderPaginationGrid(moviesList);
+            renderMoviesGrid(moviesList); // penting: re-render GRID kamu
             window.scrollTo({ top: 0, behavior: "smooth" });
         };
-
         pager.appendChild(prev);
     }
 
-    // number buttons
+    // NUMBER
     for (let i = start; i <= end; i++) {
         const btn = document.createElement("button");
         btn.innerText = i;
-        btn.style.cssText = baseBtnStyle();
 
         if (i === CURRENT_PAGE) {
             btn.classList.add("active");
-            btn.style.background = "#fff";
-            btn.style.color = "#000";
-            btn.style.fontWeight = "bold";
         }
 
         btn.onclick = () => {
             CURRENT_PAGE = i;
             renderPaginationGrid(moviesList);
+            renderMoviesGrid(moviesList); // ini yang sering hilang
             window.scrollTo({ top: 0, behavior: "smooth" });
         };
 
         pager.appendChild(btn);
     }
 
-    // tombol next ›
+    // NEXT
     if (CURRENT_PAGE < totalPages) {
         const next = document.createElement("button");
         next.innerText = "›";
-        next.style.cssText = baseBtnStyle();
-
         next.onclick = () => {
             CURRENT_PAGE++;
             renderPaginationGrid(moviesList);
+            renderMoviesGrid(moviesList); // penting
             window.scrollTo({ top: 0, behavior: "smooth" });
         };
-
         pager.appendChild(next);
     }
 
     grid.parentNode.insertBefore(pager, grid.nextSibling);
-
-
-    function baseBtnStyle() {
-        return `
-            padding:8px 12px;
-            background:#222;
-            color:#fff;
-            border:none;
-            border-radius:4px;
-            cursor:pointer;
-            min-width:38px;
-        `;
-    }
 }
     
 // Untuk mempertahankan kompatibilitas fungsi renderGrid bawaan tema
