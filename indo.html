@@ -139,6 +139,36 @@
         height:60vh;
       }
     }
+
+    /* TAMBAHKAN KE CSS */
+
+.pagination{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  padding:20px 20px 40px;
+  flex-wrap:wrap;
+}
+
+.pagination button{
+  padding:10px 15px;
+  border:none;
+  background:#1d1d1d;
+  color:#fff;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+  transition:.3s;
+}
+
+.pagination button:hover{
+  background:red;
+}
+
+.pagination button.active{
+  background:red;
+}
   </style>
 </head>
 <body>
@@ -152,6 +182,8 @@
 </header>
 
 <div class="movie-grid" id="movieGrid"></div>
+  <!-- TAMBAHKAN DI BAWAH GRID -->
+<div class="pagination" id="pagination"></div>
 
 <!-- PLAYER -->
 
@@ -163,14 +195,21 @@
 </div>
 
 <script>
+/* GANTI SEMUA SCRIPT LAMA DENGAN INI */
+
 const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 const movieGrid = document.getElementById("movieGrid");
 const searchInput = document.getElementById("searchInput");
+const pagination = document.getElementById("pagination");
 
 let allMovies = [];
 
-// AMBIL FILM INDONESIA
+// PAGINATION
+let currentPage = 1;
+const itemsPerPage = 26;
+
+// AMBIL FILM
 async function fetchMovies(){
 
   const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&page=1`;
@@ -180,21 +219,29 @@ async function fetchMovies(){
 
   allMovies = data.results;
 
-  renderMovies(allMovies);
+  renderMovies();
+  renderPagination();
+
 }
 
 // RENDER GRID
-function renderMovies(movies){
+function renderMovies(filteredMovies = allMovies){
 
   movieGrid.innerHTML = "";
 
-  movies.forEach(movie => {
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+
+  const paginatedMovies = filteredMovies.slice(start, end);
+
+  paginatedMovies.forEach(movie => {
 
     const poster = movie.poster_path
       ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      : "https://via.placeholder.com/500x750?text=No+Image";
+      : `https://via.placeholder.com/500x750?text=No+Image`;
 
     const card = document.createElement("div");
+
     card.className = "movie-card";
 
     card.innerHTML = `
@@ -206,7 +253,6 @@ function renderMovies(movies){
       </div>
     `;
 
-    // AMBIL TMDB ID -> PLAYER
     card.onclick = () => {
       openPlayer(movie.id);
     };
@@ -217,7 +263,44 @@ function renderMovies(movies){
 
 }
 
-// BUKA PLAYER
+// PAGINATION BUTTON
+function renderPagination(filteredMovies = allMovies){
+
+  pagination.innerHTML = "";
+
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
+
+  for(let i = 1; i <= totalPages; i++){
+
+    const btn = document.createElement("button");
+
+    btn.innerText = i;
+
+    if(i === currentPage){
+      btn.classList.add("active");
+    }
+
+    btn.onclick = () => {
+
+      currentPage = i;
+
+      renderMovies(filteredMovies);
+      renderPagination(filteredMovies);
+
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+
+    };
+
+    pagination.appendChild(btn);
+
+  }
+
+}
+
+// PLAYER
 function openPlayer(tmdbId){
 
   const embedUrl = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
@@ -228,7 +311,7 @@ function openPlayer(tmdbId){
 
 }
 
-// TUTUP PLAYER
+// CLOSE PLAYER
 function closePlayer(){
 
   document.getElementById("playerModal").style.display = "none";
@@ -246,7 +329,10 @@ searchInput.addEventListener("input", function(){
     movie.title.toLowerCase().includes(value)
   );
 
+  currentPage = 1;
+
   renderMovies(filtered);
+  renderPagination(filtered);
 
 });
 
