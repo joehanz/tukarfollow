@@ -217,81 +217,53 @@ function renderPaginationGrid(moviesList) {
     function renderPaginationGrid(moviesList) {
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
 
-    // hapus pagination lama kalau ada
-// PAGINATION STYLE TMDB (FIX MINIMAL)
-function renderPaginationGrid(moviesList) {
-
+// Membuat elemen tombol Navigasi Halaman (Pagination UI)
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
+    if (totalPages > 1) {
+        const pager = document.createElement('div');
+        pager.id = 'paginationContainer';
+        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
 
-    // hapus pagination lama
-    const old = document.getElementById("paginationContainer");
-    if (old) old.remove();
+        // Tombol Sebelumnya
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = "Prev";
+        prevBtn.disabled = CURRENT_PAGE === 1;
+        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
+        prevBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE > 1) {
+                CURRENT_PAGE--;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
 
-    if (totalPages <= 1) return;
+        // Info Halaman Aktif
+        const pageInfo = document.createElement('span');
+        pageInfo.innerText = ` ${CURRENT_PAGE} / ${totalPages}`;
+        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
 
-    const pager = document.createElement("div");
-    pager.id = "paginationContainer";
-    pager.style.cssText = "display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0;";
+        // Tombol Selanjutnya
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = "Next";
+        nextBtn.disabled = CURRENT_PAGE === totalPages;
+        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
+        nextBtn.addEventListener('click', () => {
+            if (CURRENT_PAGE < totalPages) {
+                CURRENT_PAGE++;
+                renderPaginationGrid(moviesList);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
 
-    let start = CURRENT_PAGE - 2;
-    let end = CURRENT_PAGE + 2;
-
-    if (start < 1) start = 1;
-    if (end > totalPages) end = totalPages;
-
-    // PREV
-    if (CURRENT_PAGE > 1) {
-        const prev = document.createElement("button");
-        prev.innerText = "‹";
-        prev.onclick = () => {
-            CURRENT_PAGE--;
-            renderPaginationGrid(moviesList);
-            renderMoviesGrid(moviesList); // penting: re-render GRID kamu
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        };
-        pager.appendChild(prev);
+        pager.appendChild(prevBtn);
+        pager.appendChild(pageInfo);
+        pager.appendChild(nextBtn);
+        grid.parentNode.insertBefore(pager, grid.nextSibling);
     }
-
-    // NUMBER
-    for (let i = start; i <= end; i++) {
-        const btn = document.createElement("button");
-        btn.innerText = i;
-
-        if (i === CURRENT_PAGE) {
-            btn.classList.add("active");
-        }
-
-        btn.onclick = () => {
-            CURRENT_PAGE = i;
-            renderPaginationGrid(moviesList);
-            renderMoviesGrid(moviesList); // ini yang sering hilang
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        };
-
-        pager.appendChild(btn);
-    }
-
-    // NEXT
-    if (CURRENT_PAGE < totalPages) {
-        const next = document.createElement("button");
-        next.innerText = "›";
-        next.onclick = () => {
-            CURRENT_PAGE++;
-            renderPaginationGrid(moviesList);
-            renderMoviesGrid(moviesList); // penting
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        };
-        pager.appendChild(next);
-    }
-
-    grid.parentNode.insertBefore(pager, grid.nextSibling);
 }
-    
-// Untuk mempertahankan kompatibilitas fungsi renderGrid bawaan tema
-function renderGrid(moviesList) {
-    CURRENT_PAGE = 1;
-    renderPaginationGrid(moviesList);
-}
+
+
+
 
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
 async function loadWatchPageData() {
