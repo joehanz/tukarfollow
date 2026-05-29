@@ -236,7 +236,7 @@ function renderPaginationGrid(moviesList) {
 
         // Info Halaman Aktif
         const pageInfo = document.createElement('span');
-        pageInfo.innerText = `Halaman ${CURRENT_PAGE} dari ${totalPages}`;
+        pageInfo.innerText = ` ${CURRENT_PAGE} dari ${totalPages}`;
         pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
 
         // Tombol Selanjutnya
