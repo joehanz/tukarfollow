@@ -221,6 +221,9 @@ function renderPaginationGrid(moviesList) {
 
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
 
+    const old = document.getElementById("paginationContainer");
+    if (old) old.remove();
+
     if (totalPages > 1) {
         const pager = document.createElement('div');
         pager.id = 'paginationContainer';
@@ -229,10 +232,15 @@ function renderPaginationGrid(moviesList) {
         const prevBtn = document.createElement('button');
         prevBtn.innerText = "Prev";
         prevBtn.disabled = CURRENT_PAGE === 1;
+
         prevBtn.addEventListener('click', () => {
             if (CURRENT_PAGE > 1) {
                 CURRENT_PAGE--;
+
+                renderGrid(moviesList); // 🔥 INI YANG HILANG
+
                 renderPaginationGrid(moviesList);
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
@@ -243,10 +251,15 @@ function renderPaginationGrid(moviesList) {
         const nextBtn = document.createElement('button');
         nextBtn.innerText = "Next";
         nextBtn.disabled = CURRENT_PAGE === totalPages;
+
         nextBtn.addEventListener('click', () => {
             if (CURRENT_PAGE < totalPages) {
                 CURRENT_PAGE++;
+
+                renderGrid(moviesList); // 🔥 INI JUGA HILANG
+
                 renderPaginationGrid(moviesList);
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
@@ -258,7 +271,6 @@ function renderPaginationGrid(moviesList) {
         grid.parentNode.insertBefore(pager, grid.nextSibling);
     }
 }
-
 
 
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
