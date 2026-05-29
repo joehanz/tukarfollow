@@ -190,45 +190,45 @@ function renderPaginationGrid(moviesList) {
         return;
     }
 
-    // Kalkulasi index pemotongan data film (26 per halaman)
-    const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const paginatedItems = moviesList.slice(startIndex, endIndex);
+   // ==================== BAGIAN 1: HITUNG PAGINATION (INDEXING DATA FILM) ====================
+const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
+const endIndex = startIndex + ITEMS_PER_PAGE;
+const paginatedItems = moviesList.slice(startIndex, endIndex);
 
-    const fragment = document.createDocumentFragment();
-    paginatedItems.forEach(movie => {
-        const card = document.createElement('a');
-        card.className = "movie-card";
-        card.href = `watch.html?id=${movie.internalId}`; 
-        card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; margin: 10px; text-decoration: none;");
-        
-        card.innerHTML = `
-            <div class="poster-wrapper" style="width: 100%; height: 100%;">
-                <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 style="position: absolute; bottom: 0; left: 0; width: 100%; margin: 0; padding: 10px; background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 13px; text-align: center; box-sizing: border-box; white-space: normal; overflow: visible; word-wrap: break-word;">
-                ${movie.title}
-            </h3>
-        `;
-        fragment.appendChild(card);
-    });
-    grid.appendChild(fragment);
+// ==================== BAGIAN 2: RENDER GRID FILM (TAMPILKAN KARTU FILM) ====================
+const fragment = document.createDocumentFragment();
+paginatedItems.forEach(movie => {
+    const card = document.createElement('a');
+    card.className = "movie-card";
+    card.href = `watch.html?id=${movie.internalId}`;
+    card.setAttribute("style", "position: relative; display: block; width: 180px; height: 260px; overflow: hidden; border-radius: 8px; margin: 10px; text-decoration: none;");
+    
+    card.innerHTML = `
+        <div class="poster-wrapper" style="width: 100%; height: 100%;">
+            <img src="${movie.image}" alt="${movie.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+        <h3 style="position: absolute; bottom: 0; left: 0; width: 100%; margin: 0; padding: 10px; background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 13px; text-align: center; box-sizing: border-box;">
+            ${movie.title}
+        </h3>
+    `;
 
-    function renderPaginationGrid(moviesList) {
+    fragment.appendChild(card);
+});
+grid.appendChild(fragment);
+
+// ==================== BAGIAN 3: SISTEM PAGINATION (UI NAVIGASI HALAMAN) ====================
+function renderPaginationGrid(moviesList) {
+
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
 
-// Membuat elemen tombol Navigasi Halaman (Pagination UI)
-    const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
     if (totalPages > 1) {
         const pager = document.createElement('div');
         pager.id = 'paginationContainer';
-        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
+        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 15px;");
 
-        // Tombol Sebelumnya
         const prevBtn = document.createElement('button');
         prevBtn.innerText = "Prev";
         prevBtn.disabled = CURRENT_PAGE === 1;
-        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
         prevBtn.addEventListener('click', () => {
             if (CURRENT_PAGE > 1) {
                 CURRENT_PAGE--;
@@ -237,16 +237,12 @@ function renderPaginationGrid(moviesList) {
             }
         });
 
-        // Info Halaman Aktif
         const pageInfo = document.createElement('span');
-        pageInfo.innerText = ` ${CURRENT_PAGE} / ${totalPages}`;
-        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
+        pageInfo.innerText = `${CURRENT_PAGE} / ${totalPages}`;
 
-        // Tombol Selanjutnya
         const nextBtn = document.createElement('button');
         nextBtn.innerText = "Next";
         nextBtn.disabled = CURRENT_PAGE === totalPages;
-        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
         nextBtn.addEventListener('click', () => {
             if (CURRENT_PAGE < totalPages) {
                 CURRENT_PAGE++;
@@ -258,10 +254,10 @@ function renderPaginationGrid(moviesList) {
         pager.appendChild(prevBtn);
         pager.appendChild(pageInfo);
         pager.appendChild(nextBtn);
+
         grid.parentNode.insertBefore(pager, grid.nextSibling);
     }
 }
-
 
 
 
