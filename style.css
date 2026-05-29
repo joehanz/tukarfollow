@@ -627,32 +627,3 @@ body {
 }
 
 
-.indo-pagination{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  padding:20px 20px 40px;
-  flex-wrap:wrap;
-}
-
-.indo-pagination button{
-  padding:10px 15px;
-  border:none;
-  background:#1d1d1d;
-  color:#fff;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:15px;
-  transition:.3s;
-}
-
-.indo-pagination button:hover{
-  background:red;
-}
-
-.indo-page-info{
-  color:#fff;
-  font-size:14px;
-  font-weight:bold;
-}
