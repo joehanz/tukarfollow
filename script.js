@@ -214,51 +214,100 @@ function renderPaginationGrid(moviesList) {
     });
     grid.appendChild(fragment);
 
-    // Membuat elemen tombol Navigasi Halaman (Pagination UI)
+    function renderPaginationGrid(moviesList) {
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
-    if (totalPages > 1) {
-        const pager = document.createElement('div');
-        pager.id = 'paginationContainer';
-        pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 15px; clear: both;");
 
-        // Tombol Sebelumnya
-        const prevBtn = document.createElement('button');
-        prevBtn.innerText = "Prev";
-        prevBtn.disabled = CURRENT_PAGE === 1;
-        prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
-        prevBtn.addEventListener('click', () => {
-            if (CURRENT_PAGE > 1) {
-                CURRENT_PAGE--;
-                renderPaginationGrid(moviesList);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
+    // hapus pagination lama kalau ada
+    const old = document.getElementById("paginationContainer");
+    if (old) old.remove();
 
-        // Info Halaman Aktif
-        const pageInfo = document.createElement('span');
-        pageInfo.innerText = ` ${CURRENT_PAGE} / ${totalPages}`;
-        pageInfo.setAttribute("style", "color: #fff; font-size: 14px; font-weight: bold;");
+    if (totalPages <= 1) return;
 
-        // Tombol Selanjutnya
-        const nextBtn = document.createElement('button');
-        nextBtn.innerText = "Next";
-        nextBtn.disabled = CURRENT_PAGE === totalPages;
-        nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
-        nextBtn.addEventListener('click', () => {
-            if (CURRENT_PAGE < totalPages) {
-                CURRENT_PAGE++;
-                renderPaginationGrid(moviesList);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
+    const pager = document.createElement("div");
+    pager.id = "paginationContainer";
+    pager.style.cssText = `
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:6px;
+        margin:20px 0;
+        flex-wrap:wrap;
+    `;
 
-        pager.appendChild(prevBtn);
-        pager.appendChild(pageInfo);
-        pager.appendChild(nextBtn);
-        grid.parentNode.insertBefore(pager, grid.nextSibling);
+    let start = CURRENT_PAGE - 2;
+    let end = CURRENT_PAGE + 2;
+
+    if (start < 1) start = 1;
+    if (end > totalPages) end = totalPages;
+
+    // tombol prev ‹
+    if (CURRENT_PAGE > 1) {
+        const prev = document.createElement("button");
+        prev.innerText = "‹";
+        prev.style.cssText = baseBtnStyle();
+
+        prev.onclick = () => {
+            CURRENT_PAGE--;
+            renderPaginationGrid(moviesList);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
+        pager.appendChild(prev);
+    }
+
+    // number buttons
+    for (let i = start; i <= end; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = i;
+        btn.style.cssText = baseBtnStyle();
+
+        if (i === CURRENT_PAGE) {
+            btn.classList.add("active");
+            btn.style.background = "#fff";
+            btn.style.color = "#000";
+            btn.style.fontWeight = "bold";
+        }
+
+        btn.onclick = () => {
+            CURRENT_PAGE = i;
+            renderPaginationGrid(moviesList);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
+        pager.appendChild(btn);
+    }
+
+    // tombol next ›
+    if (CURRENT_PAGE < totalPages) {
+        const next = document.createElement("button");
+        next.innerText = "›";
+        next.style.cssText = baseBtnStyle();
+
+        next.onclick = () => {
+            CURRENT_PAGE++;
+            renderPaginationGrid(moviesList);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
+        pager.appendChild(next);
+    }
+
+    grid.parentNode.insertBefore(pager, grid.nextSibling);
+
+
+    function baseBtnStyle() {
+        return `
+            padding:8px 12px;
+            background:#222;
+            color:#fff;
+            border:none;
+            border-radius:4px;
+            cursor:pointer;
+            min-width:38px;
+        `;
     }
 }
-
+    
 // Untuk mempertahankan kompatibilitas fungsi renderGrid bawaan tema
 function renderGrid(moviesList) {
     CURRENT_PAGE = 1;
