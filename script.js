@@ -622,19 +622,16 @@ function renderIndoMovies(movies){
     card.className = "indo-movie-card";
 
     card.innerHTML = `
-      <img src="${poster}" alt="${movie.title}">
+  <div class="indo-poster-wrap">
 
-      <div class="indo-movie-info">
-        <div class="indo-movie-title">
-          ${movie.title}
-        </div>
+    <img src="${poster}" alt="${movie.title}">
 
-        <div class="indo-movie-date">
-          ${movie.release_date || '-'}
-        </div>
-      </div>
-    `;
+    <div class="indo-movie-title">
+      ${movie.title}
+    </div>
 
+  </div>
+`;
     card.onclick = () => {
       openIndoPlayer(movie.id);
     };
