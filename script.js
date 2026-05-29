@@ -223,7 +223,7 @@ function renderPaginationGrid(moviesList) {
 
         // Tombol Sebelumnya
         const prevBtn = document.createElement('button');
-        prevBtn.innerText = "Sebelumnya";
+        prevBtn.innerText = "Prev";
         prevBtn.disabled = CURRENT_PAGE === 1;
         prevBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === 1 ? "0.5" : "1") + ";");
         prevBtn.addEventListener('click', () => {
@@ -241,7 +241,7 @@ function renderPaginationGrid(moviesList) {
 
         // Tombol Selanjutnya
         const nextBtn = document.createElement('button');
-        nextBtn.innerText = "Selanjutnya";
+        nextBtn.innerText = "Next";
         nextBtn.disabled = CURRENT_PAGE === totalPages;
         nextBtn.setAttribute("style", "padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; opacity: " + (CURRENT_PAGE === totalPages ? "0.5" : "1") + ";");
         nextBtn.addEventListener('click', () => {
