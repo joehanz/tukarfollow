@@ -222,9 +222,6 @@ const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
 
 if (totalPages > 1) {
 
-    const oldPager = document.getElementById('paginationContainer');
-    if (oldPager) oldPager.remove();
-
     const pager = document.createElement('div');
 
     pager.id = 'paginationContainer';
@@ -256,7 +253,7 @@ if (totalPages > 1) {
 
             CURRENT_PAGE--;
 
-            loadPageContent();
+            renderGrid(moviesList);
 
             window.scrollTo({
                 top: 0,
@@ -291,7 +288,7 @@ if (totalPages > 1) {
 
             CURRENT_PAGE = i;
 
-            loadPageContent();
+            renderGrid(moviesList);
 
             window.scrollTo({
                 top: 0,
@@ -318,7 +315,7 @@ if (totalPages > 1) {
 
             CURRENT_PAGE++;
 
-            loadPageContent();
+            renderGrid(moviesList);
 
             window.scrollTo({
                 top: 0,
@@ -331,8 +328,6 @@ if (totalPages > 1) {
 
     grid.parentNode.insertBefore(pager, grid.nextSibling);
 }
-
-
 
 // ==================== BAGIAN 2: HALAMAN NONTON & SISTEM IKLAN ====================
 async function loadWatchPageData() {
