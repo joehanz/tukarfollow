@@ -328,6 +328,16 @@
     "genre": ["Comedy", "Drama"],
     "release_date": "06-04-2026",
     "country": "Amerika serikat"
+  },
+  {
+    "title": "Hell Hath No Fury (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/hell-hath-no-fury.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/kDmj8hoalzcOLPK",
+    "sinopsis": "Psikiater berduka digoda wanita misterius saat pembunuhan berantai mengungkap hubungan alkitabiah kuno.",
+    "genre": ["Thriller", "Drama"],
+    "release_date": "04-04-2026",
+    "country": "Amerika serikat"
   }
 
 
