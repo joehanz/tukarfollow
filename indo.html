@@ -91,107 +91,50 @@
     <main class="main-content2">
 
         <style>
- /* =========================================================
-   KHUSUS GRID FILM INDONESIA
-   ========================================================= */
-
-.indo-movie-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 25px 18px; 
-    width: 100%;
+             .indo-movie-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:20px;
+  padding:20px;
 }
 
-.indo-movie-card { 
-    text-decoration: none; 
-    color: inherit; 
-    cursor: pointer; 
-    transition: transform 0.2s ease; 
-    max-width: 100%;
+.indo-movie-card{
+  background:#151515;
+  border-radius:15px;
+  overflow:hidden;
+  transition:.3s;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,.4);
 }
 
-.indo-movie-card:hover { 
-    transform: scale(1.03); 
+.indo-movie-card:hover{
+  transform:translateY(-5px) scale(1.02);
 }
 
-.indo-poster-wrapper { 
-    width: 100%; 
-    aspect-ratio: 2/3; 
-    background-color: #1c1c21; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid #232329; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+.indo-movie-card img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  display:block;
 }
 
-.indo-poster-wrapper img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
+.indo-movie-info{
+  padding:12px;
 }
 
-.indo-movie-card h3 { 
-    margin-top: 10px; 
-    font-size: 14px; 
-    font-weight: 500; 
-    line-height: 1.3;
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
+.indo-movie-title{
+  font-size:15px;
+  font-weight:bold;
+  line-height:1.4;
+  margin-bottom:8px;
 }
 
-/* =========================================================
-   KHUSUS PLAYER FILM INDONESIA
-   ========================================================= */
-
-.indo-watch-container {
-    max-width: 840px;
-    width: 100%;
+.indo-movie-date{
+  color:#aaa;
+  font-size:13px;
 }
 
-#indoWatchTitle {
-    font-size: 24px;
-    margin-bottom: 15px;
-}
-
-.indo-video-player-area { 
-    position: relative; 
-    width: 100%; 
-    aspect-ratio: 16/9; 
-    background-color: #000; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid #232329; 
-}
-
-.indo-ad-overlay { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    z-index: 10; 
-    cursor: pointer; 
-    background: transparent; 
-}
-
-.indo-ad-overlay.disabled { 
-    display: none; 
-}
-
-.indo-video-container,
-.indo-video-container iframe,
-.indo-video-container video { 
-    width: 100%; 
-    height: 100%; 
-    border: none; 
-}
-
-/* =========================================================
-   PAGINATION FILM INDONESIA
-   ========================================================= */
-
-.indoPagination{
+.indo-pagination{
   display:flex;
   justify-content:center;
   align-items:center;
@@ -200,7 +143,7 @@
   flex-wrap:wrap;
 }
 
-.indoPagination button{
+.indo-pagination button{
   padding:10px 15px;
   border:none;
   background:#1d1d1d;
@@ -210,20 +153,47 @@
   font-size:15px;
 }
 
-.indoPagination button.active{
+.indo-pagination button.active{
   background:red;
 }
 
-/* =========================================================
-   RESPONSIVE KHUSUS INDO GRID
-   ========================================================= */
+/* PLAYER */
 
-@media (max-width: 480px) {
+.indo-player-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
 
-    .indo-movie-grid { 
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
+.indo-player-box{
+  width:100%;
+  max-width:1200px;
+  position:relative;
+}
 
+.indo-player-box iframe{
+  width:100%;
+  height:80vh;
+  border:none;
+  border-radius:15px;
+  background:#000;
+}
+
+.indo-close-btn{
+  position:absolute;
+  top:-50px;
+  right:0;
+  background:red;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
 }
         </style>
 
