@@ -98,22 +98,23 @@
 }
              
 .indo-movie-grid{
-  display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Mengecilkan sedikit grid agar pas di layar kecil */
-    gap: 25px 18px; 
-    width: 100%;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:20px;
+  padding:20px;
 }
 
 .indo-movie-card{
-  text-decoration: none; 
-    color: inherit; 
-    cursor: pointer; 
-    transition: transform 0.2s ease; 
-    max-width: 100%;
+  background:#151515;
+  border-radius:15px;
+  overflow:hidden;
+  transition:.3s;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,.4);
 }
-            
+
 .indo-movie-card:hover{
-  transform: scale(1.03); 
+  transform:translateY(-5px) scale(1.02);
 }
 
 .indo-movie-card img{
