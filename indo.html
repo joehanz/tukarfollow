@@ -152,7 +152,6 @@
 }
 
 /* JUDUL MENGAMBANG DI DEPAN POSTER */
-
 .indo-movie-title{
   position:absolute;
   left:0;
@@ -164,22 +163,22 @@
 
   text-align:center;
 
-  background:rgba(0,0,0,.78);
+  background:linear-gradient(
+    to top,
+    rgba(0,0,0,.9),
+    rgba(0,0,0,0)
+  );
 
   color:#fff;
   font-size:14px;
   font-weight:bold;
 
-  white-space:nowrap;
   overflow:hidden;
+  white-space:nowrap;
   text-overflow:ellipsis;
 
   z-index:5;
-
-  backdrop-filter:blur(3px);
 }
-
-
 /* =========================================
    PAGINATION
 ========================================= */
