@@ -195,76 +195,73 @@
 </div>
 
 <script>
-/* GANTI SEMUA SCRIPT LAMA DENGAN INI */
-
 const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 const movieGrid = document.getElementById("movieGrid");
 const searchInput = document.getElementById("searchInput");
 const pagination = document.getElementById("pagination");
 
-let allMovies = [];
-
-// PAGINATION
 let currentPage = 1;
-const itemsPerPage = 26;
+let totalPages = 500;
 
-// AMBIL BANYAK PAGE FILM INDONESIA
-async function fetchMovies(){
+// FETCH MOVIES
+async function fetchMovies(page = 1){
 
-  allMovies = [];
+  movieGrid.innerHTML = `
+    <h2 style="
+      grid-column:1/-1;
+      text-align:center;
+      padding:50px;
+    ">
+      Loading...
+    </h2>
+  `;
 
-  // JUMLAH PAGE YANG DIAMBIL
-  // 1 PAGE ≈ 20 FILM
-  // 50 PAGE ≈ 1000 FILM
-  const totalPages = 50;
+  try{
 
-  for(let page = 1; page <= totalPages; page++){
+    const url = `
+      https://api.themoviedb.org/3/discover/movie
+      ?api_key=${API_KEY}
+      &with_original_language=id
+      &sort_by=popularity.desc
+      &page=${page}
+    `.replace(/\s+/g,'');
 
-    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&sort_by=popularity.desc&page=${page}`;
+    const res = await fetch(url);
 
-    try{
+    const data = await res.json();
 
-      const res = await fetch(url);
+    totalPages = data.total_pages;
 
-      const data = await res.json();
+    renderMovies(data.results);
 
-      if(data.results){
+    renderPagination();
 
-        allMovies.push(...data.results);
+  }catch(err){
 
-      }
+    movieGrid.innerHTML = `
+      <h2 style="
+        grid-column:1/-1;
+        text-align:center;
+        padding:50px;
+        color:red;
+      ">
+        Gagal memuat film
+      </h2>
+    `;
 
-    }catch(err){
-
-      console.log("Error page", page);
-
-    }
+    console.log(err);
 
   }
 
-  // HAPUS DUPLIKAT
-  allMovies = allMovies.filter(
-    (movie, index, self) =>
-      index === self.findIndex(m => m.id === movie.id)
-  );
-
-  renderMovies();
-  renderPagination();
-
 }
 
-// RENDER GRID
-function renderMovies(filteredMovies = allMovies){
+// RENDER MOVIES
+function renderMovies(movies){
 
   movieGrid.innerHTML = "";
 
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-
-  const paginatedMovies = filteredMovies.slice(start, end);
-
-  paginatedMovies.forEach(movie => {
+  movies.forEach(movie => {
 
     const poster = movie.poster_path
       ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -293,14 +290,43 @@ function renderMovies(filteredMovies = allMovies){
 
 }
 
-// PAGINATION BUTTON
-function renderPagination(filteredMovies = allMovies){
+// PAGINATION
+function renderPagination(){
 
   pagination.innerHTML = "";
 
-  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
+  let start = currentPage - 2;
+  let end = currentPage + 2;
 
-  for(let i = 1; i <= totalPages; i++){
+  if(start < 1) start = 1;
+  if(end > totalPages) end = totalPages;
+
+  // PREV
+  if(currentPage > 1){
+
+    const prev = document.createElement("button");
+
+    prev.innerText = "‹";
+
+    prev.onclick = () => {
+
+      currentPage--;
+
+      fetchMovies(currentPage);
+
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+
+    };
+
+    pagination.appendChild(prev);
+
+  }
+
+  // NUMBER
+  for(let i = start; i <= end; i++){
 
     const btn = document.createElement("button");
 
@@ -314,8 +340,7 @@ function renderPagination(filteredMovies = allMovies){
 
       currentPage = i;
 
-      renderMovies(filteredMovies);
-      renderPagination(filteredMovies);
+      fetchMovies(currentPage);
 
       window.scrollTo({
         top:0,
@@ -325,6 +350,30 @@ function renderPagination(filteredMovies = allMovies){
     };
 
     pagination.appendChild(btn);
+
+  }
+
+  // NEXT
+  if(currentPage < totalPages){
+
+    const next = document.createElement("button");
+
+    next.innerText = "›";
+
+    next.onclick = () => {
+
+      currentPage++;
+
+      fetchMovies(currentPage);
+
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+
+    };
+
+    pagination.appendChild(next);
 
   }
 
@@ -351,22 +400,52 @@ function closePlayer(){
 }
 
 // SEARCH
-searchInput.addEventListener("input", function(){
+searchInput.addEventListener("keypress", async function(e){
 
-  const value = this.value.toLowerCase();
+  if(e.key !== "Enter") return;
 
-  const filtered = allMovies.filter(movie =>
-    movie.title.toLowerCase().includes(value)
+  const query = this.value.trim();
+
+  if(!query){
+
+    fetchMovies(1);
+
+    return;
+
+  }
+
+  movieGrid.innerHTML = `
+    <h2 style="
+      grid-column:1/-1;
+      text-align:center;
+      padding:50px;
+    ">
+      Searching...
+    </h2>
+  `;
+
+  const url = `
+    https://api.themoviedb.org/3/search/movie
+    ?api_key=${API_KEY}
+    &query=${encodeURIComponent(query)}
+  `.replace(/\s+/g,'');
+
+  const res = await fetch(url);
+
+  const data = await res.json();
+
+  const indoMovies = data.results.filter(
+    movie => movie.original_language === "id"
   );
 
-  currentPage = 1;
+  renderMovies(indoMovies);
 
-  renderMovies(filtered);
-  renderPagination(filtered);
+  pagination.innerHTML = "";
 
 });
 
-fetchMovies();
+// INIT
+fetchMovies(currentPage);
 </script>
 
 </body>
