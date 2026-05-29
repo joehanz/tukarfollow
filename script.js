@@ -733,3 +733,24 @@ function closeIndoPlayer(){
 
 // INIT
 fetchIndoMovies();
+
+// ==================== BAGIAN 6: BERKAITAN DENGAN AUTO CLOSE BURGER ====================
+// AUTO CLOSE MOBILE MENU
+document.querySelectorAll('.nav-menu a').forEach(link => {
+
+    link.addEventListener('click', () => {
+
+        const navMenu = document.getElementById('navMenu');
+        const burgerBtn = document.getElementById('burgerBtn');
+
+        if(navMenu){
+            navMenu.classList.remove('open');
+        }
+
+        if(burgerBtn){
+            burgerBtn.classList.remove('open');
+        }
+
+    });
+
+});
