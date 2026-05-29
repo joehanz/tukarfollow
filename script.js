@@ -550,25 +550,21 @@ window.onclick = function(event) {
         document.body.style.overflow = "auto"; 
     }
 }
-// ==================== BAGIAN 5: BERKAITAN DENGAN TMDB FILM ID ====================
-    const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
-const movieGrid = document.getElementById("movieGrid");
-const searchInput = document.getElementById("searchInput");
-const pagination = document.getElementById("pagination");
+// ==================== BAGIAN 5: BERKAITAN DENGAN TMDB INDO ====================
+const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
-let currentPage = 1;
-let totalPages = 500;
+const indoMovieGrid = document.getElementById("indoMovieGrid");
+const indoPagination = document.getElementById("indoPagination");
 
-// FETCH MOVIES
-async function fetchMovies(page = 1){
+let indoCurrentPage = 1;
+let indoTotalPages = 500;
 
-  movieGrid.innerHTML = `
-    <h2 style="
-      grid-column:1/-1;
-      text-align:center;
-      padding:50px;
-    ">
+// FETCH
+async function fetchIndoMovies(page = 1){
+
+  indoMovieGrid.innerHTML = `
+    <h2 style="grid-column:1/-1;text-align:center;padding:50px;">
       Loading...
     </h2>
   `;
@@ -587,15 +583,15 @@ async function fetchMovies(page = 1){
 
     const data = await res.json();
 
-    totalPages = data.total_pages;
+    indoTotalPages = data.total_pages;
 
-    renderMovies(data.results);
+    renderIndoMovies(data.results);
 
-    renderPagination();
+    renderIndoPagination();
 
   }catch(err){
 
-    movieGrid.innerHTML = `
+    indoMovieGrid.innerHTML = `
       <h2 style="
         grid-column:1/-1;
         text-align:center;
@@ -606,16 +602,14 @@ async function fetchMovies(page = 1){
       </h2>
     `;
 
-    console.log(err);
-
   }
 
 }
 
-// RENDER MOVIES
-function renderMovies(movies){
+// RENDER
+function renderIndoMovies(movies){
 
-  movieGrid.innerHTML = "";
+  indoMovieGrid.innerHTML = "";
 
   movies.forEach(movie => {
 
@@ -625,40 +619,44 @@ function renderMovies(movies){
 
     const card = document.createElement("div");
 
-    card.className = "movie-card";
+    card.className = "indo-movie-card";
 
     card.innerHTML = `
       <img src="${poster}" alt="${movie.title}">
 
-      <div class="movie-info">
-        <div class="movie-title">${movie.title}</div>
-        <div class="movie-date">${movie.release_date || '-'}</div>
+      <div class="indo-movie-info">
+        <div class="indo-movie-title">
+          ${movie.title}
+        </div>
+
+        <div class="indo-movie-date">
+          ${movie.release_date || '-'}
+        </div>
       </div>
     `;
 
     card.onclick = () => {
-      openPlayer(movie.id);
+      openIndoPlayer(movie.id);
     };
 
-    movieGrid.appendChild(card);
+    indoMovieGrid.appendChild(card);
 
   });
 
 }
 
 // PAGINATION
-function renderPagination(){
+function renderIndoPagination(){
 
-  pagination.innerHTML = "";
+  indoPagination.innerHTML = "";
 
-  let start = currentPage - 2;
-  let end = currentPage + 2;
+  let start = indoCurrentPage - 2;
+  let end = indoCurrentPage + 2;
 
   if(start < 1) start = 1;
-  if(end > totalPages) end = totalPages;
+  if(end > indoTotalPages) end = indoTotalPages;
 
-  // PREV
-  if(currentPage > 1){
+  if(indoCurrentPage > 1){
 
     const prev = document.createElement("button");
 
@@ -666,51 +664,39 @@ function renderPagination(){
 
     prev.onclick = () => {
 
-      currentPage--;
+      indoCurrentPage--;
 
-      fetchMovies(currentPage);
-
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
+      fetchIndoMovies(indoCurrentPage);
 
     };
 
-    pagination.appendChild(prev);
+    indoPagination.appendChild(prev);
 
   }
 
-  // NUMBER
   for(let i = start; i <= end; i++){
 
     const btn = document.createElement("button");
 
     btn.innerText = i;
 
-    if(i === currentPage){
+    if(i === indoCurrentPage){
       btn.classList.add("active");
     }
 
     btn.onclick = () => {
 
-      currentPage = i;
+      indoCurrentPage = i;
 
-      fetchMovies(currentPage);
-
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
+      fetchIndoMovies(indoCurrentPage);
 
     };
 
-    pagination.appendChild(btn);
+    indoPagination.appendChild(btn);
 
   }
 
-  // NEXT
-  if(currentPage < totalPages){
+  if(indoCurrentPage < indoTotalPages){
 
     const next = document.createElement("button");
 
@@ -718,90 +704,35 @@ function renderPagination(){
 
     next.onclick = () => {
 
-      currentPage++;
+      indoCurrentPage++;
 
-      fetchMovies(currentPage);
-
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
+      fetchIndoMovies(indoCurrentPage);
 
     };
 
-    pagination.appendChild(next);
+    indoPagination.appendChild(next);
 
   }
 
 }
 
 // PLAYER
-function openPlayer(tmdbId){
+function openIndoPlayer(tmdbId){
 
-  const embedUrl = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+  document.getElementById("indoPlayerFrame").src =
+    `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
 
-  document.getElementById("playerFrame").src = embedUrl;
-
-  document.getElementById("playerModal").style.display = "flex";
-
-}
-
-// CLOSE PLAYER
-function closePlayer(){
-
-  document.getElementById("playerModal").style.display = "none";
-
-  document.getElementById("playerFrame").src = "";
+  document.getElementById("indoPlayerModal").style.display = "flex";
 
 }
 
-// SEARCH
-searchInput.addEventListener("keypress", async function(e){
+function closeIndoPlayer(){
 
-  if(e.key !== "Enter") return;
+  document.getElementById("indoPlayerModal").style.display = "none";
 
-  const query = this.value.trim();
+  document.getElementById("indoPlayerFrame").src = "";
 
-  if(!query){
-
-    fetchMovies(1);
-
-    return;
-
-  }
-
-  movieGrid.innerHTML = `
-    <h2 style="
-      grid-column:1/-1;
-      text-align:center;
-      padding:50px;
-    ">
-      Searching...
-    </h2>
-  `;
-
-  const url = `
-    https://api.themoviedb.org/3/search/movie
-    ?api_key=${API_KEY}
-    &query=${encodeURIComponent(query)}
-  `.replace(/\s+/g,'');
-
-  const res = await fetch(url);
-
-  const data = await res.json();
-
-  const indoMovies = data.results.filter(
-    movie => movie.original_language === "id"
-  );
-
-  renderMovies(indoMovies);
-
-  pagination.innerHTML = "";
-
-});
+}
 
 // INIT
-fetchMovies(currentPage);
-
-
-
+fetchIndoMovies();
