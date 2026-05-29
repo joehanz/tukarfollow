@@ -91,24 +91,29 @@
     <main class="main-content2">
 
         <style>
-             .indo-movie-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
-  gap:20px;
-  padding:20px;
+.grid-section h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+             
+.indo-movie-grid{
+  display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Mengecilkan sedikit grid agar pas di layar kecil */
+    gap: 25px 18px; 
+    width: 100%;
 }
 
 .indo-movie-card{
-  background:#151515;
-  border-radius:15px;
-  overflow:hidden;
-  transition:.3s;
-  cursor:pointer;
-  box-shadow:0 5px 15px rgba(0,0,0,.4);
+  text-decoration: none; 
+    color: inherit; 
+    cursor: pointer; 
+    transition: transform 0.2s ease; 
+    max-width: 100%;
 }
-
+            
 .indo-movie-card:hover{
-  transform:translateY(-5px) scale(1.02);
+  transform: scale(1.03); 
 }
 
 .indo-movie-card img{
