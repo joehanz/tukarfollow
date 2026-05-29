@@ -217,35 +217,47 @@ paginatedItems.forEach(movie => {
 grid.appendChild(fragment);
 
 // ==================== BAGIAN 3: SISTEM PAGINATION (UI NAVIGASI HALAMAN) ====================
-// GOBOT: Perintah Kerja Selesai. Timpa fungsi pagination index.html Anda dengan kode di bawah ini:
+// GOBOT: Perbaikan Bug DOM Isolation. Timpa fungsi render pagination index Anda dengan ini:
 
 function renderIndexPagination() {
-    // 1. Hitung total halaman berdasarkan data manual
+    // 1. ISOLASI SCRIPT: Cari elemen grid index.html secara spesifik
+    // Ganti 'movieGridIndex' dengan ID container grid film asli di index.html Anda jika berbeda
+    const gridIndex = document.getElementById('movieGridIndex') || document.querySelector('.grid'); 
+    
+    // Jika tidak berada di halaman index.html, keluar dari fungsi agar tidak merusak halaman indo.html
+    if (!gridIndex) return;
+
+    // 2. Hitung total halaman berdasarkan data manual
     const totalPages = Math.ceil(moviesList.length / ITEMS_PER_PAGE);
     
-    // Cari container pagination lama untuk dibersihkan (mencegah duplikasi saat render ulang)
-    let pager = document.getElementById('paginationContainer');
+    // 3. Manajemen Container Pagination khusus Index
+    let pager = document.getElementById('paginationContainerIndex');
     if (pager) {
-        pager.innerHTML = "";
+        pager.innerHTML = ""; // Bersihkan isi tombol lama saja, jangan hapus container-nya
     } else {
-        // Jika belum ada, buat container baru
         pager = document.createElement('div');
-        pager.id = 'paginationContainer';
+        pager.id = 'paginationContainerIndex';
         pager.setAttribute("style", "display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0; gap: 8px; clear: both;");
-        grid.parentNode.insertBefore(pager, grid.nextSibling);
+        // Selipkan tepat di bawah grid index
+        gridIndex.parentNode.insertBefore(pager, gridIndex.nextSibling);
     }
 
-    // Jika total halaman hanya 1 atau kosong, tidak perlu memunculkan pagination
-    if (totalPages <= 1) return;
+    // Jika film kosong atau hanya 1 halaman, sembunyikan pagination container
+    if (totalPages <= 1) {
+        pager.style.display = 'none';
+        return;
+    } else {
+        pager.style.display = 'flex';
+    }
 
-    // 2. Hitung batas minimal dan maksimal angka yang muncul (Sistem Range Indo)
+    // 4. Hitung batas angka (Sistem Range Indo)
     let start = CURRENT_PAGE - 2;
     let end = CURRENT_PAGE + 2;
 
     if (start < 1) start = 1;
     if (end > totalPages) end = totalPages;
 
-    // 3. Tombol Sebelumnya (‹) - Muncul jika halaman aktif > 1
+    // 5. Tombol Sebelumnya (‹)
     if (CURRENT_PAGE > 1) {
         const prev = document.createElement("button");
         prev.innerText = "‹";
@@ -258,18 +270,16 @@ function renderIndexPagination() {
         pager.appendChild(prev);
     }
 
-    // 4. Looping untuk membuat deretan tombol angka (Model Indo)
+    // 6. Deretan Tombol Angka Dinamis
     for (let i = start; i <= end; i++) {
         const btn = document.createElement("button");
         btn.innerText = i;
 
-        // Styling dasar tombol angka
         let btnStyle = "padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; ";
 
-        // Cek jika angka adalah halaman yang sedang aktif (Class Active)
         if (i === CURRENT_PAGE) {
             btn.classList.add("active");
-            btnStyle += "background: #007bff; color: #fff;"; // Warna biru penanda aktif (bisa Anda sesuaikan)
+            btnStyle += "background: #007bff; color: #fff;"; // Warna tombol aktif
         } else {
             btnStyle += "background: #333; color: #fff;";
         }
@@ -285,7 +295,7 @@ function renderIndexPagination() {
         pager.appendChild(btn);
     }
 
-    // 5. Tombol Selanjutnya (›) - Muncul jika halaman aktif belum sampai akhir
+    // 7. Tombol Selanjutnya (›)
     if (CURRENT_PAGE < totalPages) {
         const next = document.createElement("button");
         next.innerText = "›";
