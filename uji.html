@@ -1,160 +1,26 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Test VSEmbed Auto Subtitle</title>
-
 <style>
 body{
 margin:0;
 background:#111;
-font-family:Arial,sans-serif;
-color:white;
+height:100vh;
 }
-
-.wrap{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-input,button{
-padding:12px;
-border:none;
-border-radius:8px;
-margin:5px;
-}
-
-input{
-width:120px;
-}
-
-button{
-cursor:pointer;
-}
-
-.player{
-margin-top:20px;
-aspect-ratio:16/9;
-background:#222;
-border-radius:10px;
-overflow:hidden;
-}
-
 iframe{
 width:100%;
 height:100%;
-}
-
-.status{
-margin-top:10px;
-font-size:14px;
-opacity:.8;
+border:0;
 }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-
-<h2>TMDB Auto Subtitle Test</h2>
-
-<input id="tmdb" value="603" placeholder="TMDB ID">
-
-<button onclick="loadMovie()">
-Putar
-</button>
-
-<div class="status" id="status">
-Menunggu...
-</div>
-
-<div class="player" id="player"></div>
-
-</div>
-
-<script>
-
-async function loadMovie(){
-
-const tmdb=
-document.getElementById("tmdb").value;
-
-const status=
-document.getElementById("status");
-
-const player=
-document.getElementById("player");
-
-status.innerText=
-"Mencari subtitle...";
-
-player.innerHTML="";
-
-let subUrl="";
-
-try{
-
-const res=await fetch(
-`https://sub.wyzie.ru/search?id=${tmdb}`
-);
-
-const data=await res.json();
-
-const indo=data.find(
-x=>x.language?.toLowerCase()
-.includes("indonesian")
-);
-
-const eng=data.find(
-x=>x.language?.toLowerCase()
-.includes("english")
-);
-
-if(indo){
-
-subUrl=indo.url;
-
-status.innerText=
-"Subtitle Indonesia ditemukan";
-
-}else if(eng){
-
-subUrl=eng.url;
-
-status.innerText=
-"Subtitle Indonesia tidak ada, pakai English";
-
-}else{
-
-status.innerText=
-"Subtitle tidak ditemukan";
-
-}
-
-}catch(err){
-
-status.innerText=
-"Gagal mengambil subtitle";
-
-console.log(err);
-
-}
-
-player.innerHTML=`
 <iframe
-src="https://vsembed.ru/embed/movie?tmdb=${tmdb}&sub.file=${encodeURIComponent(subUrl)}&sub.label=Subtitle"
-frameborder="0"
+src="https://vsembed.ru/embed/movie?tmdb=603&sub.file=https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.vtt&sub.label=Indonesia"
 allowfullscreen>
 </iframe>
-`;
-
-}
-
-loadMovie();
-
-</script>
 
 </body>
 </html>
