@@ -7,19 +7,24 @@
 
 <style>
 
-body{
+*{
 margin:0;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
 background:#111;
 color:#fff;
 }
 
 header{
-padding:15px;
-background:#000;
 position:sticky;
 top:0;
 z-index:100;
+background:#000;
+padding:15px;
 }
 
 .menu{
@@ -29,21 +34,22 @@ gap:10px;
 
 button{
 padding:10px 15px;
-border:none;
+border:0;
+border-radius:8px;
 cursor:pointer;
-border-radius:6px;
 }
 
 .active{
-background:#ff4444;
+background:#e50914;
 color:#fff;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:15px;
 padding:15px;
+display:grid;
+grid-template-columns:
+repeat(auto-fill,minmax(150px,1fr));
+gap:15px;
 }
 
 .card{
@@ -55,12 +61,13 @@ transition:.3s;
 }
 
 .card:hover{
-transform:translateY(-5px);
+transform:translateY(-4px);
 }
 
 .card img{
 width:100%;
-display:block;
+height:240px;
+object-fit:cover;
 }
 
 .title{
@@ -68,26 +75,28 @@ padding:10px;
 font-size:14px;
 }
 
+.pagination{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:20px;
+align-items:center;
+}
+
 .playerBox{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.9);
+background:rgba(0,0,0,.95);
 display:none;
 justify-content:center;
 align-items:center;
-z-index:999;
+z-index:9999;
 }
 
 .playerWrap{
 width:90%;
-height:80%;
+height:85%;
 position:relative;
-}
-
-iframe{
-width:100%;
-height:100%;
-border:0;
 }
 
 .close{
@@ -98,15 +107,24 @@ font-size:30px;
 cursor:pointer;
 }
 
+iframe{
+width:100%;
+height:100%;
+border:0;
+border-radius:10px;
+}
+
 </style>
 </head>
+
 <body>
 
 <header>
 
 <div class="menu">
 
-<button class="active"
+<button
+class="active"
 onclick="loadIndonesia(this)">
 Film Indonesia
 </button>
@@ -121,21 +139,44 @@ Film Luar
 </header>
 
 <div id="movies" class="grid">
-
 Loading...
+</div>
+
+<div class="pagination">
+
+<button onclick="prevPage()">
+◀ Prev
+</button>
+
+<div id="pageNum">
+1
+</div>
+
+<button onclick="nextPage()">
+Next ▶
+</button>
 
 </div>
 
-<div class="playerBox" id="playerBox">
+<div
+class="playerBox"
+id="playerBox">
 
 <div class="playerWrap">
 
-<div class="close"
+<div
+class="close"
 onclick="tutup()">
 ✕
 </div>
 
-<iframe id="player"></iframe>
+<iframe
+id="player"
+style="width:100%;height:100%;"
+frameborder="0"
+referrerpolicy="origin"
+allowfullscreen>
+</iframe>
 
 </div>
 
@@ -143,14 +184,32 @@ onclick="tutup()">
 
 <script>
 
-const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
+const API_KEY="MASUKKAN_API_TMDB";
+
+let page=1;
+let mode="id";
 
 const movies=
 document.getElementById("movies");
 
-async function ambil(url){
+async function ambilData(){
 
-movies.innerHTML="Loading...";
+movies.innerHTML=
+"Loading...";
+
+let url="";
+
+if(mode=="id"){
+
+url=
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=ID&page=${page}`;
+
+}else{
+
+url=
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&without_origin_country=ID&page=${page}`;
+
+}
 
 try{
 
@@ -162,10 +221,18 @@ await res.json();
 
 tampil(data.results);
 
-}catch{
+document
+.getElementById(
+"pageNum"
+)
+.innerText=page;
+
+}catch(err){
 
 movies.innerHTML=
 "Gagal ambil data";
+
+console.log(err);
 
 }
 
@@ -175,22 +242,21 @@ function tampil(data){
 
 movies.innerHTML="";
 
-data.forEach(m=>{
+data.forEach(movie=>{
 
-if(!m.poster_path) return;
+if(!movie.poster_path)
+return;
 
 movies.innerHTML+=`
 
 <div class="card"
-onclick="putar(${m.id})">
+onclick="putar(${movie.id})">
 
 <img src=
-"https://image.tmdb.org/t/p/w500${m.poster_path}">
+"https://image.tmdb.org/t/p/w500${movie.poster_path}">
 
 <div class="title">
-
-${m.title||m.name}
-
+${movie.title}
 </div>
 
 </div>
@@ -203,34 +269,68 @@ ${m.title||m.name}
 
 function putar(id){
 
-document.getElementById(
+document
+.getElementById(
 "playerBox"
-).style.display="flex";
+)
+.style.display=
+"flex";
 
-document.getElementById(
+document
+.getElementById(
 "player"
-).src=
-`https://vidsrc.su/embed/movie/${id}`;
+)
+.src=
+`https://vsembed.ru/embed/movie?tmdb=${id}`;
 
 }
 
 function tutup(){
 
-document.getElementById(
+document
+.getElementById(
 "playerBox"
-).style.display="none";
+)
+.style.display=
+"none";
 
-document.getElementById(
+document
+.getElementById(
 "player"
-).src="";
+)
+.src="";
+
+}
+
+function loadIndonesia(btn){
+
+mode="id";
+page=1;
+
+aktif(btn);
+
+ambilData();
+
+}
+
+function loadLuar(btn){
+
+mode="luar";
+page=1;
+
+aktif(btn);
+
+ambilData();
 
 }
 
 function aktif(btn){
 
-document.querySelectorAll(
-"button"
-).forEach(x=>
+document
+.querySelectorAll(
+".menu button"
+)
+.forEach(x=>
 x.classList.remove(
 "active"
 ));
@@ -241,31 +341,36 @@ btn.classList.add(
 
 }
 
-function loadIndonesia(btn){
+function nextPage(){
 
-aktif(btn);
+page++;
+ambilData();
 
-ambil(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=ID`
+window.scrollTo(
+0,
+0
 );
 
 }
 
-function loadLuar(btn){
+function prevPage(){
 
-aktif(btn);
+if(page>1){
 
-ambil(
-`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&without_origin_country=ID`
+page--;
+
+ambilData();
+
+window.scrollTo(
+0,
+0
 );
 
 }
 
-loadIndonesia(
-document.querySelector(
-"button"
-)
-);
+}
+
+ambilData();
 
 </script>
 
