@@ -1,102 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Movie Hub</title>
 
 <style>
-body{
-margin:0;
-background:#111;
-color:#fff;
-font-family:Arial;
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+body{background:#111;color:#fff}
+
+/* NAVBAR */
+nav{
+display:flex;
+align-items:center;
+gap:15px;
+padding:12px 15px;
+background:#000;
+position:sticky;
+top:0;
+z-index:1000;
 }
 
+.logo{
+font-weight:bold;
+color:#e50914;
+font-size:18px;
+white-space:nowrap;
+}
+
+nav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+opacity:.8;
+}
+
+nav a:hover{opacity:1}
+
+input{
+flex:1;
+padding:8px 10px;
+border-radius:6px;
+border:none;
+outline:none;
+}
+
+/* GRID */
 .grid{
 display:grid;
-grid-template-columns:
-repeat(auto-fill,minmax(180px,1fr));
-gap:15px;
-padding:20px;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:12px;
+padding:15px;
 }
 
 .card{
 cursor:pointer;
+transition:.2s;
 }
+
+.card:hover{transform:scale(1.05)}
 
 .card img{
 width:100%;
-border-radius:10px;
+border-radius:8px;
 }
 
 .title{
-padding:8px 0;
-font-size:14px;
+font-size:12px;
+margin-top:5px;
+opacity:.8;
 }
-</style>
 
+/* PAGINATION */
+.page{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:15px;
+}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#222;
+color:#fff;
+}
+button:hover{background:#e50914}
+</style>
 </head>
+
 <body>
 
-<div class="grid"
-id="movies">
-Loading...
+<nav>
+<div class="logo">MOVIE+</div>
+
+<input id="search" placeholder="Cari film..." oninput="searchMovie()">
+
+<a href="uji.html">Home</a>
+<a href="#" onclick="setMode('all')">All Movies</a>
+<a href="#" onclick="setMode('luar')">Film Luar</a>
+<a href="#" onclick="setMode('id')">Film Indonesia</a>
+</nav>
+
+<div id="grid" class="grid">Loading...</div>
+
+<div class="page">
+<button onclick="prev()">Prev</button>
+<span id="pg">1</span>
+<button onclick="next()">Next</button>
 </div>
 
 <script>
 
-const TOKEN=
-"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiM2I4OTM4NzNlZDFiYjdmMTc1YjI3MDdhZmVlYTJhMCIsIm5iZiI6MTc3Nzg3MTI4My42NDIsInN1YiI6IjY5ZjgyOWIzYTdiOGY1ZDE3MWY1MWUyMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.lJ8g9RsWHsZN3TQ3KpxUYNe34Im15z3KnWxAi6fYODU";
+const KEY="ISI_API_KEY";
+let page=1;
+let mode="all";
+let query="";
 
 async function load(){
 
-const res=await fetch(
-"https://api.themoviedb.org/3/discover/movie?page=1",
-{
-headers:{
-Authorization:
-`Bearer ${TOKEN}`
-}
-}
-);
+let url="";
 
-const data=
-await res.json();
+if(query){
+url=`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${query}&page=${page}`;
+}else if(mode==="id"){
+url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID&page=${page}`;
+}else if(mode==="luar"){
+url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&without_origin_country=ID&page=${page}`;
+}else{
+url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${KEY}&page=${page}`;
+}
 
-let html="";
+const res=await fetch(url);
+const data=await res.json();
+
+const grid=document.getElementById("grid");
+grid.innerHTML="";
 
 data.results.forEach(m=>{
+if(!m.poster_path)return;
 
-html+=`
-
-<div class="card"
-onclick="
-location=
-'./uji2.html?id=${m.id}'
-">
-
-<img src=
-"https://image.tmdb.org/t/p/w500${m.poster_path}">
-
-<div class="title">
-
-${m.title}
-
+grid.innerHTML+=`
+<div class="card" onclick="openMovie(${m.id})">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<div class="title">${m.title||m.name}</div>
 </div>
-
-</div>
-
 `;
-
 });
 
-document
-.getElementById(
-"movies"
-)
-.innerHTML=
-html;
+document.getElementById("pg").innerText=page;
+}
 
+function openMovie(id){
+location.href=`uji2.html?id=${id}`;
+}
+
+function next(){page++;load()}
+function prev(){if(page>1)page--;load()}
+
+function setMode(m){
+mode=m;query="";page=1;load();
+}
+
+function searchMovie(){
+query=document.getElementById("search").value;
+page=1;
+load();
 }
 
 load();
