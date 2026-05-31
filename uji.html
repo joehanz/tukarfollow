@@ -23,20 +23,29 @@ position:sticky;
 top:0;
 z-index:1000;
 border-bottom:1px solid rgba(255,255,255,.05);
+
+/* IMPORTANT FIX */
+overflow-x:auto;
+white-space:nowrap;
+gap:12px;
 }
 
+/* kiri logo jangan ikut shrink */
 .logo{
-font-weight:bold;
+flex:0 0 auto;
 color:#ff2e2e;
-letter-spacing:1px;
+font-weight:bold;
 }
 
+/* kanan group */
 .nav-right{
 display:flex;
-gap:10px;
 align-items:center;
+gap:10px;
+flex:0 0 auto;
 }
 
+/* input jangan pecah layout */
 .nav-right input{
 padding:7px 10px;
 border-radius:8px;
@@ -44,16 +53,25 @@ border:none;
 outline:none;
 background:#1a1a1f;
 color:#fff;
+min-width:140px;
 }
 
+/* menu tetap horizontal */
 .nav-right a{
 color:#ddd;
 text-decoration:none;
 font-size:13px;
+white-space:nowrap;
 }
 
-.nav-right a:hover{color:#fff}
-
+/* optional: sembunyikan scrollbar */
+nav::-webkit-scrollbar{
+display:none;
+}
+nav{
+scrollbar-width:none;
+}
+  
 /* GRID PREMIUM */
 .grid{
 display:grid;
