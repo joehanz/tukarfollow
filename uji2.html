@@ -6,43 +6,34 @@
 <title>Movie Detail</title>
 
 <style>
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+
 body{background:#111;color:#fff}
 
-/* NAV */
+/* NAV FULL WIDTH */
 nav{
 display:flex;
+justify-content:space-between;
 align-items:center;
-gap:15px;
-padding:12px;
+padding:10px 15px;
 background:#000;
-position:sticky;
-top:0;
-z-index:1000;
 }
 
 .logo{color:#e50914;font-weight:bold}
 
-nav a{
+.nav-right a{
 color:#fff;
+margin-left:10px;
 text-decoration:none;
 font-size:13px;
 opacity:.8;
 }
 
-nav a:hover{opacity:1}
-
-input{
-flex:1;
-padding:7px;
-border-radius:6px;
-border:none;
-}
-
 /* PLAYER */
 .player{
 width:100%;
-aspect-ratio:16/9;
+height:77vh;
 background:#000;
 }
 
@@ -54,48 +45,57 @@ border:0;
 
 /* INFO */
 .info{
-padding:15px;
-}
-
-.info h2{margin-bottom:10px}
-
-.meta{
-font-size:13px;
-opacity:.8;
-margin:5px 0;
+width:100%;
+max-width:1200px;
+margin:auto;
+padding:20px;
 }
 
 /* RELATED */
-.related-title{
-padding:15px;
-font-size:14px;
-opacity:.8;
+.rel-wrap{
+width:100%;
+max-width:1200px;
+margin:auto;
+position:relative;
+padding:10px 0;
 }
 
-.related{
+.rel-box{
 display:flex;
 gap:10px;
 overflow-x:auto;
-padding:0 15px 20px;
-scroll-snap-type:x mandatory;
+scroll-behavior:smooth;
 }
 
 .rel-card{
-min-width:120px;
+min-width:140px;
 cursor:pointer;
-scroll-snap-align:start;
 }
 
 .rel-card img{
 width:100%;
-border-radius:6px;
+border-radius:8px;
 }
 
-.rel-card div{
-font-size:11px;
-opacity:.8;
-margin-top:5px;
+.arrow{
+position:absolute;
+top:40%;
+background:#000;
+border:none;
+color:#fff;
+font-size:20px;
+padding:10px;
+cursor:pointer;
+z-index:10;
 }
+
+.left{left:0}
+.right{right:0}
+
+@media(max-width:768px){
+.arrow{display:none;}
+}
+
 </style>
 </head>
 
@@ -103,23 +103,28 @@ margin-top:5px;
 
 <nav>
 <div class="logo">MOVIE+</div>
-
-<input placeholder="Search coming soon">
-
+<div class="nav-right">
 <a href="uji.html">Home</a>
-<a href="uji.html">All Movies</a>
-<a href="uji.html">Film Luar</a>
-<a href="uji.html">Film Indonesia</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
+</div>
 </nav>
 
 <div class="player">
-<iframe id="player" allowfullscreen></iframe>
+<iframe id="player"></iframe>
 </div>
 
-<div class="info" id="info">Loading...</div>
+<div class="info" id="info"></div>
 
-<div class="related-title">Related Movies</div>
-<div class="related" id="related"></div>
+<div class="rel-wrap">
+
+<button class="arrow left" onclick="scrollRel(-300)">‹</button>
+<button class="arrow right" onclick="scrollRel(300)">›</button>
+
+<div class="rel-box" id="rel"></div>
+
+</div>
 
 <script>
 
@@ -129,49 +134,50 @@ const id=new URLSearchParams(location.search).get("id");
 async function load(){
 
 // DETAIL
-const res=await fetch(
+const m=await fetch(
 `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-);
-
-const m=await res.json();
+).then(r=>r.json());
 
 document.getElementById("player").src=
 `https://vsembed.ru/embed/movie?tmdb=${id}`;
 
 document.getElementById("info").innerHTML=`
 <h2>${m.title}</h2>
-<div class="meta">⭐ ${m.vote_average}</div>
-<div class="meta">🌍 ${m.production_countries.map(c=>c.name).join(", ")}</div>
-<div class="meta">🎭 ${m.genres.map(g=>g.name).join(", ")}</div>
-<div class="meta">📅 ${m.release_date}</div>
-<p style="margin-top:10px">${m.overview}</p>
+<p>⭐ ${m.vote_average}</p>
+<p>🌍 ${m.production_countries.map(c=>c.name).join(", ")}</p>
+<p>🎭 ${m.genres.map(g=>g.name).join(", ")}</p>
+<p>📅 ${m.release_date}</p>
+<p>${m.overview}</p>
 `;
 
 // RELATED
-const rel=await fetch(
+const r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
-);
+).then(r=>r.json());
 
-const r=await rel.json();
-
-const box=document.getElementById("related");
-box.innerHTML="";
+let html="";
 
 r.results.slice(0,10).forEach(v=>{
-
-box.innerHTML+=`
+html+=`
 <div class="rel-card" onclick="go(${v.id})">
 <img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
-<div>${v.title}</div>
 </div>
 `;
-
 });
+
+document.getElementById("rel").innerHTML=html;
 
 }
 
 function go(id){
 location.href=`uji2.html?id=${id}`;
+}
+
+function scrollRel(x){
+document.getElementById("rel").scrollBy({
+left:x,
+behavior:"smooth"
+});
 }
 
 load();
