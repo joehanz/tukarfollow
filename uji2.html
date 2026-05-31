@@ -277,6 +277,27 @@ document.getElementById("mobileMenu")
 .classList.toggle("show");
 }
 
+/* SEARCH FIX (dari uji2 -> redirect ke uji.html) */
+function searchMovie(){
+const val = document.getElementById("search")?.value || "";
+if(val.trim()==="") return;
+location.href = `uji.html?query=${encodeURIComponent(val)}`;
+}
+
+/* MOBILE SEARCH FIX (kalau dipakai) */
+function searchMovieMobile(){
+const el = document.querySelector("#mobileMenu input");
+if(!el) return;
+const val = el.value || "";
+if(val.trim()==="") return;
+location.href = `uji.html?query=${encodeURIComponent(val)}`;
+}
+
+/* LOCAL BUTTON FIX */
+function setMode(){
+location.href="uji.html";
+}
+
 /* PLAY GATE */
 document.getElementById("playLayer").onclick=function(){
 
