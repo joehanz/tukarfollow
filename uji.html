@@ -6,15 +6,16 @@
 <title>Movie Hub</title>
 
 <style>
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
 body{background:#111;color:#fff}
 
-/* NAVBAR */
+/* NAV */
 nav{
 display:flex;
+justify-content:space-between;
 align-items:center;
-gap:15px;
-padding:12px 15px;
+padding:10px 15px;
 background:#000;
 position:sticky;
 top:0;
@@ -22,72 +23,108 @@ z-index:1000;
 }
 
 .logo{
-font-weight:bold;
 color:#e50914;
+font-weight:bold;
 font-size:18px;
-white-space:nowrap;
 }
 
-nav a{
-color:#fff;
-text-decoration:none;
-font-size:14px;
-opacity:.8;
+.nav-right{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
-nav a:hover{opacity:1}
-
-input{
-flex:1;
-padding:8px 10px;
+.nav-right input{
+padding:6px;
 border-radius:6px;
 border:none;
 outline:none;
 }
 
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:12px;
-padding:15px;
-}
-
-.card{
-cursor:pointer;
-transition:.2s;
-}
-
-.card:hover{transform:scale(1.05)}
-
-.card img{
-width:100%;
-border-radius:8px;
-}
-
-.title{
-font-size:12px;
-margin-top:5px;
+.nav-right a{
+color:#fff;
+text-decoration:none;
+font-size:13px;
 opacity:.8;
 }
 
-/* PAGINATION */
-.page{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:15px;
+.nav-right a:hover{opacity:1}
+
+/* BURGER */
+.burger{
+display:none;
+cursor:pointer;
+font-size:22px;
 }
 
-button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
-cursor:pointer;
+.menu{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:10px;
+padding:20px;
+max-width:1200px;
+margin:auto;
+}
+
+@media(max-width:1000px){
+.grid{grid-template-columns:repeat(4,1fr);}
+}
+
+@media(max-width:600px){
+.grid{grid-template-columns:repeat(2,1fr);}
+.nav-right{display:none;}
+.burger{display:block;}
+}
+
+.card{cursor:pointer}
+.card img{width:100%;border-radius:8px}
+.title{font-size:12px;margin-top:5px;opacity:.8}
+
+/* PAGINATION */
+.pagination{
+display:flex;
+justify-content:center;
+gap:8px;
+padding:20px;
+flex-wrap:wrap;
+}
+
+.pagination button{
 background:#222;
 color:#fff;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
 }
-button:hover{background:#e50914}
+
+.pagination button.active{
+background:#e50914;
+}
+
+/* MOBILE MENU */
+.mobile-menu{
+display:none;
+flex-direction:column;
+background:#000;
+padding:10px;
+}
+
+.mobile-menu a{
+color:#fff;
+padding:8px 0;
+text-decoration:none;
+}
+
+.show{display:flex !important;}
+
 </style>
 </head>
 
@@ -96,28 +133,44 @@ button:hover{background:#e50914}
 <nav>
 <div class="logo">MOVIE+</div>
 
-<input id="search" placeholder="Cari film..." oninput="searchMovie()">
+<div class="nav-right">
+<input id="search" placeholder="Search..." oninput="searchMovie()">
 
+<div class="menu">
 <a href="uji.html">Home</a>
-<a href="#" onclick="setMode('all')">All Movies</a>
-<a href="#" onclick="setMode('luar')">Film Luar</a>
-<a href="#" onclick="setMode('id')">Film Indonesia</a>
+<a href="#" onclick="setMode('all')">All</a>
+<a href="#" onclick="setMode('luar')">Abroad</a>
+<a href="#" onclick="setMode('id')">Local</a>
+</div>
+</div>
+
+<div class="burger" onclick="toggleMenu()">☰</div>
 </nav>
 
-<div id="grid" class="grid">Loading...</div>
-
-<div class="page">
-<button onclick="prev()">Prev</button>
-<span id="pg">1</span>
-<button onclick="next()">Next</button>
+<div class="mobile-menu" id="mobileMenu">
+<input id="search2" placeholder="Search..." oninput="searchMovie2()">
+<a href="uji.html">Home</a>
+<a href="#" onclick="setMode('all')">All</a>
+<a href="#" onclick="setMode('luar')">Abroad</a>
+<a href="#" onclick="setMode('id')">Local</a>
 </div>
+
+<div id="grid" class="grid"></div>
+
+<div class="pagination" id="pagination"></div>
 
 <script>
 
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+
 let page=1;
 let mode="all";
 let query="";
+
+function toggleMenu(){
+document.getElementById("mobileMenu")
+.classList.toggle("show");
+}
 
 async function load(){
 
@@ -136,36 +189,77 @@ url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${KEY}&page=${page
 const res=await fetch(url);
 const data=await res.json();
 
-const grid=document.getElementById("grid");
-grid.innerHTML="";
+render(data.results);
+renderPagination(data.page,data.total_pages);
 
-data.results.forEach(m=>{
+}
+
+function render(data){
+
+let html="";
+
+data.slice(0,26).forEach(m=>{
 if(!m.poster_path)return;
 
-grid.innerHTML+=`
+html+=`
 <div class="card" onclick="openMovie(${m.id})">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-<div class="title">${m.title||m.name}</div>
+<div class="title">${m.title}</div>
 </div>
 `;
 });
 
-document.getElementById("pg").innerText=page;
+document.getElementById("grid").innerHTML=html;
+
+}
+
+function renderPagination(current,total){
+
+let html="";
+let start=current;
+let end=Math.min(current+5,total);
+
+for(let i=start;i<=end;i++){
+html+=`<button class="${i===current?'active':''}" onclick="go(${i})">${i}</button>`;
+}
+
+if(end<total){
+html+=`<button onclick="nextSet()">></button>`;
+}
+
+document.getElementById("pagination").innerHTML=html;
+
+}
+
+function go(p){
+page=p;
+load();
+window.scrollTo(0,0);
+}
+
+function nextSet(){
+page+=6;
+load();
+window.scrollTo(0,0);
 }
 
 function openMovie(id){
 location.href=`uji2.html?id=${id}`;
 }
 
-function next(){page++;load()}
-function prev(){if(page>1)page--;load()}
-
 function setMode(m){
-mode=m;query="";page=1;load();
+mode=m;page=1;query="";
+load();
 }
 
 function searchMovie(){
 query=document.getElementById("search").value;
+page=1;
+load();
+}
+
+function searchMovie2(){
+query=document.getElementById("search2").value;
 page=1;
 load();
 }
