@@ -11,7 +11,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0b0b0f;color:#fff}
 
-/* NAV PREMIUM LIGHT GLASS */
+/* NAV */
 nav{
 display:flex;
 justify-content:space-between;
@@ -60,17 +60,7 @@ cursor:pointer;
 color:#fff;
 }
 
-/* MOBILE */
-@media(max-width:768px){
-
-.nav-right{
-display:none;
-}
-
-.burger{
-display:block;
-}
-
+/* MOBILE MENU */
 .mobile-menu{
 display:flex;
 flex-direction:column;
@@ -83,6 +73,7 @@ padding:15px;
 gap:10px;
 transform:translateX(100%);
 transition:.3s;
+z-index:999;
 }
 
 .mobile-menu.show{
@@ -95,9 +86,14 @@ text-decoration:none;
 padding:8px 0;
 border-bottom:1px solid #222;
 }
+
+/* MOBILE RULE */
+@media(max-width:768px){
+.nav-right{display:none;}
+.burger{display:block;}
 }
-  
-/* GRID PREMIUM */
+
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(6,1fr);
@@ -136,7 +132,7 @@ font-size:12px;
 opacity:.8;
 }
 
-/* PAGINATION PILLS */
+/* PAGINATION */
 .pagination{
 display:flex;
 justify-content:center;
@@ -152,14 +148,9 @@ border:none;
 padding:7px 12px;
 border-radius:10px;
 cursor:pointer;
-transition:.2s;
 }
 
 .pagination button:hover{
-background:#ff2e2e;
-}
-
-.pagination .active{
 background:#ff2e2e;
 }
 
@@ -190,31 +181,37 @@ opacity:.7;
 
 <body>
 
+<!-- NAV CLEAN -->
 <nav>
 <div class="logo">MOVIE+</div>
 
 <div class="nav-right">
-<input placeholder="Search...">
+<input id="search" placeholder="Search..." oninput="searchMovie()">
 <a href="uji.html">Home</a>
-<a href="uji.html">All</a>
-<a href="uji.html">Abroad</a>
-<a href="uji.html">Local</a>
+<a href="#" onclick="setMode('all')">All</a>
+<a href="#" onclick="setMode('luar')">Abroad</a>
+<a href="#" onclick="setMode('id')">Local</a>
 </div>
 
 <div class="burger" onclick="toggleMenu()">☰</div>
 </nav>
 
+<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
+<input placeholder="Search..." oninput="searchMovieMobile()">
 <a href="uji.html">Home</a>
-<a href="uji.html">All</a>
-<a href="uji.html">Abroad</a>
-<a href="uji.html">Local</a>
+<a href="#" onclick="setMode('all')">All</a>
+<a href="#" onclick="setMode('luar')">Abroad</a>
+<a href="#" onclick="setMode('id')">Local</a>
 </div>
 
+<!-- GRID -->
 <div id="grid" class="grid"></div>
 
+<!-- PAGINATION -->
 <div class="pagination" id="pagination"></div>
 
+<!-- FOOTER -->
 <footer>
 <div class="footer-grid">
 <div>About</div>
@@ -227,8 +224,15 @@ opacity:.7;
 <script>
 
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+
 let page=1,mode="all",query="";
 
+function toggleMenu(){
+document.getElementById("mobileMenu")
+.classList.toggle("show");
+}
+
+/* LOAD */
 async function load(){
 
 let url="";
@@ -254,14 +258,12 @@ function render(d){
 let h="";
 d.forEach(m=>{
 if(!m.poster_path)return;
-
 h+=`
 <div class="card" onclick="go(${m.id})">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div class="title">${m.title}</div>
 </div>`;
 });
-
 document.getElementById("grid").innerHTML=h;
 }
 
@@ -280,6 +282,7 @@ function go(id){location.href=`uji2.html?id=${id}`}
 
 function setMode(m){mode=m;query="";page=1;load()}
 function searchMovie(){query=document.getElementById("search").value;page=1;load()}
+function searchMovieMobile(){query=document.querySelector("#mobileMenu input").value;page=1;load()}
 
 load();
 
