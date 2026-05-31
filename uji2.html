@@ -8,10 +8,9 @@
 <style>
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-
 body{background:#0b0b0f;color:#fff}
 
-/* NAV GLASS */
+/* NAV SAMA PERSIS UJI.HTML */
 nav{
 display:flex;
 justify-content:space-between;
@@ -26,36 +25,60 @@ z-index:1000;
 
 .logo{color:#ff2e2e;font-weight:bold}
 
-nav a{
+.nav-right{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.nav-right input{
+padding:7px 10px;
+border-radius:8px;
+border:none;
+outline:none;
+background:#1a1a1f;
+color:#fff;
+}
+
+.nav-right a{
 color:#ddd;
-margin-left:12px;
 text-decoration:none;
 font-size:13px;
 }
-
-nav a:hover{color:#fff}
 
 /* PLAYER */
 .player{
 width:100%;
 height:77vh;
 background:#000;
-border-bottom:1px solid rgba(255,255,255,.05);
+position:relative;
 }
 
 iframe{width:100%;height:100%;border:0}
 
-/* INFO CARD */
+/* PLAY LAYER */
+.playLayer{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.5);
+cursor:pointer;
+font-size:22px;
+font-weight:bold;
+}
+
+/* INFO */
 .info{
 max-width:1200px;
 margin:20px auto;
 padding:20px;
 background:#141420;
 border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,.4);
 }
 
-/* RELATED */
+/* RELATED (SLIDER FIX INDEX BASED) */
 .rel-wrap{
 max-width:1200px;
 margin:20px auto;
@@ -66,16 +89,14 @@ overflow:hidden;
 .rel-box{
 display:flex;
 gap:12px;
-transition:.3s;
+transition:transform .4s ease;
+will-change:transform;
 }
 
 .rel-card{
 min-width:140px;
 cursor:pointer;
-transition:.2s;
 }
-
-.rel-card:hover{transform:scale(1.05)}
 
 .rel-card img{
 width:100%;
@@ -91,11 +112,11 @@ color:#fff;
 border:none;
 padding:10px;
 cursor:pointer;
-opacity:.7;
+opacity:.8;
+z-index:10;
 }
 
 .arrow:hover{opacity:1}
-
 .left{left:0}
 .right{right:0}
 
@@ -105,9 +126,8 @@ opacity:.7;
 
 footer{
 background:#000;
-padding:35px 20px;
+padding:30px 15px;
 margin-top:40px;
-border-top:1px solid rgba(255,255,255,.05);
 }
 
 .footer-grid{
@@ -129,9 +149,12 @@ opacity:.7;
 
 <body>
 
+<!-- NAV (SAMA DENGAN UJI.HTML) -->
 <nav>
 <div class="logo">MOVIE+</div>
-<div>
+
+<div class="nav-right">
+<input placeholder="Search...">
 <a href="uji.html">Home</a>
 <a href="uji.html">All</a>
 <a href="uji.html">Abroad</a>
@@ -139,12 +162,15 @@ opacity:.7;
 </div>
 </nav>
 
+<!-- PLAYER -->
 <div class="player">
 <iframe id="player"></iframe>
+<div class="playLayer" id="playLayer">▶ PLAY</div>
 </div>
 
 <div class="info" id="info"></div>
 
+<!-- RELATED -->
 <div class="rel-wrap">
 <button class="arrow left" onclick="move(-1)">‹</button>
 <button class="arrow right" onclick="move(1)">›</button>
@@ -166,14 +192,40 @@ opacity:.7;
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 const id=new URLSearchParams(location.search).get("id");
 
+const ads=[
+"https://rajarayap.com",
+"https://caturbangunsentosa.blogspot.com",
+"https://ptdwiprima.blogspot.com"
+];
+
+let adsState=false;
+let index=0;
+let items=[];
+
+/* PLAY GATE FIX */
+document.getElementById("playLayer").onclick=function(){
+
+if(!adsState){
+adsState=true;
+window.open(
+ads[Math.floor(Math.random()*ads.length)],
+"_blank"
+);
+return;
+}
+
+this.style.display="none";
+
+document.getElementById("player").src=
+`https://vsembed.ru/embed/movie?tmdb=${id}`;
+};
+
+/* LOAD DETAIL */
 async function load(){
 
 const m=await fetch(
 `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
 ).then(r=>r.json());
-
-document.getElementById("player").src=
-`https://vsembed.ru/embed/movie?tmdb=${id}`;
 
 document.getElementById("info").innerHTML=`
 <h2>${m.title}</h2>
@@ -187,8 +239,16 @@ const r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
 ).then(r=>r.json());
 
+items=r.results.slice(0,10);
+
+render();
+
+}
+
+function render(){
+
 let h="";
-r.results.slice(0,10).forEach(v=>{
+items.forEach(v=>{
 h+=`
 <div class="rel-card" onclick="go(${v.id})">
 <img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
@@ -197,10 +257,30 @@ h+=`
 
 document.getElementById("rel").innerHTML=h;
 
+updateSlider();
 }
 
-function go(i){location.href=`uji2.html?id=${i}`}
-function move(x){document.getElementById("rel").scrollBy({left:x*300,behavior:"smooth"})}
+/* SLIDER FIX PROPER */
+function updateSlider(){
+document.getElementById("rel").style.transform=
+`translateX(${-index * 160}px)`;
+}
+
+function move(dir){
+
+const max=Math.max(0,items.length-4);
+
+index+=dir;
+
+if(index<0)index=0;
+if(index>max)index=max;
+
+updateSlider();
+}
+
+function go(i){
+location.href=`uji2.html?id=${i}`;
+}
 
 load();
 
