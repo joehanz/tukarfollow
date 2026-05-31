@@ -7,87 +7,93 @@
 
 <style>
 
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-body{background:#111;color:#fff}
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0b0b0f;color:#fff}
 
-/* NAV */
+/* NAV PREMIUM LIGHT GLASS */
 nav{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:10px 15px;
-background:#000;
+padding:12px 18px;
+background:rgba(0,0,0,.7);
+backdrop-filter:blur(10px);
 position:sticky;
 top:0;
 z-index:1000;
+border-bottom:1px solid rgba(255,255,255,.05);
 }
 
 .logo{
-color:#e50914;
 font-weight:bold;
-font-size:18px;
+color:#ff2e2e;
+letter-spacing:1px;
 }
 
 .nav-right{
 display:flex;
-align-items:center;
 gap:10px;
+align-items:center;
 }
 
 .nav-right input{
-padding:6px;
-border-radius:6px;
+padding:7px 10px;
+border-radius:8px;
 border:none;
 outline:none;
+background:#1a1a1f;
+color:#fff;
 }
 
 .nav-right a{
-color:#fff;
+color:#ddd;
 text-decoration:none;
 font-size:13px;
-opacity:.8;
 }
 
-.nav-right a:hover{opacity:1}
+.nav-right a:hover{color:#fff}
 
-/* BURGER */
-.burger{
-display:none;
-cursor:pointer;
-font-size:22px;
-}
-
-.menu{
-display:flex;
-gap:10px;
-align-items:center;
-}
-
-/* GRID */
+/* GRID PREMIUM */
 .grid{
 display:grid;
 grid-template-columns:repeat(6,1fr);
-gap:10px;
-padding:20px;
-max-width:1200px;
+gap:14px;
+padding:25px;
+max-width:1300px;
 margin:auto;
 }
 
-@media(max-width:1000px){
-.grid{grid-template-columns:repeat(4,1fr);}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
+
+/* CARD */
+.card{
+cursor:pointer;
+transition:.25s;
+border-radius:10px;
+overflow:hidden;
+background:#141420;
+box-shadow:0 4px 15px rgba(0,0,0,.3);
 }
 
-@media(max-width:600px){
-.grid{grid-template-columns:repeat(2,1fr);}
-.nav-right{display:none;}
-.burger{display:block;}
+.card:hover{
+transform:scale(1.06);
+box-shadow:0 10px 25px rgba(255,0,0,.15);
 }
 
-.card{cursor:pointer}
-.card img{width:100%;border-radius:8px}
-.title{font-size:12px;margin-top:5px;opacity:.8}
+.card img{
+width:100%;
+display:block;
+}
 
-/* PAGINATION */
+.title{
+padding:8px;
+font-size:12px;
+opacity:.8;
+}
+
+/* PAGINATION PILLS */
 .pagination{
 display:flex;
 justify-content:center;
@@ -97,33 +103,44 @@ flex-wrap:wrap;
 }
 
 .pagination button{
-background:#222;
+background:#1a1a22;
 color:#fff;
 border:none;
-padding:6px 10px;
-border-radius:6px;
+padding:7px 12px;
+border-radius:10px;
 cursor:pointer;
+transition:.2s;
 }
 
-.pagination button.active{
-background:#e50914;
+.pagination button:hover{
+background:#ff2e2e;
 }
 
-/* MOBILE MENU */
-.mobile-menu{
-display:none;
-flex-direction:column;
+.pagination .active{
+background:#ff2e2e;
+}
+
+/* FOOTER */
+footer{
 background:#000;
-padding:10px;
+padding:35px 20px;
+margin-top:40px;
+border-top:1px solid rgba(255,255,255,.05);
 }
 
-.mobile-menu a{
-color:#fff;
-padding:8px 0;
-text-decoration:none;
+.footer-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+max-width:1200px;
+margin:auto;
+font-size:13px;
+opacity:.7;
 }
 
-.show{display:flex !important;}
+@media(max-width:700px){
+.footer-grid{grid-template-columns:repeat(2,1fr)}
+}
 
 </style>
 </head>
@@ -135,42 +152,30 @@ text-decoration:none;
 
 <div class="nav-right">
 <input id="search" placeholder="Search..." oninput="searchMovie()">
-
-<div class="menu">
 <a href="uji.html">Home</a>
 <a href="#" onclick="setMode('all')">All</a>
 <a href="#" onclick="setMode('luar')">Abroad</a>
 <a href="#" onclick="setMode('id')">Local</a>
 </div>
-</div>
-
-<div class="burger" onclick="toggleMenu()">☰</div>
 </nav>
-
-<div class="mobile-menu" id="mobileMenu">
-<input id="search2" placeholder="Search..." oninput="searchMovie2()">
-<a href="uji.html">Home</a>
-<a href="#" onclick="setMode('all')">All</a>
-<a href="#" onclick="setMode('luar')">Abroad</a>
-<a href="#" onclick="setMode('id')">Local</a>
-</div>
 
 <div id="grid" class="grid"></div>
 
 <div class="pagination" id="pagination"></div>
 
+<footer>
+<div class="footer-grid">
+<div>About</div>
+<div>DMCA</div>
+<div>Privacy</div>
+<div>Contact</div>
+</div>
+</footer>
+
 <script>
 
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
-
-let page=1;
-let mode="all";
-let query="";
-
-function toggleMenu(){
-document.getElementById("mobileMenu")
-.classList.toggle("show");
-}
+let page=1,mode="all",query="";
 
 async function load(){
 
@@ -186,83 +191,43 @@ url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&without_origin_c
 url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${KEY}&page=${page}`;
 }
 
-const res=await fetch(url);
-const data=await res.json();
+const data=await fetch(url).then(r=>r.json());
 
 render(data.results);
-renderPagination(data.page,data.total_pages);
+renderPagination(data.page);
 
 }
 
-function render(data){
-
-let html="";
-
-data.slice(0,26).forEach(m=>{
+function render(d){
+let h="";
+d.forEach(m=>{
 if(!m.poster_path)return;
 
-html+=`
-<div class="card" onclick="openMovie(${m.id})">
+h+=`
+<div class="card" onclick="go(${m.id})">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div class="title">${m.title}</div>
-</div>
-`;
+</div>`;
 });
 
-document.getElementById("grid").innerHTML=html;
-
+document.getElementById("grid").innerHTML=h;
 }
 
-function renderPagination(current,total){
-
-let html="";
-let start=current;
-let end=Math.min(current+5,total);
-
-for(let i=start;i<=end;i++){
-html+=`<button class="${i===current?'active':''}" onclick="go(${i})">${i}</button>`;
+function renderPagination(p){
+let h="";
+for(let i=p;i<p+6;i++){
+h+=`<button onclick="goPage(${i})">${i}</button>`;
+}
+h+=`<button onclick="nextSet()">›</button>`;
+document.getElementById("pagination").innerHTML=h;
 }
 
-if(end<total){
-html+=`<button onclick="nextSet()">></button>`;
-}
+function goPage(p){page=p;load()}
+function nextSet(){page+=6;load()}
+function go(id){location.href=`uji2.html?id=${id}`}
 
-document.getElementById("pagination").innerHTML=html;
-
-}
-
-function go(p){
-page=p;
-load();
-window.scrollTo(0,0);
-}
-
-function nextSet(){
-page+=6;
-load();
-window.scrollTo(0,0);
-}
-
-function openMovie(id){
-location.href=`uji2.html?id=${id}`;
-}
-
-function setMode(m){
-mode=m;page=1;query="";
-load();
-}
-
-function searchMovie(){
-query=document.getElementById("search").value;
-page=1;
-load();
-}
-
-function searchMovie2(){
-query=document.getElementById("search2").value;
-page=1;
-load();
-}
+function setMode(m){mode=m;query="";page=1;load()}
+function searchMovie(){query=document.getElementById("search").value;page=1;load()}
 
 load();
 
