@@ -214,11 +214,11 @@ opacity:.7;
 <div class="logo">MOVIE+</div>
 
 <div class="nav-right">
-<input placeholder="Search...">
+<input id="search" placeholder="Search..." oninput="searchMovie()">
 <a href="uji.html">Home</a>
-<a href="uji.html">All</a>
-<a href="uji.html">Abroad</a>
-<a href="uji.html">Local</a>
+<a href="#" onclick="setMode('all')">All</a>
+<a href="#" onclick="setMode('luar')">Abroad</a>
+<a href="#" onclick="setMode('id')">Local</a>
 </div>
 
 <div class="burger" onclick="toggleMenu()">☰</div>
