@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Movie Hub</title>
+
+<style>
+body{
+margin:0;
+background:#111;
+color:#fff;
+font-family:Arial;
+}
+
+.grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fill,minmax(180px,1fr));
+gap:15px;
+padding:20px;
+}
+
+.card{
+cursor:pointer;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+.title{
+padding:8px 0;
+font-size:14px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="grid"
+id="movies">
+Loading...
+</div>
+
+<script>
+
+const TOKEN=
+"ISI_BEARER_TOKEN";
+
+async function load(){
+
+const res=await fetch(
+"https://api.themoviedb.org/3/discover/movie?page=1",
+{
+headers:{
+Authorization:
+`Bearer ${TOKEN}`
+}
+}
+);
+
+const data=
+await res.json();
+
+let html="";
+
+data.results.forEach(m=>{
+
+html+=`
+
+<div class="card"
+onclick="
+location=
+'./uji2.html?id=${m.id}'
+">
+
+<img src=
+"https://image.tmdb.org/t/p/w500${m.poster_path}">
+
+<div class="title">
+
+${m.title}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById(
+"movies"
+)
+.innerHTML=
+html;
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
