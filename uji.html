@@ -23,29 +23,20 @@ position:sticky;
 top:0;
 z-index:1000;
 border-bottom:1px solid rgba(255,255,255,.05);
-
-/* IMPORTANT FIX */
-overflow-x:auto;
-white-space:nowrap;
-gap:12px;
 }
 
-/* kiri logo jangan ikut shrink */
 .logo{
-flex:0 0 auto;
 color:#ff2e2e;
 font-weight:bold;
 }
 
-/* kanan group */
+/* DESKTOP MENU */
 .nav-right{
 display:flex;
+gap:12px;
 align-items:center;
-gap:10px;
-flex:0 0 auto;
 }
 
-/* input jangan pecah layout */
 .nav-right input{
 padding:7px 10px;
 border-radius:8px;
@@ -53,23 +44,57 @@ border:none;
 outline:none;
 background:#1a1a1f;
 color:#fff;
-min-width:140px;
 }
 
-/* menu tetap horizontal */
 .nav-right a{
 color:#ddd;
 text-decoration:none;
 font-size:13px;
-white-space:nowrap;
 }
 
-/* optional: sembunyikan scrollbar */
-nav::-webkit-scrollbar{
+/* BURGER */
+.burger{
+display:none;
+font-size:22px;
+cursor:pointer;
+color:#fff;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+.nav-right{
 display:none;
 }
-nav{
-scrollbar-width:none;
+
+.burger{
+display:block;
+}
+
+.mobile-menu{
+display:flex;
+flex-direction:column;
+position:fixed;
+top:60px;
+right:0;
+width:220px;
+background:#000;
+padding:15px;
+gap:10px;
+transform:translateX(100%);
+transition:.3s;
+}
+
+.mobile-menu.show{
+transform:translateX(0);
+}
+
+.mobile-menu a{
+color:#fff;
+text-decoration:none;
+padding:8px 0;
+border-bottom:1px solid #222;
+}
 }
   
 /* GRID PREMIUM */
@@ -169,13 +194,22 @@ opacity:.7;
 <div class="logo">MOVIE+</div>
 
 <div class="nav-right">
-<input id="search" placeholder="Search..." oninput="searchMovie()">
+<input placeholder="Search...">
 <a href="uji.html">Home</a>
-<a href="#" onclick="setMode('all')">All</a>
-<a href="#" onclick="setMode('luar')">Abroad</a>
-<a href="#" onclick="setMode('id')">Local</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
 </div>
+
+<div class="burger" onclick="toggleMenu()">☰</div>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+<a href="uji.html">Home</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
+</div>
 
 <div id="grid" class="grid"></div>
 
