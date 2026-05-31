@@ -11,66 +11,27 @@
 body{background:#0b0b0f;color:#fff}
 
 /* NAV SAMA PERSIS UJI.HTML */
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 18px;
-background:rgba(0,0,0,.7);
-backdrop-filter:blur(10px);
-position:sticky;
-top:0;
-z-index:1000;
-border-bottom:1px solid rgba(255,255,255,.05);
+<nav>
+<div class="logo">MOVIE+</div>
 
-/* IMPORTANT FIX */
-overflow-x:auto;
-white-space:nowrap;
-gap:12px;
-}
+<div class="nav-right">
+<input placeholder="Search...">
+<a href="uji.html">Home</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
+</div>
 
-/* kiri logo jangan ikut shrink */
-.logo{
-flex:0 0 auto;
-color:#ff2e2e;
-font-weight:bold;
-}
+<div class="burger" onclick="toggleMenu()">☰</div>
+</nav>
 
-/* kanan group */
-.nav-right{
-display:flex;
-align-items:center;
-gap:10px;
-flex:0 0 auto;
-}
-
-/* input jangan pecah layout */
-.nav-right input{
-padding:7px 10px;
-border-radius:8px;
-border:none;
-outline:none;
-background:#1a1a1f;
-color:#fff;
-min-width:140px;
-}
-
-/* menu tetap horizontal */
-.nav-right a{
-color:#ddd;
-text-decoration:none;
-font-size:13px;
-white-space:nowrap;
-}
-
-/* optional: sembunyikan scrollbar */
-nav::-webkit-scrollbar{
-display:none;
-}
-nav{
-scrollbar-width:none;
-}
-
+<div class="mobile-menu" id="mobileMenu">
+<a href="uji.html">Home</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
+</div>
+  
 /* PLAYER */
 .player{
 width:100%;
@@ -193,7 +154,16 @@ opacity:.7;
 <a href="uji.html">Abroad</a>
 <a href="uji.html">Local</a>
 </div>
+
+<div class="burger" onclick="toggleMenu()">☰</div>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+<a href="uji.html">Home</a>
+<a href="uji.html">All</a>
+<a href="uji.html">Abroad</a>
+<a href="uji.html">Local</a>
+</div>
 
 <!-- PLAYER -->
 <div class="player">
