@@ -83,26 +83,34 @@ border-radius:12px;
 max-width:1200px;
 margin:20px auto;
 position:relative;
-overflow:hidden;
+padding:10px;
 }
 
 .rel-box{
 display:flex;
 gap:12px;
-transition:transform .4s ease;
-will-change:transform;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+}
+
+.rel-box::-webkit-scrollbar{
+display:none;
 }
 
 .rel-card{
 min-width:140px;
+scroll-snap-align:start;
 cursor:pointer;
+flex:0 0 auto;
 }
 
 .rel-card img{
 width:100%;
 border-radius:10px;
 }
-
+  
 /* ARROW */
 .arrow{
 position:absolute;
@@ -239,7 +247,7 @@ const r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
 ).then(r=>r.json());
 
-items=r.results.slice(0,10);
+items=r.results.slice(0,15);
 
 render();
 
@@ -267,15 +275,11 @@ document.getElementById("rel").style.transform=
 }
 
 function move(dir){
-
-const max=Math.max(0,items.length-4);
-
-index+=dir;
-
-if(index<0)index=0;
-if(index>max)index=max;
-
-updateSlider();
+const box=document.getElementById("rel");
+box.scrollBy({
+left:dir*300,
+behavior:"smooth"
+});
 }
 
 function go(i){
