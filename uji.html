@@ -3,165 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Filter Film Ada Subtitle Indonesia</title>
+<title>Movie Hub</title>
 
 <style>
+
 body{
+margin:0;
+font-family:Arial;
 background:#111;
 color:#fff;
-font-family:Arial;
-padding:20px;
-margin:0;
+}
+
+header{
+padding:15px;
+background:#000;
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.menu{
+display:flex;
+gap:10px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+cursor:pointer;
+border-radius:6px;
+}
+
+.active{
+background:#ff4444;
+color:#fff;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:15px;
+padding:15px;
 }
 
 .card{
 background:#222;
-padding:15px;
 border-radius:10px;
+overflow:hidden;
+cursor:pointer;
+transition:.3s;
 }
 
-button{
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card img{
 width:100%;
+display:block;
+}
+
+.title{
 padding:10px;
-margin-top:10px;
-cursor:pointer;
+font-size:14px;
+}
+
+.playerBox{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.playerWrap{
+width:90%;
+height:80%;
+position:relative;
 }
 
 iframe{
 width:100%;
-height:400px;
+height:100%;
 border:0;
-margin-top:20px;
-display:none;
 }
+
+.close{
+position:absolute;
+right:0;
+top:-40px;
+font-size:30px;
+cursor:pointer;
+}
+
 </style>
 </head>
 <body>
 
-<h2>Film yang punya subtitle Indonesia</h2>
+<header>
 
-<div id="filmGrid" class="grid">
-Memeriksa subtitle...
-</div>
+<div class="menu">
 
-<iframe id="player" allowfullscreen></iframe>
-
-<script>
-
-// contoh TMDB ID
-const movies=[
-{
-id:603,
-title:"The Matrix"
-},
-{
-id:550,
-title:"Fight Club"
-},
-{
-id:155,
-title:"The Dark Knight"
-},
-{
-id:27205,
-title:"Inception"
-}
-];
-
-const grid=
-document.getElementById("filmGrid");
-
-const player=
-document.getElementById("player");
-
-async function cekSub(tmdbId){
-
-try{
-
-const res=await fetch(
-`https://sub.wyzie.ru/search?id=${tmdbId}`
-);
-
-const data=await res.json();
-
-return data.some(
-x=>x.language &&
-x.language.toLowerCase()
-.includes("indonesian")
-);
-
-}catch(err){
-
-return false;
-
-}
-
-}
-
-async function loadMovies(){
-
-grid.innerHTML="";
-
-for(const movie of movies){
-
-const adaSub=
-await cekSub(movie.id);
-
-if(adaSub){
-
-grid.innerHTML+=`
-<div class="card">
-
-<h3>${movie.title}</h3>
-
-<div>
-TMDB: ${movie.id}
-</div>
+<button class="active"
+onclick="loadIndonesia(this)">
+Film Indonesia
+</button>
 
 <button
-onclick="playMovie(${movie.id})">
-
-Putar Film
-
+onclick="loadLuar(this)">
+Film Luar
 </button>
 
 </div>
+
+</header>
+
+<div id="movies" class="grid">
+
+Loading...
+
+</div>
+
+<div class="playerBox" id="playerBox">
+
+<div class="playerWrap">
+
+<div class="close"
+onclick="tutup()">
+✕
+</div>
+
+<iframe id="player"></iframe>
+
+</div>
+
+</div>
+
+<script>
+
+const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
+
+const movies=
+document.getElementById("movies");
+
+async function ambil(url){
+
+movies.innerHTML="Loading...";
+
+try{
+
+const res=
+await fetch(url);
+
+const data=
+await res.json();
+
+tampil(data.results);
+
+}catch{
+
+movies.innerHTML=
+"Gagal ambil data";
+
+}
+
+}
+
+function tampil(data){
+
+movies.innerHTML="";
+
+data.forEach(m=>{
+
+if(!m.poster_path) return;
+
+movies.innerHTML+=`
+
+<div class="card"
+onclick="putar(${m.id})">
+
+<img src=
+"https://image.tmdb.org/t/p/w500${m.poster_path}">
+
+<div class="title">
+
+${m.title||m.name}
+
+</div>
+
+</div>
+
 `;
 
-}
-
-}
-
-if(grid.innerHTML==""){
-
-grid.innerHTML=
-"Tidak ada film dengan subtitle Indonesia";
-
-}
-
-}
-
-function playMovie(id){
-
-player.style.display="block";
-
-player.src=
-`https://vsembed.ru/embed/movie?tmdb=${id}`;
-
-window.scrollTo({
-top:9999,
-behavior:"smooth"
 });
 
 }
 
-loadMovies();
+function putar(id){
+
+document.getElementById(
+"playerBox"
+).style.display="flex";
+
+document.getElementById(
+"player"
+).src=
+`https://vidsrc.su/embed/movie/${id}`;
+
+}
+
+function tutup(){
+
+document.getElementById(
+"playerBox"
+).style.display="none";
+
+document.getElementById(
+"player"
+).src="";
+
+}
+
+function aktif(btn){
+
+document.querySelectorAll(
+"button"
+).forEach(x=>
+x.classList.remove(
+"active"
+));
+
+btn.classList.add(
+"active"
+);
+
+}
+
+function loadIndonesia(btn){
+
+aktif(btn);
+
+ambil(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=ID`
+);
+
+}
+
+function loadLuar(btn){
+
+aktif(btn);
+
+ambil(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&without_origin_country=ID`
+);
+
+}
+
+loadIndonesia(
+document.querySelector(
+"button"
+)
+);
 
 </script>
 
