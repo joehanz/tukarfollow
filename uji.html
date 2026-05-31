@@ -1,26 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Filter Film Ada Subtitle Indonesia</title>
+
 <style>
 body{
-margin:0;
 background:#111;
-height:100vh;
+color:#fff;
+font-family:Arial;
+padding:20px;
+margin:0;
 }
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+gap:15px;
+}
+
+.card{
+background:#222;
+padding:15px;
+border-radius:10px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+cursor:pointer;
+}
+
 iframe{
 width:100%;
-height:100%;
+height:400px;
 border:0;
+margin-top:20px;
+display:none;
 }
 </style>
 </head>
 <body>
 
-<iframe
-src="https://vsembed.ru/embed/movie?tmdb=603&sub.file=https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.vtt&sub.label=Indonesia"
-allowfullscreen>
-</iframe>
+<h2>Film yang punya subtitle Indonesia</h2>
+
+<div id="filmGrid" class="grid">
+Memeriksa subtitle...
+</div>
+
+<iframe id="player" allowfullscreen></iframe>
+
+<script>
+
+// contoh TMDB ID
+const movies=[
+{
+id:603,
+title:"The Matrix"
+},
+{
+id:550,
+title:"Fight Club"
+},
+{
+id:155,
+title:"The Dark Knight"
+},
+{
+id:27205,
+title:"Inception"
+}
+];
+
+const grid=
+document.getElementById("filmGrid");
+
+const player=
+document.getElementById("player");
+
+async function cekSub(tmdbId){
+
+try{
+
+const res=await fetch(
+`https://sub.wyzie.ru/search?id=${tmdbId}`
+);
+
+const data=await res.json();
+
+return data.some(
+x=>x.language &&
+x.language.toLowerCase()
+.includes("indonesian")
+);
+
+}catch(err){
+
+return false;
+
+}
+
+}
+
+async function loadMovies(){
+
+grid.innerHTML="";
+
+for(const movie of movies){
+
+const adaSub=
+await cekSub(movie.id);
+
+if(adaSub){
+
+grid.innerHTML+=`
+<div class="card">
+
+<h3>${movie.title}</h3>
+
+<div>
+TMDB: ${movie.id}
+</div>
+
+<button
+onclick="playMovie(${movie.id})">
+
+Putar Film
+
+</button>
+
+</div>
+`;
+
+}
+
+}
+
+if(grid.innerHTML==""){
+
+grid.innerHTML=
+"Tidak ada film dengan subtitle Indonesia";
+
+}
+
+}
+
+function playMovie(id){
+
+player.style.display="block";
+
+player.src=
+`https://vsembed.ru/embed/movie?tmdb=${id}`;
+
+window.scrollTo({
+top:9999,
+behavior:"smooth"
+});
+
+}
+
+loadMovies();
+
+</script>
 
 </body>
 </html>
