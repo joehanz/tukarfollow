@@ -553,9 +553,20 @@ document.getElementById(
 /* LOAD DETAIL */
 async function load(){
 
-const m=await fetch(
+let m=await fetch(
 `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}&language=id-ID`
 ).then(r=>r.json());
+
+/* fallback kalau sinopsis Indonesia kosong */
+if(!m.overview){
+
+const backup=await fetch(
+`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
+).then(r=>r.json());
+
+m.overview=backup.overview;
+
+}
 
 document.getElementById("info").innerHTML=`
 
