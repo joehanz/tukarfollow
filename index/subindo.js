@@ -1,54 +1,59 @@
-const MOVIES_URL="../movies.json";
+const ITEMS_PER_PAGE=24;
 
 let movies=[];
 let filtered=[];
 let page=1;
-const perPage=24;
+
+/* BURGER */
 
 function toggleMenu(){
-document.getElementById("mobileMenu")
+
+document
+.getElementById("mobileMenu")
 .classList.toggle("show");
+
 }
 
-/* LOAD MOVIES */
+/* LOAD JSON */
+
 async function load(){
 
 try{
 
-const data=await fetch(MOVIES_URL)
-.then(r=>r.json());
+const data=await fetch(
+"movies.json"
+);
 
-movies=data;
+movies=await data.json();
+
 filtered=[...movies];
 
 render();
-renderPagination();
 
-}catch(err){
+}
+catch(err){
 
-console.log(err);
-
-document.getElementById("grid").innerHTML=`
-<div style="
-padding:30px;
-text-align:center;
-opacity:.7;
-">
-Gagal memuat movies.json
-</div>
-`;
+console.log(
+"movies.json gagal dimuat",
+err
+);
 
 }
 
 }
 
 /* RENDER GRID */
+
 function render(){
 
-let start=(page-1)*perPage;
-let end=start+perPage;
+const start=
+(page-1)*ITEMS_PER_PAGE;
 
-let current=filtered.slice(
+const end=
+start+ITEMS_PER_PAGE;
+
+const current=
+filtered.slice(
 start,
 end
 );
@@ -64,10 +69,15 @@ class="card"
 onclick="go(${movies.indexOf(m)})"
 >
 
-<img src="${m.image}">
+<img
+src="${m.image}"
+loading="lazy"
+>
 
 <div class="title">
+
 ${m.title}
+
 </div>
 
 </div>
@@ -76,29 +86,35 @@ ${m.title}
 
 });
 
-document.getElementById(
-"grid"
-).innerHTML=h;
+document
+.getElementById("grid")
+.innerHTML=h;
+
+renderPagination();
 
 }
 
 /* PAGINATION */
+
 function renderPagination(){
 
-let total=
+const totalPages=
 Math.ceil(
-filtered.length/perPage
+filtered.length/
+ITEMS_PER_PAGE
 );
 
 let h="";
 
-let start=Math.max(
+let start=
+Math.max(
 1,
 page-2
 );
 
-let end=Math.min(
-total,
+let end=
+Math.min(
+totalPages,
 start+5
 );
 
@@ -113,7 +129,11 @@ h+=`
 <button
 onclick="goPage(${i})"
 style="
-background:${i===page?'#ff2e2e':'#1a1a22'}
+background:
+${i===page
+?'#ff2e2e'
+:'#1a1a22'
+};
 "
 >
 
@@ -125,7 +145,7 @@ ${i}
 
 }
 
-if(page<total){
+if(page<totalPages){
 
 h+=`
 
@@ -141,19 +161,21 @@ onclick="goPage(${page+1})"
 
 }
 
-document.getElementById(
+document
+.getElementById(
 "pagination"
-).innerHTML=h;
+)
+.innerHTML=h;
 
 }
+
+/* PAGE */
 
 function goPage(p){
 
 page=p;
 
 render();
-
-renderPagination();
 
 window.scrollTo({
 
@@ -165,60 +187,89 @@ behavior:"smooth"
 }
 
 /* SEARCH */
+
 function searchMovie(){
 
 const q=
-document.getElementById(
+document
+.getElementById(
 "search"
-).value
-.toLowerCase();
+)
+.value
+.toLowerCase()
+.trim();
+
+page=1;
+
+if(!q){
+
+filtered=
+[...movies];
+
+render();
+
+return;
+
+}
 
 filtered=
 movies.filter(m=>
 
-m.title.toLowerCase()
+m.title
+.toLowerCase()
 .includes(q)
 
 );
 
-page=1;
-
 render();
-
-renderPagination();
 
 }
 
 /* MOBILE SEARCH */
+
 function searchMovieMobile(){
 
 const q=
-document.querySelector(
+document
+.querySelector(
 "#mobileMenu input"
-).value
-.toLowerCase();
+)
+.value
+.toLowerCase()
+.trim();
+
+page=1;
+
+if(!q){
+
+filtered=
+[...movies];
+
+render();
+
+return;
+
+}
 
 filtered=
 movies.filter(m=>
 
-m.title.toLowerCase()
+m.title
+.toLowerCase()
 .includes(q)
 
 );
 
-page=1;
-
 render();
-
-renderPagination();
 
 }
 
-/* OPEN DETAIL */
+/* OPEN WATCH */
+
 function go(i){
 
 location.href=
-`manual-watch.html?id=${i}`;
+`manual-watch.html?movie=${i}`;
 
 }
 
