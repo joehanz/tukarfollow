@@ -198,18 +198,18 @@ opacity:.7;
 /* 🔥 OVERLAY MODE (FIX UTAMA) */
 #overlay{
 display:none;
-position:relative;
-top:auto;
-left:auto;
+position:absolute;
+top:60px;
+left:0;
 width:100%;
+min-height:90vh;
 background:#0b0b0f;
-z-index:20;
+z-index:999;
 padding:20px;
-margin:0 auto;
 }
 
-  #overlayPagination{
-margin-bottom:40px;
+  body.overlay-open{
+overflow:hidden;
 }
 
 .overlay-grid{
