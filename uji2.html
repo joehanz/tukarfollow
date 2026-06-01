@@ -270,6 +270,14 @@ opacity:.8;
 <!-- 🔥 OVERLAY SEARCH/LOCAL -->
 <div id="overlay">
 <div id="overlayGrid" class="overlay-grid"></div>
+
+<div id="overlayPagination" style="
+display:flex;
+justify-content:center;
+gap:8px;
+padding:25px;
+flex-wrap:wrap;
+"></div>
 </div>
 
 <div class="player">
@@ -308,75 +316,238 @@ const ads=[
 let adsState=false;
 let items=[];
 
+/* OVERLAY STATE */
+let overlayPage=1;
+let overlayMode="";
+let currentQuery="";
+
 /* BURGER */
 function toggleMenu(){
-document.getElementById("mobileMenu").classList.toggle("show");
+document.getElementById("mobileMenu")
+.classList.toggle("show");
 }
 
-/* 🔥 OVERLAY RENDER */
+/* OVERLAY LOAD */
+async function loadOverlay(){
+
+let url="";
+
+if(overlayMode==="search"){
+url=`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
+}
+
+if(overlayMode==="local"){
+url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID&page=${overlayPage}`;
+}
+
+const data=await fetch(url)
+.then(r=>r.json());
+
+showOverlay(data.results);
+
+renderOverlayPagination(
+data.page,
+data.total_pages
+);
+
+}
+
+/* SHOW OVERLAY */
 function showOverlay(data){
+
 document.getElementById("overlay").style.display="block";
 
 let h="";
+
 data.forEach(v=>{
+
 if(!v.poster_path) return;
 
 h+=`
 <div class="card" onclick="go(${v.id})">
+
 <img src="https://image.tmdb.org/t/p/w300${v.poster_path}">
-<div class="title">${v.title || v.name}</div>
-</div>`;
+
+<div class="title">
+${v.title||v.name}
+</div>
+
+</div>
+`;
+
 });
 
-document.getElementById("overlayGrid").innerHTML=h;
+document.getElementById(
+"overlayGrid"
+).innerHTML=h;
+
 }
 
-/* SEARCH (FIX) */
+/* PAGINATION */
+function renderOverlayPagination(
+page,
+total
+){
+
+let h="";
+
+let start=Math.max(
+1,
+page-2
+);
+
+let end=Math.min(
+total,
+start+5
+);
+
+for(
+let i=start;
+i<=end;
+i++
+){
+
+h+=`
+<button
+onclick="changeOverlayPage(${i})"
+style="
+padding:8px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:${i===page?'#ff2e2e':'#1a1a22'};
+color:#fff;
+"
+>
+
+${i}
+
+</button>
+`;
+
+}
+
+if(page<total){
+
+h+=`
+<button
+onclick="changeOverlayPage(${page+1})"
+style="
+padding:8px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#1a1a22;
+color:#fff;
+"
+>
+
+›
+
+</button>
+`;
+
+}
+
+document.getElementById(
+"overlayPagination"
+).innerHTML=h;
+
+}
+
+function changeOverlayPage(p){
+
+overlayPage=p;
+
+loadOverlay();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+/* SEARCH */
 function searchMovie(){
-const val=document.getElementById("search")?.value||"";
+
+const val=
+document.getElementById(
+"search"
+).value;
+
 if(!val.trim()) return;
 
-fetch(`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${val}`)
-.then(r=>r.json())
-.then(d=>{
-showOverlay(d.results);
-});
+currentQuery=val;
+
+overlayMode="search";
+
+overlayPage=1;
+
+loadOverlay();
+
 }
 
 /* MOBILE SEARCH */
 function searchMovieMobile(){
-const val=document.querySelector("#mobileMenu input")?.value||"";
+
+const val=
+document.querySelector(
+"#mobileMenu input"
+).value;
+
 if(!val.trim()) return;
 
-fetch(`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${val}`)
-.then(r=>r.json())
-.then(d=>{
-showOverlay(d.results);
-});
+currentQuery=val;
+
+overlayMode="search";
+
+overlayPage=1;
+
+loadOverlay();
+
 }
 
-/* LOCAL FIX */
+/* LOCAL */
 function loadLocal(){
-fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID`)
-.then(r=>r.json())
-.then(d=>{
-showOverlay(d.results);
-});
+
+overlayMode="local";
+
+overlayPage=1;
+
+loadOverlay();
+
 }
 
 /* PLAY GATE */
-document.getElementById("playLayer").onclick=function(){
+document.getElementById(
+"playLayer"
+).onclick=function(){
 
 if(!adsState){
+
 adsState=true;
-window.open(ads[Math.floor(Math.random()*ads.length)],"_blank");
+
+window.open(
+ads[
+Math.floor(
+Math.random()*ads.length
+)
+],
+"_blank"
+);
+
 return;
+
 }
 
 this.style.display="none";
 
-document.getElementById("player").src=
+document.getElementById(
+"player"
+).src=
 `https://vsembed.ru/embed/movie?tmdb=${id}`;
+
 };
 
 /* LOAD DETAIL */
@@ -384,46 +555,99 @@ async function load(){
 
 const m=await fetch(
 `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-).then(r=>r.json());
+)
+.then(r=>r.json());
 
-document.getElementById("info").innerHTML=`
+document.getElementById(
+"info"
+).innerHTML=`
+
 <h2>${m.title}</h2>
-<p>⭐ ${m.vote_average}</p>
-<p>🌍 ${m.production_countries.map(c=>c.name).join(", ")}</p>
-<p>🎭 ${m.genres.map(g=>g.name).join(", ")}</p>
-<p>${m.overview}</p>
+
+<p>
+⭐ ${m.vote_average}
+</p>
+
+<p>
+🌍 ${m.production_countries.map(
+c=>c.name
+).join(", ")}
+</p>
+
+<p>
+🎭 ${m.genres.map(
+g=>g.name
+).join(", ")}
+</p>
+
+<p>
+${m.overview}
+</p>
+
 `;
 
 const r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
-).then(r=>r.json());
+)
+.then(r=>r.json());
 
-items=r.results.slice(0,15);
+items=r.results.slice(
+0,
+15
+);
+
 render();
+
 }
 
+/* RELATED */
 function render(){
 
 let h="";
+
 items.forEach(v=>{
+
+if(!v.poster_path)return;
+
 h+=`
-<div class="rel-card" onclick="go(${v.id})">
+
+<div
+class="rel-card"
+onclick="go(${v.id})"
+>
+
 <img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
-</div>`;
+
+</div>
+
+`;
+
 });
 
-document.getElementById("rel").innerHTML=h;
+document.getElementById(
+"rel"
+).innerHTML=h;
+
 }
 
 function move(dir){
-document.getElementById("rel").scrollBy({
+
+document.getElementById(
+"rel"
+).scrollBy({
+
 left:dir*300,
 behavior:"smooth"
+
 });
+
 }
 
 function go(i){
-location.href=`uji2.html?id=${i}`;
+
+location.href=
+`uji2.html?id=${i}`;
+
 }
 
 load();
