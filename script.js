@@ -576,3 +576,10 @@ location.href=
 
 load();
 
+const params = new URLSearchParams(location.search);
+const urlMode = params.get("mode");
+
+if(urlMode === "id"){
+mode = "id";
+}
+
