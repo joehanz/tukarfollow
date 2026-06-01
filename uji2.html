@@ -554,34 +554,35 @@ document.getElementById(
 async function load(){
 
 const m=await fetch(
-`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-)
-.then(r=>r.json());
+`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}&language=id-ID`
+).then(r=>r.json());
 
-document.getElementById(
-"info"
-).innerHTML=`
+document.getElementById("info").innerHTML=`
 
 <h2>${m.title}</h2>
 
-<p>
-⭐ ${m.vote_average}
-</p>
+<p>⭐ Rating : ${m.vote_average.toFixed(1)}</p>
 
-<p>
-🌍 ${m.production_countries.map(
+<p>📅 Rilis : ${m.release_date || "-"}</p>
+
+<p>🌍 Negara : ${
+m.production_countries.map(
 c=>c.name
-).join(", ")}
-</p>
+).join(", ")
+}</p>
 
-<p>
-🎭 ${m.genres.map(
+<p>🎭 Genre : ${
+m.genres.map(
 g=>g.name
-).join(", ")}
-</p>
+).join(", ")
+}</p>
 
-<p>
-${m.overview}
+<p style="
+margin-top:15px;
+line-height:1.7;
+opacity:.9;
+">
+${m.overview || "Sinopsis tidak tersedia"}
 </p>
 
 `;
