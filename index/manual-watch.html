@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Movie Detail</title>
 
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">MOVIE+</div>
+
+<div class="nav-right">
+
+<input
+id="search"
+placeholder="Search..."
+oninput="searchMovie()"
+>
+
+<a href="index.html">Home</a>
+
+<a href="subindo.html">Sub Indo</a>
+
+</div>
+
+<div
+class="burger"
+onclick="toggleMenu()"
+>
+☰
+</div>
+
+</nav>
+
+<div
+class="mobile-menu"
+id="mobileMenu"
+>
+
+<input
+placeholder="Search..."
+oninput="searchMovieMobile()"
+>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="subindo.html">
+Sub Indo
+</a>
+
+</div>
+
+<!-- OVERLAY -->
+
+<div id="overlay">
+
+<div
+id="overlayGrid"
+class="overlay-grid"
+>
+</div>
+
+<div
+id="overlayPagination"
+style="
+display:flex;
+justify-content:center;
+gap:8px;
+padding:25px;
+flex-wrap:wrap;
+"
+>
+</div>
+
+</div>
+
+<!-- PLAYER -->
+
+<div class="player">
+
+<iframe
+id="player"
+allowfullscreen
+></iframe>
+
+<div
+class="playLayer"
+id="playLayer"
+>
+
+▶ PLAY
+
+</div>
+
+</div>
+
+<!-- INFO -->
+
+<div
+class="info"
+id="info"
+>
+</div>
+
+<!-- RELATED -->
+
+<div class="rel-wrap">
+
+<button
+class="arrow left"
+onclick="move(-1)"
+>
+
+‹
+
+</button>
+
+<button
+class="arrow right"
+onclick="move(1)"
+>
+
+›
+
+</button>
+
+<div
+class="rel-box"
+id="rel"
+>
+</div>
+
+</div>
+
+<footer>
+
+<div class="footer-grid">
+
+<div>About</div>
+
+<div>DMCA</div>
+
+<div>Privacy</div>
+
+<div>Contact</div>
+
+</div>
+
+</footer>
+
+<script src="manual-watch.js"></script>
+
+</body>
+</html>
