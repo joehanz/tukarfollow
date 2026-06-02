@@ -33,9 +33,18 @@ border-bottom:1px solid rgba(255,255,255,.05);
 }
 
 .logo{
-color:#ff2e2e;
 font-weight:bold;
 flex:0 0 auto;
+font-size:22px;
+}
+
+.logo a{
+color:#ff2e2e;
+text-decoration:none;
+}
+
+.logo a:hover{
+color:#ff2e2e;
 }
 
 .nav-right{
