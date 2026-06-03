@@ -111,21 +111,45 @@ PAGINATION CONTROL
 =========================== */
 
 function goPage(p){
+
 page=p;
 load();
-window.scrollTo({top:0,behavior:"smooth"});
+
+requestAnimationFrame(()=>{
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+});
+
 }
 
 function nextSet(){
+
 page+=6;
 load();
-window.scrollTo({top:0,behavior:"smooth"});
+
+requestAnimationFrame(()=>{
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+});
+
 }
 
 function prevSet(){
+
 page=Math.max(1,page-6);
 load();
-window.scrollTo({top:0,behavior:"smooth"});
+
+requestAnimationFrame(()=>{
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+});
+
 }
 
 /* ===========================
