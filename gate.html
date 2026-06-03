@@ -3,200 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TukarFollow - Gate</title>
+<title>TukarFollow</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:system-ui,sans-serif;
 }
 
 body{
-height:100vh;
-overflow:hidden;
-background:#000;
+background:#080808;
 color:#fff;
+min-height:100vh;
+overflow-x:hidden;
 }
 
-/* Latar bioskop mewah tipis */
+/* background bioskop tipis */
 body::before{
 content:"";
 position:fixed;
 inset:0;
 background:
-linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.88)),
-url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600");
+linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.95)),
+url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1800");
 background-size:cover;
 background-position:center;
-transform:scale(1.1);
 filter:blur(2px);
-opacity:.8;
+transform:scale(1.1);
 z-index:-2;
 }
 
-/* cahaya premium kanan atas */
 body::after{
 content:"";
 position:fixed;
-width:450px;
-height:450px;
-top:-180px;
-right:-120px;
+top:-100px;
+right:-100px;
+width:400px;
+height:400px;
 background:
 radial-gradient(
-rgba(255,185,80,.35),
+rgba(255,190,90,.25),
 transparent 70%
 );
-border-radius:50%;
 z-index:-1;
 }
 
-.wrap{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-padding:20px;
+.container{
+padding:30px 20px;
+max-width:1100px;
+margin:auto;
 }
 
-.card{
-width:100%;
-max-width:420px;
-padding:30px;
-border-radius:30px;
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(18px);
-border:1px solid rgba(255,255,255,.08);
-box-shadow:
-0 0 40px rgba(0,0,0,.6);
-}
-
-.logo{
-font-size:32px;
+.title{
+font-size:35px;
 font-weight:bold;
-text-align:center;
-margin-bottom:10px;
+margin-bottom:8px;
 }
 
-.logo span{
+.title span{
 color:gold;
 }
 
 .desc{
-font-size:14px;
-opacity:.8;
+opacity:.7;
+margin-bottom:30px;
 line-height:1.6;
-text-align:center;
-margin-bottom:25px;
 }
 
-.btn{
-width:100%;
-padding:15px;
-border:none;
-border-radius:100px;
-margin:10px 0;
-font-size:15px;
-font-weight:bold;
+/* grid poster */
+
+.grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+/* card */
+
+.card{
+
+position:relative;
+height:300px;
+overflow:hidden;
+border-radius:20px;
 cursor:pointer;
-transition:.3s;
-}
 
-.btn:hover{
-transform:translateY(-3px);
-}
-
-.yt{
-background:#ff0000;
-color:white;
-}
-
-.ig{
-background:linear-gradient(
-45deg,
-#833ab4,
-#fd1d1d,
-#fcb045
-);
-color:white;
-}
-
-.tt{
 background:#111;
-border:1px solid #444;
-color:#fff;
+
+transition:.4s;
 }
 
-.reward{
-display:none;
-margin-top:20px;
-text-align:center;
+.card:hover{
+
+transform:translateY(-8px);
+
 }
 
-.reward button{
-padding:14px 30px;
-border:none;
-border-radius:100px;
-background:gold;
+.card img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+
+}
+
+.overlay{
+
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+
+padding:20px;
+
+background:
+linear-gradient(
+transparent,
+rgba(0,0,0,.95)
+);
+
+}
+
+.name{
+
+font-size:20px;
 font-weight:bold;
-cursor:pointer;
+margin-bottom:5px;
 }
 
-.footer{
-margin-top:20px;
-text-align:center;
-font-size:12px;
-opacity:.5;
+.sub{
+
+font-size:13px;
+opacity:.7;
 }
+
+/* klaim */
+
+.claim{
+
+display:none;
+text-align:center;
+margin-top:80px;
+
+}
+
+.claim button{
+
+border:none;
+padding:18px 40px;
+font-size:18px;
+font-weight:bold;
+border-radius:100px;
+cursor:pointer;
+
+background:gold;
+
+}
+
+.claim button:hover{
+
+transform:scale(1.05);
+
+}
+
 </style>
 </head>
+
 <body>
 
-<div class="wrap">
+<div class="container">
 
-<div class="card">
-
-<div class="logo">
+<div class="title">
 Tukar<span>Follow</span>
 </div>
 
 <div class="desc">
-Masuk bioskop TukarFollow.<br>
-Pilih salah satu media sosial lalu kembali untuk membuka akses hiburan 🎬
+Pilih media sosial lalu kembali untuk membuka bioskop.
 </div>
 
-<button class="btn yt"
-onclick="go('https://youtube.com/@AKUNANDA')">
-📺 YouTube
-</button>
+<div id="socialGrid" class="grid">
 
-<button class="btn ig"
-onclick="go('https://instagram.com/AKUNANDA')">
-📸 Instagram
-</button>
+<div class="card"
+onclick="buka('https://youtube.com/@AKUNMU')">
 
-<button class="btn tt"
-onclick="go('https://tiktok.com/@AKUNANDA')">
-🎵 TikTok
-</button>
+<img src="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=900">
 
-<div class="reward" id="reward">
+<div class="overlay">
 
-<p style="margin-bottom:15px">
-🔥 Reward siap dibuka
-</p>
+<div class="name">
+YouTube
+</div>
+
+<div class="sub">
+Buka channel
+</div>
+
+</div>
+</div>
+
+
+<div class="card"
+onclick="buka('https://instagram.com/AKUNMU')">
+
+<img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=900">
+
+<div class="overlay">
+
+<div class="name">
+Instagram
+</div>
+
+<div class="sub">
+Buka profil
+</div>
+
+</div>
+</div>
+
+
+<div class="card"
+onclick="buka('https://tiktok.com/@AKUNMU')">
+
+<img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=900">
+
+<div class="overlay">
+
+<div class="name">
+TikTok
+</div>
+
+<div class="sub">
+Buka profil
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<div class="claim" id="claim">
+
+<h2 style="margin-bottom:20px">
+🔥 Reward Siap
+</h2>
 
 <button onclick="masuk()">
-🎬 Masuk Bioskop
+
+🎬 Klaim Bioskop
+
 </button>
-
-</div>
-
-<div class="footer">
-tukarfollow.web.id
-</div>
 
 </div>
 
@@ -204,30 +264,34 @@ tukarfollow.web.id
 
 <script>
 
-let keluar=false;
+let sudahKlik=false;
 
-function go(link){
+function buka(url){
 
-keluar=true;
+sudahKlik=true;
 
-window.open(link,"_blank");
+window.open(
+url,
+"_blank"
+);
 
 }
 
-/* ketika balik ke tab */
+/* saat user balik ke tab */
 
 window.onfocus=function(){
 
-if(keluar){
+if(sudahKlik){
 
 document
-.getElementById("reward")
-.style.display="block";
+.getElementById(
+"socialGrid"
+).style.display="none";
 
-localStorage.setItem(
-"visitedDay",
-new Date().toDateString()
-);
+document
+.getElementById(
+"claim"
+).style.display="block";
 
 }
 
@@ -236,22 +300,6 @@ new Date().toDateString()
 function masuk(){
 
 location.href="index.html";
-
-}
-
-/* kalau hari ini sudah pernah masuk */
-
-let simpan=
-localStorage.getItem("visitedDay");
-
-if(
-simpan==
-new Date().toDateString()
-){
-
-document
-.getElementById("reward")
-.style.display="block";
 
 }
 
