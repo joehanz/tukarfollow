@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TukarFollow - Gate</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+background:#000;
+color:#fff;
+}
+
+/* Latar bioskop mewah tipis */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.88)),
+url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600");
+background-size:cover;
+background-position:center;
+transform:scale(1.1);
+filter:blur(2px);
+opacity:.8;
+z-index:-2;
+}
+
+/* cahaya premium kanan atas */
+body::after{
+content:"";
+position:fixed;
+width:450px;
+height:450px;
+top:-180px;
+right:-120px;
+background:
+radial-gradient(
+rgba(255,185,80,.35),
+transparent 70%
+);
+border-radius:50%;
+z-index:-1;
+}
+
+.wrap{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+padding:20px;
+}
+
+.card{
+width:100%;
+max-width:420px;
+padding:30px;
+border-radius:30px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.08);
+box-shadow:
+0 0 40px rgba(0,0,0,.6);
+}
+
+.logo{
+font-size:32px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+}
+
+.logo span{
+color:gold;
+}
+
+.desc{
+font-size:14px;
+opacity:.8;
+line-height:1.6;
+text-align:center;
+margin-bottom:25px;
+}
+
+.btn{
+width:100%;
+padding:15px;
+border:none;
+border-radius:100px;
+margin:10px 0;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+}
+
+.yt{
+background:#ff0000;
+color:white;
+}
+
+.ig{
+background:linear-gradient(
+45deg,
+#833ab4,
+#fd1d1d,
+#fcb045
+);
+color:white;
+}
+
+.tt{
+background:#111;
+border:1px solid #444;
+color:#fff;
+}
+
+.reward{
+display:none;
+margin-top:20px;
+text-align:center;
+}
+
+.reward button{
+padding:14px 30px;
+border:none;
+border-radius:100px;
+background:gold;
+font-weight:bold;
+cursor:pointer;
+}
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:12px;
+opacity:.5;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="card">
+
+<div class="logo">
+Tukar<span>Follow</span>
+</div>
+
+<div class="desc">
+Masuk bioskop TukarFollow.<br>
+Pilih salah satu media sosial lalu kembali untuk membuka akses hiburan 🎬
+</div>
+
+<button class="btn yt"
+onclick="go('https://youtube.com/@AKUNANDA')">
+📺 YouTube
+</button>
+
+<button class="btn ig"
+onclick="go('https://instagram.com/AKUNANDA')">
+📸 Instagram
+</button>
+
+<button class="btn tt"
+onclick="go('https://tiktok.com/@AKUNANDA')">
+🎵 TikTok
+</button>
+
+<div class="reward" id="reward">
+
+<p style="margin-bottom:15px">
+🔥 Reward siap dibuka
+</p>
+
+<button onclick="masuk()">
+🎬 Masuk Bioskop
+</button>
+
+</div>
+
+<div class="footer">
+tukarfollow.web.id
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let keluar=false;
+
+function go(link){
+
+keluar=true;
+
+window.open(link,"_blank");
+
+}
+
+/* ketika balik ke tab */
+
+window.onfocus=function(){
+
+if(keluar){
+
+document
+.getElementById("reward")
+.style.display="block";
+
+localStorage.setItem(
+"visitedDay",
+new Date().toDateString()
+);
+
+}
+
+}
+
+function masuk(){
+
+location.href="index.html";
+
+}
+
+/* kalau hari ini sudah pernah masuk */
+
+let simpan=
+localStorage.getItem("visitedDay");
+
+if(
+simpan==
+new Date().toDateString()
+){
+
+document
+.getElementById("reward")
+.style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
