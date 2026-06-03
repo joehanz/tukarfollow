@@ -107,48 +107,24 @@ grid.innerHTML=h;
 
 }
 
-function renderPagination(p){
-
-const pagination=document.getElementById("pagination");
-
-if(!pagination)return;
-
-let h="";
-
-if(p>1){
-
-h+=`
-<button onclick="prevSet()">
-‹
-</button>
-`;
-
+function goPage(p){
+page = p;
+load();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-for(
-let i=p;
-i<p+6;
-i++
-){
-
-h+=`
-<button onclick="goPage(${i})">
-${i}
-</button>
-`;
-
+function nextSet(){
+page = page + 1;
+load();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-h+=`
-<button onclick="nextSet()">
-›
-</button>
-`;
-
-pagination.innerHTML=h;
-
+function prevSet(){
+page = Math.max(1, page - 1);
+load();
+window.scrollTo({top:0,behavior:"smooth"});
 }
-
+    
 function nextSet(){
 
 page+=6;
