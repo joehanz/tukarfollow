@@ -242,63 +242,63 @@ document.getElementById(
 
 }
 
-function renderPagination(p){
+function renderOverlayPagination(page,total){
+
+const el=document.getElementById("overlayPagination");
+
+if(!el)return;
 
 let h="";
 
-for(
-let i=p;
-i<p+6;
-i++
-){
+let start=Math.max(1,page-2);
+let end=Math.min(total,start+5);
 
-h+=`
+for(let i=start;i<=end;i++){
 
-<button
-onclick="goPage(${i})">
-
-${i}
-
-</button>
-
-`;
-
-}
-
-h+=`
-
-<button
-onclick="nextSet()">
-
-›
-
-</button>
-
-`;
-
-document
-.getElementById(
-"pagination"
-)
-.innerHTML=h;
+h+=`<button
+onclick="changeOverlayPage(${i})"
+style="
+padding:8px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:${i===page?'#ff2e2e':'#1a1a22'};
+color:#fff;
+">
+${i} </button>`;
 
 }
 
+if(page<total){
 
-function goPage(p){
-
-page=p;
-
-load();
+h+=`<button
+onclick="changeOverlayPage(${page+1})"
+style="
+padding:8px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#1a1a22;
+color:#fff;
+">
+› </button>`;
 
 }
 
+el.innerHTML=h;
 
-function nextSet(){
+}
 
-page+=6;
+function changeOverlayPage(p){
 
-load();
+overlayPage=p;
+
+loadOverlay();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
