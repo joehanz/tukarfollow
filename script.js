@@ -115,30 +115,55 @@ if(!pagination)return;
 
 let h="";
 
-for(let i=p;i<p+6;i++){
+if(p>1){
 
-h+=`<button onclick="goPage(${i})">
-${i} </button>`;
+h+=`
+<button onclick="prevSet()">
+‹
+</button>
+`;
 
 }
 
-h+=`<button onclick="nextSet()">
-› </button>`;
+for(
+let i=p;
+i<p+6;
+i++
+){
+
+h+=`
+<button onclick="goPage(${i})">
+${i}
+</button>
+`;
+
+}
+
+h+=`
+<button onclick="nextSet()">
+›
+</button>
+`;
 
 pagination.innerHTML=h;
-
-}
-
-function goPage(p){
-
-page=p;
-load();
 
 }
 
 function nextSet(){
 
 page+=6;
+
+load();
+
+}
+
+function prevSet(){
+
+page=Math.max(
+1,
+page-6
+);
+
 load();
 
 }
