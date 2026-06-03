@@ -242,63 +242,63 @@ document.getElementById(
 
 }
 
-function renderOverlayPagination(page,total){
-
-const el=document.getElementById("overlayPagination");
-
-if(!el)return;
+function renderPagination(p){
 
 let h="";
 
-let start=Math.max(1,page-2);
-let end=Math.min(total,start+5);
+for(
+let i=p;
+i<p+6;
+i++
+){
 
-for(let i=start;i<=end;i++){
+h+=`
 
-h+=`<button
-onclick="changeOverlayPage(${i})"
-style="
-padding:8px 14px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:${i===page?'#ff2e2e':'#1a1a22'};
-color:#fff;
-">
-${i} </button>`;
+<button
+onclick="goPage(${i})">
 
-}
+${i}
 
-if(page<total){
+</button>
 
-h+=`<button
-onclick="changeOverlayPage(${page+1})"
-style="
-padding:8px 14px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:#1a1a22;
-color:#fff;
-">
-› </button>`;
+`;
 
 }
 
-el.innerHTML=h;
+h+=`
+
+<button
+onclick="nextSet()">
+
+›
+
+</button>
+
+`;
+
+document
+.getElementById(
+"pagination"
+)
+.innerHTML=h;
 
 }
 
-function changeOverlayPage(p){
 
-overlayPage=p;
+function goPage(p){
 
-loadOverlay();
+page=p;
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+load();
+
+}
+
+
+function nextSet(){
+
+page+=6;
+
+load();
 
 }
 
