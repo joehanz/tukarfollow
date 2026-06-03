@@ -82,60 +82,53 @@ function renderPagination(p){
 
 let h="";
 
-for(
-let i=p;
-i<p+6;
-i++
-){
-
-h+=`
-
-<button
-onclick="goPage(${i})">
-
-${i}
-
-</button>
-
-`;
-
+/* PREV */
+if(p > 1){
+h+=`<button onclick="prevSet()">‹</button>`;
 }
 
+/* NUMBER */
+for(let i=1;i<=6;i++){
+let num = p + i - 1;
+
 h+=`
-
-<button
-onclick="nextSet()">
-
-›
-
+<button onclick="goPage(${num})"
+style="
+background:${num===page?'#ff2e2e':'#1a1a22'};
+color:#fff;
+border:none;
+padding:6px 10px;
+margin:2px;
+border-radius:6px;
+cursor:pointer;
+">
+${num}
 </button>
-
 `;
-
-document
-.getElementById(
-"pagination"
-)
-.innerHTML=h;
-
 }
 
+/* NEXT */
+h+=`<button onclick="nextSet()">›</button>`;
+
+document.getElementById("pagination").innerHTML=h;
+}
 
 function goPage(p){
-
-page=p;
-
+page = p;
 load();
-
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-
 function nextSet(){
-
-page+=6;
-
+page = page + 1;
 load();
+window.scrollTo({top:0,behavior:"smooth"});
+}
 
+function prevSet(){
+page = Math.max(1, page - 1);
+load();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 
