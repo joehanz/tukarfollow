@@ -540,9 +540,7 @@ background:#111;
 border:1px solid rgba(255,255,255,.08);
 ">
 
-<a href="${filmLokal.iframe}"
-
-target="_blank"
+<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
 
 style="
 color:gold;
