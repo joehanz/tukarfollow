@@ -360,6 +360,82 @@ setMode("id");
 WATCH DETAIL
 =========================== */
 
+/* ===== COCOKKAN FILM INDONESIA ===== */
+
+function cleanTitle(title){
+
+return title
+.toLowerCase()
+.replace(/\(\d{4}\)/g,'')
+.replace(/['’:.,-]/g,' ')
+.replace(/\b(the|movie|film)\b/g,'')
+.replace(/\s+/g,' ')
+.trim();
+
+}
+
+function similarity(a,b){
+
+const aa=
+cleanTitle(a)
+.split(' ')
+.filter(Boolean);
+
+const bb=
+cleanTitle(b)
+.split(' ')
+.filter(Boolean);
+
+let cocok=0;
+
+aa.forEach(kata=>{
+
+if(bb.includes(kata)){
+
+cocok++;
+
+}
+
+});
+
+return cocok/
+Math.max(
+aa.length,
+bb.length
+);
+
+}
+
+function cariFilmIndonesia(tmdbTitle){
+
+let hasil=null;
+let skor=0;
+
+movies.forEach(f=>{
+
+let nilai=
+similarity(
+tmdbTitle,
+f.title
+);
+
+if(
+nilai>=0.8 &&
+nilai>skor
+){
+
+skor=nilai;
+hasil=f;
+
+}
+
+});
+
+return hasil;
+
+}
+
+
 if(document.getElementById("playLayer")){
 
 document.getElementById("playLayer").onclick=function(){
@@ -438,6 +514,53 @@ ${m.overview||"Sinopsis tidak tersedia"}
 </p>
 
 `;
+
+/* ==== CEK MOVIES.JSON ==== */
+
+let filmLokal=
+cariFilmIndonesia(
+m.title
+);
+
+if(filmLokal){
+
+document
+.getElementById("info")
+.insertAdjacentHTML(
+
+"beforeend",
+
+`
+
+<div style="
+margin:15px 0;
+padding:14px;
+border-radius:12px;
+background:#111;
+border:1px solid rgba(255,255,255,.08);
+">
+
+<a href="${filmLokal.iframe}"
+
+target="_blank"
+
+style="
+color:gold;
+font-weight:bold;
+text-decoration:none;
+">
+
+🎬 Tersedia dalam Bahasa Indonesia
+
+</a>
+
+</div>
+
+`
+
+);
+
+}
 
 const r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
