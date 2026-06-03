@@ -494,7 +494,17 @@ location.href=`watch.html?id=${i}`;
 
 }
 
+let movies=[];
+
+fetch("movies.json")
+.then(r=>r.json())
+.then(data=>{
+
+movies=data;
+
 load();
+
+});
 
 
     //<![CDATA[
