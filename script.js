@@ -550,30 +550,80 @@ m.title
 if(filmLokal){
 
 document
-.getElementById("info")
+.querySelector(".player")
 .insertAdjacentHTML(
 
-"beforeend",
+"afterend",
 
 `
 
 <div style="
-margin:15px 0;
-padding:14px;
-border-radius:12px;
-background:#111;
-border:1px solid rgba(255,255,255,.08);
+max-width:900px;
+margin:18px auto;
+padding:15px;
+border-radius:14px;
+background:
+linear-gradient(
+90deg,
+rgba(20,20,20,.95),
+rgba(40,25,0,.95),
+rgba(20,20,20,.95)
+);
+
+border:1px solid rgba(255,215,0,.25);
+
+box-shadow:
+0 0 25px rgba(255,215,0,.15);
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+flex-wrap:wrap;
 ">
 
-<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
+<div>
+
+<div style="
+font-size:18px;
+font-weight:bold;
+color:gold;
+">
+
+🎬 Sub Indo Tersedia
+
+</div>
+
+<div style="
+font-size:13px;
+opacity:.7;
+margin-top:4px;
+">
+
+Versi terjemahan Indonesia siap ditonton
+
+</div>
+
+</div>
+
+<a
+href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
 
 style="
-color:gold;
+padding:12px 22px;
+border-radius:30px;
+background:gold;
+color:#000;
 font-weight:bold;
 text-decoration:none;
-">
+white-space:nowrap;
+box-shadow:
+0 0 20px rgba(255,215,0,.4);
+"
 
-🎬 Tersedia dalam Bahasa Indonesia
+>
+
+TONTON SEKARANG →
 
 </a>
 
