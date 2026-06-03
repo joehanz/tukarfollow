@@ -11,6 +11,9 @@ document
 
 }
 
+/* ===========================
+LOAD DATA
+=========================== */
 
 async function load(){
 
@@ -26,20 +29,19 @@ url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_coun
 
 }
 
-const data=
-await fetch(url)
-.then(r=>r.json());
+const data=await fetch(url).then(r=>r.json());
 
-render(
-data.results
-);
+render(data.results);
 
-renderPagination(
-data.page
-);
+if(document.getElementById("pagination")){
+renderPagination(data.page);
+}
 
 }
 
+/* ===========================
+RENDER GRID
+=========================== */
 
 function render(data){
 
@@ -51,132 +53,111 @@ if(!m.poster_path)return;
 
 h+=`
 
-<div
-class="card"
-onclick="go(${m.id})">
-
+<div class="card" onclick="go(${m.id})">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-
-<div class="title">
-
-${m.title}
-
-</div>
-
+<div class="title">${m.title}</div>
 </div>
 
 `;
 
 });
 
-document
-.getElementById(
-"grid"
-)
-.innerHTML=h;
+document.getElementById("grid").innerHTML=h;
 
 }
 
+/* ===========================
+PAGINATION FIX (INDEX STYLE)
+=========================== */
 
 function renderPagination(p){
 
+const pagination=document.getElementById("pagination");
+if(!pagination)return;
+
 let h="";
 
-for(
-let i=p;
-i<p+6;
-i++
-){
+/* prev */
+if(p>1){
+h+=`
+<button onclick="prevSet()">‹</button>
+`;
+}
+
+/* numbers */
+for(let i=p;i<p+6;i++){
 
 h+=`
-
-<button
-onclick="goPage(${i})">
-
+<button onclick="goPage(${i})"
+style="
+background:${i===page?'#ff2e2e':'#1a1a22'};
+color:#fff;
+">
 ${i}
-
 </button>
-
 `;
-
 }
 
+/* next */
 h+=`
-
-<button
-onclick="nextSet()">
-
-›
-
-</button>
-
+<button onclick="nextSet()">›</button>
 `;
 
-document
-.getElementById(
-"pagination"
-)
-.innerHTML=h;
-
+pagination.innerHTML=h;
 }
 
+/* ===========================
+PAGINATION CONTROL
+=========================== */
 
 function goPage(p){
-
 page=p;
-
 load();
-
+window.scrollTo({top:0,behavior:"smooth"});
 }
-
 
 function nextSet(){
-
 page+=6;
-
 load();
-
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
+function prevSet(){
+page=Math.max(1,page-6);
+load();
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ===========================
+NAVIGATION
+=========================== */
 
 function go(id){
-
-location.href=
-`watch.html?id=${id}`;
-
+location.href=`watch.html?id=${id}`;
 }
 
+/* ===========================
+SEARCH
+=========================== */
 
 function searchMovie(){
 
-query=
-document
-.getElementById(
-"search"
-)
-.value;
-
+query=document.getElementById("search").value;
 page=1;
-
 load();
 
 }
-
 
 function searchMovieMobile(){
 
-query=
-document
-.querySelector(
-"#mobileMenu input"
-)
-.value;
-
+query=document.querySelector("#mobileMenu input").value;
 page=1;
-
 load();
 
 }
 
-load();
+/* ===========================
+INIT
+=========================== */
 
+load();
