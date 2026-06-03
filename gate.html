@@ -3,107 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TukarFollow</title>
+<title>TukarFollow Gate</title>
 
 <style>
 
-*{
+/* semua dikurung tf- agar tidak tabrakan */
+
+html,body{
 margin:0;
 padding:0;
-box-sizing:border-box;
-font-family:system-ui,sans-serif;
+height:100%;
 }
 
-body{
+.tf-body{
+
 background:#080808;
 color:#fff;
 min-height:100vh;
 overflow-x:hidden;
+font-family:Arial,sans-serif;
+position:relative;
+
 }
 
-/* background bioskop tipis */
-body::before{
+.tf-body:before{
+
 content:"";
 position:fixed;
 inset:0;
+
 background:
-linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.95)),
+linear-gradient(
+rgba(0,0,0,.75),
+rgba(0,0,0,.95)
+),
 url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1800");
+
 background-size:cover;
 background-position:center;
+
 filter:blur(2px);
 transform:scale(1.1);
+
 z-index:-2;
+
 }
 
-body::after{
-content:"";
-position:fixed;
-top:-100px;
-right:-100px;
-width:400px;
-height:400px;
-background:
-radial-gradient(
-rgba(255,190,90,.25),
-transparent 70%
-);
-z-index:-1;
-}
+.tf-wrap{
 
-.container{
-padding:30px 20px;
-max-width:1100px;
+max-width:1200px;
 margin:auto;
+padding:25px;
+
 }
 
-.title{
+.tf-title{
+
 font-size:35px;
 font-weight:bold;
-margin-bottom:8px;
+margin-bottom:10px;
+
 }
 
-.title span{
+.tf-title span{
+
 color:gold;
+
 }
 
-.desc{
+.tf-desc{
+
 opacity:.7;
 margin-bottom:30px;
-line-height:1.6;
+
 }
 
-/* grid poster */
+.tf-grid{
 
-.grid{
 display:grid;
 grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
+repeat(
+auto-fit,
+minmax(230px,1fr)
+);
+
 gap:20px;
+
 }
 
-/* card */
+.tf-card{
 
-.card{
-
-position:relative;
 height:300px;
-overflow:hidden;
 border-radius:20px;
+overflow:hidden;
 cursor:pointer;
+position:relative;
 
-background:#111;
-
-transition:.4s;
-}
-
-.card:hover{
-
-transform:translateY(-8px);
+transition:.3s;
 
 }
 
-.card img{
+.tf-card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.tf-card img{
 
 width:100%;
 height:100%;
@@ -111,7 +117,7 @@ object-fit:cover;
 
 }
 
-.overlay{
+.tf-overlay{
 
 position:absolute;
 left:0;
@@ -128,45 +134,27 @@ rgba(0,0,0,.95)
 
 }
 
-.name{
-
-font-size:20px;
-font-weight:bold;
-margin-bottom:5px;
-}
-
-.sub{
-
-font-size:13px;
-opacity:.7;
-}
-
-/* klaim */
-
-.claim{
+.tf-claim{
 
 display:none;
 text-align:center;
-margin-top:80px;
+margin-top:100px;
 
 }
 
-.claim button{
+.tf-claim a{
 
-border:none;
-padding:18px 40px;
-font-size:18px;
-font-weight:bold;
-border-radius:100px;
-cursor:pointer;
+display:inline-block;
+
+padding:16px 40px;
 
 background:gold;
+color:black;
 
-}
+text-decoration:none;
 
-.claim button:hover{
-
-transform:scale(1.05);
+border-radius:100px;
+font-weight:bold;
 
 }
 
@@ -175,88 +163,76 @@ transform:scale(1.05);
 
 <body>
 
-<div class="container">
+<div class="tf-body">
 
-<div class="title">
+<div class="tf-wrap">
+
+<h1 class="tf-title">
 Tukar<span>Follow</span>
+</h1>
+
+<div class="tf-desc">
+
+Pilih media sosial lalu kembali.
+
 </div>
 
-<div class="desc">
-Pilih media sosial lalu kembali untuk membuka bioskop.
-</div>
+<div id="tfGrid" class="tf-grid">
 
-<div id="socialGrid" class="grid">
-
-<div class="card"
+<div class="tf-card"
 onclick="buka('https://youtube.com/@AKUNMU')">
 
-<img src="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=900">
+<img src="https://picsum.photos/400/700?1">
 
-<div class="overlay">
+<div class="tf-overlay">
 
-<div class="name">
-YouTube
-</div>
+<h2>YouTube</h2>
 
-<div class="sub">
-Buka channel
 </div>
 
 </div>
-</div>
 
 
-<div class="card"
+<div class="tf-card"
 onclick="buka('https://instagram.com/AKUNMU')">
 
-<img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=900">
+<img src="https://picsum.photos/400/700?2">
 
-<div class="overlay">
+<div class="tf-overlay">
 
-<div class="name">
-Instagram
-</div>
+<h2>Instagram</h2>
 
-<div class="sub">
-Buka profil
 </div>
 
 </div>
-</div>
 
 
-<div class="card"
+<div class="tf-card"
 onclick="buka('https://tiktok.com/@AKUNMU')">
 
-<img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=900">
+<img src="https://picsum.photos/400/700?3">
 
-<div class="overlay">
+<div class="tf-overlay">
 
-<div class="name">
-TikTok
-</div>
-
-<div class="sub">
-Buka profil
-</div>
+<h2>TikTok</h2>
 
 </div>
+
 </div>
 
 </div>
 
 
-<div class="claim" id="claim">
+<div class="tf-claim"
+id="tfClaim">
 
-<h2 style="margin-bottom:20px">
-🔥 Reward Siap
-</h2>
+<a href="index.html">
 
-<button onclick="masuk()">
+🎬 Klaim Reward
 
-🎬 Klaim Bioskop
+</a>
 
-</button>
+</div>
 
 </div>
 
@@ -264,11 +240,11 @@ Buka profil
 
 <script>
 
-let sudahKlik=false;
+let klik=false;
 
 function buka(url){
 
-sudahKlik=true;
+klik=true;
 
 window.open(
 url,
@@ -277,29 +253,25 @@ url,
 
 }
 
-/* saat user balik ke tab */
-
 window.onfocus=function(){
 
-if(sudahKlik){
+if(klik){
 
 document
 .getElementById(
-"socialGrid"
-).style.display="none";
+"tfGrid"
+)
+.style.display=
+"none";
 
 document
 .getElementById(
-"claim"
-).style.display="block";
+"tfClaim"
+)
+.style.display=
+"block";
 
 }
-
-}
-
-function masuk(){
-
-location.href="index.html";
 
 }
 
