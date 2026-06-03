@@ -30,17 +30,12 @@ BURGER
 =========================== */
 
 function toggleMenu(){
-
 const menu=document.getElementById("mobileMenu");
-
-if(menu){
-menu.classList.toggle("show");
-}
-
+if(menu) menu.classList.toggle("show");
 }
 
 /* ===========================
-INDEX.HTML
+INDEX LOAD
 =========================== */
 
 async function load(){
@@ -53,21 +48,16 @@ return;
 let url="";
 
 if(query){
-
 url=`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${query}&page=${page}`;
-
-}else if(mode==="id"){
-
+}
+else if(mode==="id"){
 url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID&page=${page}`;
-
-}else if(mode==="luar"){
-
+}
+else if(mode==="luar"){
 url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&without_origin_country=ID&page=${page}`;
-
-}else{
-
+}
+else{
 url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${KEY}&page=${page}`;
-
 }
 
 const data=await fetch(url).then(r=>r.json());
@@ -77,55 +67,46 @@ renderGrid(data.results);
 if(document.getElementById("pagination")){
 renderPagination(data.page);
 }
-
 }
 
+/* ===========================
+GRID (AMAN)
+=========================== */
+
 function renderGrid(data){
-
 const grid=document.getElementById("grid");
-
 if(!grid)return;
 
 let h="";
 
 data.forEach(m=>{
-
 if(!m.poster_path)return;
 
 h+=`
-
-<div class="card" onclick="go(${m.id})">
+<div class="card" onclick="go(${m.id})" style="cursor:pointer">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div class="title">${m.title}</div>
 </div>
-
 `;
-
 });
 
 grid.innerHTML=h;
-
 }
 
 /* ===========================
-PAGINATION FIX FULL
+PAGINATION FIX STABLE
 =========================== */
 
 function renderPagination(p){
-
 const pagination=document.getElementById("pagination");
 if(!pagination)return;
 
 let h="";
 
-/* prev */
-if(p>1){
-h+=`
-<button onclick="prevSet()">‹</button>
-`;
+if(page>1){
+h+=`<button onclick="prevSet()">‹</button>`;
 }
 
-/* number */
 for(let i=p;i<p+6;i++){
 
 h+=`
@@ -133,16 +114,14 @@ h+=`
 style="
 background:${i===page?'#ff2e2e':'#1a1a22'};
 color:#fff;
+font-weight:${i===page?'bold':'normal'};
 ">
 ${i}
 </button>
 `;
 }
 
-/* next */
-h+=`
-<button onclick="nextSet()">›</button>
-`;
+h+=`<button onclick="nextSet()">›</button>`;
 
 pagination.innerHTML=h;
 }
@@ -177,156 +156,7 @@ load();
 }
 
 /* ===========================
-OVERLAY SEARCH (UNCHANGED SAFE)
-=========================== */
-
-async function loadOverlay(){
-
-let url="";
-
-if(overlayMode==="search"){
-url=`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
-}
-
-if(overlayMode==="local"){
-url=`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID&page=${overlayPage}`;
-}
-
-const data=await fetch(url).then(r=>r.json());
-
-showOverlay(data.results);
-
-renderOverlayPagination(data.page,data.total_pages);
-}
-
-function showOverlay(data){
-
-const overlay=document.getElementById("overlay");
-if(!overlay)return;
-
-overlay.style.display="block";
-
-let h="";
-
-data.forEach(v=>{
-
-if(!v.poster_path)return;
-
-h+=`
-<div class="card" onclick="go(${v.id})">
-<img src="https://image.tmdb.org/t/p/w300${v.poster_path}">
-<div class="title">${v.title||v.name}</div>
-</div>
-`;
-
-});
-
-document.getElementById("overlayGrid").innerHTML=h;
-}
-
-/* overlay pagination tetap */
-function renderOverlayPagination(page,total){
-
-const el=document.getElementById("overlayPagination");
-if(!el)return;
-
-let h="";
-
-let start=Math.max(1,page-2);
-let end=Math.min(total,start+5);
-
-for(let i=start;i<=end;i++){
-
-h+=`
-<button onclick="changeOverlayPage(${i})"
-style="
-padding:8px 14px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:${i===page?'#ff2e2e':'#1a1a22'};
-color:#fff;
-">
-${i}
-</button>
-`;
-}
-
-if(page<total){
-h+=`
-<button onclick="changeOverlayPage(${page+1})">›</button>
-`;
-}
-
-el.innerHTML=h;
-}
-
-function changeOverlayPage(p){
-overlayPage=p;
-loadOverlay();
-window.scrollTo({top:0,behavior:"smooth"});
-}
-
-/* ===========================
-SEARCH
-=========================== */
-
-function searchMovie(){
-
-const input=document.getElementById("search");
-if(!input)return;
-
-const val=input.value;
-if(!val.trim())return;
-
-if(id){
-currentQuery=val;
-overlayMode="search";
-overlayPage=1;
-loadOverlay();
-}else{
-query=val;
-page=1;
-load();
-}
-
-}
-
-function searchMovieMobile(){
-
-const input=document.querySelector("#mobileMenu input");
-if(!input)return;
-
-const val=input.value;
-if(!val.trim())return;
-
-if(id){
-currentQuery=val;
-overlayMode="search";
-overlayPage=1;
-loadOverlay();
-}else{
-query=val;
-page=1;
-load();
-}
-
-}
-
-function loadLocal(){
-
-if(id){
-overlayMode="local";
-overlayPage=1;
-loadOverlay();
-}else{
-setMode("id");
-}
-
-}
-
-/* ===========================
-DETAIL
+DETAIL PAGE
 =========================== */
 
 if(document.getElementById("playLayer")){
@@ -334,14 +164,8 @@ if(document.getElementById("playLayer")){
 document.getElementById("playLayer").onclick=function(){
 
 if(!adsState){
-
 adsState=true;
-
-window.open(
-ads[Math.floor(Math.random()*ads.length)],
-"_blank"
-);
-
+window.open(ads[Math.floor(Math.random()*ads.length)],"_blank");
 return;
 }
 
@@ -349,13 +173,11 @@ this.style.display="none";
 
 document.getElementById("player").src=
 `https://vsembed.ru/embed/movie?tmdb=${id}`;
-
 };
-
 }
 
 /* ===========================
-DETAIL LOAD
+LOAD DETAIL + BUTTON SUB INDO FIX (INI YANG AMAN)
 =========================== */
 
 async function loadDetail(){
@@ -382,6 +204,62 @@ ${m.overview||"Sinopsis tidak tersedia"}
 </p>
 `;
 
+/* ===========================
+🔴 SUB INDO BUTTON FIX (NO QUERYSELECTOR BUG)
+=========================== */
+
+let filmLokal = cariFilmIndonesia(m.title);
+
+if(filmLokal){
+
+const info = document.getElementById("info");
+
+if(info){
+
+info.insertAdjacentHTML("afterend",`
+<div style="
+max-width:900px;
+margin:18px auto;
+padding:15px;
+border-radius:14px;
+background:linear-gradient(90deg,rgba(20,20,20,.95),rgba(40,25,0,.95),rgba(20,20,20,.95));
+border:1px solid rgba(255,215,0,.25);
+box-shadow:0 0 25px rgba(255,215,0,.15);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+">
+
+<div>
+<div style="font-size:18px;font-weight:bold;color:gold;">
+🎬 Sub Indo Tersedia
+</div>
+<div style="font-size:13px;opacity:.7;margin-top:4px;">
+Versi Indonesia siap ditonton
+</div>
+</div>
+
+<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
+style="
+padding:12px 22px;
+border-radius:30px;
+background:gold;
+color:#000;
+font-weight:bold;
+text-decoration:none;
+box-shadow:0 0 20px rgba(255,215,0,.4);
+">
+TONTON SEKARANG →
+</a>
+
+</div>
+`);
+}
+}
+
+/* RELATED */
 let r=await fetch(
 `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
 ).then(r=>r.json());
@@ -391,14 +269,12 @@ renderRelated();
 }
 
 function renderRelated(){
-
 const rel=document.getElementById("rel");
 if(!rel)return;
 
 let h="";
 
 items.forEach(v=>{
-
 if(!v.poster_path)return;
 
 h+=`
@@ -406,14 +282,12 @@ h+=`
 <img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
 </div>
 `;
-
 });
 
 rel.innerHTML=h;
 }
 
 function move(dir){
-
 const rel=document.getElementById("rel");
 if(!rel)return;
 
@@ -421,7 +295,6 @@ rel.scrollBy({
 left:dir*300,
 behavior:"smooth"
 });
-
 }
 
 function go(i){
@@ -429,7 +302,59 @@ location.href=`watch.html?id=${i}`;
 }
 
 /* ===========================
-BOOT
+SEARCH + BOOT
+=========================== */
+
+function searchMovie(){
+const input=document.getElementById("search");
+if(!input)return;
+
+const val=input.value;
+if(!val.trim())return;
+
+if(id){
+currentQuery=val;
+overlayMode="search";
+overlayPage=1;
+loadOverlay();
+}else{
+query=val;
+page=1;
+load();
+}
+}
+
+function searchMovieMobile(){
+const input=document.querySelector("#mobileMenu input");
+if(!input)return;
+
+const val=input.value;
+if(!val.trim())return;
+
+if(id){
+currentQuery=val;
+overlayMode="search";
+overlayPage=1;
+loadOverlay();
+}else{
+query=val;
+page=1;
+load();
+}
+}
+
+function loadLocal(){
+if(id){
+overlayMode="local";
+overlayPage=1;
+loadOverlay();
+}else{
+setMode("id");
+}
+}
+
+/* ===========================
+MOVIES LOAD
 =========================== */
 
 let movies=[];
