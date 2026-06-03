@@ -109,74 +109,57 @@ grid.innerHTML=h;
 
 function renderPagination(p){
 
-const pagination=document.getElementById("pagination");
-
-if(!pagination)return;
-
 let h="";
 
-if(p>1){
-
-h+=`
-<button onclick="prevSet()">
-‹
-</button>
-`;
-
+/* PREV */
+if(p > 1){
+h+=`<button onclick="prevSet()">‹</button>`;
 }
 
-for(
-let i=p;
-i<p+6;
-i++
-){
+/* NUMBER */
+for(let i=1;i<=6;i++){
+let num = p + i - 1;
 
 h+=`
-<button onclick="goPage(${i})">
-${i}
+<button onclick="goPage(${num})"
+style="
+background:${num===page?'#ff2e2e':'#1a1a22'};
+color:#fff;
+border:none;
+padding:6px 10px;
+margin:2px;
+border-radius:6px;
+cursor:pointer;
+">
+${num}
 </button>
 `;
-
 }
 
-h+=`
-<button onclick="nextSet()">
-›
-</button>
-`;
+/* NEXT */
+h+=`<button onclick="nextSet()">›</button>`;
 
-pagination.innerHTML=h;
+document.getElementById("pagination").innerHTML=h;
+}
 
+function goPage(p){
+page = p;
+load();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function nextSet(){
-
-page+=6;
-
+page = page + 1;
 load();
-
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function prevSet(){
-
-page=Math.max(
-1,
-page-6
-);
-
+page = Math.max(1, page - 1);
 load();
-
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function setMode(m){
-
-mode=m;
-query="";
-page=1;
-
-load();
-
-}
 
 /* ===========================
 WATCH.HTML OVERLAY
