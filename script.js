@@ -523,64 +523,117 @@ ${m.overview||"Sinopsis tidak tersedia"}
 
 `;
 
-/* ==== cek movies.json ==== */
-let filmlokal = carifilmindonesia(m.title);
-if (filmlokal) {
-  // Menempatkan elemen tepat di antara player dan info film
-  document
-    .getElementById("player")
-    .insertAdjacentHTML(
-      "afterend",
-      `
-      <div style=" margin:15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08); ">
-        <a href="manual-watch.html?movie=${movies.indexOf(filmlokal)}" style=" color:gold; font-weight:bold; text-decoration:none; ">
-          🎬 Available in Indonesian
-        </a>
-      </div>
-      `
-    );
+/* ==== CEK MOVIES.JSON ==== */
+
+let filmLokal=
+cariFilmIndonesia(
+m.title
+);
+
+if(filmLokal){
+
+document
+.getElementById("info")
+.insertAdjacentHTML(
+
+"beforeend",
+
+`
+
+<div style="
+margin:15px 0;
+padding:14px;
+border-radius:12px;
+background:#111;
+border:1px solid rgba(255,255,255,.08);
+">
+
+<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
+
+style="
+color:gold;
+font-weight:bold;
+text-decoration:none;
+">
+
+🎬 Available in Indonesian
+
+</a>
+
+</div>
+
+`
+
+);
+
 }
 
-const r = await fetch(
-  `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${key}`
-).then((r) => r.json());
-items = r.results.slice(0, 15);
-renderrelated();
+const r=await fetch(
+`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
+)
+.then(r=>r.json());
+
+items=r.results.slice(0,15);
+
+renderRelated();
+
 }
 
-function renderrelated() {
-  const rel = document.getElementById("rel");
-  if (!rel) return;
-  let h = "";
-  items.forEach((v) => {
-    if (!v.poster_path) return;
-    h += `
-    <div class="rel-card" onclick="go(${v.id})">
-      <img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
-    </div>
-    `;
-  });
-  rel.innerHTML = h;
+function renderRelated(){
+
+const rel=document.getElementById("rel");
+
+if(!rel)return;
+
+let h="";
+
+items.forEach(v=>{
+
+if(!v.poster_path)return;
+
+h+=`
+
+<div class="rel-card" onclick="go(${v.id})">
+<img src="https://image.tmdb.org/t/p/w200${v.poster_path}">
+</div>
+`;
+
+});
+
+rel.innerHTML=h;
+
 }
 
-function move(dir) {
-  const rel = document.getElementById("rel");
-  if (!rel) return;
-  rel.scrollby({ left: dir * 300, behavior: "smooth" });
+function move(dir){
+
+const rel=document.getElementById("rel");
+
+if(!rel)return;
+
+rel.scrollBy({
+left:dir*300,
+behavior:"smooth"
+});
+
 }
 
-function go(i) {
-  location.href = `watch.html?id=${i}`;
+function go(i){
+
+location.href=`watch.html?id=${i}`;
+
 }
 
-let movies = [];
+let movies=[];
+
 fetch("movies.json")
-  .then((r) => r.json())
-  .then((data) => {
-    movies = data;
-    load();
-  });
+.then(r=>r.json())
+.then(data=>{
 
+movies=data;
+
+load();
+
+});
 
 
     //<![CDATA[
