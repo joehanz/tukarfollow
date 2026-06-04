@@ -99,30 +99,7 @@ opacity:.9;
 ${movie.sinopsis}
 
 </p>
-
-
-
-
-
-<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
-
-style="
-color:gold;
-font-weight:bold;
-text-decoration:none;
-">
-
-🎬 Available in Indonesian
-
-</a>
-
-
-
-
-
-
-
-
+kembali
 `;
 
 renderRelated();
