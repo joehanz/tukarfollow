@@ -100,6 +100,57 @@ ${movie.sinopsis}
 
 </p>
 
+
+
+/* ==== CEK MOVIES.JSON ==== */
+
+let filmLokal=
+cariFilmIndonesia(
+m.title
+);
+
+if(filmLokal){
+
+document
+.getElementById("info")
+.insertAdjacentHTML(
+
+"beforeend",
+
+`
+
+<div style="
+margin:15px 0;
+padding:14px;
+border-radius:12px;
+background:#111;
+border:1px solid rgba(255,255,255,.08);
+">
+
+<a href="manual-watch.html?movie=${movies.indexOf(filmLokal)}"
+
+style="
+color:gold;
+font-weight:bold;
+text-decoration:none;
+">
+
+🎬 Available in Indonesian
+
+</a>
+
+</div>
+
+`
+
+);
+
+
+
+
+
+
+
 `;
 
 renderRelated();
