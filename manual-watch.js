@@ -115,7 +115,7 @@ font-weight:bold;
 text-decoration:none;
 ">
 
-🎬 Versi Original
+🎬 Versi Orisinal
 
 </a>
 
