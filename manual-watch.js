@@ -119,6 +119,7 @@ text-decoration:none;
 🎬 Available in Indonesian
 
 </a>
+</div>
 
 `;
 
