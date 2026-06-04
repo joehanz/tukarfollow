@@ -103,6 +103,7 @@ ${movie.sinopsis}
 
 renderRelated();
 
+  <button onclick='goBack()'>Kembali </button>
 }
 
 
