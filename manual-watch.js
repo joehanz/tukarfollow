@@ -2,8 +2,8 @@ const movieId = new URLSearchParams(location.search).get("movie");
 
 const ads = [
   "https://rajarayap.com",
-  "https://blogspot.com",
-  "https://blogspot.com"
+  "https://ptdwiprima.blogspot.com",
+  "https://caturbangunsentosa.blogspot.com"
 ];
 
 let movies = [];
