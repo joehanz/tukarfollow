@@ -58,7 +58,7 @@ loadMovie();
 }
 
 /* LOAD MOVIE */
-ulangi sekali lagi disini. kembali siap copas function loadMovie(){
+function loadMovie(){
 
 if(!movie)return;
 
