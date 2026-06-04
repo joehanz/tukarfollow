@@ -2,8 +2,8 @@ const movieId = new URLSearchParams(location.search).get("movie");
 
 const ads = [
   "https://rajarayap.com",
-  "https://ptdwiprima.blogspot.com",
-  "https://caturbangunsentosa.blogspot.com"
+  "https://blogspot.com",
+  "https://blogspot.com"
 ];
 
 let movies = [];
@@ -42,27 +42,15 @@ function loadMovie() {
       ${movie.sinopsis}
     </p>
 
-    <!-- TOMBOL VERSI ORISINIL -->
+    <!-- TOMBOL VERSI ORISINIL MENGARAH KE WATCH.HTML SESUAI GRID INDEX -->
     <div style="margin:20px 0 15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08);">
-      <a href="#" onclick="goBackToReferrer(event)" style="color:gold; font-weight:bold; text-decoration:none; display:inline-block;">
+      <a href="watch.html?movie=${movieId}" style="color:gold; font-weight:bold; text-decoration:none; display:inline-block;">
         🎬 Versi Orisinal
       </a>
     </div>
   `;
 
   renderRelated();
-}
-
-/* FUNGSI KEMBALI KE HALAMAN ASAL KLIK */
-function goBackToReferrer(e) {
-  e.preventDefault();
-  // Jika ada riwayat halaman asal tempat dia klik, kembali ke sana
-  if (document.referrer && document.referrer !== "") {
-    window.location.href = document.referrer;
-  } else {
-    // Jika masuk langsung tanpa klik dari halaman lain, kembali ke index.html
-    window.location.href = "index.html";
-  }
 }
 
 /* PLAYER */
