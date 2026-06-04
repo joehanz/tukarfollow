@@ -102,23 +102,6 @@ ${movie.sinopsis}
 
 
 
-/* ==== CEK MOVIES.JSON ==== */
-
-let filmLokal=
-cariFilmIndonesia(
-m.title
-);
-
-if(filmLokal){
-
-document
-.getElementById("info")
-.insertAdjacentHTML(
-
-"beforeend",
-
-`
-
 <div style="
 margin:15px 0;
 padding:14px;
