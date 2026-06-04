@@ -124,9 +124,6 @@ text-decoration:none;
 
 </div>
 
-`
-
-);
 
 
 
