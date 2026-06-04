@@ -99,62 +99,33 @@ ${movie.sinopsis}
 
 </p>
 
+<div style="
+margin:15px 0;
+padding:14px;
+border-radius:12px;
+background:#111;
+border:1px solid rgba(255,255,255,.08);
+">
+
+<a href="javascript:history.back()"
+
+style="
+color:gold;
+font-weight:bold;
+text-decoration:none;
+">
+
+🎬 Versi Original
+
+</a>
+
+</div>
+
 `;
 
 renderRelated();
   
 }
-
-
-/* PLAYER */
-
-document
-.getElementById(
-"playLayer"
-)
-.onclick=function(){
-
-const src=
-movie.iframe
-.toLowerCase();
-
-const bypass=
-
-src.includes(
-"abyssplayer.com"
-);
-
-if(
-!bypass &&
-!adsState
-){
-
-adsState=true;
-
-ads.forEach(url=>{
-
-window.open(
-url,
-"_blank"
-);
-
-});
-
-return;
-
-}
-
-this.style.display=
-"none";
-
-document
-.getElementById(
-"player"
-)
-.src=
-movie.iframe;
-
-};
 
 /* RELATED */
 
