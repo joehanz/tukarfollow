@@ -100,7 +100,6 @@ ${movie.sinopsis}
 
 </p>
 
-/*salah
 `;
 
 renderRelated();
