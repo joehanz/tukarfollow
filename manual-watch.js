@@ -100,6 +100,8 @@ ${movie.sinopsis}
 </p>
 
 `
+  
+`
 
 <div style="
 margin:15px 0;
@@ -125,9 +127,8 @@ text-decoration:none;
 
 `
 
-
-
-`;
+  
+  ;
 
 renderRelated();
   
