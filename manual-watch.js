@@ -1,4 +1,5 @@
 const movieId = new URLSearchParams(location.search).get("movie");
+const KEY = "b3b893873ed1bb7f175b2707afeea2a0"; // Disamakan dengan KEY script.js agar bisa akses TMDB
 
 const ads = [
   "https://rajarayap.com",
@@ -10,21 +11,23 @@ let movies = [];
 let movie = null;
 let adsState = false;
 
-/* OVERLAY */
-let filtered = [];
+/* OVERLAY STATE (DISAMAKAN DENGAN SCRIPT.JS) */
 let overlayPage = 1;
-const ITEMS_PER_PAGE = 24;
+let overlayMode = "";
+let currentQuery = "";
 
 /* BURGER */
 function toggleMenu() {
-  document.getElementById("mobileMenu").classList.toggle("show");
+  const menu = document.getElementById("mobileMenu");
+  if (menu) {
+    menu.classList.toggle("show");
+  }
 }
 
 /* LOAD JSON */
 async function load() {
   const res = await fetch("movies.json");
   movies = await res.json();
-  filtered = [...movies];
   movie = movies[movieId];
   loadMovie();
 }
@@ -53,24 +56,17 @@ function loadMovie() {
   renderRelated();
 }
 
-/* PLAYER */
-/* PLAYER */
+/* PLAYER (SUDAH DIPERBAIKI: ACAK & SATU NEWTAB) */
 document.getElementById("playLayer").onclick = function () {
   const checkSrc = movie.iframe.toLowerCase();
   const bypass = checkSrc.includes("abyssplayer.com");
 
-  // Jika tidak di-bypass dan iklan belum pernah muncul
   if (!bypass && !adsState) {
     adsState = true;
-    
-    // 1. Mengambil satu link iklan secara acak dari array 'ads'
     const randomAd = ads[Math.floor(Math.random() * ads.length)];
-    
-    // 2. Membuka hanya satu link iklan tersebut di tab baru
     window.open(randomAd, "_blank");
   }
 
-  // 3. Langsung putar video tanpa memaksa user klik dua kali
   this.style.display = "none";
   document.getElementById("player").src = movie.iframe;
 };
@@ -95,7 +91,9 @@ function renderRelated() {
 }
 
 function move(dir) {
-  document.getElementById("rel").scrollBy({
+  const rel = document.getElementById("rel");
+  if (!rel) return;
+  rel.scrollBy({
     left: dir * 300,
     behavior: "smooth"
   });
@@ -105,70 +103,114 @@ function go(i) {
   location.href = `manual-watch.html?movie=${i}`;
 }
 
-/* SEARCH */
-function searchMovie() {
-  const q = document.getElementById("search").value.toLowerCase().trim();
-  filterMovies(q);
-}
+/* ========================================================
+   FUNGSI PENCARIAN & OVERLAY TMDB (SAMA SEPERTI SCRIPT.JS)
+   ======================================================== */
 
-function searchMovieMobile() {
-  const q = document.querySelector("#mobileMenu input").value.toLowerCase().trim();
-  filterMovies(q);
-}
+async function loadOverlay() {
+  let url = "";
 
-function filterMovies(q) {
-  if (!q) {
-    document.getElementById("overlay").style.display = "none";
-    return;
+  if (overlayMode === "search") {
+    url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
   }
 
-  filtered = movies.filter(m => m.title.toLowerCase().includes(q));
-  overlayPage = 1;
-  showOverlay();
+  if (overlayMode === "local") {
+    url = `https://themoviedb.org{KEY}&with_origin_country=ID&page=${overlayPage}`;
+  }
+
+  const data = await fetch(url).then(r => r.json());
+  showOverlay(data.results);
+  renderOverlayPagination(data.page, data.total_pages);
 }
 
-/* OVERLAY */
-function showOverlay() {
-  document.getElementById("overlay").style.display = "block";
-  const start = (overlayPage - 1) * ITEMS_PER_PAGE;
-  const current = filtered.slice(start, start + ITEMS_PER_PAGE);
+function showOverlay(data) {
+  const overlay = document.getElementById("overlay");
+  if (!overlay) return;
 
+  overlay.style.display = "block";
   let h = "";
-  current.forEach(v => {
+
+  data.forEach(v => {
+    if (!v.poster_path) return;
     h += `
-      <div class="card" onclick="go(${movies.indexOf(v)})">
-        <img src="${v.image}">
-        <div class="title">${v.title}</div>
+      <div class="card" onclick="goWatch(${v.id})">
+        <img src="https://tmdb.org{v.poster_path}">
+        <div class="title">${v.title || v.name}</div>
       </div>
     `;
   });
 
   document.getElementById("overlayGrid").innerHTML = h;
-  renderOverlayPagination();
 }
 
-function renderOverlayPagination() {
-  const total = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  let h = "";
+function renderOverlayPagination(page, total) {
+  const el = document.getElementById("overlayPagination");
+  if (!el) return;
 
-  for (let i = 1; i <= total; i++) {
+  let h = "";
+  let start = Math.max(1, page - 2);
+  let end = Math.min(total, start + 5);
+
+  for (let i = start; i <= end; i++) {
     h += `
-      <button onclick="changePage(${i})" style="padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:${i === overlayPage ? '#ff2e2e' : '#1a1a22'}; color:#fff;">
+      <button onclick="changeOverlayPage(${i})" style="padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:${i === page ? '#ff2e2e' : '#1a1a22'}; color:#fff; margin:2px;">
         ${i}
       </button>
     `;
   }
 
-  document.getElementById("overlayPagination").innerHTML = h;
+  if (page < total) {
+    h += `
+      <button onclick="changeOverlayPage(${page + 1})" style="padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:#1a1a22; color:#fff; margin:2px;">
+        ›
+      </button>
+    `;
+  }
+
+  el.innerHTML = h;
 }
 
-function changePage(i) {
-  overlayPage = i;
-  showOverlay();
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+function changeOverlayPage(p) {
+  overlayPage = p;
+  loadOverlay();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function searchMovie() {
+  const input = document.getElementById("search");
+  if (!input) return;
+
+  const val = input.value;
+  if (!val.trim()) return;
+
+  currentQuery = val;
+  overlayMode = "search";
+  overlayPage = 1;
+  loadOverlay();
+}
+
+function searchMovieMobile() {
+  const input = document.querySelector("#mobileMenu input");
+  if (!input) return;
+
+  const val = input.value;
+  if (!val.trim()) return;
+
+  currentQuery = val;
+  overlayMode = "search";
+  overlayPage = 1;
+  loadOverlay();
+}
+
+function loadLocal() {
+  overlayMode = "local";
+  overlayPage = 1;
+  loadOverlay();
+}
+
+// Fungsi bantu saat film hasil cari di klik, dia langsung lompat ke halaman watch.html berbasis TMDB ID
+function goWatch(tmdbId) {
+  location.href = `watch.html?id=${tmdbId}`;
 }
 
 load();
