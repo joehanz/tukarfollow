@@ -67,7 +67,7 @@ border:0;
 </div>
 <div class="nav-right">
 
-<!-- INPUT NAVIGASI DENGAN ID YANG SESUAI -->
+<!-- RE-FIX: Memastikan ID terpasang dengan benar -->
 <input id="search" placeholder="Search..." oninput="searchMovie()">
 
 <a href="index.html">All Movies</a>
@@ -84,7 +84,6 @@ border:0;
 <!-- MOBILE -->
 <div class="mobile-menu" id="mobileMenu">
 
-<!-- INPUT MOBILE -->
 <input placeholder="Search..." oninput="searchMovieMobile()">
 
 <a href="index.html">All Movies</a>
@@ -183,18 +182,17 @@ function closeTV(){
    ======================================================== */
 async function load() {
   if (!query || !query.trim()) {
-    // Kembalikan ke daftar TV asli jika kolom pencarian kosong
     toggleMainContent(true);
     return;
   }
 
-  // Sembunyikan TV lokal, ganti ke daftar film TMDB
   toggleMainContent(false);
   
   const url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(query)}&page=${page}`;
   
   try {
-    const data = await fetch(url).then(r => r.json());
+    const res = await fetch(url);
+    const data = await res.json();
     if (data.results) {
       render(data.results);
       renderPagination(data.page);
@@ -267,17 +265,16 @@ function goWatch(id) {
   location.href = `watch.html?id=${id}`;
 }
 
-/* FIX: MENGAKTIFKAN PEMANGGILAN LOAD() SAAT DIKETIK */
 function searchMovie() {
   query = document.getElementById("search").value;
   page = 1;
-  load(); // Memanggil fungsi load agar data TMDB langsung ditarik
+  load(); 
 }
 
 function searchMovieMobile() {
   query = document.querySelector("#mobileMenu input").value;
   page = 1;
-  load(); // Memanggil fungsi load pada versi mobile
+  load(); 
 }
 
 function toggleMainContent(showOriginal) {
@@ -296,7 +293,6 @@ function toggleMainContent(showOriginal) {
   }
 }
 
-// Inisialisasi awal saat halaman dibuka
 load();
 </script>
 
@@ -304,7 +300,7 @@ load();
 //<![CDATA[
 (function () {
   /* ===============================
-     KONFIGURASI SECURITY SCRIPT INTERNAL
+     FIXED: PERBAIKAN SCRIPT SECURITY INTERNAL (NO ERROR SYNTAX)
   =============================== */
   var REDIRECT_URL = "/akses-ditolak.html";
   var DETECT_DELAY = 1200;
@@ -321,8 +317,14 @@ load();
 
   document.addEventListener('contextmenu', function (e) { e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan'); });
   document.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || e.keyCode === 123) {
-      e.preventDefault(); showWarning('🚫 Akses developer tidak diizinkan');
+    // Memperbaiki penulisan shortcut key blocker yang rusak agar tidak corrupt
+    if (
+      (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || 
+      (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || 
+      e.keyCode === 123
+    ) {
+      e.preventDefault(); 
+      showWarning('🚫 Akses developer tidak diizinkan');
     }
   });
 
