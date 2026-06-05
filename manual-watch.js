@@ -3,8 +3,8 @@ const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 const ads = [
   "https://rajarayap.com",
-  "https://blogspot.com",
-  "https://blogspot.com"
+  "https://ptdwiprima.blogspot.com",
+  "https://caturbangunsentosa.blogspot.com"
 ];
 
 let movies = [];
