@@ -67,7 +67,7 @@ border:0;
 </div>
 <div class="nav-right">
 
-<!-- FIX: Menghubungkan oninput dengan fungsi TMDB -->
+<!-- INPUT NAVIGASI DENGAN ID YANG SESUAI -->
 <input id="search" placeholder="Search..." oninput="searchMovie()">
 
 <a href="index.html">All Movies</a>
@@ -84,7 +84,7 @@ border:0;
 <!-- MOBILE -->
 <div class="mobile-menu" id="mobileMenu">
 
-<!-- FIX: Menghubungkan oninput dengan fungsi TMDB -->
+<!-- INPUT MOBILE -->
 <input placeholder="Search..." oninput="searchMovieMobile()">
 
 <a href="index.html">All Movies</a>
@@ -93,7 +93,7 @@ border:0;
 </div>
 
 
-<!-- GRID HASIL PENCARIAN TMDB (STANDBY / TERSEMBUNYI DI AWAL) -->
+<!-- GRID UTAMA HASIL PENCARIAN TMDB -->
 <div id="grid" class="grid" style="display:none;"></div>
 <div id="pagination" class="pagination" style="display:none;"></div>
 
@@ -182,8 +182,8 @@ function closeTV(){
    LOGIKA PENCARIAN TMDB GLOBAL & REPLACE (SAMA SEPERTI IDMOVIES)
    ======================================================== */
 async function load() {
-  if (!query) {
-    // Kembalikan ke daftar TV asli jika kosong
+  if (!query || !query.trim()) {
+    // Kembalikan ke daftar TV asli jika kolom pencarian kosong
     toggleMainContent(true);
     return;
   }
@@ -192,14 +192,27 @@ async function load() {
   toggleMainContent(false);
   
   const url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(query)}&page=${page}`;
-  const data = await fetch(url).then(r => r.json());
-
-  render(data.results);
-  renderPagination(data.page);
+  
+  try {
+    const data = await fetch(url).then(r => r.json());
+    if (data.results) {
+      render(data.results);
+      renderPagination(data.page);
+    }
+  } catch (err) {
+    console.error("Gagal mengambil data dari TMDB:", err);
+  }
 }
 
 function render(data) {
   let h = "";
+  if (data.length === 0) {
+    h = `<p style="color:#fff; text-align:center; grid-column:1/-1; padding:50px 0;">Film tidak ditemukan.</p>`;
+    document.getElementById("pagination").innerHTML = "";
+    document.getElementById("grid").innerHTML = h;
+    return;
+  }
+
   data.forEach(m => {
     if (!m.poster_path) return;
     h += `
@@ -254,16 +267,17 @@ function goWatch(id) {
   location.href = `watch.html?id=${id}`;
 }
 
+/* FIX: MENGAKTIFKAN PEMANGGILAN LOAD() SAAT DIKETIK */
 function searchMovie() {
   query = document.getElementById("search").value;
   page = 1;
-  load();
+  load(); // Memanggil fungsi load agar data TMDB langsung ditarik
 }
 
 function searchMovieMobile() {
   query = document.querySelector("#mobileMenu input").value;
   page = 1;
-  load();
+  load(); // Memanggil fungsi load pada versi mobile
 }
 
 function toggleMainContent(showOriginal) {
@@ -281,6 +295,9 @@ function toggleMainContent(showOriginal) {
     if (tvContent) tvContent.style.display = "none";
   }
 }
+
+// Inisialisasi awal saat halaman dibuka
+load();
 </script>
 
 <script type='text/javascript'>
