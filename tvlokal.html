@@ -9,14 +9,12 @@
 <meta name="description" content="Nonton TV lokal Indonesia live streaming gratis kualitas HD.">
 <meta name="keywords" content="tv lokal, live tv indonesia, streaming tv">
 
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
+<link rel="icon" type="image/png" href="https://githubusercontent.com">
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-
 /* POPUP TV */
-
 .tv-popup{
 display:none;
 position:fixed;
@@ -56,7 +54,6 @@ width:100%;
 height:100%;
 border:0;
 }
-
 </style>
 
 </head>
@@ -64,140 +61,87 @@ border:0;
 <body>
 
 <!-- NAV -->
-
 <nav>
-
 <div class="logo">
 <a href="/">TUKARFOLLOW</a>
 </div>
 <div class="nav-right">
 
-<input placeholder="Search TV...">
+<!-- FIX: Menghubungkan oninput dengan fungsi TMDB -->
+<input id="search" placeholder="Search..." oninput="searchMovie()">
 
 <a href="index.html">All Movies</a>
 <a href="idmovies.html">ID Movies</a>
 <a href="tvlokal.html">ID TV</a>
-
 </div>
 
-<div class="burger"
-onclick="toggleMenu()">
-
+<div class="burger" onclick="toggleMenu()">
 ☰
-
 </div>
-
 </nav>
 
 
 <!-- MOBILE -->
+<div class="mobile-menu" id="mobileMenu">
 
-<div class="mobile-menu"
-id="mobileMenu">
-
-<input placeholder="Search TV...">
+<!-- FIX: Menghubungkan oninput dengan fungsi TMDB -->
+<input placeholder="Search..." oninput="searchMovieMobile()">
 
 <a href="index.html">All Movies</a>
 <a href="idmovies.html">ID Movies</a>
 <a href="tvlokal.html">ID TV</a>
+</div>
+
+
+<!-- GRID HASIL PENCARIAN TMDB (STANDBY / TERSEMBUNYI DI AWAL) -->
+<div id="grid" class="grid" style="display:none;"></div>
+<div id="pagination" class="pagination" style="display:none;"></div>
+
+
+<!-- WADAH UTAMA KONTEN TV LOKAL -->
+<div id="mainTVContent">
+
+  <!-- GRID TV LOKAL -->
+  <div class="grid">
+
+    <div class="card" onclick="openTV('https://inews.id')">
+      <img src="https://githubusercontent.com">
+      <div class="title">RCTI</div>
+    </div>
+
+    <div class="card" onclick="openTV('https://inews.id')">
+      <img src="https://googleusercontent.com">
+      <div class="title">GTV</div>
+    </div>
+
+    <div class="card" onclick="openTV('https://inews.id')">
+      <img src="https://githubusercontent.com">
+      <div class="title">INews TV</div>
+    </div>
+
+    <div class="card" onclick="openTV('https://inews.id')">
+      <img src="https://githubusercontent.com">
+      <div class="title">MNC TV</div>
+    </div>
+
+    <div class="card" onclick="openTV('https://detik.com')">
+      <img src="https://googleusercontent.com">
+      <div class="title">TRANS 7</div>
+    </div>
+
+  </div>
 
 </div>
 
 
-<!-- GRID -->
-
-<div class="grid">
-
-<div class="card"
-onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGcmN0aSUyRmluZXdzaWQmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU=')">
-
-<img src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rcti.webp">
-
-<div class="title">
-RCTI
-</div>
-
-</div>
-
-
-<div class="card"
-onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGZ3R2JTJGaW5ld3NpZCZoZWlnaHQ9MTAwJTI1JndpZHRoPTEwMCUyNQ==')">
-
-<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjiu-Khd7AaRd76KWyEwgvkJUlYvuDT9bW57BFvO1P1KtTaZKqPRRCOqf6y3xf0KWSxVPNjMWHjKQBrZ6g18j39zAqQkTBK7PQN6cjPF_SKAN1ud-kngVWI-h4GivQF_VgdjtWmuyV1kjYM4iyFrzipkf19cfInZ2_YiLIdocboYZ-bZa8fghE8S-ntVZ0/s800/gtv-by-caturbangunsentosa.blogspot.com.webp">
-
-<div class="title">
-GTV
-</div>
-
-</div>
-
-            <div class="card"
-onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGaW5ld3MlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1')">
-
-<img src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/streaming-inews-tv.webp">
-
-<div class="title">
-INews TV
-</div>
-
-</div>
-            <div class="card"
-onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1')">
-
-<img src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/mnctv.jpg
-">
-
-<div class="title">
-MNC TV
-</div>
-
-</div>
-            
-
-
-<div class="card"
-onclick="openTV('https://20.detik.com/watch/livestreaming-trans7')">
-
-<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvPIR-tfsq3_0ZhvZE9othCG0R7fpU4-aMjriG2iXr4l6zmyD7RPA5f-XuDus2XRocbr8n-Aj4vwAsGdXTwXIIEGajMjWqUIMlC-zMUK8c0t2SvSKxBPLjKnoA9hztb6HLzfJoc2UbVHE9diorRZJRngLnnP_qiWkj2YeikqhUWNGz0m-srOCbKxKMFyY/s343/TRANS7.png">
-
-<div class="title">
-TRANS 7
-</div>
-
-</div>
-
-</div>
-
-
-<!-- POPUP -->
-
-<div
-class="tv-popup"
-id="tvPopup">
-
+<!-- POPUP TV PLAYER -->
+<div class="tv-popup" id="tvPopup">
 <div class="tv-box">
-
-<div
-class="close-tv"
-onclick="closeTV()">
-
-✖
-
-</div>
-
+<div class="close-tv" onclick="closeTV()">✖</div>
 <div class="tv-frame">
-
-<iframe
-id="tvFrame"
-allowfullscreen
-allow="autoplay; fullscreen">
-
-</iframe>
-
+<iframe id="tvFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
 </div>
-
 </div>
-
 </div>
 
 
@@ -205,197 +149,184 @@ allow="autoplay; fullscreen">
 <footer>
 <div class="footer-grid">
 <div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
+<p>Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western</p></div>
 <div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
+<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.</p></div>
 <div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
+<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.</p></div>
 <div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
+<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.</p></div>
 </div>
 </footer>
-
-
+<!-- CORE LOGIC / JAVASCRIPT SYSTEM -->
 <script>
+const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
+let page = 1;
+let query = "";
 
 function toggleMenu(){
-
-document
-.getElementById(
-"mobileMenu"
-)
-.classList.toggle(
-"show"
-);
-
+  document.getElementById("mobileMenu").classList.toggle("show");
 }
-
 
 function openTV(url){
-
-document
-.getElementById(
-"tvPopup"
-)
-.style.display="flex";
-
-document
-.getElementById(
-"tvFrame"
-)
-.src=url;
-
+  document.getElementById("tvPopup").style.display = "flex";
+  document.getElementById("tvFrame").src = url;
 }
-
 
 function closeTV(){
-
-document
-.getElementById(
-"tvPopup"
-)
-.style.display="none";
-
-document
-.getElementById(
-"tvFrame"
-)
-.src="";
-
+  document.getElementById("tvPopup").style.display = "none";
+  document.getElementById("tvFrame").src = "";
 }
 
+/* ========================================================
+   LOGIKA PENCARIAN TMDB GLOBAL & REPLACE (SAMA SEPERTI IDMOVIES)
+   ======================================================== */
+async function load() {
+  if (!query) {
+    // Kembalikan ke daftar TV asli jika kosong
+    toggleMainContent(true);
+    return;
+  }
 
+  // Sembunyikan TV lokal, ganti ke daftar film TMDB
+  toggleMainContent(false);
+  
+  const url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(query)}&page=${page}`;
+  const data = await fetch(url).then(r => r.json());
 
-    //<![CDATA[
-    (function () {
+  render(data.results);
+  renderPagination(data.page);
+}
 
-      /* ===============================
-         KONFIGURASI
-      =============================== */
-      var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
-      var DETECT_DELAY = 1200; // ms
+function render(data) {
+  let h = "";
+  data.forEach(m => {
+    if (!m.poster_path) return;
+    h += `
+      <div class="card" onclick="goWatch(${m.id})">
+        <img src="https://tmdb.org{m.poster_path}">
+        <div class="title">${m.title}</div>
+      </div>
+    `;
+  });
+  document.getElementById("grid").innerHTML = h;
+}
 
-      /* ===============================
-         OVERLAY WARNING
-      =============================== */
-      function showWarning(msg){
-        if(document.getElementById('antiWarn')) return;
-        var d = document.createElement('div');
-        d.id = 'antiWarn';
-        d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
-        d.style = `
-          position:fixed;
-          top:0;left:0;
-          width:100%;height:100%;
-          background:rgba(0,0,0,.92);
-          color:#fff;
-          z-index:999999;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          text-align:center;
-          font-size:22px;
-          font-family:Arial,sans-serif
-        `;
-        document.body.appendChild(d);
+function renderPagination(p) {
+  let h = "";
+  if (p > 1) {
+    h += `<button onclick="prevSet()">‹</button>`;
+  }
 
-        setTimeout(function(){
-          location.href = REDIRECT_URL;
-        }, 2500);
-      }
+  for (let i = 1; i <= 6; i++) {
+    let num = p + i - 1;
+    h += `
+      <button onclick="goPage(${num})"
+        style="background:${num === page ? '#ff2e2e' : '#1a1a22'}; color:#fff; border:none; padding:6px 10px; margin:2px; border-radius:6px; cursor:pointer;">
+        ${num}
+      </button>
+    `;
+  }
 
-      /* ===============================
-         DISABLE KLIK KANAN
-      =============================== */
-      document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        showWarning('🚫 Klik kanan dinonaktifkan');
-      });
+  h += `<button onclick="nextSet()">›</button>`;
+  document.getElementById("pagination").innerHTML = h;
+}
 
-      /* ===============================
-         DISABLE SHORTCUT KEY
-      =============================== */
-      document.addEventListener('keydown', function (e) {
+function goPage(p) {
+  page = p;
+  load();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-        if (
-          (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
-          (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
-          e.keyCode === 123 // F12
-        ) {
-          e.preventDefault();
-          showWarning('🚫 Akses developer tidak diizinkan');
-        }
+function nextSet() {
+  page = page + 1;
+  load();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-      });
+function prevSet() {
+  page = Math.max(1, page - 1);
+  load();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-      /* ===============================
-         DETEKSI DEVTOOLS (TRICK CONSOLE)
-      =============================== */
-      setInterval(function(){
-        var t = new Image();
-        Object.defineProperty(t,'id',{
-          get:function(){
-            showWarning('🛑 DevTools terdeteksi');
-            throw 'DevTools Blocked';
-          }
-        });
-        console.log(t);
-      }, DETECT_DELAY);
+function goWatch(id) {
+  location.href = `watch.html?id=${id}`;
+}
 
-      /* ===============================
-         DISABLE SELECT & DRAG
-      =============================== */
-      var css = document.createElement('style');
-      css.innerHTML = `
-        body {
-          -webkit-user-select:none;
-          -moz-user-select:none;
-          -ms-user-select:none;
-          user-select:none;
-        }
-        img {
-          pointer-events:none;
-        }
-      `;
-      document.head.appendChild(css);
+function searchMovie() {
+  query = document.getElementById("search").value;
+  page = 1;
+  load();
+}
 
-      /* ===============================
-         WATERMARK HALUS
-      =============================== */
-     var wm = document.createElement('div');
+function searchMovieMobile() {
+  query = document.querySelector("#mobileMenu input").value;
+  page = 1;
+  load();
+}
 
+function toggleMainContent(showOriginal) {
+  const mainGrid = document.getElementById("grid");
+  const mainPag = document.getElementById("pagination");
+  const tvContent = document.getElementById("mainTVContent");
+
+  if (showOriginal) {
+    if (mainGrid) mainGrid.style.display = "none";
+    if (mainPag) mainPag.style.display = "none";
+    if (tvContent) tvContent.style.display = "block";
+  } else {
+    if (mainGrid) mainGrid.style.display = "grid";
+    if (mainPag) mainPag.style.display = "flex";
+    if (tvContent) tvContent.style.display = "none";
+  }
+}
+</script>
+
+<script type='text/javascript'>
+//<![CDATA[
+(function () {
+  /* ===============================
+     KONFIGURASI SECURITY SCRIPT INTERNAL
+  =============================== */
+  var REDIRECT_URL = "/akses-ditolak.html";
+  var DETECT_DELAY = 1200;
+
+  function showWarning(msg){
+    if(document.getElementById('antiWarn')) return;
+    var d = document.createElement('div');
+    d.id = 'antiWarn';
+    d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
+    d.style = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);color:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;text-align:center;font-size:22px;font-family:Arial,sans-serif`;
+    document.body.appendChild(d);
+    setTimeout(function(){ location.href = REDIRECT_URL; }, 2500);
+  }
+
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan'); });
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || e.keyCode === 123) {
+      e.preventDefault(); showWarning('🚫 Akses developer tidak diizinkan');
+    }
+  });
+
+  setInterval(function(){
+    var t = new Image();
+    Object.defineProperty(t,'id',{ get:function(){ showWarning('🛑 DevTools terdeteksi'); throw 'DevTools Blocked'; } });
+    console.log(t);
+  }, DETECT_DELAY);
+
+  var css = document.createElement('style');
+  css.innerHTML = `body {-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;} img {pointer-events:none;}`;
+  document.head.appendChild(css);
+
+  var wm = document.createElement('div');
   wm.innerHTML = 'Web design by joehanz';
-
   wm.title = 'Providing website creation services at affordable prices';
-
-  wm.onclick = function(){
-    window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-  };
-
-  wm.style.position = 'fixed';
-  wm.style.bottom = '6px';
-  wm.style.right = '5%';
-  wm.style.opacity = '.25';
-  wm.style.fontSize = '11px';
-  wm.style.zIndex = '999999';
-  wm.style.color = '#fff';
-  wm.style.cursor = 'pointer';
-
+  wm.onclick = function(){ window.open('https://freelancer.co.id'); };
+  wm.style = `position:fixed;bottom:6px;right:5%;opacity:.25;font-size:11px;z-index:999999;color:#fff;cursor:pointer;`;
   document.body.appendChild(wm);
-    })();
-    //]]>
+})();
+//]]>
 </script>
 
 </body>
