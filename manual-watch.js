@@ -1,10 +1,10 @@
 const movieId = new URLSearchParams(location.search).get("movie");
-const KEY = "b3b893873ed1bb7f175b2707afeea2a0"; // Disamakan dengan KEY script.js agar bisa akses TMDB
+const KEY = "b3b893873ed1bb7f175b2707afeea2a0"; 
 
 const ads = [
   "https://rajarayap.com",
-  "https://ptdwiprima.blogspot.com",
-  "https://caturbangunsentosa.blogspot.com"
+  "https://blogspot.com",
+  "https://blogspot.com"
 ];
 
 let movies = [];
@@ -45,7 +45,6 @@ function loadMovie() {
       ${movie.sinopsis}
     </p>
 
-    <!-- TOMBOL VERSI ORISINIL MENGARAH KE WATCH.HTML SESUAI GRID INDEX -->
     <div style="margin:20px 0 15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08);">
       <a href="javascript:void(0);" onclick="history.back();" style="color:gold; font-weight:bold; text-decoration:none; display:inline-block;">
         🎬 Versi Orisinal
@@ -56,7 +55,7 @@ function loadMovie() {
   renderRelated();
 }
 
-/* PLAYER (SUDAH DIPERBAIKI: ACAK & SATU NEWTAB) */
+/* PLAYER */
 document.getElementById("playLayer").onclick = function () {
   const checkSrc = movie.iframe.toLowerCase();
   const bypass = checkSrc.includes("abyssplayer.com");
@@ -104,7 +103,7 @@ function go(i) {
 }
 
 /* ========================================================
-   FUNGSI PENCARIAN & OVERLAY TMDB (SAMA SEPERTI SCRIPT.JS)
+   FUNGSI PENCARIAN RE-PLACE HALAMAN (SAMA SEPERTI SCRIPT.JS)
    ======================================================== */
 
 async function loadOverlay() {
@@ -114,10 +113,6 @@ async function loadOverlay() {
     url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
   }
 
-  if (overlayMode === "local") {
-    url = `https://themoviedb.org{KEY}&with_origin_country=ID&page=${overlayPage}`;
-  }
-
   const data = await fetch(url).then(r => r.json());
   showOverlay(data.results);
   renderOverlayPagination(data.page, data.total_pages);
@@ -125,11 +120,18 @@ async function loadOverlay() {
 
 function showOverlay(data) {
   const overlay = document.getElementById("overlay");
+  
   if (!overlay) return;
 
-  overlay.style.display = "block";
-  let h = "";
+  // 1. SEMBUNYIKAN SEMUA ELEMEN UTAMA SEHINGGA TER-REPLACE BERSIH
+  document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
+    el.style.display = "none";
+  });
 
+  // 2. TAMPILKAN KONTANER HASIL PENCARIAN
+  overlay.style.display = "block";
+
+  let h = "";
   data.forEach(v => {
     if (!v.poster_path) return;
     h += `
@@ -181,7 +183,18 @@ function searchMovie() {
   if (!input) return;
 
   const val = input.value;
-  if (!val.trim()) return;
+  
+  // Jika kolom pencarian dihapus sampai kosong, kembalikan halaman seperti semula
+  if (!val.trim()) {
+    document.getElementById("overlay").style.display = "none";
+    document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
+      // Kembalikan display player ke style default flex/block sesuai css awal
+      if(el.classList.contains('player')) el.style.display = "flex";
+      else if(el.classList.contains('rel-wrap1')) el.style.display = "none"; // tetapkan sembunyi jika defaultnya none
+      else el.style.display = "block";
+    });
+    return;
+  }
 
   currentQuery = val;
   overlayMode = "search";
@@ -194,7 +207,15 @@ function searchMovieMobile() {
   if (!input) return;
 
   const val = input.value;
-  if (!val.trim()) return;
+  if (!val.trim()) {
+    document.getElementById("overlay").style.display = "none";
+    document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
+      if(el.classList.contains('player')) el.style.display = "flex";
+      else if(el.classList.contains('rel-wrap1')) el.style.display = "none";
+      else el.style.display = "block";
+    });
+    return;
+  }
 
   currentQuery = val;
   overlayMode = "search";
@@ -202,13 +223,6 @@ function searchMovieMobile() {
   loadOverlay();
 }
 
-function loadLocal() {
-  overlayMode = "local";
-  overlayPage = 1;
-  loadOverlay();
-}
-
-// Fungsi bantu saat film hasil cari di klik, dia langsung lompat ke halaman watch.html berbasis TMDB ID
 function goWatch(tmdbId) {
   location.href = `watch.html?id=${tmdbId}`;
 }
