@@ -60,14 +60,13 @@ border:0;
 
 <body>
 
-<!-- NAV -->
+<!-- NAV (PERSIS SEPERTI IDMOVIES.HTML) -->
 <nav>
 <div class="logo">
 <a href="/">TUKARFOLLOW</a>
 </div>
 <div class="nav-right">
 
-<!-- RE-FIX: Memastikan ID terpasang dengan benar -->
 <input id="search" placeholder="Search..." oninput="searchMovie()">
 
 <a href="index.html">All Movies</a>
@@ -83,24 +82,22 @@ border:0;
 
 <!-- MOBILE -->
 <div class="mobile-menu" id="mobileMenu">
-
 <input placeholder="Search..." oninput="searchMovieMobile()">
-
 <a href="index.html">All Movies</a>
 <a href="idmovies.html">ID Movies</a>
 <a href="tvlokal.html">ID TV</a>
 </div>
 
 
-<!-- GRID UTAMA HASIL PENCARIAN TMDB -->
-<div id="grid" class="grid" style="display:none;"></div>
-<div id="pagination" class="pagination" style="display:none;"></div>
+<!-- GRID TEMPAT HASIL PENCARIAN (STRUKTUR SAMA KEMBAR DENGAN IDMOVIES) -->
+<div id="grid" class="grid"></div>
+
+<!-- PAGINATION -->
+<div id="pagination" class="pagination"></div>
 
 
-<!-- WADAH UTAMA KONTEN TV LOKAL -->
+<!-- WADAH KHUSUS KONTEN TV LOKAL -->
 <div id="mainTVContent">
-
-  <!-- GRID TV LOKAL -->
   <div class="grid">
 
     <div class="card" onclick="openTV('https://inews.id')">
@@ -129,7 +126,6 @@ border:0;
     </div>
 
   </div>
-
 </div>
 
 
@@ -178,43 +174,36 @@ function closeTV(){
 }
 
 /* ========================================================
-   LOGIKA PENCARIAN TMDB GLOBAL & REPLACE (SAMA SEPERTI IDMOVIES)
+   LOGIKA LOAD & RENDER (ADAPTASI BERSIH DARI IDMOVIES.JS)
    ======================================================== */
 async function load() {
+  // Jika kolom teks kosong, tampilkan daftar stasiun TV asli
   if (!query || !query.trim()) {
-    toggleMainContent(true);
+    document.getElementById("grid").style.display = "none";
+    document.getElementById("pagination").style.display = "none";
+    document.getElementById("mainTVContent").style.display = "block";
     return;
   }
 
-  toggleMainContent(false);
-  
+  // Jika sedang mencari film, sembunyikan TV lokal dan hidupkan grid TMDB
+  document.getElementById("mainTVContent").style.display = "none";
+  document.getElementById("grid").style.display = "grid";
+  document.getElementById("pagination").style.display = "block";
+
   const url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(query)}&page=${page}`;
   
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.results) {
-      render(data.results);
-      renderPagination(data.page);
-    }
-  } catch (err) {
-    console.error("Gagal mengambil data dari TMDB:", err);
-  }
+  const data = await fetch(url).then(r => r.json());
+  
+  render(data.results);
+  renderPagination(data.page);
 }
 
 function render(data) {
   let h = "";
-  if (data.length === 0) {
-    h = `<p style="color:#fff; text-align:center; grid-column:1/-1; padding:50px 0;">Film tidak ditemukan.</p>`;
-    document.getElementById("pagination").innerHTML = "";
-    document.getElementById("grid").innerHTML = h;
-    return;
-  }
-
   data.forEach(m => {
     if (!m.poster_path) return;
     h += `
-      <div class="card" onclick="goWatch(${m.id})">
+      <div class="card" onclick="go(${m.id})">
         <img src="https://tmdb.org{m.poster_path}">
         <div class="title">${m.title}</div>
       </div>
@@ -261,47 +250,32 @@ function prevSet() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function goWatch(id) {
+function go(id) {
   location.href = `watch.html?id=${id}`;
 }
 
 function searchMovie() {
   query = document.getElementById("search").value;
   page = 1;
-  load(); 
+  load();
 }
 
 function searchMovieMobile() {
   query = document.querySelector("#mobileMenu input").value;
   page = 1;
-  load(); 
+  load();
 }
 
-function toggleMainContent(showOriginal) {
-  const mainGrid = document.getElementById("grid");
-  const mainPag = document.getElementById("pagination");
-  const tvContent = document.getElementById("mainTVContent");
-
-  if (showOriginal) {
-    if (mainGrid) mainGrid.style.display = "none";
-    if (mainPag) mainPag.style.display = "none";
-    if (tvContent) tvContent.style.display = "block";
-  } else {
-    if (mainGrid) mainGrid.style.display = "grid";
-    if (mainPag) mainPag.style.display = "flex";
-    if (tvContent) tvContent.style.display = "none";
-  }
-}
-
+// Panggilan wajib awal halaman dibuka
 load();
 </script>
 
 <script type='text/javascript'>
 //<![CDATA[
 (function () {
-  /* ===============================
-     FIXED: PERBAIKAN SCRIPT SECURITY INTERNAL (NO ERROR SYNTAX)
-  =============================== */
+  /* =======================================================
+     SECURITY SCRIPT (DIKEMBALIKAN KE STRUKTUR ORIGINAL ANDA)
+  ======================================================= */
   var REDIRECT_URL = "/akses-ditolak.html";
   var DETECT_DELAY = 1200;
 
@@ -316,14 +290,15 @@ load();
   }
 
   document.addEventListener('contextmenu', function (e) { e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan'); });
+  
   document.addEventListener('keydown', function (e) {
-    // Memperbaiki penulisan shortcut key blocker yang rusak agar tidak corrupt
+    // DIKEMBALIKAN KE ARRAY ASLI MILIK ANDA AGAR TIDAK TERJADI SYNTAX ERROR
     if (
       (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || 
       (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || 
       e.keyCode === 123
     ) {
-      e.preventDefault(); 
+      e.preventDefault();
       showWarning('🚫 Akses developer tidak diizinkan');
     }
   });
