@@ -54,18 +54,23 @@ function loadMovie() {
 }
 
 /* PLAYER */
+/* PLAYER */
 document.getElementById("playLayer").onclick = function () {
   const checkSrc = movie.iframe.toLowerCase();
   const bypass = checkSrc.includes("abyssplayer.com");
 
+  // Jika tidak di-bypass dan iklan belum pernah muncul
   if (!bypass && !adsState) {
     adsState = true;
-    ads.forEach(url => {
-      window.open(url, "_blank");
-    });
-    return;
+    
+    // 1. Mengambil satu link iklan secara acak dari array 'ads'
+    const randomAd = ads[Math.floor(Math.random() * ads.length)];
+    
+    // 2. Membuka hanya satu link iklan tersebut di tab baru
+    window.open(randomAd, "_blank");
   }
 
+  // 3. Langsung putar video tanpa memaksa user klik dua kali
   this.style.display = "none";
   document.getElementById("player").src = movie.iframe;
 };
