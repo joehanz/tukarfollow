@@ -43,7 +43,7 @@ function loadMovie() {
     </p>
 
     <!-- TOMBOL VERSI ORISINIL MENGARAH KE WATCH.HTML SESUAI GRID INDEX -->
-    <div style="display;none; margin:20px 0 15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08);">
+    <div style="display:none; margin:20px 0 15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08);">
       <a href="watch.html?movie=${movieId}" style="color:gold; font-weight:bold; text-decoration:none; display:inline-block;">
         🎬 Versi Orisinal
       </a>
