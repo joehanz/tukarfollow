@@ -1,5 +1,5 @@
 const movieId = new URLSearchParams(location.search).get("movie");
-const KEY = "b3b893873ed1bb7f175b2707afeea2a0"; 
+const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 const ads = [
   "https://rajarayap.com",
@@ -11,28 +11,42 @@ let movies = [];
 let movie = null;
 let adsState = false;
 
-/* OVERLAY STATE (DISAMAKAN DENGAN SCRIPT.JS) */
-let overlayPage = 1;
-let overlayMode = "";
-let currentQuery = "";
+/* STATE PENCARIAN (SAMA PERSIS SEPERTI IDMOVIES.JS) */
+let page = 1;
+let query = "";
 
 /* BURGER */
 function toggleMenu() {
-  const menu = document.getElementById("mobileMenu");
-  if (menu) {
-    menu.classList.toggle("show");
-  }
+  document.getElementById("mobileMenu").classList.toggle("show");
 }
 
-/* LOAD JSON */
+/* LOAD UTAMA (LOGIKA GABUNGAN FILM MANUAL DAN PENCARIAN TMDB) */
 async function load() {
-  const res = await fetch("movies.json");
-  movies = await res.json();
-  movie = movies[movieId];
-  loadMovie();
+  // Jika tidak ada query pencarian, jalankan fungsi default memuat halaman video manual
+  if (!query) {
+    // Tampilkan kembali elemen pemutar video orisinal halaman ini
+    toggleMainElements(true);
+
+    if (movies.length === 0) {
+      const res = await fetch("movies.json");
+      movies = await res.json();
+    }
+    movie = movies[movieId];
+    loadMovie();
+    return;
+  }
+
+  // JIKA ADA QUERY: REPLACE HALAMAN DENGAN MENEMBAK API PENCARIAN TMDB
+  toggleMainElements(false);
+  
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(query)}&page=${page}`;
+  const data = await fetch(url).then(r => r.json());
+
+  render(data.results);
+  renderPagination(data.page);
 }
 
-/* LOAD MOVIE */
+/* LOAD DETAIL FILM MANUAL */
 function loadMovie() {
   if (!movie) return;
 
@@ -70,7 +84,7 @@ document.getElementById("playLayer").onclick = function () {
   document.getElementById("player").src = movie.iframe;
 };
 
-/* RELATED */
+/* RELATED MOVIES KECIL */
 function renderRelated() {
   let h = "";
   const related = movies
@@ -90,9 +104,7 @@ function renderRelated() {
 }
 
 function move(dir) {
-  const rel = document.getElementById("rel");
-  if (!rel) return;
-  rel.scrollBy({
+  document.getElementById("rel").scrollBy({
     left: dir * 300,
     behavior: "smooth"
   });
@@ -102,129 +114,101 @@ function go(i) {
   location.href = `manual-watch.html?movie=${i}`;
 }
 
-/* ========================================================
-   FUNGSI PENCARIAN RE-PLACE HALAMAN (SAMA SEPERTI SCRIPT.JS)
-   ======================================================== */
-
-async function loadOverlay() {
-  let url = "";
-
-  if (overlayMode === "search") {
-    url = `https://themoviedb.org{KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
-  }
-
-  const data = await fetch(url).then(r => r.json());
-  showOverlay(data.results);
-  renderOverlayPagination(data.page, data.total_pages);
-}
-
-function showOverlay(data) {
-  const overlay = document.getElementById("overlay");
-  
-  if (!overlay) return;
-
-  // 1. SEMBUNYIKAN SEMUA ELEMEN UTAMA SEHINGGA TER-REPLACE BERSIH
-  document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
-    el.style.display = "none";
-  });
-
-  // 2. TAMPILKAN KONTANER HASIL PENCARIAN
-  overlay.style.display = "block";
-
+/* RENDER GRID HASIL PENCARIAN (SAMA SEPERTI IDMOVIES.JS) */
+function render(data) {
   let h = "";
-  data.forEach(v => {
-    if (!v.poster_path) return;
+  data.forEach(m => {
+    if (!m.poster_path) return;
     h += `
-      <div class="card" onclick="goWatch(${v.id})">
-        <img src="https://tmdb.org{v.poster_path}">
-        <div class="title">${v.title || v.name}</div>
+      <div class="card" onclick="goWatch(${m.id})">
+        <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+        <div class="title">${m.title}</div>
       </div>
     `;
   });
 
-  document.getElementById("overlayGrid").innerHTML = h;
+  document.getElementById("grid").innerHTML = h;
 }
 
-function renderOverlayPagination(page, total) {
-  const el = document.getElementById("overlayPagination");
-  if (!el) return;
-
+/* PAGINATION PENCARIAN (SAMA SEPERTI IDMOVIES.JS) */
+function renderPagination(p) {
   let h = "";
-  let start = Math.max(1, page - 2);
-  let end = Math.min(total, start + 5);
+  if (p > 1) {
+    h += `<button onclick="prevSet()">‹</button>`;
+  }
 
-  for (let i = start; i <= end; i++) {
+  for (let i = 1; i <= 6; i++) {
+    let num = p + i - 1;
     h += `
-      <button onclick="changeOverlayPage(${i})" style="padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:${i === page ? '#ff2e2e' : '#1a1a22'}; color:#fff; margin:2px;">
-        ${i}
+      <button onclick="goPage(${num})"
+        style="background:${num === page ? '#ff2e2e' : '#1a1a22'}; color:#fff; border:none; padding:6px 10px; margin:2px; border-radius:6px; cursor:pointer;">
+        ${num}
       </button>
     `;
   }
 
-  if (page < total) {
-    h += `
-      <button onclick="changeOverlayPage(${page + 1})" style="padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:#1a1a22; color:#fff; margin:2px;">
-        ›
-      </button>
-    `;
-  }
-
-  el.innerHTML = h;
+  h += `<button onclick="nextSet()">›</button>`;
+  document.getElementById("pagination").innerHTML = h;
 }
 
-function changeOverlayPage(p) {
-  overlayPage = p;
-  loadOverlay();
+function goPage(p) {
+  page = p;
+  load();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function nextSet() {
+  page = page + 1;
+  load();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function prevSet() {
+  page = Math.max(1, page - 1);
+  load();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* TARGET KLIK FILM HASIL CARI MEMBUKA WATCH.HTML BERBASIS ID TMDB */
+function goWatch(id) {
+  location.href = `watch.html?id=${id}`;
+}
+
+/* FUNGSI PENCARIAN NAV (SAMA SEPERTI IDMOVIES.JS) */
 function searchMovie() {
-  const input = document.getElementById("search");
-  if (!input) return;
-
-  const val = input.value;
-  
-  // Jika kolom pencarian dihapus sampai kosong, kembalikan halaman seperti semula
-  if (!val.trim()) {
-    document.getElementById("overlay").style.display = "none";
-    document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
-      // Kembalikan display player ke style default flex/block sesuai css awal
-      if(el.classList.contains('player')) el.style.display = "flex";
-      else if(el.classList.contains('rel-wrap1')) el.style.display = "none"; // tetapkan sembunyi jika defaultnya none
-      else el.style.display = "block";
-    });
-    return;
-  }
-
-  currentQuery = val;
-  overlayMode = "search";
-  overlayPage = 1;
-  loadOverlay();
+  query = document.getElementById("search").value;
+  page = 1;
+  load();
 }
 
 function searchMovieMobile() {
-  const input = document.querySelector("#mobileMenu input");
-  if (!input) return;
+  query = document.querySelector("#mobileMenu input").value;
+  page = 1;
+  load();
+}
 
-  const val = input.value;
-  if (!val.trim()) {
-    document.getElementById("overlay").style.display = "none";
-    document.querySelectorAll(".player, .info, .rel-wrap1, footer").forEach(el => {
-      if(el.classList.contains('player')) el.style.display = "flex";
-      else if(el.classList.contains('rel-wrap1')) el.style.display = "none";
-      else el.style.display = "block";
-    });
-    return;
+/* FUNGSI BANTU UNTUK SWITCH/REPLACE TAMPILAN HALAMAN BERSIH */
+function toggleMainElements(showOriginal) {
+  const mainGrid = document.getElementById("grid");
+  const mainPag = document.getElementById("pagination");
+  const playerWrap = document.querySelector(".player");
+  const infoWrap = document.getElementById("info");
+  const relWrap = document.querySelector(".rel-wrap1");
+
+  if (showOriginal) {
+    if (mainGrid) mainGrid.style.display = "none";
+    if (mainPag) mainPag.style.display = "none";
+    if (playerWrap) playerWrap.style.display = "flex";
+    if (infoWrap) infoWrap.style.display = "block";
+    if (relWrap) relWrap.style.display = "none";
+  } else {
+    if (mainGrid) mainGrid.style.display = "grid";
+    if (mainPag) mainPag.style.display = "flex";
+    if (playerWrap) playerWrap.style.display = "none";
+    if (infoWrap) infoWrap.style.display = "none";
+    if (relWrap) relWrap.style.display = "none";
   }
-
-  currentQuery = val;
-  overlayMode = "search";
-  overlayPage = 1;
-  loadOverlay();
 }
 
-function goWatch(tmdbId) {
-  location.href = `watch.html?id=${tmdbId}`;
-}
-
+// Eksekusi muat data awal
 load();
