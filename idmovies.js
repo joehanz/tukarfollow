@@ -173,3 +173,16 @@ load();
 
 load();
 
+
+  function toggleSeriesMobile(){
+
+document
+.getElementById(
+"mobileSeries"
+)
+.classList
+.toggle(
+"show"
+);
+
+}
