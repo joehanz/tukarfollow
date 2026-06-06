@@ -376,3 +376,37 @@ grid-template-columns:repeat(2,1fr);
 }
 
 }
+
+
+
+.seriesMenu{
+position:relative;
+}
+
+.seriesDropdown{
+position:absolute;
+top:100%;
+left:0;
+background:#111;
+min-width:140px;
+border-radius:10px;
+overflow:hidden;
+display:none;
+box-shadow:0 5px 20px rgba(0,0,0,.4);
+z-index:9999;
+}
+
+.seriesDropdown a{
+display:block;
+padding:12px;
+font-size:13px;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.seriesDropdown a:hover{
+background:#1a1a22;
+}
+
+.seriesMenu:hover .seriesDropdown{
+display:block;
+}
