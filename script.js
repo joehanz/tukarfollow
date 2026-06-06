@@ -759,3 +759,17 @@ load();
   document.body.appendChild(wm);
     })();
     //]]>
+
+
+ function toggleSeriesMobile(){
+
+document
+.getElementById(
+"mobileSeries"
+)
+.classList
+.toggle(
+"show"
+);
+
+}
