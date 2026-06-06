@@ -410,3 +410,24 @@ background:#1a1a22;
 .seriesMenu:hover .seriesDropdown{
 display:block;
 }
+
+
+.mobileDropBtn{
+padding:10px 0;
+cursor:pointer;
+border-bottom:1px solid #222;
+}
+
+.mobileDropContent{
+display:none;
+padding-left:15px;
+}
+
+.mobileDropContent.show{
+display:block;
+}
+
+.mobileDropContent a{
+display:block;
+padding:10px 0;
+}
