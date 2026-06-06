@@ -1,4 +1,4 @@
-const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+script.js const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
 const id=new URLSearchParams(location.search).get("id");
 const params=new URLSearchParams(location.search);
@@ -754,17 +754,3 @@ load();
   document.body.appendChild(wm);
     })();
     //]]>
-
-
-  function toggleSeriesMobile(){
-
-document
-.getElementById(
-"mobileSeries"
-)
-.classList
-.toggle(
-"show"
-);
-
-}
