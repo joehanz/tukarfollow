@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TukarFollow Series - Streaming TV Series Gratis</title>
+
+<meta name="description" content="Streaming TV Series sub indo gratis kualitas HD">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#0b0b0f;
+color:#fff;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 18px;
+background:rgba(0,0,0,.7);
+backdrop-filter:blur(10px);
+position:sticky;
+top:0;
+z-index:1000;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.logo{
+font-weight:bold;
+font-size:22px;
+}
+
+.logo a{
+text-decoration:none;
+color:#ff2e2e;
+}
+
+.nav-right{
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.nav-right input{
+padding:8px;
+border:none;
+border-radius:8px;
+background:#1a1a22;
+color:#fff;
+}
+
+.nav-right a{
+text-decoration:none;
+color:#ddd;
+font-size:13px;
+}
+
+.burger{
+display:none;
+font-size:25px;
+cursor:pointer;
+}
+
+.mobile-menu{
+position:fixed;
+right:0;
+top:60px;
+width:220px;
+background:#000;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+transform:translateX(100%);
+transition:.3s;
+z-index:999;
+}
+
+.mobile-menu.show{
+transform:translateX(0);
+}
+
+.mobile-menu input{
+padding:8px;
+background:#1a1a22;
+border:none;
+color:#fff;
+border-radius:8px;
+}
+
+.mobile-menu a{
+text-decoration:none;
+color:#fff;
+padding:10px 0;
+border-bottom:1px solid #222;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:14px;
+padding:25px;
+max-width:1300px;
+margin:auto;
+}
+
+.card{
+cursor:pointer;
+background:#141420;
+border-radius:10px;
+overflow:hidden;
+transition:.25s;
+}
+
+.card:hover{
+transform:scale(1.05);
+}
+
+.card img{
+width:100%;
+display:block;
+}
+
+.title{
+padding:8px;
+font-size:12px;
+}
+
+.pagination{
+display:flex;
+justify-content:center;
+gap:8px;
+padding:25px;
+flex-wrap:wrap;
+}
+
+.pagination button{
+background:#1a1a22;
+border:none;
+padding:8px 12px;
+color:#fff;
+border-radius:10px;
+cursor:pointer;
+}
+
+.player{
+width:100%;
+height:75vh;
+background:#000;
+position:relative;
+}
+
+iframe{
+width:100%;
+height:100%;
+border:0;
+}
+
+.playLayer{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+background:rgba(0,0,0,.5);
+cursor:pointer;
+}
+
+.info{
+max-width:1200px;
+margin:auto;
+padding:20px;
+background:#141420;
+border-radius:12px;
+margin-top:20px;
+}
+
+.selects{
+display:flex;
+gap:10px;
+margin:20px 0;
+}
+
+select{
+padding:10px;
+background:#1a1a22;
+border:none;
+color:#fff;
+border-radius:8px;
+}
+
+footer{
+background:#000;
+padding:35px;
+margin-top:50px;
+}
+
+.footer-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+opacity:.7;
+max-width:1200px;
+margin:auto;
+}
+
+@media(max-width:768px){
+
+.nav-right{
+display:none;
+}
+
+.burger{
+display:block;
+}
+
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.footer-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+<a href="series.html">
+TUKARFOLLOW
+</a>
+</div>
+
+<div class="nav-right">
+
+<input
+id="search"
+placeholder="Search..."
+oninput="searchSeries()"
+>
+
+<a href="series.html">
+All Series
+</a>
+
+<a href="series.html?mode=id">
+ID TV
+</a>
+
+</div>
+
+<div
+class="burger"
+onclick="toggleMenu()"
+>
+☰
+</div>
+
+</nav>
+
+<div
+class="mobile-menu"
+id="mobileMenu"
+>
+
+<input
+placeholder="Search..."
+oninput="searchSeriesMobile()"
+>
+
+<a href="series.html">
+All Series
+</a>
+
+<a href="series.html?mode=id">
+ID TV
+</a>
+
+</div>
+
+<div
+id="watchArea"
+style="display:none"
+>
+
+<div class="player">
+
+<div
+class="playLayer"
+id="playLayer"
+>
+▶ PLAY
+</div>
+
+<iframe id="player"></iframe>
+
+</div>
+
+<div class="info" id="info"></div>
+
+</div>
+
+<div
+id="grid"
+class="grid"
+></div>
+
+<div
+id="pagination"
+class="pagination"
+></div>
+
+  
+<footer>
+
+<div class="footer-grid">
+
+<div>
+<h3>Genre</h3>
+<p>
+Action, Adventure, Animation, Comedy, Crime, Drama, Family, Fantasy, Horror, Mystery, Romance, Science Fiction, Thriller
+</p>
+</div>
+
+<div>
+<h3>About</h3>
+<p>
+TUKARFOLLOW adalah situs streaming TV Series gratis.
+</p>
+</div>
+
+<div>
+<h3>Ads Disclosure</h3>
+<p>
+Situs ini dapat menampilkan iklan untuk mendukung layanan.
+</p>
+</div>
+
+<div>
+<h3>Disclaimer</h3>
+<p>
+Kami tidak menyimpan file video di server sendiri.
+</p>
+</div>
+
+</div>
+
+</footer>
+
+<script>
+
+const KEY="API_KEY";
+
+const id=
+new URLSearchParams(
+location.search
+).get("id");
+
+const mode=
+new URLSearchParams(
+location.search
+).get("mode");
+
+let season=1;
+let episode=1;
+
+let page=1;
+let query="";
+
+const ads=[
+
+"https://rajarayap.com",
+"https://caturbangunsentosa.blogspot.com",
+"https://ptdwiprima.blogspot.com"
+
+];
+
+let adsState=false;
+
+function toggleMenu(){
+
+document
+.getElementById(
+"mobileMenu"
+)
+.classList
+.toggle("show");
+
+}
+
+async function load(){
+
+if(id){
+
+loadDetail();
+
+return;
+
+}
+
+let url="";
+
+if(query){
+
+url=
+`https://api.themoviedb.org/3/search/tv?api_key=${KEY}&query=${query}&page=${page}`;
+
+}
+
+else if(mode==="id"){
+
+url=
+`https://api.themoviedb.org/3/discover/tv?api_key=${KEY}&with_origin_country=ID&page=${page}`;
+
+}
+
+else{
+
+url=
+`https://api.themoviedb.org/3/trending/tv/week?api_key=${KEY}&page=${page}`;
+
+}
+
+const data=
+await fetch(url)
+.then(r=>r.json());
+
+renderGrid(
+data.results
+);
+
+renderPagination(
+data.page
+);
+
+}
+
+function renderGrid(data){
+
+let h="";
+
+data.forEach(v=>{
+
+if(
+!v.poster_path
+)return;
+
+h+=`
+
+<div
+class="card"
+onclick="go(${v.id})"
+>
+
+<img
+src="https://image.tmdb.org/t/p/w300${v.poster_path}"
+>
+
+<div class="title">
+
+${v.name}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById(
+"grid"
+)
+.innerHTML=h;
+
+}
+
+function renderPagination(p){
+
+let h="";
+
+for(
+let i=1;
+i<=6;
+i++
+){
+
+let n=p+i-1;
+
+h+=`
+
+<button
+onclick="goPage(${n})"
+>
+
+${n}
+
+</button>
+
+`;
+
+}
+
+document
+.getElementById(
+"pagination"
+)
+.innerHTML=h;
+
+}
+
+function goPage(p){
+
+page=p;
+
+load();
+
+window.scrollTo({
+
+top:0,
+behavior:"smooth"
+
+});
+
+}
+
+function go(i){
+
+location.href=
+`series.html?id=${i}`;
+
+}
+
+function searchSeries(){
+
+query=
+document
+.getElementById(
+"search"
+)
+.value;
+
+page=1;
+
+load();
+
+}
+
+  function searchSeriesMobile(){
+
+query=
+document.querySelector(
+"#mobileMenu input"
+).value;
+
+page=1;
+
+load();
+
+}
+
+async function loadDetail(){
+
+document
+.getElementById(
+"watchArea"
+)
+.style.display="block";
+
+document
+.getElementById(
+"grid"
+)
+.style.display="none";
+
+document
+.getElementById(
+"pagination"
+)
+.style.display="none";
+
+const m=
+await fetch(
+
+`https://api.themoviedb.org/3/tv/${id}?api_key=${KEY}&language=id-ID`
+
+)
+.then(r=>r.json());
+
+let seasonCount=
+m.number_of_seasons||1;
+
+let seasonHtml=`
+<div class="selects">
+
+<select
+id="season"
+onchange="changeSeason()"
+>
+`;
+
+for(
+let i=1;
+i<=seasonCount;
+i++
+){
+
+seasonHtml+=`
+<option value="${i}">
+Season ${i}
+</option>
+`;
+
+}
+
+seasonHtml+=`
+</select>
+
+<select
+id="episode"
+onchange="changeEpisode()"
+></select>
+
+</div>
+`;
+
+document
+.getElementById(
+"info"
+)
+.innerHTML=`
+
+<h2>
+${m.name}
+</h2>
+
+<p>
+⭐ Rating :
+${m.vote_average.toFixed(1)}
+</p>
+
+<p>
+📅 First Air :
+${m.first_air_date||"-"}
+</p>
+
+<p>
+🎭 Genre :
+${m.genres.map(
+g=>g.name
+).join(", ")}
+</p>
+
+${seasonHtml}
+
+<p style="
+margin-top:20px;
+line-height:1.8;
+">
+
+${m.overview}
+
+</p>
+
+`;
+
+loadEpisode();
+
+}
+
+async function loadEpisode(){
+
+season=
+document
+.getElementById(
+"season"
+).value;
+
+const d=
+await fetch(
+
+`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${KEY}`
+
+)
+.then(r=>r.json());
+
+let h="";
+
+d.episodes.forEach(v=>{
+
+h+=`
+
+<option value="${v.episode_number}">
+
+Episode
+${v.episode_number}
+
+</option>
+
+`;
+
+});
+
+document
+.getElementById(
+"episode"
+)
+.innerHTML=h;
+
+changeEpisode();
+
+}
+
+function changeSeason(){
+
+loadEpisode();
+
+}
+
+function changeEpisode(){
+
+episode=
+document
+.getElementById(
+"episode"
+).value;
+
+}
+
+if(
+document.getElementById(
+"playLayer"
+)
+){
+
+document
+.getElementById(
+"playLayer"
+)
+.onclick=function(){
+
+if(
+!adsState
+){
+
+adsState=true;
+
+window.open(
+
+ads[
+Math.floor(
+Math.random()
+*
+ads.length
+)
+],
+
+"_blank"
+
+);
+
+return;
+
+}
+
+this.style.display="none";
+
+document
+.getElementById(
+"player"
+)
+.src=
+
+`https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+
+};
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
