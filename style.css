@@ -376,3 +376,23 @@ grid-template-columns:repeat(2,1fr);
 }
 
 }
+
+
+.seriesDropdown{
+position:absolute;
+top:100%;
+left:0;
+background:#111;
+min-width:140px;
+border-radius:10px;
+overflow:hidden;
+display:none;
+flex-direction:column;
+box-shadow:0 5px 20px rgba(0,0,0,.4);
+z-index:9999;
+white-space:nowrap;
+}
+
+.seriesMenu:hover .seriesDropdown{
+display:flex;
+}
