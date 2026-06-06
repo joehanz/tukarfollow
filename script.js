@@ -772,3 +772,16 @@ document.querySelector(".rel-wrap").style.display="none";
 }
 
 
+function resetWatchView(){
+
+const player=document.querySelector(".player");
+const info=document.querySelector(".info");
+const related=document.querySelector(".rel-wrap");
+
+if(player)player.style.display="block";
+if(info)info.style.display="block";
+if(related)related.style.display="block";
+
+document.getElementById("overlay").style.display="none";
+
+}
