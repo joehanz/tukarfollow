@@ -28,11 +28,10 @@ href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/b
 <body>
 
 <!-- NAV -->
-
 <nav>
 
-<div class="logo">
-<a href="/">TUKARFOLLOW</a>
+<div class="logo"> 
+<a href="/"> TUKARFOLLOW </a>
 </div>
 
 <div class="nav-right">
@@ -40,56 +39,59 @@ href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/b
 <input
 id="search"
 placeholder="Search..."
-oninput="searchMovie()">
+oninput="searchSeries()"
+>
 
-<a href="index.html">
-All Movies
-</a>
-            
+<a href="index.html">All Movies</a>
 <a href="idmovies.html">ID Movies</a>
-
-<a href="tvlokal.html">
-ID TV
+  
+<div class="seriesMenu">
+<a href="javascript:void(0)">
+Series ▼
 </a>
+<div class="seriesDropdown">
+<a href="series.html">
+All Series
+</a>
+<a href="series.html?mode=id">
+ID Series
+</a>
+</div>
+</div>
 
+  <a href="tvlokal.html">ID TV</a>
 </div>
 
 <div
 class="burger"
-onclick="toggleMenu()">
-
+onclick="toggleMenu()"
+>
 ☰
-
 </div>
 
 </nav>
 
+<div class="mobile-menu" id="mobileMenu">
 
-<!-- MOBILE -->
+<input placeholder="Search..." oninput="searchSeriesMobile()">
 
-<div
-class="mobile-menu"
-id="mobileMenu">
-
-<input
-placeholder="Search..."
-oninput="searchMovieMobile()">
-
-<a href="index.html">
-All Movies
-</a>
-
-<a href="subindo.html">
-Sub ID Movies
-</a>
-
+<a href="index.html">All Movies</a>
 <a href="idmovies.html">ID Movies</a>
-
-<a href="tvlokal.html">
-ID TV
-</a>
+  
+<div class="mobileDrop">
+<div class="mobileDropBtn" onclick="toggleSeriesMobile()"> Series ▼ </div>
+  
+<div class="mobileDropContent" id="mobileSeries">
+<a href="series.html"> All Series </a>
+<a href="series.html?mode=id"> ID Series </a>
+</div>
 
 </div>
+
+<a href="tvlokal.html">ID TV</a>
+  
+</div>
+
 
 
 <!-- GRID -->
