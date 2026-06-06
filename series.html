@@ -80,28 +80,43 @@ id="watchArea"
 style="display:none"
 >
 
-<div class="player">
+  <div class="player">
 
-<div
-class="playLayer"
-id="playLayer"
->
-▶ PLAY
+    <div
+    class="playLayer"
+    id="playLayer"
+    >
+    ▶ PLAY EPISODE
+    </div>
+
+    <iframe id="player" allowfullscreen></iframe>
+
+  </div>
+
+  <div class="info" id="info"></div>
+
+  <!-- UX STATUS BIAR USER NGERTI -->
+  <div id="playStatus" style="
+    max-width:1200px;
+    margin:10px auto;
+    padding:10px 20px;
+    color:#aaa;
+    font-size:14px;
+    background:rgba(255,255,255,.03);
+    border-radius:8px;
+  ">
+    Pilih season dan episode untuk mulai menonton
+  </div>
+
 </div>
 
-<iframe id="player" control="" allowfullscreen=""></iframe>
-
-</div>
-
-<div class="info" id="info"></div>
-
-</div>
-
+<!-- GRID LIST -->
 <div
 id="grid"
 class="grid"
 ></div>
 
+<!-- PAGINATION -->
 <div
 id="pagination"
 class="pagination"
