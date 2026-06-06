@@ -629,12 +629,7 @@ fetch("movies.json")
 .then(r=>r.json())
 .then(data=>{
 
-movies=data||[];
-
-load();
-
-})
-.catch(()=>{
+movies=data;
 
 load();
 
@@ -759,5 +754,7 @@ load();
   document.body.appendChild(wm);
     })();
     //]]>
+
+
 
 
