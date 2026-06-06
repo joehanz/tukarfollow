@@ -295,15 +295,19 @@ const input=document.getElementById("search");
 
 if(!input)return;
 
-const val=input.value;
+const val=input.value.trim();
 
-if(!val.trim())return;
+if(!val)return;
 
 if(id){
 
 currentQuery=val;
 overlayMode="search";
 overlayPage=1;
+
+document.getElementById("playerArea").style.display="none";
+document.getElementById("info").style.display="none";
+document.getElementById("relatedArea").style.display="none";
 
 loadOverlay();
 
@@ -324,15 +328,19 @@ const input=document.querySelector("#mobileMenu input");
 
 if(!input)return;
 
-const val=input.value;
+const val=input.value.trim();
 
-if(!val.trim())return;
+if(!val)return;
 
 if(id){
 
 currentQuery=val;
 overlayMode="search";
 overlayPage=1;
+
+document.getElementById("playerArea").style.display="none";
+document.getElementById("info").style.display="none";
+document.getElementById("relatedArea").style.display="none";
 
 loadOverlay();
 
@@ -354,11 +362,17 @@ if(id){
 overlayMode="local";
 overlayPage=1;
 
+document.getElementById("playerArea").style.display="none";
+document.getElementById("info").style.display="none";
+document.getElementById("relatedArea").style.display="none";
+
 loadOverlay();
 
 }else{
 
-setMode("id");
+mode="id";
+page=1;
+load();
 
 }
 
