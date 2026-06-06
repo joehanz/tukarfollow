@@ -769,6 +769,10 @@ load();
     })();
     //]]>
 
-
+function hideWatchContent(){
+document.querySelector(".player").style.display="none";
+document.querySelector(".info").style.display="none";
+document.querySelector(".rel-wrap").style.display="none";
+}
 
 
