@@ -288,26 +288,31 @@ behavior:"smooth"
 /* ===========================
 SEARCH
 =========================== */
+function hideWatchContent(){
+const player=document.querySelector(".player");
+const info=document.querySelector(".info");
+const related=document.querySelector(".rel-wrap");
+
+if(player)player.style.display="none";
+if(info)info.style.display="none";
+if(related)related.style.display="none";
+}
 
 function searchMovie(){
 
 const input=document.getElementById("search");
-
 if(!input)return;
 
 const val=input.value.trim();
-
 if(!val)return;
 
 if(id){
 
+hideWatchContent();
+
 currentQuery=val;
 overlayMode="search";
 overlayPage=1;
-
-document.getElementById("playerArea").style.display="none";
-document.getElementById("info").style.display="none";
-document.getElementById("relatedArea").style.display="none";
 
 loadOverlay();
 
@@ -315,7 +320,6 @@ loadOverlay();
 
 query=val;
 page=1;
-
 load();
 
 }
@@ -325,22 +329,18 @@ load();
 function searchMovieMobile(){
 
 const input=document.querySelector("#mobileMenu input");
-
 if(!input)return;
 
 const val=input.value.trim();
-
 if(!val)return;
 
 if(id){
 
+hideWatchContent();
+
 currentQuery=val;
 overlayMode="search";
 overlayPage=1;
-
-document.getElementById("playerArea").style.display="none";
-document.getElementById("info").style.display="none";
-document.getElementById("relatedArea").style.display="none";
 
 loadOverlay();
 
@@ -348,7 +348,6 @@ loadOverlay();
 
 query=val;
 page=1;
-
 load();
 
 }
@@ -359,12 +358,10 @@ function loadLocal(){
 
 if(id){
 
+hideWatchContent();
+
 overlayMode="local";
 overlayPage=1;
-
-document.getElementById("playerArea").style.display="none";
-document.getElementById("info").style.display="none";
-document.getElementById("relatedArea").style.display="none";
 
 loadOverlay();
 
@@ -377,7 +374,6 @@ load();
 }
 
 }
-
 /* ===========================
 WATCH DETAIL
 =========================== */
