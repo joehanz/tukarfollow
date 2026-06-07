@@ -57,16 +57,17 @@ function loadMovie() {
       </a>
     </div>
 
-    <h2>${movie.title}</h2>
-    <p>⭐ Rating : ${movie.vote_average.toFixed(1)}</p>
-    <p>📅 Rilis : ${movie.release_date || "-"}</p>
-    <p>🌍 Negara : ${movie.country || "-"}</p>
-    <p>🎭 Genre : ${movie.genre.join(", ")}</p>
-    <p style="font-size:20px; margin-top:15px; line-height:1.7; opacity:.9;">SINOPSIS:</p>
-    <p style="margin-top:10px; line-height:1.7; opacity:.9;">
-      ${movie.sinopsis}
-    </p>
-  `;
+    document.getElementById("info").innerHTML = `
+  <h2>${movie?.title || movie?.name || "Tanpa Judul"}</h2>
+  <p>⭐ Rating : ${movie?.vote_average ? movie.vote_average.toFixed(1) : "-"}</p>
+  <p>📅 Rilis : ${movie?.release_date || "-"}</p>
+  <p>🌍 Negara : ${movie?.country || "-"}</p>
+  <p>🎭 Genre : ${Array.isArray(movie?.genre) ? movie.genre.join(", ") : (movie?.genre || "-")}</p>
+  <p style="font-size:20px; margin-top:15px; line-height:1.7; opacity:.9;">SINOPSIS:</p>
+  <p style="margin-top:10px; line-height:1.7; opacity:.9;">
+    ${movie?.sinopsis || movie?.overview || "Sinopsis tidak tersedia."}
+  </p>
+`;
 
   renderRelated();
 }
