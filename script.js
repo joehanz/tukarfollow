@@ -566,7 +566,7 @@ font-weight:bold;
 text-decoration:none;
 ">
 
-🎬 Available in Indonesian
+🇮🇩 Indonesian Subs
 
 </a>
 
