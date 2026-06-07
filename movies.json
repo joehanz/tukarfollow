@@ -10,6 +10,16 @@
     "country": "Amerika Serikat"
   },
   {
+    "title": "A Gorilla Story: Told by David Attenborough (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/05Vg23HihQYYOpu",
+    "sinopsis": "David Attenborough ungkap kisah kawanan gorila dari jumpa pertama tahun 70-an hingga saat ini.",
+    "genre": ["Documentary"],
+    "release_date": "16-04-2026",
+    "country": "Inggris"
+  },
+  {
     "title": "The Whistler (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/wisther.webp",
     "video": "",
