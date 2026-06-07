@@ -61,7 +61,7 @@ function loadMovie() {
 
     <div style="margin:20px 0 15px 0; padding:14px; border-radius:12px; background:#111; border:1px solid rgba(255,255,255,.08);">
       <a href="javascript:void(0);" onclick="history.back();" style="color:gold; font-weight:bold; text-decoration:none; display:inline-block;">
-        🎬 Versi Orisinal
+        ⚙️ Reset to Original
       </a>
     </div>
   `;
