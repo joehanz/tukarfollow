@@ -58,11 +58,12 @@ function loadMovie() {
     </div>
 
  <h2>${movie.title}</h2>
+    <p>⭐ Rating : ${movie.vote_average.toFixed(1)}</p>
     <p>📅 Rilis : ${movie.release_date || "-"}</p>
     <p>🌍 Negara : ${movie.country || "-"}</p>
     <p>🎭 Genre : ${movie.genre.join(", ")}</p>
-    <p>SINOPSIS:</p><br>
-    <p style="margin-top:10px; line-height:1.7; opacity:.9;">
+    <p style="font-size:20px; margin-top:15px; line-height:1.7; opacity:.9;">SINOPSIS:</p>
+    <p style="margin-top:5px; line-height:1.7; opacity:.9;">
       ${movie.sinopsis}
     </p>
   `;
