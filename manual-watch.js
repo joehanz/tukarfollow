@@ -62,8 +62,8 @@ function loadMovie() {
     <p>📅 Rilis : ${movie.release_date || "-"}</p>
     <p>🌍 Negara : ${movie.country || "-"}</p>
     <p>🎭 Genre : ${movie.genre.join(", ")}</p>
-    <h3>SINOPSIS:</h3>
-    <p style="margin-top:15px; line-height:1.7; opacity:.9;">
+    <p style="font-size:20px; margin-top:15px; line-height:1.7; opacity:.9;">SINOPSIS:</p>
+    <p style="margin-top:10px; line-height:1.7; opacity:.9;">
       ${movie.sinopsis}
     </p>
   `;
