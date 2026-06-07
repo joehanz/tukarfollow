@@ -58,7 +58,6 @@ function loadMovie() {
     </div>
 
  <h2>${movie.title}</h2>
-    <p>⭐ Rating :</p>
     <p>📅 Rilis : ${movie.release_date || "-"}</p>
     <p>🌍 Negara : ${movie.country || "-"}</p>
     <p>🎭 Genre : ${movie.genre.join(", ")}</p>
