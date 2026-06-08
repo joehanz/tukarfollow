@@ -1,305 +1,481 @@
-/* Reset Dasar */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif
 }
 
-body {
-    background-color: #141414;
-    color: #ffffff;
+html{
+
+scroll-behavior:smooth
+
 }
 
-/* ==========================================
-   🧱 NAVIGASI UTAS (RESPONSIVE NAVBAR)
-   ========================================== */
-.navbar2 {
-    background-color: #000000;
-    padding: 15px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+body{
+
+background:#0b0b0b;
+color:#fff;
+overflow-x:hidden
+
 }
 
-.nav-container2 {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+/* HEADER */
+
+header{
+
+position:sticky;
+top:0;
+z-index:999;
+
+background:#111;
+
+border-bottom:
+1px solid rgba(
+255,
+255,
+255,
+.08
+);
+
 }
 
-/* Kiri: Logo Tulisan */
-.logo2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #e50914;
-    text-decoration: none;
-    letter-spacing: 1px;
+
+.navbar{
+
+height:70px;
+
+display:flex;
+
+justify-content:
+space-between;
+
+align-items:center;
+
+padding:
+0 20px;
+
+max-width:
+1400px;
+
+margin:auto;
+
 }
 
-/* Kanan: Menu Navigasi & Search */
-.nav-menu2 {
-    display: flex;
-    align-items: center;
-    gap: 25px;
+
+/* LOGO */
+
+.logo{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+font-size:22px;
+font-weight:bold;
+
+cursor:pointer;
+
 }
 
-.nav-menu2 a {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    transition: color 0.3s;
+.logo i{
+
+font-size:25px
+
 }
 
-.nav-menu2 a:hover {
-    color: #e50914;
+
+/* MENU */
+
+#navMenu{
+
+display:flex;
+list-style:none;
+gap:25px;
+
 }
 
-/* Kolom Pencarian */
-.search-box2 input {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid #333;
-    background-color: #222;
-    color: #fff;
-    outline: none;
-    width: 200px;
-    transition: width 0.3s, border-color 0.3s;
+#navMenu a{
+
+color:#fff;
+
+text-decoration:none;
+
+font-size:15px;
+
+opacity:.8;
+
+transition:.3s;
+
 }
 
-.search-box2 input:focus {
-    width: 250px;
-    border-color: #e50914;
+#navMenu a:hover{
+
+opacity:1
+
 }
 
-/* Burger Menu (Tersembunyi di Desktop) */
-.burger-menu2 {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
+
+/* SEARCH */
+
+.searchBox{
+
+position:relative;
+
+display:flex;
+align-items:center;
+
 }
 
-.burger-menu2 span {
-    width: 25px;
-    height: 3px;
-    background-color: #ffffff;
-    border-radius: 2px;
-    transition: 0.3s;
+.searchBox input{
+
+width:240px;
+height:42px;
+
+padding:
+0 45px 0 15px;
+
+border:none;
+outline:none;
+
+border-radius:50px;
+
+background:#1b1b1b;
+
+color:#fff;
+
 }
 
-/* ==========================================
-   🎬 GRID FILM (HALAMAN UTAMA)
-   ========================================== */
-.container2 {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
+.searchBox i{
+
+position:absolute;
+
+right:15px;
+
+opacity:.7
+
 }
 
-.section-title2 {
-    margin-bottom: 25px;
-    font-size: 22px;
-    border-left: 4px solid #e50914;
-    padding-left: 12px;
+
+/* BURGER */
+
+#burger{
+
+display:none;
+
+font-size:25px;
+
+cursor:pointer;
+
 }
 
-.movie-grid2 {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 25px;
+
+/* MOBILE MENU */
+
+#mobileMenu{
+
+display:none;
+
+flex-direction:column;
+
+gap:15px;
+
+padding:20px;
+
+background:#111;
+
+border-top:
+1px solid rgba(
+255,
+255,
+255,
+.05
+);
+
 }
 
-.movie-card2 {
-    background-color: #1f1f1f;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+#mobileMenu a{
+
+text-decoration:none;
+
+color:white
+
 }
 
-.movie-card2:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(229, 9, 20, 0.2);
+#mobileMenu input{
+
+height:45px;
+
+border:none;
+
+outline:none;
+
+border-radius:50px;
+
+padding:0 15px;
+
+background:#1b1b1b;
+
+color:#fff;
+
 }
 
-.movie-card2 a {
-    text-decoration: none;
-    color: #ffffff;
+
+/* HERO */
+
+#hero{
+
+padding:20px;
+
+max-width:1400px;
+
+margin:auto;
+
 }
 
-.movie-card2 img {
-    width: 100%;
-    height: 270px;
-    object-fit: cover;
-    display: block;
+#slider{
+
+height:380px;
+
+border-radius:20px;
+
+overflow:hidden;
+
+background:#111;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
 }
 
-.movie-card2 h3 {
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 10px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+.loading{
+
+padding:30px;
+
+opacity:.7
+
 }
 
-/* Pesan Kosong */
-.empty-msg {
-    text-align: center;
-    grid-column: 1 / -1;
-    padding: 40px;
-    color: #aaa;
+
+/* MOVIES */
+
+.movies{
+
+max-width:1400px;
+
+margin:auto;
+
+padding:20px;
+
 }
 
-/* ==========================================
-   🔢 PAGINATION (1 2 3 4 5)
-   ========================================== */
-.pagination2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 50px;
-    margin-bottom: 30px;
+.titleBar{
+
+margin-bottom:20px;
+
 }
 
-.pagination2 a {
-    color: #ffffff;
-    padding: 10px 16px;
-    text-decoration: none;
-    background-color: #222;
-    border-radius: 4px;
-    font-weight: 600;
-    transition: 0.3s;
-    user-select: none;
+.titleBar h2{
+
+font-size:24px
+
 }
 
-.pagination2 a.active, .pagination2 a:hover {
-    background-color: #e50914;
-    color: #ffffff;
+
+/* GRID */
+
+#movieGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(
+auto-fill,
+minmax(
+170px,
+1fr
+)
+);
+
+gap:20px;
+
 }
 
-/* ==========================================
-   📺 AREA WATCH / PLAYER (WATCH2.HTML)
-   ========================================== */
-.watch-container2 {
-    max-width: 960px;
-    margin: 30px auto;
-    padding: 0 20px;
+
+.card{
+
+background:#151515;
+
+border-radius:15px;
+
+overflow:hidden;
+
+cursor:pointer;
+
+transition:.3s;
+
 }
 
-.movie-title2 {
-    margin-bottom: 20px;
-    font-size: 26px;
-    font-weight: 700;
+.card:hover{
+
+transform:
+translateY(-5px);
+
 }
 
-.player-wrapper2 {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* Rasio Layar Lebar 16:9 */
-    background-color: #000000;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+
+.card img{
+
+width:100%;
+
+height:260px;
+
+object-fit:cover;
+
+display:block;
+
 }
 
-.player-wrapper2 iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+
+.card h3{
+
+padding:12px;
+
+font-size:14px;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
 }
 
-/* Notifikasi Merah Jika Belum Diupdate */
-.error-notif2 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #1a1a1a;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #ff3838;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    padding: 20px;
+
+/* PAGINATION */
+
+#pagination{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:10px;
+
+padding:40px 0;
+
+flex-wrap:wrap;
+
 }
 
-.movie-info2 {
-    margin-top: 25px;
-    background-color: #1f1f1f;
-    padding: 25px;
-    border-radius: 8px;
-    line-height: 1.7;
-    border-top: 3px solid #e50914;
+
+#pagination button{
+
+width:42px;
+
+height:42px;
+
+border:none;
+
+border-radius:10px;
+
+background:#1a1a1a;
+
+color:#fff;
+
+cursor:pointer;
+
+transition:.3s;
+
 }
 
-/* ==========================================
-   📱 MEDIA QUERIES (TAMPILAN MOBILE)
-   ========================================== */
-@media (max-width: 768px) {
-    /* Aktifkan Tombol Burger */
-    .burger-menu2 {
-        display: flex;
-    }
+#pagination button:hover{
 
-    /* Sembunyikan Menu Default & Bentuk Panel Dropdown */
-    .nav-menu2 {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 64px;
-        right: 0;
-        background-color: #000000;
-        width: 100%;
-        padding: 25px;
-        gap: 20px;
-        border-top: 1px solid #222;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.5);
-    }
+background:#333
 
-    /* Munculkan Menu saat Burger Aktif */
-    .nav-menu2.active {
-        display: flex;
-    }
+}
 
-    /* Lebarkan kolom pencarian di HP */
-    .search-box2, .search-box2 input {
-        width: 100%;
-    }
-    .search-box2 input:focus {
-        width: 100%;
-    }
+#pagination .active{
 
-    /* Mengecilkan Grid di Layar HP Kecil */
-    .movie-grid2 {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 15px;
-    }
-    
-    .movie-card2 img {
-        height: 210px;
-    }
+background:#e50914;
 
-    /* Animasi Transformasi Ikon Burger Menjadi Silang (X) */
-    .burger-menu2.open span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 6px);
-    }
-    .burger-menu2.open span:nth-child(2) {
-        opacity: 0;
-    }
-    .burger-menu2.open span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -6px);
-    }
+}
+
+
+/* TOP BUTTON */
+
+#topBtn{
+
+position:fixed;
+
+right:20px;
+
+bottom:20px;
+
+width:45px;
+
+height:45px;
+
+border:none;
+
+border-radius:50%;
+
+background:#e50914;
+
+color:white;
+
+cursor:pointer;
+
+display:none;
+
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+#navMenu,
+.searchBox{
+
+display:none;
+
+}
+
+#burger{
+
+display:block;
+
+}
+
+#slider{
+
+height:250px;
+
+}
+
+#movieGrid{
+
+grid-template-columns:
+repeat(
+2,
+1fr
+);
+
+gap:15px;
+
+}
+
+.card img{
+
+height:220px
+
+}
+
 }
