@@ -6,67 +6,67 @@ const BIG="https://image.tmdb.org/t/p/original";
 const slider=document.getElementById("slider");
 const movieGrid=document.getElementById("movieGrid");
 const search=document.getElementById("search");
+const pagination=document.getElementById("pagination");
 
 let sliderTimer;
 
+let page=1;
+let mode="movie";
 
 
-async function loadTrending(){
+
+async function loadData(){
 
 try{
 
 movieGrid.innerHTML=
 "<div class='loading'>Loading...</div>";
 
-let res=await fetch(
+let url=
+mode==="movie"
 
-`https://api.themoviedb.org/3/trending/all/week?api_key=${KEY}`
+?
 
-);
+`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&page=${page}`
+
+:
+
+`https://api.themoviedb.org/3/discover/tv?api_key=${KEY}&page=${page}`;
+
+
+
+let res=await fetch(url);
 
 let data=await res.json();
-
-if(!data.results){
-
-throw new Error(
-"Data kosong"
-);
-
-}
 
 createSlider(
 data.results.slice(0,5)
 );
 
 renderMovies(
-data.results
+data.results.slice(0,26)
+);
+
+renderPagination(
+page,
+data.total_pages
 );
 
 }
-
 catch(e){
 
 console.log(e);
 
-slider.innerHTML=
-
-"<div class='loading'>Gagal memuat slider</div>";
-
 movieGrid.innerHTML=
-
-"<div class='loading'>Gagal memuat movie</div>";
-
-}
+"<div class='loading'>Gagal memuat</div>";
 
 }
 
-
+}
 
 
 
 function createSlider(items){
-
-if(!items.length)return;
 
 clearInterval(
 sliderTimer
@@ -81,16 +81,6 @@ movie.title||
 movie.name||
 "Untitled";
 
-let desc=
-movie.overview||
-"Tidak ada deskripsi";
-
-desc=
-desc.substring(
-0,
-150
-);
-
 html+=`
 
 <div
@@ -103,19 +93,19 @@ url(${BIG}${movie.backdrop_path})
 <div class="slideContent">
 
 <h1>
-
 ${title}
-
 </h1>
 
 <p>
 
-${desc}...
+${(movie.overview||"").substring(0,150)}
+
+...
 
 </p>
 
 <a
-href="#"
+href="watch2.html?id=${movie.id}"
 class="btn"
 >
 
@@ -131,14 +121,11 @@ Play
 
 });
 
-slider.innerHTML=
-html;
+slider.innerHTML=html;
 
 autoSlider();
 
 }
-
-
 
 
 
@@ -163,22 +150,17 @@ movie.release_date||
 movie.first_air_date||
 ""
 
-).substring(
-0,
-4
-);
-
-
-let rate=
-movie.vote_average?
-movie.vote_average.toFixed(1)
-:
-"0";
+).substring(0,4);
 
 
 html+=`
 
-<div class="card">
+<div
+class="card"
+
+onclick="location.href='watch2.html?id=${movie.id}'"
+
+>
 
 <img
 src="${IMG}${movie.poster_path}"
@@ -195,7 +177,7 @@ ${title}
 
 <span>
 
-⭐ ${rate}
+⭐ ${movie.vote_average.toFixed(1)}
 
 |
 
@@ -218,10 +200,110 @@ html;
 
 
 
+function renderPagination(current,total){
+
+let html="";
+
+html+=`
+
+<button
+
+onclick="changePage(${current-1})"
+
+${current<=1?"disabled":""}
+
+>
+
+<
+
+</button>
+
+`;
+
+let start=
+Math.max(
+1,
+current-3
+);
+
+let end=
+Math.min(
+total,
+start+6
+);
+
+
+for(
+let i=start;
+i<=end;
+i++
+){
+
+html+=`
+
+<button
+
+class="${
+i===current?
+"active"
+:
+""
+}"
+
+onclick="changePage(${i})"
+
+>
+
+${i}
+
+</button>
+
+`;
+
+}
+
+
+html+=`
+
+<button
+
+onclick="changePage(${current+1})"
+
+>
+
+>
+
+</button>
+
+`;
+
+pagination.innerHTML=
+html;
+
+}
+
+
+
+function changePage(p){
+
+if(p<1)return;
+
+page=p;
+
+window.scrollTo({
+
+top:0,
+behavior:"smooth"
+
+});
+
+loadData();
+
+}
+
 
 
 let current=0;
-
 
 function autoSlider(){
 
@@ -231,10 +313,10 @@ document.querySelectorAll(
 ".slide"
 );
 
-
-if(!slides.length)
+if(
+!slides.length
+)
 return;
-
 
 slides.forEach(
 
@@ -242,7 +324,6 @@ s=>s.style.display=
 "none"
 
 );
-
 
 slides[0]
 .style.display=
@@ -280,8 +361,6 @@ slides[current]
 
 
 
-
-
 search.addEventListener(
 
 "keyup",
@@ -291,39 +370,35 @@ async e=>{
 let q=
 e.target.value;
 
-
 if(
 q.length<2
 ){
 
-loadTrending();
+loadData();
 
 return;
 
 }
 
-
 let res=
-
 await fetch(
 
 `https://api.themoviedb.org/3/search/multi?api_key=${KEY}&query=${encodeURIComponent(q)}`
 
 );
 
-
 let data=
 await res.json();
 
-
 renderMovies(
-data.results||[]
+data.results
 );
+
+pagination.innerHTML="";
 
 }
 
 );
 
 
-
-loadTrending();
+loadData();
