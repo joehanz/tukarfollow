@@ -715,5 +715,48 @@
     })();
     //]]>
     </script>
+
+    <script>
+      if (document.getElementById("playBtn")) {
+
+  let splashDone = false;
+
+  // 1. Delay 3 detik sebelum bisa dipakai
+  setTimeout(() => {
+    splashDone = true;
+  }, 3000);
+
+  document.getElementById("playBtn").onclick = function () {
+
+    // kalau belum 3 detik, abaikan klik
+    if (!splashDone) return;
+
+    // STEP A: trigger ads / new tab (pakai sistem lama kamu)
+    if (!adsState) {
+
+      adsState = true;
+
+      window.open(
+        ads[Math.floor(Math.random() * ads.length)],
+        "_blank"
+      );
+
+      return;
+    }
+
+    // STEP B: setelah ads selesai → masuk ke player iframe
+    document.getElementById("introSplash").style.display = "none";
+
+    const iframe = document.getElementById("player");
+
+    iframe.style.display = "block";
+
+    iframe.src =
+      `https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+
+  };
+
+}
+    </script>
   </body>
 </html>
