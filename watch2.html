@@ -7,11 +7,15 @@
 
 <meta
 name="viewport"
-content="width=device-width,initial-scale=1">
+content="width=device-width, initial-scale=1">
 
 <title>
-Watch Movie
+TukarFollow Watch
 </title>
+
+<meta
+name="description"
+content="Streaming Movie Gratis">
 
 <link
 rel="stylesheet"
@@ -26,81 +30,93 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 <body>
 
 
-
-<header>
-
 <nav class="navbar">
 
 <div class="logo">
+
+<a
+href="index2.html">
 
 <i class="fa-solid fa-film"></i>
 
 TukarFollow
 
+</a>
+
 </div>
 
 
-<a
-href="index2.html"
-class="btn">
+<ul id="menu">
 
-← Home
+<li>
+
+<a href="index2.html">
+
+Movies
 
 </a>
 
+</li>
+
+<li>
+
+<a href="#">
+
+Series
+
+</a>
+
+</li>
+
+</ul>
+
+
+<div class="searchBox">
+
+<input
+id="search"
+placeholder="Cari film...">
+
+<i class="fa fa-search"></i>
+
+</div>
+
+
+<div
+class="burger"
+id="burger">
+
+☰
+
+</div>
+
 </nav>
 
-</header>
 
 
 
-
-<section
-id="watchHero">
+<div id="overlay">
 
 <div
-class="watchOverlay">
-
-<div
-class="watchInfo">
-
-<h1 id="title">
-
-Loading...
-
-</h1>
-
-
-<div id="meta">
-
-Loading...
+id="overlayGrid"
+class="overlay-grid">
 
 </div>
 
 
-<p
-id="sinopsis">
-
-Loading...
-
-</p>
+<div
+id="overlayPagination"
+class="pagination">
 
 </div>
 
 </div>
 
-</section>
 
 
-
-
-
-<section
-class="movies">
 
 <div
-class="player"
-id="playerBox">
+class="player">
 
 <iframe
 id="player"
@@ -108,17 +124,108 @@ allowfullscreen>
 
 </iframe>
 
+<div
+class="playLayer"
+id="playLayer">
+
+▶ PLAY
+
 </div>
 
-</section>
+</div>
 
 
 
 
-<script
-src="watch2.js">
 
-</script>
+<div
+class="info"
+id="info">
+
+Loading...
+
+</div>
+
+
+
+
+
+<div
+class="rel-wrap">
+
+<button
+class="arrow left">
+
+‹
+
+</button>
+
+
+<button
+class="arrow right">
+
+›
+
+</button>
+
+
+<div
+class="rel-box"
+id="rel">
+
+</div>
+
+</div>
+
+
+
+
+
+<footer>
+
+<div
+class="footer-grid">
+
+<div>
+
+<h3>
+
+About
+
+</h3>
+
+<p>
+
+TukarFollow streaming movie gratis.
+
+</p>
+
+</div>
+
+
+<div>
+
+<h3>
+
+Disclaimer
+
+</h3>
+
+<p>
+
+Konten berasal dari sumber pihak ketiga.
+
+</p>
+
+</div>
+
+</div>
+
+</footer>
+
+
+
+<script src="watch2.js"></script>
 
 </body>
 
