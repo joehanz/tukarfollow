@@ -73,10 +73,8 @@
     </div>
 
     <div id="watchArea" style="display:none">
-      <div class="player">
-        <div class="playLayer" id="playLayer">▶ PLAY</div>
-
-        <iframe id="player" control="" allowfullscreen=""></iframe>
+      <div class="player" id="playerBox">
+  <iframe id="player" allowfullscreen></iframe>
       </div>
 
       <div class="info" id="info"></div>
@@ -497,18 +495,35 @@
 
       }
 
-      if(
-      document.getElementById(
-      "playLayer"
-      )
-      ){
+     const playerBox =
+document.querySelector(".player");
 
-      document
-      .getElementById(
-      "playLayer"
-      )
-      .onclick=function(){
+if(playerBox){
 
+playerBox.onclick=function(){
+
+if(!adsState){
+
+adsState=true;
+
+window.open(
+ads[
+Math.floor(Math.random()*ads.length)
+],
+"_blank"
+);
+
+return;
+
+}
+
+document.getElementById("player").src =
+`https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+
+};
+
+}
+      
       if(
       !adsState
       ){
