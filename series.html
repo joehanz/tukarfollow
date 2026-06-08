@@ -118,7 +118,6 @@ const mode=new URLSearchParams(location.search).get("mode");
 
 let season=1;
 let episode=1;
-
 let page=1;
 let query="";
 
@@ -130,13 +129,9 @@ const ads=[
 
 let adsState=false;
 
-/* ================= NAV ================= */
-
 function toggleMenu(){
 document.getElementById("mobileMenu").classList.toggle("show");
 }
-
-/* ================= LOAD LIST ================= */
 
 async function load(){
 
@@ -163,7 +158,7 @@ renderGrid(data.results);
 renderPagination(data.page);
 }
 
-/* ================= GRID ================= */
+/* ================= GRID (ASLI) ================= */
 
 function renderGrid(data){
 
@@ -183,12 +178,6 @@ h+=`
 document.getElementById("grid").innerHTML=h;
 }
 
-function go(i){
-location.href=`series.html?id=${i}`;
-}
-
-/* ================= PAGINATION ================= */
-
 function renderPagination(p){
 
 let h="";
@@ -207,11 +196,12 @@ document.getElementById("pagination").innerHTML=h;
 function goPage(p){
 page=p;
 load();
-
 window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* ================= SEARCH ================= */
+function go(i){
+location.href=`series.html?id=${i}`;
+}
 
 function searchSeries(){
 query=document.getElementById("search").value;
@@ -225,7 +215,7 @@ page=1;
 load();
 }
 
-/* ================= DETAIL ================= */
+/* ================= DETAIL (ASLI) ================= */
 
 async function loadDetail(){
 
@@ -274,8 +264,6 @@ SINOPSIS:<br>${m.overview}
 loadEpisode();
 }
 
-/* ================= EPISODE ================= */
-
 async function loadEpisode(){
 
 season=document.getElementById("season").value;
@@ -304,13 +292,14 @@ function changeEpisode(){
 episode=document.getElementById("episode").value;
 }
 
-/* ================= PLAYER FIX (NO ▶ LAYER) ================= */
+/* ================= FIX ONLY: HAPUS ▶ PLAY LAYER ================= */
+/* GANTI EVENT PLAYER DARI LAYER KE PLAYER BOX */
 
 const playerBox=document.querySelector(".player");
 
 if(playerBox){
 
-playerBox.addEventListener("click",function(){
+playerBox.onclick=function(){
 
 if(!adsState){
 
@@ -327,15 +316,11 @@ return;
 document.getElementById("player").src=
 `https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
 
-});
+};
 
 }
 
-/* ================= START ================= */
-
 load();
-
-/* ================= MOBILE SERIES ================= */
 
 function toggleSeriesMobile(){
 document.getElementById("mobileSeries").classList.toggle("show");
