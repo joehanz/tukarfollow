@@ -111,594 +111,235 @@
 </footer>
 
     <script>
-        const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
-      const id=
-      new URLSearchParams(
-      location.search
-      ).get("id");
+const id=new URLSearchParams(location.search).get("id");
+const mode=new URLSearchParams(location.search).get("mode");
 
-      const mode=
-      new URLSearchParams(
-      location.search
-      ).get("mode");
+let season=1;
+let episode=1;
 
-      let season=1;
-      let episode=1;
+let page=1;
+let query="";
 
-      let page=1;
-      let query="";
+const ads=[
+"https://rajarayap.com",
+"https://caturbangunsentosa.blogspot.com",
+"https://ptdwiprima.blogspot.com"
+];
 
-      const ads=[
+let adsState=false;
 
-      "https://rajarayap.com",
-      "https://caturbangunsentosa.blogspot.com",
-      "https://ptdwiprima.blogspot.com"
+/* ================= NAV ================= */
 
-      ];
+function toggleMenu(){
+document.getElementById("mobileMenu").classList.toggle("show");
+}
 
-      let adsState=false;
+/* ================= LOAD LIST ================= */
 
-      function toggleMenu(){
+async function load(){
 
-      document
-      .getElementById(
-      "mobileMenu"
-      )
-      .classList
-      .toggle("show");
+if(id){
+loadDetail();
+return;
+}
 
-      }
+let url="";
 
-      async function load(){
+if(query){
+url=`https://api.themoviedb.org/3/search/tv?api_key=${KEY}&query=${query}&page=${page}`;
+}
+else if(mode==="id"){
+url=`https://api.themoviedb.org/3/discover/tv?api_key=${KEY}&with_origin_country=ID&page=${page}`;
+}
+else{
+url=`https://api.themoviedb.org/3/trending/tv/week?api_key=${KEY}&page=${page}`;
+}
 
-      if(id){
+const data=await fetch(url).then(r=>r.json());
 
-      loadDetail();
+renderGrid(data.results);
+renderPagination(data.page);
+}
 
-      return;
+/* ================= GRID ================= */
 
-      }
+function renderGrid(data){
 
-      let url="";
+let h="";
 
-      if(query){
+data.forEach(v=>{
+if(!v.poster_path)return;
 
-      url=
-      `https://api.themoviedb.org/3/search/tv?api_key=${KEY}&query=${query}&page=${page}`;
+h+=`
+<div class="card" onclick="go(${v.id})">
+<img src="https://image.tmdb.org/t/p/w300${v.poster_path}">
+<div class="title">${v.name}</div>
+</div>
+`;
+});
 
-      }
+document.getElementById("grid").innerHTML=h;
+}
 
-      else if(mode==="id"){
+function go(i){
+location.href=`series.html?id=${i}`;
+}
 
-      url=
-      `https://api.themoviedb.org/3/discover/tv?api_key=${KEY}&with_origin_country=ID&page=${page}`;
+/* ================= PAGINATION ================= */
 
-      }
+function renderPagination(p){
 
-      else{
+let h="";
 
-      url=
-      `https://api.themoviedb.org/3/trending/tv/week?api_key=${KEY}&page=${page}`;
+for(let i=1;i<=6;i++){
+let n=p+i-1;
 
-      }
+h+=`
+<button onclick="goPage(${n})">${n}</button>
+`;
+}
 
-      const data=
-      await fetch(url)
-      .then(r=>r.json());
+document.getElementById("pagination").innerHTML=h;
+}
 
-      renderGrid(
-      data.results
-      );
+function goPage(p){
+page=p;
+load();
 
-      renderPagination(
-      data.page
-      );
+window.scrollTo({top:0,behavior:"smooth"});
+}
 
-      }
+/* ================= SEARCH ================= */
 
-      function renderGrid(data){
+function searchSeries(){
+query=document.getElementById("search").value;
+page=1;
+load();
+}
 
-      let h="";
+function searchSeriesMobile(){
+query=document.querySelector("#mobileMenu input").value;
+page=1;
+load();
+}
 
-      data.forEach(v=>{
+/* ================= DETAIL ================= */
 
-      if(
-      !v.poster_path
-      )return;
+async function loadDetail(){
 
-      h+=`
+document.getElementById("watchArea").style.display="block";
+document.getElementById("grid").style.display="none";
+document.getElementById("pagination").style.display="none";
 
-      <div
-      class="card"
-      onclick="go(${v.id})"
-      >
+const m=await fetch(
+`https://api.themoviedb.org/3/tv/${id}?api_key=${KEY}&language=id-ID`
+).then(r=>r.json());
 
-      <img
-      src="https://image.tmdb.org/t/p/w300${v.poster_path}"
-      >
+let seasonCount=m.number_of_seasons||1;
 
-      <div class="title">
+let seasonHtml=`
+<div class="selects">
+<select id="season" onchange="changeSeason()">
+`;
 
-      ${v.name}
+for(let i=1;i<=seasonCount;i++){
+seasonHtml+=`<option value="${i}">Season ${i}</option>`;
+}
 
-      </div>
+seasonHtml+=`
+</select>
 
-      </div>
+<select id="episode" onchange="changeEpisode()"></select>
+</div>
+`;
 
-      `;
+document.getElementById("info").innerHTML=`
+<h2>${m.name}</h2>
 
-      });
+<p>⭐ Rating : ${m.vote_average.toFixed(1)}</p>
+<p>📅 First Air : ${m.first_air_date||"-"}</p>
+<p>🎭 Genre : ${m.genres.map(g=>g.name).join(", ")}</p>
 
-      document
-      .getElementById(
-      "grid"
-      )
-      .innerHTML=h;
+<br>
+${seasonHtml}
+<br>
 
-      }
+<p style="margin-top:20px;line-height:1.8;">
+SINOPSIS:<br>${m.overview}
+</p>
+`;
 
-      function renderPagination(p){
+loadEpisode();
+}
 
-      let h="";
+/* ================= EPISODE ================= */
 
-      for(
-      let i=1;
-      i<=6;
-      i++
-      ){
+async function loadEpisode(){
 
-      let n=p+i-1;
+season=document.getElementById("season").value;
 
-      h+=`
+const d=await fetch(
+`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${KEY}`
+).then(r=>r.json());
 
-      <button
-      onclick="goPage(${n})"
-      >
+let h="";
 
-      ${n}
+d.episodes.forEach(v=>{
+h+=`<option value="${v.episode_number}">Episode ${v.episode_number}</option>`;
+});
 
-      </button>
+document.getElementById("episode").innerHTML=h;
 
-      `;
+changeEpisode();
+}
 
-      }
+function changeSeason(){
+episode=1;
+loadEpisode();
+}
 
-      document
-      .getElementById(
-      "pagination"
-      )
-      .innerHTML=h;
+function changeEpisode(){
+episode=document.getElementById("episode").value;
+}
 
-      }
+/* ================= PLAYER FIX (NO ▶ LAYER) ================= */
 
-      function goPage(p){
-
-      page=p;
-
-      load();
-
-      window.scrollTo({
-
-      top:0,
-      behavior:"smooth"
-
-      });
-
-      }
-
-      function go(i){
-
-      location.href=
-      `series.html?id=${i}`;
-
-      }
-
-      function searchSeries(){
-
-      query=
-      document
-      .getElementById(
-      "search"
-      )
-      .value;
-
-      page=1;
-
-      load();
-
-      }
-
-        function searchSeriesMobile(){
-
-      query=
-      document.querySelector(
-      "#mobileMenu input"
-      ).value;
-
-      page=1;
-
-      load();
-
-      }
-
-      async function loadDetail(){
-
-      document
-      .getElementById(
-      "watchArea"
-      )
-      .style.display="block";
-
-      document
-      .getElementById(
-      "grid"
-      )
-      .style.display="none";
-
-      document
-      .getElementById(
-      "pagination"
-      )
-      .style.display="none";
-
-      const m=
-      await fetch(
-
-      `https://api.themoviedb.org/3/tv/${id}?api_key=${KEY}&language=id-ID`
-
-      )
-      .then(r=>r.json());
-
-      let seasonCount=
-      m.number_of_seasons||1;
-
-      let seasonHtml=`
-      <div class="selects">
-
-      <select
-      id="season"
-      onchange="changeSeason()"
-      >
-      `;
-
-      for(
-      let i=1;
-      i<=seasonCount;
-      i++
-      ){
-
-      seasonHtml+=`
-      <option value="${i}">
-      Season ${i}
-      </option>
-      `;
-
-      }
-
-      seasonHtml+=`
-      </select>
-
-      <select
-      id="episode"
-      onchange="changeEpisode()"
-      ></select>
-
-      </div>
-      `;
-
-      document
-      .getElementById(
-      "info"
-      )
-      .innerHTML=`
-
-      <h2>
-      ${m.name}
-      </h2>
-
-      <p>
-      ⭐ Rating :
-      ${m.vote_average.toFixed(1)}
-      </p>
-
-      <p>
-      📅 First Air :
-      ${m.first_air_date||"-"}
-      </p>
-
-      <p>
-      🎭 Genre :
-      ${m.genres.map(
-      g=>g.name
-      ).join(", ")}
-      </p>
-      <br>
-      ${seasonHtml}
-      <br>
-      <p style="font-size:10px;">Refresh pages, setting session + episode & click play</p>
-
-      <p style="
-      margin-top:20px;
-      line-height:1.8;
-      ">
-      SINOPSIS:
-      <br>
-      ${m.overview}
-
-      </p>
-
-      `;
-
-      loadEpisode();
-
-      }
-
-      async function loadEpisode(){
-
-      season=
-      document
-      .getElementById(
-      "season"
-      ).value;
-
-      const d=
-      await fetch(
-
-      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${KEY}`
-
-      )
-      .then(r=>r.json());
-
-      let h="";
-
-      d.episodes.forEach(v=>{
-
-      h+=`
-
-      <option value="${v.episode_number}">
-
-      Episode
-      ${v.episode_number}
-
-      </option>
-
-      `;
-
-      });
-
-      document
-      .getElementById(
-      "episode"
-      )
-      .innerHTML=h;
-
-      changeEpisode();
-
-      }
-
-      function changeSeason(){
-
-      episode=1;
-
-      loadEpisode();
-
-      }
-
-      function changeEpisode(){
-
-      episode=
-      document
-      .getElementById(
-      "episode"
-      ).value;
-
-      }
-
-     const playerBox =
-document.querySelector(".player");
+const playerBox=document.querySelector(".player");
 
 if(playerBox){
 
-playerBox.onclick=function(){
+playerBox.addEventListener("click",function(){
 
 if(!adsState){
 
 adsState=true;
 
 window.open(
-ads[
-Math.floor(Math.random()*ads.length)
-],
+ads[Math.floor(Math.random()*ads.length)],
 "_blank"
 );
 
 return;
-
 }
 
-document.getElementById("player").src =
+document.getElementById("player").src=
 `https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
 
-};
+});
 
 }
-      
-      if(
-      !adsState
-      ){
 
-      adsState=true;
+/* ================= START ================= */
 
-      window.open(
+load();
 
-      ads[
-      Math.floor(
-      Math.random()
-      *
-      ads.length
-      )
-      ],
+/* ================= MOBILE SERIES ================= */
 
-      "_blank"
-
-      );
-
-      return;
-
-      }
-
-      this.style.display="none";
-
-      document
-      .getElementById(
-      "player"
-      )
-      .src=
-
-      `https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
-
-      };
-
-      }
-
-      load();
-
-
-
-        function toggleSeriesMobile(){
-
-      document
-      .getElementById(
-      "mobileSeries"
-      )
-      .classList
-      .toggle(
-      "show"
-      );
-
-      }
-    </script>
-
-    <script>
-       //<![CDATA[
-    (function () {
-
-      /* ===============================
-         KONFIGURASI
-      =============================== */
-      var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
-      var DETECT_DELAY = 1200; // ms
-
-      /* ===============================
-         OVERLAY WARNING
-      =============================== */
-      function showWarning(msg){
-        if(document.getElementById('antiWarn')) return;
-        var d = document.createElement('div');
-        d.id = 'antiWarn';
-        d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
-        d.style = `
-          position:fixed;
-          top:0;left:0;
-          width:100%;height:100%;
-          background:rgba(0,0,0,.92);
-          color:#fff;
-          z-index:999999;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          text-align:center;
-          font-size:22px;
-          font-family:Arial,sans-serif
-        `;
-        document.body.appendChild(d);
-
-        setTimeout(function(){
-          location.href = REDIRECT_URL;
-        }, 2500);
-      }
-
-      /* ===============================
-         DISABLE KLIK KANAN
-      =============================== */
-      document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        showWarning('🚫 Klik kanan dinonaktifkan');
-      });
-
-      /* ===============================
-         DISABLE SHORTCUT KEY
-      =============================== */
-      document.addEventListener('keydown', function (e) {
-
-        if (
-          (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
-          (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
-          e.keyCode === 123 // F12
-        ) {
-          e.preventDefault();
-          showWarning('🚫 Akses developer tidak diizinkan');
-        }
-
-      });
-
-      /* ===============================
-         DETEKSI DEVTOOLS (TRICK CONSOLE)
-      =============================== */
-      setInterval(function(){
-        var t = new Image();
-        Object.defineProperty(t,'id',{
-          get:function(){
-            showWarning('🛑 DevTools terdeteksi');
-            throw 'DevTools Blocked';
-          }
-        });
-        console.log(t);
-      }, DETECT_DELAY);
-
-      /* ===============================
-         DISABLE SELECT & DRAG
-      =============================== */
-      var css = document.createElement('style');
-      css.innerHTML = `
-        body {
-          -webkit-user-select:none;
-          -moz-user-select:none;
-          -ms-user-select:none;
-          user-select:none;
-        }
-        img {
-          pointer-events:none;
-        }
-      `;
-      document.head.appendChild(css);
-
-      /* ===============================
-         WATERMARK HALUS
-      =============================== */
-     var wm = document.createElement('div');
-
-  wm.innerHTML = 'Web design by joehanz';
-
-  wm.title = 'Providing website creation services at affordable prices';
-
-  wm.onclick = function(){
-    window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-  };
-
-  wm.style.position = 'fixed';
-  wm.style.bottom = '6px';
-  wm.style.right = '5%';
-  wm.style.opacity = '.25';
-  wm.style.fontSize = '11px';
-  wm.style.zIndex = '999999';
-  wm.style.color = '#fff';
-  wm.style.cursor = 'pointer';
-
-  document.body.appendChild(wm);
-    })();
-    //]]>
-    </script>
+function toggleSeriesMobile(){
+document.getElementById("mobileSeries").classList.toggle("show");
+}
+</script>
   </body>
 </html>
