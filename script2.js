@@ -1,38 +1,41 @@
-const burger=
-document.getElementById(
-"burger"
-);
+/* ========= ELEMENTS ========= */
 
-const navMenu=
-document.getElementById(
-"navMenu"
-);
+const burger=document.getElementById("burger");
+const navMenu=document.getElementById("navMenu");
 
-const movieGrid=
-document.getElementById(
-"movieGrid"
-);
+const movieGrid=document.getElementById("movieGrid");
+const loading=document.getElementById("loading");
 
-const searchInput=
-document.getElementById(
-"searchInput"
-);
+const searchInput=document.getElementById("searchInput");
+const searchBtn=document.getElementById("searchBtn");
 
-const searchBtn=
-document.getElementById(
-"searchBtn"
-);
+const playerFrame=document.getElementById("playerFrame");
+const mediaInfo=document.getElementById("mediaInfo");
 
-const loading=
-document.getElementById(
-"loading"
-);
+const relatedGrid=document.getElementById("relatedGrid");
+
+const seasonSelect=document.getElementById("seasonSelect");
+const episodeSelect=document.getElementById("episodeSelect");
+const playEpisode=document.getElementById("playEpisode");
+const seriesBox=document.getElementById("seriesBox");
+
+const pagination=document.getElementById("pagination");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
 
 
-let movies=[];
+/* ========= GLOBAL ========= */
+
+let page=1;
+
+let media=[];
+
+let searchMode=false;
+
+let query="";
 
 
-/* BURGER */
+/* ========= BURGER ========= */
 
 if(burger){
 
@@ -47,37 +50,101 @@ navMenu.classList.toggle(
 }
 
 
-/* FETCH MOVIES */
+/* ========= START ========= */
 
-async function loadMovies(){
+if(movieGrid){
+
+loadTMDB();
+
+}
+
+if(playerFrame){
+
+loadWatch();
+
+}
+
+
+
+/* ========= RANDOM PAGE ========= */
+
+function randomPage(){
+
+return Math.floor(
+Math.random()*500
+)+1;
+
+}
+
+
+
+/* ========= LOAD GRID ========= */
+
+async function loadTMDB(){
 
 try{
 
 loading.style.display=
 "block";
 
-const res=
+let moviePage=
+randomPage();
+
+let tvPage=
+randomPage();
+
+
+const movieRes=
 await fetch(
-CONFIG2.MOVIES_JSON+
-"?v="+Date.now()
+
+`${CONFIG2.TMDB_BASE}/discover/movie?api_key=${CONFIG2.TMDB_KEY}&page=${moviePage}`
+
 );
 
-movies=
-await res.json();
+const tvRes=
+await fetch(
 
-if(
-CONFIG2.RANDOMIZE
-){
+`${CONFIG2.TMDB_BASE}/discover/tv?api_key=${CONFIG2.TMDB_KEY}&page=${tvPage}`
 
-shuffle(
-movies
 );
 
-}
 
-renderMovies(
-movies
+const movieData=
+await movieRes.json();
+
+const tvData=
+await tvRes.json();
+
+
+media=[
+
+...movieData.results.map(
+x=>({
+...x,
+type:"movie"
+})
+),
+
+...tvData.results.map(
+x=>({
+...x,
+type:"tv"
+})
+)
+
+];
+
+
+shuffle(media);
+
+renderGrid(
+media.slice(
+0,
+CONFIG2.POSTER_PER_PAGE
+)
 );
+
+renderPagination();
 
 loading.style.display=
 "none";
@@ -86,55 +153,58 @@ loading.style.display=
 
 console.log(err);
 
-loading.innerHTML=
-"Failed loading data";
-
 }
 
 }
 
 
-/* SHUFFLE */
 
-function shuffle(arr){
+/* ========= SHUFFLE ========= */
+
+function shuffle(a){
 
 for(
-let i=arr.length-1;
+
+let i=a.length-1;
+
 i>0;
+
 i--
+
 ){
 
-const j=
-Math.floor(
+const j=Math.floor(
+
 Math.random()*
 (i+1)
+
 );
 
-[arr[i],arr[j]]=
-[arr[j],arr[i]];
+[a[i],a[j]]=
+
+[a[j],a[i]];
 
 }
 
-return arr;
+return a;
 
 }
 
 
-/* RENDER GRID */
 
-function renderMovies(data){
+/* ========= GRID ========= */
 
-if(
-!movieGrid
-)return;
+function renderGrid(data){
 
 movieGrid.innerHTML="";
 
-data.forEach(
-(
-item,
-index
-)=>{
+data.forEach(item=>{
+
+const title=
+
+item.title||
+item.name;
+
 
 const card=
 document.createElement(
@@ -144,79 +214,54 @@ document.createElement(
 card.className=
 "card";
 
+
 card.innerHTML=`
 
+${item.type==="movie"
+
+?'<div class="webpTag">WEBP</div>'
+:""
+
+}
+
 <img
-src="${
-item.image
-}"
-loading="lazy"
+src="
+${CONFIG2.TMDB_IMAGE}
+${item.poster_path}
+"
 >
 
 <div
 class="cardTitle"
 >
-${
-item.title
-}
+
+${title}
+
 </div>
 
 `;
 
+
 card.onclick=()=>{
 
 location.href=
-`watch2.html?id=${index}`;
+
+`watch2.html?id=${item.id}&type=${item.type}`;
 
 };
+
 
 movieGrid.appendChild(
 card
 );
 
-}
-
-);
+});
 
 }
 
 
-/* SEARCH */
 
-function runSearch(){
-
-const q=
-searchInput.value
-.toLowerCase()
-.trim();
-
-if(!q){
-
-renderMovies(
-movies
-);
-
-return;
-
-}
-
-const result=
-movies.filter(
-x=>
-
-x.title
-.toLowerCase()
-.includes(
-q
-)
-
-);
-
-renderMovies(
-result
-);
-
-}
+/* ========= SEARCH ========= */
 
 if(searchBtn){
 
@@ -227,8 +272,7 @@ runSearch;
 
 if(searchInput){
 
-searchInput.addEventListener(
-"keyup",
+searchInput.onkeyup=
 e=>{
 
 if(
@@ -239,94 +283,286 @@ runSearch();
 
 }
 
-}
-);
+};
 
 }
 
 
-/* START */
+async function runSearch(){
 
-loadMovies();
+query=
+searchInput.value.trim();
 
-
-
-
-
-/* WATCH PAGE */
-
-const playerFrame=
-document.getElementById(
-"playerFrame"
-);
-
-const mediaInfo=
-document.getElementById(
-"mediaInfo"
-);
-
-const relatedGrid=
-document.getElementById(
-"relatedGrid"
-);
-
-const seriesBox=
-document.getElementById(
-"seriesBox"
-);
-
-const seasonSelect=
-document.getElementById(
-"seasonSelect"
-);
-
-const episodeSelect=
-document.getElementById(
-"episodeSelect"
-);
-
-const playEpisode=
-document.getElementById(
-"playEpisode"
-);
+if(!query)return;
 
 
-if(playerFrame){
-
-loadWatch();
-
-}
-
-
-async function loadWatch(){
-
-const id=
-new URLSearchParams(
-location.search
-)
-.get("id");
+loading.style.display=
+"block";
 
 
 const res=
+
 await fetch(
-CONFIG2.MOVIES_JSON+
-"?v="+Date.now()
+
+`${CONFIG2.TMDB_BASE}/search/multi?api_key=${CONFIG2.TMDB_KEY}&query=${query}`
+
 );
 
 const data=
 await res.json();
 
 
-const item=
-data[id];
+media=
 
-if(
-!item
+data.results.filter(
+
+x=>
+
+x.media_type==="movie"
+
+||
+
+x.media_type==="tv"
+
+).map(
+
+x=>({
+
+...x,
+
+type:
+x.media_type
+
+})
+
+);
+
+
+renderGrid(
+
+media.slice(
+0,
+26
+)
+
+);
+
+loading.style.display=
+"none";
+
+}
+
+
+
+/* ========= PAGINATION ========= */
+
+function renderPagination(){
+
+if(!pagination)return;
+
+pagination.innerHTML="";
+
+
+for(
+
+let i=1;
+i<=6;
+i++
+
 ){
+
+const btn=
+document.createElement(
+"button"
+);
+
+btn.className=
+"pageBtn";
+
+btn.innerText=
+
+page+i-1;
+
+
+btn.onclick=()=>{
+
+page=
+page+i-1;
+
+loadTMDB();
+
+};
+
+
+pagination.appendChild(
+btn);
+
+}
+
+
+if(prevBtn){
+
+prevBtn.onclick=()=>{
+
+if(page>1){
+
+page--;
+
+loadTMDB();
+
+}
+
+};
+
+}
+
+
+if(nextBtn){
+
+nextBtn.onclick=()=>{
+
+page++;
+
+loadTMDB();
+
+};
+
+}
+
+}
+
+
+
+/* ========= WATCH ========= */
+
+async function loadWatch(){
+
+const id=
+
+new URLSearchParams(
+location.search
+)
+.get("id");
+
+
+const type=
+
+new URLSearchParams(
+location.search
+)
+.get("type");
+
+
+try{
+
+const tmdb=
+
+await fetch(
+
+`${CONFIG2.TMDB_BASE}/${type}/${id}?api_key=${CONFIG2.TMDB_KEY}`
+
+);
+
+const tmdbData=
+await tmdb.json();
+
+
+const json=
+await fetch(
+CONFIG2.MOVIES_JSON
+);
+
+const list=
+await json.json();
+
+
+const title=
+
+tmdbData.title||
+
+tmdbData.name;
+
+
+const match=
+
+list.find(
+
+x=>
+
+x.title
+.toLowerCase()
+.includes(
+
+title
+.toLowerCase()
+
+)
+
+);
+
+
+if(match){
+
+playerFrame.src=
+match.iframe;
+
 
 mediaInfo.innerHTML=`
 
-<div class="unavailable">
+<h1>
+
+${match.title}
+
+</h1>
+
+<br>
+
+<p>
+
+${match.sinopsis}
+
+</p>
+
+<br>
+
+<p>
+
+Genre:
+${match.genre.join(", ")}
+
+</p>
+
+<p>
+
+Release:
+${match.release_date}
+
+</p>
+
+<p>
+
+Country:
+${match.country}
+
+</p>
+
+`;
+
+}else{
+
+playerFrame.style.display=
+"none";
+
+
+document
+.getElementById(
+"playerArea"
+)
+.innerHTML=`
+
+<div
+class="unavailable"
+>
 
 This media is unavailable at the moment.
 
@@ -334,173 +570,51 @@ This media is unavailable at the moment.
 
 `;
 
-playerFrame.style.display=
-"none";
-
-return;
-
-}
-
-
-playerFrame.src=
-item.iframe||"";
-
 
 mediaInfo.innerHTML=`
 
 <h1>
-${item.title}
+
+${title}
+
 </h1>
 
 <br>
 
 <p>
-${item.sinopsis||""}
+
+${tmdbData.overview}
+
 </p>
 
 <br>
 
 <p>
 
-Genre :
-${(item.genre||[])
-.join(", ")}
-
-</p>
-
-<p>
-
-Release :
-${item.release_date||"-"}
-
-</p>
-
-<p>
-
-Country :
-${item.country||"-"}
+⭐
+${tmdbData.vote_average}
 
 </p>
 
 `;
+
+}
+
+
+if(type==="tv"){
+
+loadSeries(
+id
+);
+
+}
+
 
 loadRelated(
-data,
-item
+id,
+type
 );
 
-
-searchTMDB(
-item.title,
-item
-);
-
-}
-
-
-/* RELATED */
-
-function loadRelated(
-all,
-current
-){
-
-if(
-!relatedGrid
-)return;
-
-relatedGrid.innerHTML="";
-
-
-let related=
-all.filter(
-x=>
-
-x.title!=
-current.title
-
-);
-
-shuffle(
-related
-);
-
-related=
-related.slice(
-0,
-CONFIG2.RELATED_LIMIT
-);
-
-related.forEach(
-(
-item,
-index
-)=>{
-
-relatedGrid.innerHTML+=`
-
-<div
-class="card"
-onclick="
-location.href=
-'watch2.html?id=${all.indexOf(item)}'
-"
->
-
-<img
-src="${item.image}"
->
-
-<div
-class="cardTitle"
->
-
-${item.title}
-
-</div>
-
-</div>
-
-`;
-
-}
-);
-
-}
-
-
-/* TMDB SEARCH */
-
-async function searchTMDB(
-title,
-item
-){
-
-try{
-
-const r=
-await fetch(
-
-`${CONFIG2.TMDB_BASE}/search/tv?api_key=${CONFIG2.TMDB_KEY}&query=${encodeURIComponent(title)}`
-
-);
-
-const d=
-await r.json();
-
-if(
-!d.results?.length
-)return;
-
-
-const tv=
-d.results[0];
-
-
-loadSeasonData(
-tv.id,
-item
-);
 
 }catch(e){
 
@@ -511,15 +625,16 @@ console.log(e);
 }
 
 
-/* SEASONS */
 
-async function loadSeasonData(
-id,
-item
-){
+/* ========= SERIES ========= */
+
+async function loadSeries(id){
+
+if(!seriesBox)return;
 
 seriesBox.style.display=
 "flex";
+
 
 const r=
 await fetch(
@@ -532,12 +647,10 @@ const d=
 await r.json();
 
 
-seasonSelect.innerHTML=
-"";
+seasonSelect.innerHTML="";
 
 
-d.seasons.forEach(
-s=>{
+d.seasons.forEach(s=>{
 
 seasonSelect.innerHTML+=`
 
@@ -550,32 +663,29 @@ ${s.season_number}
 
 `;
 
-}
-);
+});
+
+
+loadEpisodes();
 
 
 seasonSelect.onchange=
 loadEpisodes;
 
 
-loadEpisodes();
-
-
 playEpisode.onclick=
 ()=>{
 
-const season=
+let season=
 seasonSelect.value;
 
-const episode=
+let episode=
 episodeSelect.value;
 
 
-/* ganti player */
-
 playerFrame.src=
 
-item.iframe+
+playerFrame.src+
 
 `?season=${season}&episode=${episode}`;
 
@@ -584,16 +694,19 @@ item.iframe+
 }
 
 
+function loadEpisodes(){
 
-async function loadEpisodes(){
+episodeSelect.innerHTML="";
 
-episodeSelect.innerHTML=
-"";
 
 for(
+
 let i=1;
+
 i<=30;
+
 i++
+
 ){
 
 episodeSelect.innerHTML+=`
@@ -607,5 +720,80 @@ Episode ${i}
 `;
 
 }
+
+}
+
+
+
+/* ========= RELATED ========= */
+
+async function loadRelated(
+id,
+type
+){
+
+if(!relatedGrid)return;
+
+
+const r=
+await fetch(
+
+`${CONFIG2.TMDB_BASE}/${type}/${id}/recommendations?api_key=${CONFIG2.TMDB_KEY}`
+
+);
+
+const d=
+await r.json();
+
+
+relatedGrid.innerHTML=
+'<div class="relatedRow"></div>';
+
+const row=
+document.querySelector(
+".relatedRow"
+);
+
+
+d.results
+.slice(
+0,
+15
+)
+.forEach(item=>{
+
+const title=
+
+item.title||
+item.name;
+
+
+row.innerHTML+=`
+
+<div
+class="card"
+
+onclick="location.href='watch2.html?id=${item.id}&type=${type}'"
+
+>
+
+<img
+src="${CONFIG2.TMDB_IMAGE}${item.poster_path}"
+>
+
+<div
+class="cardTitle"
+>
+
+${title}
+
+</div>
+
+</div>
+
+`;
+
+});
+
 
 }
