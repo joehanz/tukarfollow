@@ -85,23 +85,10 @@
     background:#000;
   ">
 
-    <img id="splashImg"
+    <img
       src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp"
-      style="width:100%;height:auto;max-height:100%;object-fit:cover;"
+      style="width:100%;height:100%;object-fit:cover;"
     >
-
-    <button id="playBtn" style="
-      position:absolute;
-      padding:12px 20px;
-      background:red;
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      font-weight:bold;
-      cursor:pointer;
-    ">
-      ▶ PLAY
-    </button>
 
   </div>
 
@@ -715,31 +702,32 @@
     })();
     //]]>
     </script>
-
     <script>
-      if (document.getElementById("introSplash")) {
+      (function () {
 
   let ready = false;
   let clickCount = 0;
 
-  // 1. AUTO DELAY 3 DETIK
+  const splash = document.getElementById("introSplash");
+  const iframe = document.getElementById("player");
+
+  if (!splash || !iframe) return;
+
+  // 1. delay 3 detik baru boleh interaksi
   setTimeout(() => {
     ready = true;
-
-    // setelah 3 detik langsung tampilkan iframe (tanpa tombol)
-    document.getElementById("introSplash").style.display = "none";
-    document.getElementById("player").style.display = "block";
-
+    splash.style.display = "none";
+    iframe.style.display = "block";
   }, 3000);
 
-  // 2. DETEKSI KLIK IFRAME
-  document.getElementById("player").addEventListener("click", function () {
+  // 2. klik iframe = sistem 2 tahap
+  iframe.addEventListener("click", function () {
 
     if (!ready) return;
 
     clickCount++;
 
-    // klik pertama → new tab ads
+    // klik pertama → buka ads (new tab)
     if (clickCount === 1) {
 
       window.open(
@@ -750,7 +738,7 @@
       return;
     }
 
-    // klik kedua → play normal (load stream)
+    // klik kedua → baru load video
     if (clickCount >= 2) {
 
       this.src =
@@ -760,7 +748,7 @@
 
   });
 
-}
+})();
     </script>
   </body>
 </html>
