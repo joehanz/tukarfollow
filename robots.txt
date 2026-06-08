@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /subindo.html
+Disallow: /subindo.js
+Disallow: /movies.json
+Allow: /
+
+Sitemap: https://tukarfollow.web.id
