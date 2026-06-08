@@ -23,6 +23,9 @@ const pagination=document.getElementById("pagination");
 const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
 
+const leftArrow=document.getElementById("leftArrow");
+const rightArrow=document.getElementById("rightArrow");
+
 let media=[];
 let page=1;
 
@@ -58,12 +61,13 @@ loadWatch();
 
 
 
-/* ========= STRING SIMILARITY ========= */
+/* ========= TITLE MATCH ========= */
 
 function cleanTitle(str){
 
 return str
 .toLowerCase()
+.replace(/\(\d+\)/g,"")
 .replace(/[^\w\s]/g,"")
 .replace(/\s+/g," ")
 .trim();
@@ -76,33 +80,36 @@ function similarity(a,b){
 a=cleanTitle(a);
 b=cleanTitle(b);
 
-let longer=
-a.length>b.length
-?a:b;
-
-let shorter=
-a.length>b.length
-?b:a;
-
-let same=0;
-
-for(let i=0;i<shorter.length;i++){
-
 if(
-longer.includes(
-shorter[i]
-)
+a.includes(b)
+||
+b.includes(a)
 ){
 
-same++;
+return 100;
+
+}
+
+let match=0;
+
+for(let c of a){
+
+if(
+b.includes(c)
+){
+
+match++;
 
 }
 
 }
 
 return(
-same/
-longer.length
+match/
+Math.max(
+a.length,
+b.length
+)
 )*100;
 
 }
@@ -128,7 +135,8 @@ i>0;
 i--
 ){
 
-let j=Math.floor(
+let j=
+Math.floor(
 Math.random()*
 (i+1)
 );
@@ -148,6 +156,8 @@ return a;
 
 async function loadTMDB(){
 
+if(!movieGrid)return;
+
 loading.style.display=
 "block";
 
@@ -156,7 +166,6 @@ let movieRes=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/discover/movie?api_key=${CONFIG2.TMDB_KEY}&page=${randomPage()}`
-
 );
 
 let tvRes=
@@ -164,6 +173,7 @@ await fetch(
 
 `${CONFIG2.TMDB_BASE}/discover/tv?api_key=${CONFIG2.TMDB_KEY}&page=${randomPage()}`
 );
+
 
 let movie=
 await movieRes.json();
@@ -193,8 +203,12 @@ type:"tv"
 
 shuffle(media);
 
+
 renderGrid(
-media.slice(0,26)
+media.slice(
+0,
+26
+)
 );
 
 renderPagination();
@@ -222,9 +236,11 @@ movieGrid.innerHTML+=`
 
 <div
 class="card"
+
 onclick="
 location.href='watch2.html?id=${item.id}&type=${item.type}'
 "
+
 >
 
 ${item.type==="movie"
@@ -290,15 +306,10 @@ searchInput.value.trim();
 if(!q)return;
 
 
-loading.style.display=
-"block";
-
-
 let res=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/search/multi?api_key=${CONFIG2.TMDB_KEY}&query=${q}`
-
 );
 
 let d=
@@ -335,12 +346,7 @@ x.media_type
 );
 
 
-renderGrid(
-media
-);
-
-loading.style.display=
-"none";
+renderGrid(media);
 
 }
 
@@ -350,7 +356,10 @@ loading.style.display=
 
 function renderPagination(){
 
+if(!pagination)return;
+
 pagination.innerHTML="";
+
 
 for(
 let i=1;
@@ -362,6 +371,7 @@ pagination.innerHTML+=`
 
 <button
 class="pageBtn"
+
 onclick="changePage(${page+i-1})"
 >
 
@@ -374,6 +384,7 @@ ${page+i-1}
 }
 
 }
+
 
 function changePage(p){
 
@@ -399,6 +410,7 @@ loadTMDB();
 };
 
 }
+
 
 if(nextBtn){
 
@@ -441,6 +453,66 @@ let info=
 await tmdb.json();
 
 
+/* SERIES */
+
+if(type==="tv"){
+
+playerFrame.style.display=
+"block";
+
+playerFrame.src=
+
+`https://vsembed.ru/tv/${id}/1/1`;
+
+
+mediaInfo.innerHTML=`
+
+<h1>
+
+${info.name}
+
+</h1>
+
+<br>
+
+<p>
+
+⭐ ${info.vote_average}
+
+</p>
+
+<p>
+
+${info.genres.map(
+x=>x.name
+).join(", ")}
+
+</p>
+
+<br>
+
+<p>
+
+${info.overview}
+
+</p>
+
+`;
+
+loadSeries(id);
+
+loadRelated(
+id,
+type
+);
+
+return;
+
+}
+
+
+/* MOVIES JSON */
+
 let json=
 await fetch(
 CONFIG2.MOVIES_JSON
@@ -451,18 +523,17 @@ await json.json();
 
 
 let title=
-info.title||
-info.name;
+info.title;
 
 
 let best=null;
+
 let score=0;
 
 
 list.forEach(item=>{
 
 let s=
-
 similarity(
 title,
 item.title
@@ -473,6 +544,7 @@ s>score
 ){
 
 score=s;
+
 best=item;
 
 }
@@ -484,61 +556,49 @@ if(
 score>=80
 &&
 best
-&&
-type==="movie"
 ){
 
 playerFrame.src=
-best.iframe||"";
+best.iframe;
 
-
-mediaInfo.innerHTML=`
-
-<h1>${best.title}</h1>
-
-<br>
-
-<p>
-${best.sinopsis||info.overview}
-</p>
-
-<br>
-
-<p>
-Genre:
-${best.genre.join(", ")}
-</p>
-
-<p>
-Release:
-${best.release_date}
-</p>
-
-<p>
-Country:
-${best.country}
-</p>
-
-`;
-
-}else if(type==="tv"){
-
-playerFrame.src=
-
-`https://vsembed.su/tv/${id}/1/1`;
-
-loadSeries(id);
 
 mediaInfo.innerHTML=`
 
 <h1>
-${info.name}
+
+${best.title}
+
 </h1>
 
 <br>
 
 <p>
-${info.overview}
+
+${best.sinopsis}
+
+</p>
+
+<br>
+
+<p>
+
+Genre :
+${best.genre.join(", ")}
+
+</p>
+
+<p>
+
+Release :
+${best.release_date}
+
+</p>
+
+<p>
+
+Country :
+${best.country}
+
 </p>
 
 `;
@@ -563,7 +623,7 @@ mediaInfo.innerHTML=`
 
 <h1>
 
-${title}
+${info.title}
 
 </h1>
 
@@ -577,7 +637,6 @@ ${title}
 
 <p>
 
-Genre:
 ${info.genres.map(
 x=>x.name
 ).join(", ")}
@@ -586,8 +645,7 @@ x=>x.name
 
 <p>
 
-Release:
-${info.release_date||info.first_air_date}
+${info.release_date}
 
 </p>
 
@@ -616,8 +674,6 @@ type
 /* ========= SERIES ========= */
 
 async function loadSeries(id){
-
-if(!seriesBox)return;
 
 seriesBox.style.display=
 "flex";
@@ -659,7 +715,8 @@ seasonSelect.onchange=
 loadEpisodes;
 
 
-playEpisode.onclick=()=>{
+playEpisode.onclick=
+()=>{
 
 let season=
 seasonSelect.value;
@@ -670,17 +727,17 @@ episodeSelect.value;
 
 playerFrame.src=
 
-`https://vsembed.su/tv/${id}/${season}/${episode}`;
+`https://vsembed.ru/tv/${id}/${season}/${episode}`;
 
 };
 
 }
 
 
-
 function loadEpisodes(){
 
 episodeSelect.innerHTML="";
+
 
 for(
 let i=1;
@@ -706,10 +763,10 @@ Episode ${i}
 
 /* ========= RELATED ========= */
 
-async function loadRelated(id,type){
-
-if(!relatedGrid)return;
-
+async function loadRelated(
+id,
+type
+){
 
 let r=
 await fetch(
@@ -722,61 +779,15 @@ let d=
 await r.json();
 
 
-relatedGrid.innerHTML=`
-
-<div class="relatedHeader">
-
-<h2>
-Related Movies
-</h2>
-
-<div class="relatedNav">
-
-<button
-class="relatedArrow"
-id="leftArrow"
->
-
-‹
-
-</button>
-
-<button
-class="relatedArrow"
-id="rightArrow"
->
-
-›
-
-</button>
-
-</div>
-
-</div>
-
-
-<div class="relatedContainer">
-
-<div
-class="relatedRow"
-id="relatedRow"
->
-
-</div>
-
-</div>
-
-`;
-
-
-let row=
-document.getElementById(
-"relatedRow"
-);
+relatedGrid.innerHTML="";
 
 
 d.results
-.slice(0,15)
+.slice(
+0,
+15
+)
+
 .forEach(item=>{
 
 let title=
@@ -784,7 +795,7 @@ item.title||
 item.name;
 
 
-row.innerHTML+=`
+relatedGrid.innerHTML+=`
 
 <div
 class="card"
@@ -799,7 +810,9 @@ location.href='watch2.html?id=${item.id}&type=${item.media_type||type}'
 src="${CONFIG2.TMDB_IMAGE}${item.poster_path}"
 >
 
-<div class="cardTitle">
+<div
+class="cardTitle"
+>
 
 ${title}
 
@@ -812,26 +825,35 @@ ${title}
 });
 
 
-document.getElementById(
-"leftArrow"
-).onclick=()=>{
+if(leftArrow){
 
-row.scrollBy({
-left:-700,
+leftArrow.onclick=()=>{
+
+relatedGrid.scrollBy({
+
+left:-900,
 behavior:"smooth"
+
 });
 
 };
 
-document.getElementById(
-"rightArrow"
-).onclick=()=>{
+}
 
-row.scrollBy({
-left:700,
+
+if(rightArrow){
+
+rightArrow.onclick=()=>{
+
+relatedGrid.scrollBy({
+
+left:900,
 behavior:"smooth"
+
 });
 
 };
+
+}
 
 }
