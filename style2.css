@@ -280,3 +280,51 @@ padding:20px;
 }
 
 }
+
+/* PAGINATION */
+
+.pagination{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-top:50px;
+flex-wrap:wrap;
+
+}
+
+.pagination button{
+
+min-width:40px;
+height:40px;
+
+border:none;
+outline:none;
+
+border-radius:10px;
+
+background:#111827;
+color:#fff;
+
+cursor:pointer;
+
+transition:.3s;
+
+font-size:14px;
+
+}
+
+.pagination button:hover{
+
+transform:translateY(-3px);
+
+}
+
+.pagination .active{
+
+background:#f7c843;
+color:#000;
+font-weight:bold;
+
+}
