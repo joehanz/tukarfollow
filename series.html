@@ -703,7 +703,7 @@
     //]]>
     </script>
     <script>
-      (function () {
+(function () {
 
   let ready = false;
   let clickCount = 0;
@@ -713,21 +713,27 @@
 
   if (!splash || !iframe) return;
 
-  // 1. delay 3 detik baru boleh interaksi
+  // 1. setelah 3 detik → tampilkan iframe + langsung isi src
   setTimeout(() => {
     ready = true;
+
     splash.style.display = "none";
     iframe.style.display = "block";
+
+    // 🔥 INI YANG KURANG TADI (WAJIB LOAD AWAL)
+    iframe.src =
+      `https://vsembed.ru/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+
   }, 3000);
 
-  // 2. klik iframe = sistem 2 tahap
+  // 2. klik iframe
   iframe.addEventListener("click", function () {
 
     if (!ready) return;
 
     clickCount++;
 
-    // klik pertama → buka ads (new tab)
+    // klik pertama → ads new tab
     if (clickCount === 1) {
 
       window.open(
@@ -738,7 +744,7 @@
       return;
     }
 
-    // klik kedua → baru load video
+    // klik kedua → reload video (force refresh kalau episode berubah)
     if (clickCount >= 2) {
 
       this.src =
