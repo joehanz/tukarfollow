@@ -19,6 +19,7 @@ href="style2.css"
 />
 
 </head>
+
 <body>
 
 
@@ -28,11 +29,52 @@ href="style2.css"
 
 <div
 class="logo"
-onclick="location.href='index2.html'"
-style="cursor:pointer"
+onclick="
+location.href='index2.html'
+"
 >
 
-Movie2
+MOVIE2
+
+</div>
+
+
+<div
+class="burger"
+id="burger"
+>
+
+☰
+
+</div>
+
+
+<div
+class="navMenu"
+id="navMenu"
+>
+
+<div
+class="searchWrap"
+>
+
+<input
+id="searchInput"
+type="text"
+placeholder="Search..."
+>
+
+<button
+onclick="
+location.href='index2.html'
+"
+>
+
+Search
+
+</button>
+
+</div>
 
 </div>
 
@@ -40,11 +82,12 @@ Movie2
 
 
 
-<!-- PLAYER -->
-
-<section
+<div
 class="watchWrap"
 >
+
+
+<!-- PLAYER -->
 
 <div
 id="playerArea"
@@ -52,24 +95,22 @@ id="playerArea"
 
 <iframe
 id="playerFrame"
-width="100%"
-height="100%"
-frameborder="0"
 allowfullscreen
-allow="autoplay;fullscreen"
+allow="
+autoplay;
+fullscreen
+"
 >
 
 </iframe>
 
 </div>
 
-</section>
-
 
 
 <!-- INFO -->
 
-<section
+<div
 class="infoWrap"
 >
 
@@ -81,21 +122,26 @@ Loading...
 
 </div>
 
+</div>
 
-<!-- SERIES PANEL -->
+
+
+<!-- SERIES -->
 
 <div
 id="seriesBox"
-style="display:none"
+
+style="
+display:none;
+padding:25px;
+gap:10px;
+flex-wrap:wrap;
+"
 >
 
 <select
 id="seasonSelect"
 >
-
-<option>
-Season
-</option>
 
 </select>
 
@@ -103,10 +149,6 @@ Season
 <select
 id="episodeSelect"
 >
-
-<option>
-Episode
-</option>
 
 </select>
 
@@ -121,36 +163,170 @@ Play
 
 </div>
 
-</section>
-
 
 
 <!-- RELATED -->
 
-<section
+<div
 class="relatedWrap"
+>
+
+<div
+class="relatedHeader"
 >
 
 <h2>
 
-Related Videos
+Related Movies
 
 </h2>
 
+
+<div
+class="relatedNav"
+>
+
+<button
+id="leftArrow"
+class="relatedArrow"
+>
+
+❮
+
+</button>
+
+
+<button
+id="rightArrow"
+class="relatedArrow"
+>
+
+❯
+
+</button>
+
+</div>
+
+</div>
+
+
+<div
+class="relatedContainer"
+>
+
 <div
 id="relatedGrid"
-class="movieGrid"
+class="relatedRow"
 >
 
 </div>
 
-</section>
+</div>
+
+</div>
+
+
+</div>
 
 
 
-<script src="config2.js"></script>
+<!-- FOOTER -->
 
-<script src="script2.js"></script>
+<footer
+class="footer"
+>
+
+<div
+class="footerGrid"
+>
+
+<div>
+
+<h3>
+
+MOVIE2
+
+</h3>
+
+<p>
+
+Movie & TV Library
+
+</p>
+
+</div>
+
+
+<div>
+
+<h3>
+
+Movies
+
+</h3>
+
+<p>
+
+Trending</p>
+
+<p>
+
+Popular</p>
+
+</div>
+
+
+<div>
+
+<h3>
+
+Series
+
+</h3>
+
+<p>
+
+TV Shows</p>
+
+<p>
+
+Episodes</p>
+
+</div>
+
+
+<div>
+
+<h3>
+
+Contact
+
+</h3>
+
+<p>
+
+About</p>
+
+<p>
+
+Support</p>
+
+</div>
+
+</div>
+
+</footer>
+
+
+
+<script
+src="config2.js"
+></script>
+
+<script
+src="script2.js"
+></script>
+
 
 </body>
 </html>
