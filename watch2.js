@@ -5,6 +5,22 @@ new URLSearchParams(
 location.search
 ).get("id");
 
+const IMG=
+"https://image.tmdb.org/t/p/w500";
+
+const BIG=
+"https://image.tmdb.org/t/p/original";
+
+
+const banner=
+document.getElementById(
+"watchBanner"
+);
+
+const player=
+document.getElementById(
+"player"
+);
 
 const title=
 document.getElementById(
@@ -21,21 +37,16 @@ document.getElementById(
 "sinopsis"
 );
 
-const player=
+const rel=
 document.getElementById(
-"player"
+"rel"
 );
-
-const hero=
-document.getElementById(
-"watchHero");
 
 
 
 async function loadMovie(){
 
 try{
-
 
 let res=
 await fetch(
@@ -48,12 +59,10 @@ let movie=
 await res.json();
 
 
-
 title.innerHTML=
 
 movie.title||
 movie.name;
-
 
 
 meta.innerHTML=
@@ -61,13 +70,14 @@ meta.innerHTML=
 `
 ⭐ ${movie.vote_average}
 
-|
+| 
+
 ${movie.release_date}
 
 |
+
 ${movie.runtime} menit
 `;
-
 
 
 sinopsis.innerHTML=
@@ -76,20 +86,19 @@ movie.overview||
 "Tidak ada sinopsis";
 
 
+banner.innerHTML=
 
-hero.style.background=
-
-`linear-gradient(
-rgba(0,0,0,.7),
-rgba(0,0,0,.9)
-),
-
-url(
-https://image.tmdb.org/t/p/original${movie.backdrop_path}
-)
-
-center/cover`;
-
+`
+<img
+src="${BIG}${movie.backdrop_path}"
+style="
+width:100%;
+height:300px;
+object-fit:cover;
+border-radius:15px;
+margin-bottom:25px;
+">
+`;
 
 
 loadCustomPlayer(
@@ -98,8 +107,10 @@ movie.name
 );
 
 
-}
+loadRelated();
 
+
+}
 catch(e){
 
 console.log(e);
@@ -111,11 +122,9 @@ console.log(e);
 
 
 
-
 async function loadCustomPlayer(name){
 
 try{
-
 
 let res=
 await fetch(
@@ -130,16 +139,18 @@ let custom=
 
 data.find(
 
-m=>
+x=>
 
-m.title
+name
 .toLowerCase()
 .includes(
-name.toLowerCase()
+
+x.title
+.toLowerCase()
+
 )
 
 );
-
 
 
 if(custom){
@@ -164,6 +175,73 @@ catch(e){
 console.log(e);
 
 }
+
+}
+
+
+
+
+async function loadRelated(){
+
+let res=
+await fetch(
+
+`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
+
+);
+
+let data=
+await res.json();
+
+
+let html="";
+
+
+data.results
+.slice(0,12)
+.forEach(movie=>{
+
+
+html+=`
+
+<div
+class="card"
+
+onclick="location.href='watch2.html?id=${movie.id}'"
+
+>
+
+<img
+src="${IMG}${movie.poster_path}"
+loading="lazy"
+>
+
+<div class="cardInfo">
+
+<h3>
+
+${movie.title}
+
+</h3>
+
+<span>
+
+⭐ ${movie.vote_average.toFixed(1)}
+
+</span>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+rel.innerHTML=
+html;
+
 
 }
 
