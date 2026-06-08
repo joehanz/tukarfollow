@@ -1,35 +1,16 @@
-const KEY="b3b893873ed1bb7f175b2707afeea2a0";
-
-const id=
+const title=
 new URLSearchParams(
 location.search
-).get("id");
+).get("title");
 
-const IMG=
-"https://image.tmdb.org/t/p/w500";
-
-const BIG=
-"https://image.tmdb.org/t/p/original";
-
-
-const banner=
+const playerBox=
 document.getElementById(
-"watchBanner"
+"playerBox"
 );
 
-const player=
+const judul=
 document.getElementById(
-"player"
-);
-
-const title=
-document.getElementById(
-"title"
-);
-
-const meta=
-document.getElementById(
-"meta"
+"judul"
 );
 
 const sinopsis=
@@ -37,10 +18,82 @@ document.getElementById(
 "sinopsis"
 );
 
-const rel=
+const meta=
 document.getElementById(
-"rel"
+"meta"
 );
+
+const recommend=
+document.getElementById(
+"recommendGrid"
+);
+
+
+
+function cleanText(text){
+
+return text
+
+.toLowerCase()
+
+.replace(
+/\(\d+\)/g,
+""
+)
+
+.replace(
+/[^\w\s]/g,
+""
+)
+
+.replace(
+/\s+/g,
+" "
+)
+
+.trim();
+
+}
+
+
+
+function similarity(a,b){
+
+a=cleanText(a);
+
+b=cleanText(b);
+
+const wordsA=
+a.split(" ");
+
+const wordsB=
+b.split(" ");
+
+let same=0;
+
+wordsA.forEach(word=>{
+
+if(
+wordsB.includes(word)
+){
+
+same++;
+
+}
+
+});
+
+return same/
+
+Math.max(
+
+wordsA.length,
+
+wordsB.length
+
+);
+
+}
 
 
 
@@ -48,175 +101,204 @@ async function loadMovie(){
 
 try{
 
-let res=
+const data=
 await fetch(
+"data/movies.json"
+)
 
-`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
+.then(r=>r.json());
+
+
+
+const movie=
+
+data.find(m=>
+
+similarity(
+
+title,
+
+m.title
+
+)>=0.8
 
 );
 
-let movie=
-await res.json();
 
 
-title.innerHTML=
+if(movie){
 
-movie.title||
-movie.name;
+judul.textContent=
+
+movie.title;
 
 
-meta.innerHTML=
 
-`
-⭐ ${movie.vote_average}
+sinopsis.textContent=
 
-| 
+movie.sinopsis||
 
-${movie.release_date}
+"Sinopsis belum tersedia";
 
-|
 
-${movie.runtime} menit
+
+meta.innerHTML=`
+
+<span class="tag">
+
+${movie.release_date||"-"}
+
+</span>
+
+<span class="tag">
+
+${movie.country||"-"}
+
+</span>
+
+${
+movie.genre
+?.map(g=>`
+
+<span class="tag">
+
+${g}
+
+</span>
+
+`).join("")
+
+||""
+}
+
 `;
 
 
-sinopsis.innerHTML=
 
-movie.overview||
-"Tidak ada sinopsis";
+if(movie.iframe){
 
+playerBox.innerHTML=`
 
-banner.innerHTML=
+<iframe
 
-`
-<img
-src="${BIG}${movie.backdrop_path}"
-style="
-width:100%;
-height:300px;
-object-fit:cover;
-border-radius:15px;
-margin-bottom:25px;
-">
+src="${movie.iframe}"
+
+allowfullscreen
+
+loading="lazy"
+
+referrerpolicy="no-referrer"
+
+></iframe>
+
 `;
 
+}else{
 
-loadCustomPlayer(
-movie.title||
-movie.name
-);
+playerBox.innerHTML=`
 
+<div class="notfound">
 
-loadRelated();
+🎬 Video belum diupload
 
+</div>
 
-}
-catch(e){
-
-console.log(e);
+`;
 
 }
 
+}else{
+
+judul.textContent=
+
+title||"Film";
+
+
+
+sinopsis.textContent=
+
+"Film ditemukan di TMDB namun video belum tersedia.";
+
+
+
+playerBox.innerHTML=`
+
+<div class="notfound">
+
+🎬 Video belum diupload
+
+</div>
+
+`;
+
 }
 
 
 
-
-async function loadCustomPlayer(name){
-
-try{
-
-let res=
-await fetch(
-"movies.json"
-);
-
-let data=
-await res.json();
+renderRecommend(data);
 
 
-let custom=
 
-data.find(
+}catch(err){
 
-x=>
+console.log(err);
 
-name
-.toLowerCase()
-.includes(
+playerBox.innerHTML=`
 
-x.title
-.toLowerCase()
+<div class="notfound">
+
+⚠️ Gagal memuat data
+
+</div>
+
+`;
+
+}
+
+}
+
+
+
+function renderRecommend(data){
+
+recommend.innerHTML="";
+
+
+
+const random=
+
+[...data]
+
+.sort(()=>
+
+0.5-Math.random()
 
 )
 
+.slice(0,8);
+
+
+
+random.forEach(movie=>{
+
+const card=
+
+document.createElement(
+"div"
 );
 
+card.className=
 
-if(custom){
-
-player.src=
-custom.iframe;
-
-return;
-
-}
+"card";
 
 
 
-player.src=
-
-"https://www.youtube.com/embed/dQw4w9WgXcQ";
-
-
-}
-catch(e){
-
-console.log(e);
-
-}
-
-}
-
-
-
-
-async function loadRelated(){
-
-let res=
-await fetch(
-
-`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
-
-);
-
-let data=
-await res.json();
-
-
-let html="";
-
-
-data.results
-.slice(0,12)
-.forEach(movie=>{
-
-
-html+=`
-
-<div
-class="card"
-
-onclick="location.href='watch2.html?id=${movie.id}'"
-
->
+card.innerHTML=`
 
 <img
-src="${IMG}${movie.poster_path}"
+src="${movie.image}"
 loading="lazy"
 >
-
-<div class="cardInfo">
 
 <h3>
 
@@ -224,24 +306,33 @@ ${movie.title}
 
 </h3>
 
-<span>
-
-⭐ ${movie.vote_average.toFixed(1)}
-
-</span>
-
-</div>
-
-</div>
-
 `;
 
+
+
+card.onclick=()=>{
+
+location=
+
+`watch2.html?title=${
+
+encodeURIComponent(
+
+movie.title
+
+)
+
+}`;
+
+};
+
+
+
+recommend.appendChild(
+card
+);
+
 });
-
-
-rel.innerHTML=
-html;
-
 
 }
 
