@@ -1,9 +1,9 @@
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
 let page=1;
-let mode="all";
+let mode="movie";
 let query="";
-let timer=null;
+let timer;
 
 const grid=document.getElementById("movieGrid");
 const pagination=document.getElementById("pagination");
@@ -11,40 +11,54 @@ const pagination=document.getElementById("pagination");
 const search=document.getElementById("search");
 const mobileSearch=document.getElementById("mobileSearch");
 
-
 async function loadMovies(){
 
 try{
 
-let url="";
+grid.innerHTML=`
+<h2 style="
+padding:30px;
+text-align:center;
+grid-column:1/-1;
+">
+Loading...
+</h2>
+`;
+
+let endpoint="";
 
 if(query){
 
-url=`https://api.themoviedb.org/3/search/multi?api_key=${KEY}&query=${encodeURIComponent(query)}&page=${page}`;
+endpoint=
+`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(query)}&page=${page}`;
 
 }else{
 
-if(mode==="movies"){
+if(mode==="series"){
 
-url=`https://api.themoviedb.org/3/trending/movie/day?api_key=${KEY}&page=${page}`;
-
-}else if(mode==="series"){
-
-url=`https://api.themoviedb.org/3/trending/tv/day?api_key=${KEY}&page=${page}`;
+endpoint=
+`https://api.themoviedb.org/3/discover/tv?api_key=${KEY}&sort_by=popularity.desc&page=${page}`;
 
 }else{
 
-url=`https://api.themoviedb.org/3/trending/all/day?api_key=${KEY}&page=${page}`;
+endpoint=
+`https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&sort_by=popularity.desc&page=${page}`;
 
 }
 
 }
 
-const res=await fetch(url);
+const response=
+await fetch(endpoint);
 
-const data=await res.json();
+const data=
+await response.json();
 
-renderMovies(data.results||[]);
+console.log(data);
+
+renderMovies(
+data.results||[]
+);
 
 renderPagination(
 Math.min(
@@ -58,13 +72,17 @@ data.total_pages||1,
 console.log(err);
 
 grid.innerHTML=`
+
 <h2 style="
+padding:30px;
 text-align:center;
-padding:40px;
 grid-column:1/-1;
 ">
-Gagal memuat film
+
+Gagal memuat TMDB
+
 </h2>
+
 `;
 
 }
@@ -77,32 +95,21 @@ function renderMovies(items){
 
 grid.innerHTML="";
 
-items=items.filter(m=>
-
-m.poster_path &&
-
-(
-m.media_type==="movie" ||
-m.media_type==="tv" ||
-m.media_type===undefined
-)
-
+items=items.filter(
+m=>m.poster_path
 );
 
 items.forEach(movie=>{
 
 const title=
-
-movie.title ||
-movie.name ||
+movie.title||
+movie.name||
 "Untitled";
 
-const card=
-document.createElement("div");
+grid.innerHTML+=`
 
-card.className="card";
-
-card.innerHTML=`
+<div class="card"
+onclick="openMovie('${encodeURIComponent(title)}')">
 
 <img
 src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
@@ -111,18 +118,20 @@ loading="lazy"
 
 <h3>${title}</h3>
 
+</div>
+
 `;
 
-card.onclick=()=>{
+});
+
+}
+
+
+
+function openMovie(title){
 
 location.href=
-`watch2.html?title=${encodeURIComponent(title)}`;
-
-};
-
-grid.appendChild(card);
-
-});
+`watch2.html?title=${title}`;
 
 }
 
@@ -132,53 +141,42 @@ function renderPagination(total){
 
 let html="";
 
-const group=6;
+const size=6;
 
 const start=
-
 Math.floor(
-(page-1)/group
+(page-1)/size
 )
-
-*group+1;
+*size+1;
 
 const end=
-
 Math.min(
-start+group-1,
+start+size-1,
 total
 );
-
 
 if(start>1){
 
 html+=`
-
-<button
-onclick="gotoPage(${start-group})"
->
-
+<button onclick="gotoPage(${start-size})">
 &lt;
-
 </button>
-
 `;
 
 }
 
-
-for(
-let i=start;
-i<=end;
-i++
-){
+for(let i=start;i<=end;i++){
 
 html+=`
 
 <button
-class="${i===page?'active':''}"
-onclick="gotoPage(${i})"
->
+class="${
+i===page
+?"active":""
+}"
+onclick="
+gotoPage(${i})
+">
 
 ${i}
 
@@ -188,19 +186,12 @@ ${i}
 
 }
 
-
 if(end<total){
 
 html+=`
-
-<button
-onclick="gotoPage(${end+1})"
->
-
+<button onclick="gotoPage(${end+1})">
 &gt;
-
 </button>
-
 `;
 
 }
@@ -216,10 +207,8 @@ function gotoPage(p){
 page=p;
 
 window.scrollTo({
-
 top:0,
 behavior:"smooth"
-
 });
 
 loadMovies();
@@ -228,13 +217,14 @@ loadMovies();
 
 
 
-function doSearch(value){
+function doSearch(v){
 
 clearTimeout(timer);
 
-timer=setTimeout(()=>{
+timer=
+setTimeout(()=>{
 
-query=value;
+query=v;
 
 page=1;
 
@@ -260,15 +250,17 @@ e=>doSearch(e.target.value)
 
 document.querySelectorAll("a").forEach(a=>{
 
-if(a.textContent==="Movies"){
+if(a.innerText==="Movies"){
 
-a.onclick=e=>{
+a.onclick=(e)=>{
 
 e.preventDefault();
 
-mode="movies";
-query="";
+mode="movie";
+
 page=1;
+
+query="";
 
 loadMovies();
 
@@ -276,15 +268,17 @@ loadMovies();
 
 }
 
-if(a.textContent==="Series"){
+if(a.innerText==="Series"){
 
-a.onclick=e=>{
+a.onclick=(e)=>{
 
 e.preventDefault();
 
 mode="series";
-query="";
+
 page=1;
+
+query="";
 
 loadMovies();
 
