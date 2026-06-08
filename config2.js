@@ -3,7 +3,7 @@ const CONFIG2={
 /* TMDB */
 
 TMDB_KEY:
-"PASTE_TMDB_API_KEY_HERE",
+"b3b893873ed1bb7f175b2707afeea2a0",
 
 TMDB_BASE:
 "https://api.themoviedb.org/3",
