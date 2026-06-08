@@ -1,173 +1,52 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>
-TukarFollow Movies
-</title>
-
-<meta
-name="description"
-content="Streaming Movie dan TV Series">
-
-<link
-rel="stylesheet"
-href="style2.css">
-
-<link
-rel="preconnect"
-href="https://image.tmdb.org">
-
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDASXXI - Nonton Film Gratis di LK21 IDLIX Rebahin</title>
+    <link rel="stylesheet" href="style2.css">
 </head>
-
 <body>
 
-
-
-<header>
-
-<nav class="navbar">
-
-<div class="logo">
-
-<i class="fa-solid fa-film"></i>
-
-TukarFollow
-
-</div>
-
-
-<ul id="menu">
-
-<li>
-
-<a
-href="#"
-id="moviesBtn">
-
-Movies
-
-</a>
-
-</li>
-
-
-<li>
-
-<a
-href="#"
-id="seriesBtn">
-
-Series
-
-</a>
-
-</li>
-
-
-<li>
-
-<a href="#">
-
-Trending
-
-</a>
-
-</li>
-
-</ul>
-
-
-<div class="searchBox">
-
-<input
-type="text"
-id="search"
-placeholder="Cari film...">
-
-<i class="fa fa-search"></i>
-
-</div>
-
-
-<div
-class="burger"
-id="burger">
-
-☰
-
-</div>
-
-</nav>
-
-</header>
-
-
-
-
-<section id="hero">
-
-<div id="slider">
-
-<div class="loading">
-
-Loading...
-
-</div>
-
-</div>
-
-</section>
-
-
-
-
-
-<section class="movies">
-
-<h2>
-
-Trending Movies
-
-</h2>
-
-
-<div id="movieGrid">
-
-<div class="loading">
-
-Loading Movie...
-
-</div>
-
-</div>
-
-
-
-<div
-id="pagination"
-class="pagination">
-
-</div>
-
-
-</section>
-
-
-
-
-<script src="script2.js"></script>
-
+    <!-- Navigasi Atas -->
+    <nav class="navbar2">
+        <div class="nav-container2">
+            <!-- Kiri: Logo Tulisan -->
+            <a href="index2.html" class="logo2">MIDASXXI</a>
+            
+            <!-- Burger Menu Icon (Muncul saat Mobile) -->
+            <div class="burger-menu2" id="burgerToggle2">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <!-- Kanan: Menu Navigasi & Search -->
+            <div class="nav-menu2" id="navMenu2">
+                <a href="index2.html">Movies</a>
+                <a href="index2.html">Series</a>
+                <div class="search-box2">
+                    <input type="text" id="searchInput2" placeholder="Cari film...">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama Grid Film -->
+    <main class="container2">
+        <h2 class="section-title2">Daftar Film Terbaru</h2>
+        
+        <!-- Grid Tempat Menampung Film dari TMDB -->
+        <div class="movie-grid2" id="movieGrid2">
+            <!-- Diisi otomatis oleh script2.js -->
+        </div>
+
+        <!-- Pagination Dinamis (< 1 2 3 4 5 >) -->
+        <div class="pagination2" id="pagination2">
+            <!-- Diisi otomatis oleh script2.js -->
+        </div>
+    </main>
+
+    <script src="script2.js"></script>
 </body>
-
 </html>
