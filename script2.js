@@ -1,4 +1,4 @@
-/* ========= ELEMENTS ========= */
+/* ========= ELEMENT ========= */
 
 const burger=document.getElementById("burger");
 const navMenu=document.getElementById("navMenu");
@@ -24,15 +24,8 @@ const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
 
 
-/* ========= GLOBAL ========= */
-
-let page=1;
-
 let media=[];
-
-let searchMode=false;
-
-let query="";
+let page=1;
 
 
 /* ========= BURGER ========= */
@@ -65,8 +58,28 @@ loadWatch();
 }
 
 
+/* ========= NORMALIZE ========= */
 
-/* ========= RANDOM PAGE ========= */
+function normalizeTitle(str){
+
+if(!str)return "";
+
+return str
+
+.toLowerCase()
+
+.replace(/\(\d{4}\)/g,"")
+
+.replace(/[^\w\s]/g,"")
+
+.replace(/\s+/g," ")
+
+.trim();
+
+}
+
+
+/* ========= RANDOM ========= */
 
 function randomPage(){
 
@@ -77,111 +90,20 @@ Math.random()*500
 }
 
 
-
-/* ========= LOAD GRID ========= */
-
-async function loadTMDB(){
-
-try{
-
-loading.style.display=
-"block";
-
-let moviePage=
-randomPage();
-
-let tvPage=
-randomPage();
-
-
-const movieRes=
-await fetch(
-
-`${CONFIG2.TMDB_BASE}/discover/movie?api_key=${CONFIG2.TMDB_KEY}&page=${moviePage}`
-
-);
-
-const tvRes=
-await fetch(
-
-`${CONFIG2.TMDB_BASE}/discover/tv?api_key=${CONFIG2.TMDB_KEY}&page=${tvPage}`
-
-);
-
-
-const movieData=
-await movieRes.json();
-
-const tvData=
-await tvRes.json();
-
-
-media=[
-
-...movieData.results.map(
-x=>({
-...x,
-type:"movie"
-})
-),
-
-...tvData.results.map(
-x=>({
-...x,
-type:"tv"
-})
-)
-
-];
-
-
-shuffle(media);
-
-renderGrid(
-media.slice(
-0,
-CONFIG2.POSTER_PER_PAGE
-)
-);
-
-renderPagination();
-
-loading.style.display=
-"none";
-
-}catch(err){
-
-console.log(err);
-
-}
-
-}
-
-
-
-/* ========= SHUFFLE ========= */
-
 function shuffle(a){
 
 for(
-
 let i=a.length-1;
-
 i>0;
-
 i--
-
 ){
 
-const j=Math.floor(
-
+let j=Math.floor(
 Math.random()*
 (i+1)
-
 );
 
 [a[i],a[j]]=
-
 [a[j],a[i]];
 
 }
@@ -194,66 +116,125 @@ return a;
 
 /* ========= GRID ========= */
 
+async function loadTMDB(){
+
+loading.style.display=
+"block";
+
+
+let movieRes=
+await fetch(
+
+`${CONFIG2.TMDB_BASE}/discover/movie?api_key=${CONFIG2.TMDB_KEY}&page=${randomPage()}`
+
+);
+
+let tvRes=
+await fetch(
+
+`${CONFIG2.TMDB_BASE}/discover/tv?api_key=${CONFIG2.TMDB_KEY}&page=${randomPage()}`
+
+);
+
+
+let movie=
+await movieRes.json();
+
+let tv=
+await tvRes.json();
+
+
+media=[
+
+...movie.results.map(
+x=>({
+
+...x,
+
+type:"movie"
+
+})
+),
+
+...tv.results.map(
+x=>({
+
+...x,
+
+type:"tv"
+
+})
+)
+
+];
+
+
+shuffle(
+media
+);
+
+
+renderGrid(
+media.slice(
+0,
+26
+)
+);
+
+
+renderPagination();
+
+loading.style.display=
+"none";
+
+}
+
+
+
 function renderGrid(data){
 
 movieGrid.innerHTML="";
 
+
 data.forEach(item=>{
 
-const title=
-
+let title=
 item.title||
 item.name;
 
 
-const card=
-document.createElement(
-"div"
-);
+movieGrid.innerHTML+=`
 
-card.className=
-"card";
+<div
+class="card"
 
+onclick="
+location.href='watch2.html?id=${item.id}&type=${item.type}'
+"
 
-card.innerHTML=`
+>
 
 ${item.type==="movie"
 
 ?'<div class="webpTag">WEBP</div>'
+
 :""
 
 }
 
 <img
-src="
-${CONFIG2.TMDB_IMAGE}
-${item.poster_path}
-"
+src="${CONFIG2.TMDB_IMAGE}${item.poster_path}"
 >
 
-<div
-class="cardTitle"
->
+<div class="cardTitle">
 
 ${title}
 
 </div>
 
+</div>
+
 `;
-
-
-card.onclick=()=>{
-
-location.href=
-
-`watch2.html?id=${item.id}&type=${item.type}`;
-
-};
-
-
-movieGrid.appendChild(
-card
-);
 
 });
 
@@ -290,31 +271,32 @@ runSearch();
 
 async function runSearch(){
 
-query=
+let q=
 searchInput.value.trim();
 
-if(!query)return;
+if(!q)return;
 
 
 loading.style.display=
 "block";
 
 
-const res=
-
+let res=
 await fetch(
 
-`${CONFIG2.TMDB_BASE}/search/multi?api_key=${CONFIG2.TMDB_KEY}&query=${query}`
+`${CONFIG2.TMDB_BASE}/search/multi?api_key=${CONFIG2.TMDB_KEY}&query=${q}`
 
 );
 
-const data=
+let d=
 await res.json();
 
 
 media=
 
-data.results.filter(
+d.results
+
+.filter(
 
 x=>
 
@@ -324,7 +306,9 @@ x.media_type==="movie"
 
 x.media_type==="tv"
 
-).map(
+)
+
+.map(
 
 x=>({
 
@@ -339,12 +323,7 @@ x.media_type
 
 
 renderGrid(
-
-media.slice(
-0,
-26
-)
-
+media
 );
 
 loading.style.display=
@@ -358,44 +337,39 @@ loading.style.display=
 
 function renderPagination(){
 
-if(!pagination)return;
-
 pagination.innerHTML="";
 
-
 for(
-
 let i=1;
 i<=6;
 i++
-
 ){
 
-const btn=
-document.createElement(
-"button"
-);
+pagination.innerHTML+=`
 
-btn.className=
-"pageBtn";
+<button
+class="pageBtn"
 
-btn.innerText=
+onclick="changePage(${page+i-1})"
 
-page+i-1;
+>
+
+${page+i-1}
+
+</button>
+
+`;
+
+}
+
+}
 
 
-btn.onclick=()=>{
+function changePage(p){
 
-page=
-page+i-1;
+page=p;
 
 loadTMDB();
-
-};
-
-
-pagination.appendChild(
-btn);
 
 }
 
@@ -429,82 +403,73 @@ loadTMDB();
 
 }
 
-}
-
 
 
 /* ========= WATCH ========= */
 
 async function loadWatch(){
 
-const id=
-
+let params=
 new URLSearchParams(
 location.search
-)
-.get("id");
+);
+
+let id=
+params.get("id");
+
+let type=
+params.get("type");
 
 
-const type=
-
-new URLSearchParams(
-location.search
-)
-.get("type");
-
-
-try{
-
-const tmdb=
-
+let tmdb=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/${type}/${id}?api_key=${CONFIG2.TMDB_KEY}`
 
 );
 
-const tmdbData=
+let info=
 await tmdb.json();
 
 
-const json=
+let json=
 await fetch(
 CONFIG2.MOVIES_JSON
 );
 
-const list=
+let list=
 await json.json();
 
 
-const title=
+let tmdbTitle=
 
-tmdbData.title||
+normalizeTitle(
 
-tmdbData.name;
-
-
-const match=
-
-list.find(
-
-x=>
-
-x.title
-.toLowerCase()
-.includes(
-
-title
-.toLowerCase()
-
-)
+info.title||
+info.name
 
 );
+
+
+let match=
+
+list.find(x=>{
+
+return normalizeTitle(
+x.title
+)
+
+.includes(
+tmdbTitle
+);
+
+});
 
 
 if(match){
 
 playerFrame.src=
-match.iframe;
+match.iframe||"";
 
 
 mediaInfo.innerHTML=`
@@ -519,7 +484,7 @@ ${match.title}
 
 <p>
 
-${match.sinopsis}
+${match.sinopsis||info.overview}
 
 </p>
 
@@ -527,21 +492,21 @@ ${match.sinopsis}
 
 <p>
 
-Genre:
+Genre :
 ${match.genre.join(", ")}
 
 </p>
 
 <p>
 
-Release:
+Release :
 ${match.release_date}
 
 </p>
 
 <p>
 
-Country:
+Country :
 ${match.country}
 
 </p>
@@ -554,10 +519,10 @@ playerFrame.style.display=
 "none";
 
 
-document
-.getElementById(
+document.getElementById(
 "playerArea"
 )
+
 .innerHTML=`
 
 <div
@@ -575,7 +540,7 @@ mediaInfo.innerHTML=`
 
 <h1>
 
-${title}
+${info.title||info.name}
 
 </h1>
 
@@ -583,16 +548,29 @@ ${title}
 
 <p>
 
-${tmdbData.overview}
+⭐ ${info.vote_average}
 
 </p>
 
-<br>
+<p>
+
+Genre :
+${info.genres.map(
+x=>x.name
+).join(", ")}
+
+</p>
 
 <p>
 
-⭐
-${tmdbData.vote_average}
+Release :
+${info.release_date||info.first_air_date}
+
+</p>
+
+<p>
+
+${info.overview}
 
 </p>
 
@@ -601,63 +579,40 @@ ${tmdbData.vote_average}
 }
 
 
-if(type==="tv"){
+/* SERIES */
 
-loadSeries(
-id
-);
-
-}
-
-
-loadRelated(
-id,
-type
-);
-
-
-}catch(e){
-
-console.log(e);
-
-}
-
-}
-
-
-
-/* ========= SERIES ========= */
-
-async function loadSeries(id){
-
-if(!seriesBox)return;
+if(
+type==="tv"
+&&
+seriesBox
+){
 
 seriesBox.style.display=
 "flex";
 
 
-const r=
+let season=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/tv/${id}?api_key=${CONFIG2.TMDB_KEY}`
 
 );
 
-const d=
-await r.json();
+let s=
+await season.json();
 
 
 seasonSelect.innerHTML="";
 
 
-d.seasons.forEach(s=>{
+s.seasons.forEach(x=>{
 
 seasonSelect.innerHTML+=`
 
-<option value="${s.season_number}">
+<option value="${x.season_number}">
 
 Season
-${s.season_number}
+${x.season_number}
 
 </option>
 
@@ -685,7 +640,7 @@ episodeSelect.value;
 
 playerFrame.src=
 
-playerFrame.src+
+match.iframe+
 
 `?season=${season}&episode=${episode}`;
 
@@ -694,19 +649,22 @@ playerFrame.src+
 }
 
 
+loadRelated(
+id,
+type
+);
+
+}
+
+
 function loadEpisodes(){
 
 episodeSelect.innerHTML="";
 
-
 for(
-
 let i=1;
-
 i<=30;
-
 i++
-
 ){
 
 episodeSelect.innerHTML+=`
@@ -735,23 +693,32 @@ type
 if(!relatedGrid)return;
 
 
-const r=
+let r=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/${type}/${id}/recommendations?api_key=${CONFIG2.TMDB_KEY}`
 
 );
 
-const d=
+let d=
 await r.json();
 
 
-relatedGrid.innerHTML=
-'<div class="relatedRow"></div>';
+relatedGrid.innerHTML=`
 
-const row=
-document.querySelector(
-".relatedRow"
+<div
+class="relatedRow"
+id="relatedRow"
+>
+
+</div>
+
+`;
+
+
+let row=
+document.getElementById(
+"relatedRow"
 );
 
 
@@ -760,9 +727,10 @@ d.results
 0,
 15
 )
+
 .forEach(item=>{
 
-const title=
+let title=
 
 item.title||
 item.name;
@@ -773,7 +741,13 @@ row.innerHTML+=`
 <div
 class="card"
 
-onclick="location.href='watch2.html?id=${item.id}&type=${type}'"
+onclick="
+location.href='watch2.html?id=${item.id}&type=${type}'
+"
+
+style="
+min-width:180px
+"
 
 >
 
@@ -794,6 +768,5 @@ ${title}
 `;
 
 });
-
 
 }
