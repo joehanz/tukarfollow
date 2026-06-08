@@ -23,7 +23,6 @@ const pagination=document.getElementById("pagination");
 const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
 
-
 let media=[];
 let page=1;
 
@@ -58,25 +57,56 @@ loadWatch();
 }
 
 
-/* ========= NORMALIZE ========= */
 
-function normalizeTitle(str){
+/* ========= STRING SIMILARITY ========= */
 
-if(!str)return "";
+function cleanTitle(str){
 
 return str
-
 .toLowerCase()
-
-.replace(/\(\d{4}\)/g,"")
-
 .replace(/[^\w\s]/g,"")
-
 .replace(/\s+/g," ")
-
 .trim();
 
 }
+
+
+function similarity(a,b){
+
+a=cleanTitle(a);
+b=cleanTitle(b);
+
+let longer=
+a.length>b.length
+?a:b;
+
+let shorter=
+a.length>b.length
+?b:a;
+
+let same=0;
+
+for(let i=0;i<shorter.length;i++){
+
+if(
+longer.includes(
+shorter[i]
+)
+){
+
+same++;
+
+}
+
+}
+
+return(
+same/
+longer.length
+)*100;
+
+}
+
 
 
 /* ========= RANDOM ========= */
@@ -133,9 +163,7 @@ let tvRes=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/discover/tv?api_key=${CONFIG2.TMDB_KEY}&page=${randomPage()}`
-
 );
-
 
 let movie=
 await movieRes.json();
@@ -148,39 +176,26 @@ media=[
 
 ...movie.results.map(
 x=>({
-
 ...x,
-
 type:"movie"
-
 })
 ),
 
 ...tv.results.map(
 x=>({
-
 ...x,
-
 type:"tv"
-
 })
 )
 
 ];
 
 
-shuffle(
-media
-);
-
+shuffle(media);
 
 renderGrid(
-media.slice(
-0,
-26
-)
+media.slice(0,26)
 );
-
 
 renderPagination();
 
@@ -207,11 +222,9 @@ movieGrid.innerHTML+=`
 
 <div
 class="card"
-
 onclick="
 location.href='watch2.html?id=${item.id}&type=${item.type}'
 "
-
 >
 
 ${item.type==="movie"
@@ -349,9 +362,7 @@ pagination.innerHTML+=`
 
 <button
 class="pageBtn"
-
 onclick="changePage(${page+i-1})"
-
 >
 
 ${page+i-1}
@@ -363,7 +374,6 @@ ${page+i-1}
 }
 
 }
-
 
 function changePage(p){
 
@@ -389,7 +399,6 @@ loadTMDB();
 };
 
 }
-
 
 if(nextBtn){
 
@@ -441,106 +450,120 @@ let list=
 await json.json();
 
 
-let tmdbTitle=
-
-normalizeTitle(
-
+let title=
 info.title||
-info.name
+info.name;
 
+
+let best=null;
+let score=0;
+
+
+list.forEach(item=>{
+
+let s=
+
+similarity(
+title,
+item.title
 );
 
+if(
+s>score
+){
 
-let match=
+score=s;
+best=item;
 
-list.find(x=>{
-
-return normalizeTitle(
-x.title
-)
-
-.includes(
-tmdbTitle
-);
+}
 
 });
 
 
-if(match){
+if(
+score>=80
+&&
+best
+&&
+type==="movie"
+){
 
 playerFrame.src=
-match.iframe||"";
+best.iframe||"";
 
 
 mediaInfo.innerHTML=`
 
+<h1>${best.title}</h1>
+
+<br>
+
+<p>
+${best.sinopsis||info.overview}
+</p>
+
+<br>
+
+<p>
+Genre:
+${best.genre.join(", ")}
+</p>
+
+<p>
+Release:
+${best.release_date}
+</p>
+
+<p>
+Country:
+${best.country}
+</p>
+
+`;
+
+}else if(type==="tv"){
+
+playerFrame.src=
+
+`https://vsembed.su/tv/${id}/1/1`;
+
+loadSeries(id);
+
+mediaInfo.innerHTML=`
+
 <h1>
-
-${match.title}
-
+${info.name}
 </h1>
 
 <br>
 
 <p>
-
-${match.sinopsis||info.overview}
-
-</p>
-
-<br>
-
-<p>
-
-Genre :
-${match.genre.join(", ")}
-
-</p>
-
-<p>
-
-Release :
-${match.release_date}
-
-</p>
-
-<p>
-
-Country :
-${match.country}
-
+${info.overview}
 </p>
 
 `;
 
 }else{
 
-playerFrame.style.display=
-"none";
-
-
-document.getElementById(
+document
+.getElementById(
 "playerArea"
 )
-
 .innerHTML=`
 
-<div
-class="unavailable"
->
+<div class="unavailable">
 
-This media is unavailable at the moment.
+Video belum update
 
 </div>
 
 `;
 
-
 mediaInfo.innerHTML=`
 
 <h1>
 
-${info.title||info.name}
+${title}
 
 </h1>
 
@@ -554,7 +577,7 @@ ${info.title||info.name}
 
 <p>
 
-Genre :
+Genre:
 ${info.genres.map(
 x=>x.name
 ).join(", ")}
@@ -563,10 +586,12 @@ x=>x.name
 
 <p>
 
-Release :
+Release:
 ${info.release_date||info.first_air_date}
 
 </p>
+
+<br>
 
 <p>
 
@@ -579,40 +604,46 @@ ${info.overview}
 }
 
 
-/* SERIES */
+loadRelated(
+id,
+type
+);
 
-if(
-type==="tv"
-&&
-seriesBox
-){
+}
+
+
+
+/* ========= SERIES ========= */
+
+async function loadSeries(id){
+
+if(!seriesBox)return;
 
 seriesBox.style.display=
 "flex";
 
 
-let season=
+let r=
 await fetch(
 
 `${CONFIG2.TMDB_BASE}/tv/${id}?api_key=${CONFIG2.TMDB_KEY}`
 
 );
 
-let s=
-await season.json();
+let d=
+await r.json();
 
 
 seasonSelect.innerHTML="";
 
 
-s.seasons.forEach(x=>{
+d.seasons.forEach(s=>{
 
 seasonSelect.innerHTML+=`
 
-<option value="${x.season_number}">
+<option value="${s.season_number}">
 
-Season
-${x.season_number}
+Season ${s.season_number}
 
 </option>
 
@@ -628,8 +659,7 @@ seasonSelect.onchange=
 loadEpisodes;
 
 
-playEpisode.onclick=
-()=>{
+playEpisode.onclick=()=>{
 
 let season=
 seasonSelect.value;
@@ -640,21 +670,12 @@ episodeSelect.value;
 
 playerFrame.src=
 
-match.iframe+
-
-`?season=${season}&episode=${episode}`;
+`https://vsembed.su/tv/${id}/${season}/${episode}`;
 
 };
 
 }
 
-
-loadRelated(
-id,
-type
-);
-
-}
 
 
 function loadEpisodes(){
@@ -685,10 +706,7 @@ Episode ${i}
 
 /* ========= RELATED ========= */
 
-async function loadRelated(
-id,
-type
-){
+async function loadRelated(id,type){
 
 if(!relatedGrid)return;
 
@@ -706,10 +724,45 @@ await r.json();
 
 relatedGrid.innerHTML=`
 
+<div class="relatedHeader">
+
+<h2>
+Related Movies
+</h2>
+
+<div class="relatedNav">
+
+<button
+class="relatedArrow"
+id="leftArrow"
+>
+
+‹
+
+</button>
+
+<button
+class="relatedArrow"
+id="rightArrow"
+>
+
+›
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="relatedContainer">
+
 <div
 class="relatedRow"
 id="relatedRow"
 >
+
+</div>
 
 </div>
 
@@ -723,15 +776,10 @@ document.getElementById(
 
 
 d.results
-.slice(
-0,
-15
-)
-
+.slice(0,15)
 .forEach(item=>{
 
 let title=
-
 item.title||
 item.name;
 
@@ -742,11 +790,7 @@ row.innerHTML+=`
 class="card"
 
 onclick="
-location.href='watch2.html?id=${item.id}&type=${type}'
-"
-
-style="
-min-width:180px
+location.href='watch2.html?id=${item.id}&type=${item.media_type||type}'
 "
 
 >
@@ -755,9 +799,7 @@ min-width:180px
 src="${CONFIG2.TMDB_IMAGE}${item.poster_path}"
 >
 
-<div
-class="cardTitle"
->
+<div class="cardTitle">
 
 ${title}
 
@@ -768,5 +810,28 @@ ${title}
 `;
 
 });
+
+
+document.getElementById(
+"leftArrow"
+).onclick=()=>{
+
+row.scrollBy({
+left:-700,
+behavior:"smooth"
+});
+
+};
+
+document.getElementById(
+"rightArrow"
+).onclick=()=>{
+
+row.scrollBy({
+left:700,
+behavior:"smooth"
+});
+
+};
 
 }
