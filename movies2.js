@@ -3,90 +3,71 @@ const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 let page=1;
 let mode="all";
 let query="";
+let timer=null;
 
-const grid=
-document.getElementById(
-"movieGrid"
-);
+const grid=document.getElementById("movieGrid");
+const pagination=document.getElementById("pagination");
 
-const pagination=
-document.getElementById(
-"pagination"
-);
-
-const search=
-document.getElementById(
-"search"
-);
-
-const mobileSearch=
-document.getElementById(
-"mobileSearch"
-);
-
+const search=document.getElementById("search");
+const mobileSearch=document.getElementById("mobileSearch");
 
 
 async function loadMovies(){
+
+try{
 
 let url="";
 
 if(query){
 
-url=`
-https://api.themoviedb.org/3/search/multi
-?api_key=${KEY}
-&query=${encodeURIComponent(query)}
-&page=${page}
-`;
+url=`https://api.themoviedb.org/3/search/multi?api_key=${KEY}&query=${encodeURIComponent(query)}&page=${page}`;
 
 }else{
 
 if(mode==="movies"){
 
-url=`
-https://api.themoviedb.org/3/trending/movie/day
-?api_key=${KEY}
-&page=${page}
-`;
+url=`https://api.themoviedb.org/3/trending/movie/day?api_key=${KEY}&page=${page}`;
 
 }else if(mode==="series"){
 
-url=`
-https://api.themoviedb.org/3/trending/tv/day
-?api_key=${KEY}
-&page=${page}
-`;
+url=`https://api.themoviedb.org/3/trending/tv/day?api_key=${KEY}&page=${page}`;
 
 }else{
 
-url=`
-https://api.themoviedb.org/3/trending/all/day
-?api_key=${KEY}
-&page=${page}
-`;
+url=`https://api.themoviedb.org/3/trending/all/day?api_key=${KEY}&page=${page}`;
 
 }
 
 }
 
-url=url.replace(/\s/g,'');
+const res=await fetch(url);
 
-const res=
-await fetch(url);
+const data=await res.json();
 
-const data=
-await res.json();
-
-renderMovies(
-data.results||[]
-);
+renderMovies(data.results||[]);
 
 renderPagination(
 Math.min(
-data.total_pages,
+data.total_pages||1,
 500
 )
 );
+
+}catch(err){
+
+console.log(err);
+
+grid.innerHTML=`
+<h2 style="
+text-align:center;
+padding:40px;
+grid-column:1/-1;
+">
+Gagal memuat film
+</h2>
+`;
+
+}
 
 }
 
@@ -96,55 +77,50 @@ function renderMovies(items){
 
 grid.innerHTML="";
 
-items
-.filter(
-m=>m.poster_path
+items=items.filter(m=>
+
+m.poster_path &&
+
+(
+m.media_type==="movie" ||
+m.media_type==="tv" ||
+m.media_type===undefined
 )
-.forEach(movie=>{
+
+);
+
+items.forEach(movie=>{
 
 const title=
 
-movie.title||
-movie.name||
+movie.title ||
+movie.name ||
 "Untitled";
 
 const card=
-document.createElement(
-"div"
-);
+document.createElement("div");
 
-card.className=
-"card";
+card.className="card";
 
 card.innerHTML=`
 
 <img
-src="
-https://image.tmdb.org/t/p/w500${movie.poster_path}
-"
+src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
 loading="lazy"
 >
 
-<h3>
-${title}
-</h3>
+<h3>${title}</h3>
 
 `;
 
 card.onclick=()=>{
 
-location=
-`watch2.html?title=${
-encodeURIComponent(
-title
-)
-}`;
+location.href=
+`watch2.html?title=${encodeURIComponent(title)}`;
 
 };
 
-grid.appendChild(
-card
-);
+grid.appendChild(card);
 
 });
 
@@ -166,7 +142,6 @@ Math.floor(
 
 *group+1;
 
-
 const end=
 
 Math.min(
@@ -175,17 +150,13 @@ total
 );
 
 
-
 if(start>1){
 
 html+=`
 
 <button
-onclick="
-gotoPage(
-${start-group}
-)
-">
+onclick="gotoPage(${start-group})"
+>
 
 &lt;
 
@@ -196,32 +167,17 @@ ${start-group}
 }
 
 
-
 for(
-
 let i=start;
-
 i<=end;
-
 i++
-
 ){
 
 html+=`
 
 <button
-
-class="${
-i===page
-?"active":""
-}"
-
-onclick="
-gotoPage(
-${i}
-)
-"
-
+class="${i===page?'active':''}"
+onclick="gotoPage(${i})"
 >
 
 ${i}
@@ -233,17 +189,13 @@ ${i}
 }
 
 
-
 if(end<total){
 
 html+=`
 
 <button
-onclick="
-gotoPage(
-${end+1}
-)
-">
+onclick="gotoPage(${end+1})"
+>
 
 &gt;
 
@@ -253,8 +205,7 @@ ${end+1}
 
 }
 
-pagination.innerHTML=
-html;
+pagination.innerHTML=html;
 
 }
 
@@ -277,58 +228,47 @@ loadMovies();
 
 
 
-search?.addEventListener(
-"keyup",
-e=>{
+function doSearch(value){
 
-query=
-e.target.value;
+clearTimeout(timer);
+
+timer=setTimeout(()=>{
+
+query=value;
 
 page=1;
 
 loadMovies();
 
-}
-);
+},500);
 
+}
+
+
+
+search?.addEventListener(
+"keyup",
+e=>doSearch(e.target.value)
+);
 
 mobileSearch?.addEventListener(
 "keyup",
-e=>{
-
-query=
-e.target.value;
-
-page=1;
-
-loadMovies();
-
-}
+e=>doSearch(e.target.value)
 );
 
 
 
-document
-.querySelectorAll("a")
-.forEach(a=>{
+document.querySelectorAll("a").forEach(a=>{
 
-if(
-
-a.innerText
-==="Movies"
-
-){
+if(a.textContent==="Movies"){
 
 a.onclick=e=>{
 
 e.preventDefault();
 
-mode=
-"movies";
-
-page=1;
-
+mode="movies";
 query="";
+page=1;
 
 loadMovies();
 
@@ -336,24 +276,15 @@ loadMovies();
 
 }
 
-
-if(
-
-a.innerText
-==="Series"
-
-){
+if(a.textContent==="Series"){
 
 a.onclick=e=>{
 
 e.preventDefault();
 
-mode=
-"series";
-
-page=1;
-
+mode="series";
 query="";
+page=1;
 
 loadMovies();
 
