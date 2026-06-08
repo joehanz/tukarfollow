@@ -7,16 +7,32 @@ const slider=document.getElementById("slider");
 const movieGrid=document.getElementById("movieGrid");
 const search=document.getElementById("search");
 
+let sliderTimer;
+
+
 
 async function loadTrending(){
 
 try{
 
+movieGrid.innerHTML=
+"<div class='loading'>Loading...</div>";
+
 let res=await fetch(
+
 `https://api.themoviedb.org/3/trending/all/week?api_key=${KEY}`
+
 );
 
 let data=await res.json();
+
+if(!data.results){
+
+throw new Error(
+"Data kosong"
+);
+
+}
 
 createSlider(
 data.results.slice(0,5)
@@ -27,23 +43,34 @@ data.results
 );
 
 }
+
 catch(e){
-
-slider.innerHTML=
-"<div class='loading'>Gagal memuat</div>";
-
-movieGrid.innerHTML=
-"<div class='loading'>Gagal memuat</div>";
 
 console.log(e);
 
+slider.innerHTML=
+
+"<div class='loading'>Gagal memuat slider</div>";
+
+movieGrid.innerHTML=
+
+"<div class='loading'>Gagal memuat movie</div>";
+
 }
 
 }
+
+
 
 
 
 function createSlider(items){
+
+if(!items.length)return;
+
+clearInterval(
+sliderTimer
+);
 
 let html="";
 
@@ -51,11 +78,18 @@ items.forEach(movie=>{
 
 let title=
 movie.title||
-movie.name;
+movie.name||
+"Untitled";
 
 let desc=
-movie.overview?.substring(0,150)
-+"...";
+movie.overview||
+"Tidak ada deskripsi";
+
+desc=
+desc.substring(
+0,
+150
+);
 
 html+=`
 
@@ -69,11 +103,15 @@ url(${BIG}${movie.backdrop_path})
 <div class="slideContent">
 
 <h1>
+
 ${title}
+
 </h1>
 
 <p>
-${desc}
+
+${desc}...
+
 </p>
 
 <a
@@ -93,11 +131,14 @@ Play
 
 });
 
-slider.innerHTML=html;
+slider.innerHTML=
+html;
 
 autoSlider();
 
 }
+
+
 
 
 
@@ -107,15 +148,33 @@ let html="";
 
 items.forEach(movie=>{
 
+if(!movie.poster_path)
+return;
+
 let title=
 movie.title||
-movie.name;
+movie.name||
+"Untitled";
 
-let year=
-(movie.release_date||
+
+let year=(
+
+movie.release_date||
 movie.first_air_date||
-"")
-.substring(0,4);
+""
+
+).substring(
+0,
+4
+);
+
+
+let rate=
+movie.vote_average?
+movie.vote_average.toFixed(1)
+:
+"0";
+
 
 html+=`
 
@@ -136,9 +195,10 @@ ${title}
 
 <span>
 
-⭐ ${movie.vote_average.toFixed(1)}
+⭐ ${rate}
 
 |
+
 ${year}
 
 </span>
@@ -151,29 +211,54 @@ ${year}
 
 });
 
-movieGrid.innerHTML=html;
+movieGrid.innerHTML=
+html;
 
 }
 
 
 
+
+
 let current=0;
+
 
 function autoSlider(){
 
 const slides=
-document.querySelectorAll(".slide");
 
-slides.forEach(
-s=>s.style.display="none"
+document.querySelectorAll(
+".slide"
 );
 
-slides[0].style.display="flex";
+
+if(!slides.length)
+return;
+
+
+slides.forEach(
+
+s=>s.style.display=
+"none"
+
+);
+
+
+slides[0]
+.style.display=
+"flex";
+
+
+current=0;
+
+
+sliderTimer=
 
 setInterval(()=>{
 
 slides[current]
-.style.display="none";
+.style.display=
+"none";
 
 current++;
 
@@ -186,7 +271,8 @@ current=0;
 }
 
 slides[current]
-.style.display="flex";
+.style.display=
+"flex";
 
 },4000);
 
@@ -194,11 +280,17 @@ slides[current]
 
 
 
+
+
 search.addEventListener(
+
 "keyup",
+
 async e=>{
 
-let q=e.target.value;
+let q=
+e.target.value;
+
 
 if(
 q.length<2
@@ -210,21 +302,28 @@ return;
 
 }
 
+
 let res=
+
 await fetch(
 
-`https://api.themoviedb.org/3/search/multi?api_key=${KEY}&query=${q}`
+`https://api.themoviedb.org/3/search/multi?api_key=${KEY}&query=${encodeURIComponent(q)}`
 
 );
+
 
 let data=
 await res.json();
 
+
 renderMovies(
-data.results
+data.results||[]
 );
 
-});
+}
+
+);
+
 
 
 loadTrending();
