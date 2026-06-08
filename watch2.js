@@ -1,341 +1,182 @@
-const title=
+const title =
 new URLSearchParams(
 location.search
-).get("title");
+).get("title") || "";
 
-const playerBox=
-document.getElementById(
-"playerBox"
-);
+const playerBox =
+document.getElementById("playerBox");
 
-const judul=
-document.getElementById(
-"judul"
-);
+const judul =
+document.getElementById("judul");
 
-const sinopsis=
-document.getElementById(
-"sinopsis"
-);
+const sinopsis =
+document.getElementById("sinopsis");
 
-const meta=
-document.getElementById(
-"meta"
-);
+const meta =
+document.getElementById("meta");
 
-const recommend=
-document.getElementById(
-"recommendGrid"
-);
-
-
+const recommend =
+document.getElementById("recommendGrid");
 
 function cleanText(text){
 
-return text
-
+return (text || "")
 .toLowerCase()
-
-.replace(
-/\(\d+\)/g,
-""
-)
-
-.replace(
-/[^\w\s]/g,
-""
-)
-
-.replace(
-/\s+/g,
-" "
-)
-
+.replace(/\(\d+\)/g, "")
+.replace(/[^\w\s]/g, "")
+.replace(/\s+/g, " ")
 .trim();
 
 }
 
+function similarity(a, b){
 
+a = cleanText(a);
+b = cleanText(b);
 
-function similarity(a,b){
+if(!a || !b) return 0;
 
-a=cleanText(a);
+const wordsA = [...new Set(a.split(" ").filter(Boolean))];
+const wordsB = [...new Set(b.split(" ").filter(Boolean))];
 
-b=cleanText(b);
-
-const wordsA=
-a.split(" ");
-
-const wordsB=
-b.split(" ");
-
-let same=0;
+let same = 0;
 
 wordsA.forEach(word=>{
-
-if(
-wordsB.includes(word)
-){
-
+if(wordsB.includes(word)){
 same++;
-
 }
-
 });
 
-return same/
-
-Math.max(
-
-wordsA.length,
-
-wordsB.length
-
-);
+return same / Math.max(wordsA.length, wordsB.length);
 
 }
-
-
 
 async function loadMovie(){
 
 try{
 
-const data=
-await fetch(
-"data/movies.json"
-)
+const data =
+await fetch("data/movies.json")
+.then(r => r.json());
 
-.then(r=>r.json());
+let movie = null;
+let bestScore = 0;
 
+data.forEach(m => {
 
+const score = similarity(title, m.title);
 
-const movie=
+if(score > bestScore){
+bestScore = score;
+movie = m;
+}
 
-data.find(m=>
+});
 
-similarity(
-
-title,
-
-m.title
-
-)>=0.8
-
-);
-
-
+// threshold 80%
+if(bestScore < 0.8){
+movie = null;
+}
 
 if(movie){
 
-judul.textContent=
+judul.textContent = movie.title;
 
-movie.title;
+sinopsis.textContent =
+movie.sinopsis || "Sinopsis belum tersedia";
 
-
-
-sinopsis.textContent=
-
-movie.sinopsis||
-
-"Sinopsis belum tersedia";
-
-
-
-meta.innerHTML=`
-
-<span class="tag">
-
-${movie.release_date||"-"}
-
-</span>
-
-<span class="tag">
-
-${movie.country||"-"}
-
-</span>
-
+meta.innerHTML = `
+<span class="tag">${movie.release_date || "-"}</span>
+<span class="tag">${movie.country || "-"}</span>
 ${
-movie.genre
-?.map(g=>`
-
-<span class="tag">
-
-${g}
-
-</span>
-
+(movie.genre || []).map(g => `
+<span class="tag">${g}</span>
 `).join("")
-
-||""
 }
-
 `;
-
-
 
 if(movie.iframe){
 
-playerBox.innerHTML=`
-
+playerBox.innerHTML = `
 <iframe
-
 src="${movie.iframe}"
-
 allowfullscreen
-
 loading="lazy"
-
 referrerpolicy="no-referrer"
-
 ></iframe>
-
 `;
 
 }else{
 
-playerBox.innerHTML=`
-
+playerBox.innerHTML = `
 <div class="notfound">
-
 🎬 Video belum diupload
-
 </div>
-
 `;
 
 }
 
 }else{
 
-judul.textContent=
+judul.textContent = title || "Film";
 
-title||"Film";
+sinopsis.textContent =
+"Film ditemukan di katalog, tetapi video belum tersedia.";
 
-
-
-sinopsis.textContent=
-
-"Film ditemukan di TMDB namun video belum tersedia.";
-
-
-
-playerBox.innerHTML=`
-
+playerBox.innerHTML = `
 <div class="notfound">
-
 🎬 Video belum diupload
-
 </div>
-
 `;
 
 }
-
-
 
 renderRecommend(data);
-
-
 
 }catch(err){
 
 console.log(err);
 
-playerBox.innerHTML=`
-
+playerBox.innerHTML = `
 <div class="notfound">
-
 ⚠️ Gagal memuat data
-
 </div>
-
 `;
 
 }
 
 }
-
-
 
 function renderRecommend(data){
 
-recommend.innerHTML="";
+recommend.innerHTML = "";
 
-
-
-const random=
-
+const random =
 [...data]
+.sort(() => 0.5 - Math.random())
+.slice(0, 8);
 
-.sort(()=>
+random.forEach(movie => {
 
-0.5-Math.random()
+const card =
+document.createElement("div");
 
-)
+card.className = "card";
 
-.slice(0,8);
-
-
-
-random.forEach(movie=>{
-
-const card=
-
-document.createElement(
-"div"
-);
-
-card.className=
-
-"card";
-
-
-
-card.innerHTML=`
-
-<img
-src="${movie.image}"
-loading="lazy"
->
-
-<h3>
-
-${movie.title}
-
-</h3>
-
+card.innerHTML = `
+<img src="${movie.image}" loading="lazy">
+<h3>${movie.title}</h3>
 `;
 
-
-
-card.onclick=()=>{
-
-location=
-
-`watch2.html?title=${
-
-encodeURIComponent(
-
-movie.title
-
-)
-
-}`;
-
+card.onclick = () => {
+location =
+`watch2.html?title=${encodeURIComponent(movie.title)}`;
 };
 
-
-
-recommend.appendChild(
-card
-);
+recommend.appendChild(card);
 
 });
 
 }
-
-
 
 loadMovie();
