@@ -1,52 +1,414 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIDASXXI - Nonton Film Gratis di LK21 IDLIX Rebahin</title>
-    <link rel="stylesheet" href="style2.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TukarFollow Movie</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif
+}
+
+body{
+background:#0b0b0b;
+color:#fff;
+}
+
+/* NAV */
+
+header{
+position:sticky;
+top:0;
+z-index:999;
+background:#111;
+padding:15px 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#fff;
+text-decoration:none;
+}
+
+.rightNav{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.rightNav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+}
+
+.searchBox{
+position:relative;
+}
+
+.searchBox input{
+height:40px;
+width:240px;
+background:#1a1a1a;
+border:none;
+outline:none;
+padding:0 15px;
+border-radius:50px;
+color:#fff;
+}
+
+.burger{
+display:none;
+font-size:30px;
+cursor:pointer;
+}
+
+/* MOBILE MENU */
+
+.mobileMenu{
+display:none;
+position:absolute;
+top:70px;
+left:0;
+width:100%;
+background:#111;
+padding:20px;
+flex-direction:column;
+gap:15px;
+border-top:1px solid rgba(255,255,255,.05);
+}
+
+.mobileMenu a{
+color:#fff;
+text-decoration:none;
+}
+
+.mobileMenu input{
+height:45px;
+border:none;
+border-radius:50px;
+padding:0 15px;
+background:#1a1a1a;
+color:#fff;
+}
+
+
+/* HERO */
+
+.hero{
+
+height:300px;
+
+background:
+linear-gradient(
+to top,
+#0b0b0b,
+transparent
+),
+
+url(
+https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600
+);
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+align-items:flex-end;
+
+padding:30px;
+
+}
+
+.heroText h1{
+
+font-size:40px;
+margin-bottom:10px;
+
+}
+
+.heroText p{
+
+opacity:.8;
+
+}
+
+
+/* GRID */
+
+.container{
+
+padding:20px;
+
+}
+
+.movieGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(
+auto-fill,
+minmax(170px,1fr)
+);
+
+gap:20px;
+
+}
+
+.card{
+
+background:#151515;
+
+border-radius:15px;
+
+overflow:hidden;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.card img{
+
+width:100%;
+height:260px;
+object-fit:cover;
+
+}
+
+.card h3{
+
+padding:10px;
+font-size:14px;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+}
+
+
+/* PAGINATION */
+
+.pagination{
+
+display:flex;
+justify-content:center;
+gap:10px;
+padding:40px 0;
+flex-wrap:wrap;
+
+}
+
+.pagination button{
+
+width:40px;
+height:40px;
+
+border:none;
+border-radius:10px;
+
+background:#1a1a1a;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+.pagination .active{
+
+background:#e50914;
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.rightNav{
+
+display:none;
+
+}
+
+.burger{
+
+display:block;
+
+}
+
+.hero{
+
+height:220px;
+
+}
+
+.heroText h1{
+
+font-size:28px;
+
+}
+
+.movieGrid{
+
+grid-template-columns:
+repeat(
+2,1fr
+);
+
+}
+
+}
+
+</style>
 </head>
+
 <body>
 
-    <!-- Navigasi Atas -->
-    <nav class="navbar2">
-        <div class="nav-container2">
-            <!-- Kiri: Logo Tulisan -->
-            <a href="index2.html" class="logo2">MIDASXXI</a>
-            
-            <!-- Burger Menu Icon (Muncul saat Mobile) -->
-            <div class="burger-menu2" id="burgerToggle2">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
 
-            <!-- Kanan: Menu Navigasi & Search -->
-            <div class="nav-menu2" id="navMenu2">
-                <a href="index2.html">Movies</a>
-                <a href="index2.html">Series</a>
-                <div class="search-box2">
-                    <input type="text" id="searchInput2" placeholder="Cari film...">
-                </div>
-            </div>
-        </div>
-    </nav>
+<header>
 
-    <!-- Konten Utama Grid Film -->
-    <main class="container2">
-        <h2 class="section-title2">Daftar Film Terbaru</h2>
-        
-        <!-- Grid Tempat Menampung Film dari TMDB -->
-        <div class="movie-grid2" id="movieGrid2">
-            <!-- Diisi otomatis oleh script2.js -->
-        </div>
+<a href="#" class="logo">
+TukarFollow
+</a>
 
-        <!-- Pagination Dinamis (< 1 2 3 4 5 >) -->
-        <div class="pagination2" id="pagination2">
-            <!-- Diisi otomatis oleh script2.js -->
-        </div>
-    </main>
+<div class="rightNav">
 
-    <script src="script2.js"></script>
+<a href="#">Movies</a>
+
+<a href="#">Series</a>
+
+<div class="searchBox">
+
+<input
+id="search"
+placeholder="Cari film..."
+>
+
+</div>
+
+</div>
+
+<div class="burger">
+☰
+</div>
+
+<div class="mobileMenu" id="mobileMenu">
+
+<input
+id="mobileSearch"
+placeholder="Cari film..."
+>
+
+<a href="#">
+Movies
+</a>
+
+<a href="#">
+Series
+</a>
+
+</div>
+
+</header>
+
+
+<section class="hero">
+
+<div class="heroText">
+
+<h1>Streaming Movie</h1>
+
+<p>Nonton film terbaru kualitas HD</p>
+
+</div>
+
+</section>
+
+
+<div class="container">
+
+<div
+id="movieGrid"
+class="movieGrid"
+>
+
+<!-- JS TMDB masuk sini -->
+
+</div>
+
+
+<div
+id="pagination"
+class="pagination"
+>
+
+<button><</button>
+
+<button class="active">
+1
+</button>
+
+<button>2</button>
+
+<button>3</button>
+
+<button>4</button>
+
+<button>5</button>
+
+<button>6</button>
+
+<button>></button>
+
+</div>
+
+</div>
+
+
+<script>
+
+document
+.querySelector(".burger")
+.onclick=()=>{
+
+const menu=
+document.getElementById(
+"mobileMenu"
+);
+
+menu.style.display=
+
+menu.style.display=="flex"
+?"none"
+:"flex";
+
+};
+
+</script>
+
+<script src="js/movies2.js"></script>
+
 </body>
 </html>
