@@ -1,4 +1,4 @@
-const KEY="ISI_API_TMDB_KAMU";
+const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
 const IMG="https://image.tmdb.org/t/p/w500";
 const BIG="https://image.tmdb.org/t/p/original";
