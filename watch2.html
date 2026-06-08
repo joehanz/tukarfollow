@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width,initial-scale=1">
 
 <title>
-Watch Movie
+TukarFollow Watch
 </title>
 
 <link
@@ -32,42 +32,25 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <div class="logo">
 
-<a
-href="index2.html"
-style="
-text-decoration:none;
-color:#f7c843;
-">
-
 <i class="fa-solid fa-film"></i>
 
 TukarFollow
 
-</a>
-
 </div>
 
 
-<ul>
+<ul id="menu">
 
 <li>
-
 <a href="index2.html">
-
 Movies
-
 </a>
-
 </li>
 
 <li>
-
 <a href="#">
-
 Series
-
 </a>
-
 </li>
 
 </ul>
@@ -85,7 +68,8 @@ placeholder="Cari film...">
 
 
 <div
-class="burger">
+class="burger"
+id="burger">
 
 ☰
 
@@ -98,8 +82,15 @@ class="burger">
 
 
 
-<section
-class="movies">
+
+<section class="movies">
+
+
+<div
+id="watchBanner"
+class="watchBanner">
+
+</div>
 
 
 
@@ -118,21 +109,37 @@ allowfullscreen>
 
 
 <div
-class="info"
-id="info">
+class="watchInfo">
+
+<h1
+id="title">
+
+Loading...
+
+</h1>
+
+
+<div
+id="meta">
 
 Loading...
 
 </div>
 
 
+<p
+id="sinopsis">
+
+Loading...
+
+</p>
+
+</div>
 
 
-<h2
-style="
-margin-top:50px;
-margin-bottom:20px;
-">
+
+
+<h2>
 
 Related Movies
 
@@ -140,21 +147,17 @@ Related Movies
 
 
 <div
-class="rel-box"
-id="rel">
+id="rel"
+class="rel-box">
 
 </div>
+
 
 
 </section>
 
 
-
-
-<script
-src="watch2.js">
-
-</script>
+<script src="watch2.js"></script>
 
 </body>
 
