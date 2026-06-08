@@ -1,164 +1,59 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>
-TukarFollow Watch
-</title>
-
-<link
-rel="stylesheet"
-href="style2.css">
-
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonton Streaming - MIDASXXI</title>
+    <link rel="stylesheet" href="style2.css">
 </head>
-
 <body>
 
-
-<header>
-
-<nav class="navbar">
-
-<div class="logo">
-
-<i class="fa-solid fa-film"></i>
-
-TukarFollow
-
-</div>
-
-
-<ul id="menu">
-
-<li>
-<a href="index2.html">
-Movies
-</a>
-</li>
-
-<li>
-<a href="#">
-Series
-</a>
-</li>
-
-</ul>
-
-
-<div class="searchBox">
-
-<input
-id="search"
-placeholder="Cari film...">
-
-<i class="fa fa-search"></i>
-
-</div>
-
-
-<div
-class="burger"
-id="burger">
-
-☰
-
-</div>
-
-</nav>
-
-</header>
-
-
-
-
-
-<section class="movies">
-
-
-<div
-id="watchBanner"
-class="watchBanner">
-
-</div>
-
-
-
-<div
-class="player">
-
-<iframe
-id="player"
-allowfullscreen>
-
-</iframe>
-
-</div>
-
-
-
-
-<div
-class="watchInfo">
-
-<h1
-id="title">
-
-Loading...
-
-</h1>
-
-
-<div
-id="meta">
-
-Loading...
-
-</div>
-
-
-<p
-id="sinopsis">
-
-Loading...
-
-</p>
-
-</div>
-
-
-
-
-<h2>
-
-Related Movies
-
-</h2>
-
-
-<div
-id="rel"
-class="rel-box">
-
-</div>
-
-
-
-</section>
-
-
-<script src="watch2.js"></script>
-
+    <!-- Navigasi Atas (Sama dengan Index agar Konsisten) -->
+    <nav class="navbar2">
+        <div class="nav-container2">
+            <!-- Kiri: Logo Tulisan -->
+            <a href="index2.html" class="logo2">MIDASXXI</a>
+            
+            <!-- Burger Menu Icon (Muncul saat Mobile) -->
+            <div class="burger-menu2" id="burgerToggle2">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <!-- Kanan: Menu Navigasi & Search -->
+            <div class="nav-menu2" id="navMenu2">
+                <a href="index2.html">Movies</a>
+                <a href="index2.html">Series</a>
+                <div class="search-box2">
+                    <input type="text" id="searchInput2" placeholder="Cari film...">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Area Pemutar Video -->
+    <main class="watch-container2">
+        <!-- Judul Film dari TMDB -->
+        <h1 class="movie-title2" id="movieTitle2">Memuat Judul...</h1>
+        
+        <div class="player-wrapper2">
+            <!-- Iframe Pemutar Video (Disembunyikan saat error) -->
+            <iframe id="videoPlayer2" src="" allowfullscreen frameborder="0" style="display: none;"></iframe>
+            
+            <!-- Notifikasi Merah Jika Tidak Lolos Matching 80% / Link Kosong -->
+            <div id="errorNotif2" class="error-notif2" style="display: none;">
+                <p>⚠️ Video belum diupdate oleh admin.</p>
+            </div>
+        </div>
+
+        <!-- Detail Informasi & Sinopsis -->
+        <div class="movie-info2">
+            <h3>Sinopsis / Catatan:</h3>
+            <p id="movieSinopsis2">Memuat informasi film...</p>
+        </div>
+    </main>
+
+    <script src="script2.js"></script>
 </body>
-
 </html>
