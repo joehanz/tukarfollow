@@ -65,34 +65,44 @@
 
 <script>
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
-let moviesData=[];
 
-let mode="movie";
-let searchMode=false;
+let moviesData=[];
 
 const id=new URLSearchParams(location.search).get("id");
 
-fetch("movies.json").then(r=>r.json()).then(d=>{moviesData=d;init();});
+/* LOAD DATABASE */
+fetch("movies.json")
+  .then(r=>r.json())
+  .then(d=>{
+    moviesData=d;
+    init();
+  });
 
+/* INIT */
 async function init(){
-const tmdb=await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`).then(r=>r.json());
 
-const match=findMatch(tmdb.title||"");
+  const movie = moviesData.find(m => String(m.tmdb_id) === String(id));
 
-renderPlayer(match);
-renderInfo(match,tmdb);
-loadRelated();
+  if(!movie){
+    document.getElementById("heroPlayer").innerHTML="Video unavailable";
+    document.getElementById("infoBox").innerHTML="<p>Movie tidak ditemukan</p>";
+    return;
+  }
+
+  renderPlayer(movie);
+  renderInfo(movie);
+  loadRelated();
 }
 
-/* MODE SWITCH */
+/* SEARCH MODE (TMDB ONLY UI) */
+let mode="movie";
+
 function setMode(m){
 mode=m;
-searchMode=true;
 toggleView();
 searchMovie();
 }
 
-/* SEARCH */
 function searchMovie(){
 const q=document.getElementById("search").value;
 if(!q)return;
@@ -106,14 +116,14 @@ renderGrid(d.results||[]);
 });
 }
 
-/* TOGGLE VIEW */
+/* VIEW TOGGLE */
 function toggleView(showGrid=false){
 document.getElementById("heroPlayer").style.display=showGrid?"none":"flex";
 document.getElementById("infoBox").style.display=showGrid?"none":"block";
 document.getElementById("gridMode").style.display=showGrid?"grid":"none";
 }
 
-/* GRID */
+/* GRID RESULT */
 function renderGrid(list){
 const el=document.getElementById("gridMode");
 el.innerHTML="";
@@ -130,45 +140,22 @@ el.innerHTML+=`
 });
 }
 
-/* MATCH */
-function clean(t){
-return t.toLowerCase().replace(/\(\d{4}\)/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
-}
-
-function similarity(a,b){
-a=clean(a);b=clean(b);
-let aa=a.split(" "),bb=b.split(" ");
-let hit=0;
-aa.forEach(x=>{if(bb.includes(x))hit++;});
-return hit/Math.max(aa.length,bb.length);
-}
-
-function findMatch(t){
-let best=null,score=0;
-moviesData.forEach(m=>{
-let s=similarity(t,m.title);
-if(s>=0.8&&s>score){best=m;score=s;}
-});
-return best;
-}
-
 /* PLAYER */
 function renderPlayer(m){
 const el=document.getElementById("heroPlayer");
-if(!m||!m.iframe){
+
+if(!m || !m.iframe){
 el.innerHTML="Video unavailable";
 return;
 }
+
 el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
 }
 
 /* INFO */
-function renderInfo(m,tmdb){
+function renderInfo(m){
 const el=document.getElementById("infoBox");
-if(!m){
-el.innerHTML=`<h2>${tmdb.title}</h2><p>Video unavailable</p>`;
-return;
-}
+
 el.innerHTML=`
 <h2>${m.title}</h2>
 <div>
@@ -180,7 +167,7 @@ el.innerHTML=`
 `;
 }
 
-/* RELATED */
+/* RELATED (optional TMDB only) */
 function loadRelated(){
 fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
 .then(r=>r.json())
@@ -190,6 +177,7 @@ fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
 function renderRelated(list){
 const el=document.getElementById("relGrid");
 el.innerHTML="";
+
 list.slice(0,10).forEach(m=>{
 if(!m.poster_path)return;
 
@@ -207,6 +195,7 @@ document.getElementById("relGrid")
 .scrollBy({left:d*300,behavior:"smooth"});
 }
 
+/* NAV */
 function go(id){
 location.href="watch.html?id="+id;
 }
