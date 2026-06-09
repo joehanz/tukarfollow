@@ -1,12 +1,7 @@
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 // =====================
-// DETECT PAGE
-// =====================
-const isWatch = document.getElementById("playerBox") !== null;
-
-// =====================
-// INDEX ELEMENTS
+// ELEMENTS (SAFE INIT)
 // =====================
 const slider = document.getElementById("slider");
 const grid = document.getElementById("movieGrid");
@@ -17,9 +12,7 @@ const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
-// =====================
 // WATCH ELEMENTS
-// =====================
 const playerBox = document.getElementById("playerBox");
 const judul = document.getElementById("judul");
 const sinopsis = document.getElementById("sinopsis");
@@ -27,10 +20,19 @@ const meta = document.getElementById("meta");
 const recommend = document.getElementById("recommendGrid");
 
 // =====================
+// STATE
+// =====================
 let page = 1;
 let mode = "movie";
 let query = "";
 let timer;
+
+// =====================
+// BOOT DETECTOR (FIX STABLE)
+// =====================
+function isWatchPage() {
+return document.getElementById("playerBox") !== null;
+}
 
 // =====================
 // MOBILE MENU
@@ -78,7 +80,7 @@ renderHero(data.results?.[0]);
 renderMovies(data.results || []);
 renderPagination(Math.min(data.total_pages, 500));
 
-} catch (err) {
+} catch (e) {
 grid.innerHTML = `<div class="loading">Gagal memuat film</div>`;
 }
 }
@@ -92,17 +94,11 @@ if (!slider || !movie) return;
 const title = movie.title || movie.name;
 
 slider.innerHTML = `
-<div style="
-width:100%;
-height:100%;
-background:
-linear-gradient(to top,rgba(0,0,0,.9),transparent),
+<div style="width:100%;height:100%;
+background:linear-gradient(to top,rgba(0,0,0,.9),transparent),
 url(https://image.tmdb.org/t/p/original${movie.backdrop_path});
-background-size:cover;
-background-position:center;
-display:flex;
-align-items:end;
-padding:30px;">
+background-size:cover;background-position:center;
+display:flex;align-items:end;padding:30px;">
 <div>
 <h1>${title}</h1>
 <p>${movie.overview || ""}</p>
@@ -112,7 +108,7 @@ padding:30px;">
 }
 
 // =====================
-// INDEX GRID
+// GRID
 // =====================
 function renderMovies(items) {
 if (!grid) return;
@@ -126,8 +122,7 @@ items
 const title = movie.title || movie.name || "Untitled";
 
 grid.innerHTML += `
-<div class="card"
-onclick="goWatch('${encodeURIComponent(title)}')">
+<div class="card" onclick="goWatch('${encodeURIComponent(title)}')">
 <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
 <h3>${title}</h3>
 </div>
@@ -172,13 +167,13 @@ window.scrollTo({ top: 0, behavior: "smooth" });
 loadMovies();
 }
 
-function doSearch(value) {
+function doSearch(v) {
 clearTimeout(timer);
 timer = setTimeout(() => {
-query = value;
+query = v;
 page = 1;
 loadMovies();
-}, 500);
+}, 400);
 }
 
 search?.addEventListener("keyup", e => doSearch(e.target.value));
@@ -227,13 +222,19 @@ location.href = `watch2.html?title=${title}`;
 }
 
 // =====================
-// WATCH ENGINE (FINAL FIX)
+// WATCH ENGINE (FINAL STABLE)
 // =====================
 async function loadWatch() {
-if (!playerBox) return;
-
 const rawTitle = new URLSearchParams(location.search).get("title") || "";
 const title = decodeURIComponent(rawTitle);
+
+const playerBox = document.getElementById("playerBox");
+if (!playerBox) return;
+
+const judul = document.getElementById("judul");
+const sinopsis = document.getElementById("sinopsis");
+const meta = document.getElementById("meta");
+const recommend = document.getElementById("recommendGrid");
 
 try {
 const data = await fetch(
@@ -243,7 +244,6 @@ const data = await fetch(
 let movie = null;
 let best = 0;
 
-// MATCH ENGINE
 data.forEach(m => {
 const score = similarity(title, m.title);
 if (score > best) {
@@ -252,7 +252,6 @@ movie = m;
 }
 });
 
-// THRESHOLD
 if (best < 0.65) movie = null;
 
 // FOUND
@@ -280,7 +279,7 @@ meta.innerHTML = "";
 playerBox.innerHTML = `<div class="notfound">🎬 Video belum diupdate</div>`;
 }
 
-// RELATED ALWAYS RUN
+// RELATED ALWAYS
 renderRecommend(title);
 
 } catch (e) {
@@ -289,7 +288,7 @@ playerBox.innerHTML = `<div class="notfound">⚠️ Gagal load data</div>`;
 }
 
 // =====================
-// RELATED TMDB
+// RELATED (TMDB ONLY)
 // =====================
 async function renderRecommend(title) {
 if (!recommend) return;
@@ -357,10 +356,12 @@ return same / Math.max(A.length, 1);
 }
 
 // =====================
-// INIT
+// INIT (DOM SAFE)
 // =====================
-if (isWatch) {
+document.addEventListener("DOMContentLoaded", () => {
+if (isWatchPage()) {
 loadWatch();
 } else {
 loadMovies();
 }
+});
