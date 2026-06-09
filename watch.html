@@ -84,7 +84,7 @@ async function init(){
   const movie = moviesData.find(m => String(m.tmdb_id) === String(id));
 
   if(!movie){
-    document.getElementById("heroPlayer").innerHTML="Video unavailable";
+    document.getElementById("heroPlayer").innerHTML="This media is unavailable at the moment.";
     document.getElementById("infoBox").innerHTML="<p>Movie tidak ditemukan</p>";
     return;
   }
@@ -145,7 +145,7 @@ function renderPlayer(m){
 const el=document.getElementById("heroPlayer");
 
 if(!m || !m.iframe){
-el.innerHTML="Video unavailable";
+el.innerHTML="This media is unavailable at the moment.";
 return;
 }
 
