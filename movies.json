@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 855435,
+    "title": "Faces Of Death (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/SMTbQy4Fq2gZOrW",
+    "sinopsis": "Moderator konten web temukan video kekerasan nyata yang meniru adegan kematian dari sebuah film.",
+    "genre": ["Horor"],
+    "release_date": "16-04-2026",
+    "country": "Kanada, Amerika Serikat"
+  },
+	{
     "tmdb_id": 1576369,
     "title": "Bharathanatyam 2 Mohiniyattam (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/bharathanatyam-2-mohiniyattam.webp",
