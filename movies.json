@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 76600,
+    "title": "Avatar: The Way of Water (2022)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/CLeCYk9EQtiLK9R",
+    "sinopsis": "Satu dekade setelah film pertama, keluarga Sully berjuang demi keselamatan dari tragedi.",
+    "genre": ["Action", "Sci-fi", "Adventure"],
+    "release_date": "14-12-2022",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 1455079,
     "title": "You, Me & Tuscany (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/you-me-tuscany.webp",
