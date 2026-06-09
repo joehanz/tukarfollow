@@ -47,7 +47,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <!-- BURGER -->
 <div id="burger">
-<i class="fa-solid fa-bars" id="burgerIcon"></i>
+<i id="burgerIcon" class="fa-solid fa-bars"></i>
 </div>
 
 </nav>
@@ -183,6 +183,7 @@ Loading Movie...
   <script>
 const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
+const burgerIcon = document.getElementById("burgerIcon");
 
 let menuOpen = false;
 
@@ -193,10 +194,12 @@ burger?.addEventListener("click", () => {
     mobileMenu.style.display = menuOpen ? "flex" : "none";
   }
 
-  // FIX: force icon swap (NO CLASS BUG)
-  burger.innerHTML = menuOpen
-    ? `<i class="fa-solid fa-xmark"></i>`
-    : `<i class="fa-solid fa-bars"></i>`;
+  // FORCE ICON CHANGE (INI YANG BENAR)
+  if (burgerIcon) {
+    burgerIcon.className = menuOpen
+      ? "fa-solid fa-xmark"
+      : "fa-solid fa-bars";
+  }
 });
   </script>
 
