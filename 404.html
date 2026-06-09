@@ -23,118 +23,87 @@
       }
     }
     </script>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
 </head>
+
 <body>
 
-<!-- NAV CLEAN -->
-<nav>
 
-<div class="logo"> 
-<a href="/"> TUKARFOLLOW </a>
-</div>
+<!-- NAVBAR -->
+<header>
 
-<div class="nav-right">
+<nav class="navbar">
 
-<input
-id="search"
-placeholder="Search..."
-oninput="searchSeries()"
->
-
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="seriesMenu">
-<a href="javascript:void(0)">
-Series ▼
+<a href="/" class="logo">
+  <i class="fa-solid fa-film"></i>
+  <span>TukarFollow</span>
 </a>
-<div class="seriesDropdown">
-<a href="series.html">
-All Series
-</a>
-<a href="series.html?mode=id">
-ID Series
-</a>
-</div>
+
+<div class="searchBox">
+<input type="text" id="search" placeholder="Cari film...">
+<i class="fa-solid fa-magnifying-glass"></i>
 </div>
 
-  <a href="tvlokal.html">ID TV</a>
-</div>
-
-<div
-class="burger"
-onclick="toggleMenu()"
->
-☰
+<!-- BURGER -->
+<div id="burger" data-state="closed">
+  <i class="fa-solid fa-bars"></i>
 </div>
 
 </nav>
 
-<div class="mobile-menu" id="mobileMenu">
-
-<input placeholder="Search..." oninput="searchSeriesMobile()">
-
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="mobileDrop">
-<div class="mobileDropBtn" onclick="toggleSeriesMobile()"> Series ▼ </div>
-  
-<div class="mobileDropContent" id="mobileSeries">
-<a href="series.html"> All Series </a>
-<a href="series.html?mode=id"> ID Series </a>
+<!-- MOBILE MENU -->
+<div id="mobileMenu">
+<input type="text" id="mobileSearch" placeholder="Cari film...">
 </div>
-
-</div>
-
-<a href="tvlokal.html">ID TV</a>
   
-</div>
 
-<div style="text-align:center; padding: 10px; margin 0 auto;">
-<h1
-style="
-font-size:55px;
-font-weight:800;
-margin-bottom:40px">
+</header>
 
+<!-- MOVIES -->
+
+<section class="movies">
 404
 
-</h1>
-<p style="margin-top:20px;">
-Halaman yang kamu cari tidak ditemukan.
-</p>
-</div>
-  
-<!-- FOOTER -->
-<footer>
-<div class="footer-grid">
-<div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
-<div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
-<div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
-<div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
-</div>
-</footer>
+
+
+
+
+
+</section>
+
+
+
+
+
+
 
 <script src="script.js"></script>
+  <script>
+const burger = document.getElementById("burger");
+const mobileMenu = document.getElementById("mobileMenu");
+
+burger?.addEventListener("click", () => {
+  const isOpen = burger.dataset.state === "open";
+
+  burger.dataset.state = isOpen ? "closed" : "open";
+
+  if (mobileMenu) {
+    mobileMenu.style.display = isOpen ? "none" : "flex";
+  }
+
+  // HARD SET ICON (NO INNERHTML REPLACE PARENT)
+  const icon = burger.querySelector("i");
+
+  if (icon) {
+    icon.className = isOpen
+      ? "fa-solid fa-bars"
+      : "fa-solid fa-xmark";
+  }
+});
+  </script>
 
 </body>
 </html>
-
 
