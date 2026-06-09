@@ -9,9 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
 <style>
-/* =========================
-BASE
-========================= */
 body{
 margin:0;
 background:#0f0f14;
@@ -19,13 +16,7 @@ color:#fff;
 font-family:Arial;
 }
 
-html, body{
-overflow-x:hidden;
-}
-
-/* =========================
-NAVBAR
-========================= */
+/* NAVBAR */
 header{
 background:#111;
 padding:10px 15px;
@@ -39,14 +30,9 @@ display:flex;
 align-items:center;
 justify-content:space-between;
 gap:10px;
-overflow:hidden;
 }
 
-.logo{
-display:flex;
-gap:8px;
-font-weight:bold;
-}
+.logo{display:flex;gap:8px;font-weight:bold;}
 
 #navMenu{
 display:flex;
@@ -69,32 +55,16 @@ padding:5px 10px;
 border-radius:8px;
 }
 
-#burger{
-display:block;
-cursor:pointer;
-margin-left:auto;
+#burger{display:none;cursor:pointer;}
+
+#mobileMenu{
+display:none;
+flex-direction:column;
+background:#111;
+padding:10px;
 }
 
-/* MOBILE NAV FIX */
-@media(max-width:768px){
-
-.searchBox{
-display:none !important;
-}
-
-#navMenu{
-display:none !important;
-}
-
-.navbar{
-justify-content:space-between;
-overflow:hidden;
-}
-}
-
-/* =========================
-PLAYER
-========================= */
+/* PLAYER */
 #heroPlayer{
 width:100%;
 height:60vh;
@@ -110,12 +80,8 @@ height:100%;
 border:none;
 }
 
-/* =========================
-INFO
-========================= */
-#infoBox{
-padding:20px;
-}
+/* INFO */
+#infoBox{padding:20px;}
 
 .badge{
 display:inline-block;
@@ -126,9 +92,60 @@ margin-right:5px;
 font-size:12px;
 }
 
-/* =========================
-GRID MODE
-========================= */
+/* RELATED */
+#relatedWrap{
+padding:20px;
+position:relative;
+}
+
+/* FLOAT ARROW EDGE */
+.arrowFloat{
+position:fixed;
+top:55%;
+transform:translateY(-50%);
+background:#222;
+border:none;
+color:#fff;
+padding:10px 12px;
+cursor:pointer;
+z-index:9999;
+opacity:.8;
+}
+
+#leftArrow{left:5px;}
+#rightArrow{right:5px;}
+
+.scrollWrap{
+display:flex;
+overflow-x:auto;
+gap:10px;
+scroll-behavior:smooth;
+}
+
+.relCard{
+min-width:140px;
+cursor:pointer;
+}
+
+.relCard img{
+width:100%;
+border-radius:10px;
+}
+
+.relTitle{
+font-size:12px;
+margin-top:5px;
+}
+
+.scrollWrap::-webkit-scrollbar{display:none;}
+
+@media(max-width:768px){
+#navMenu{display:none;}
+#burger{display:block;}
+.arrowFloat{display:none;} /* mobile swipe only */
+}
+
+/* SEARCH GRID MODE */
 #gridMode{
 display:none;
 padding:20px;
@@ -148,72 +165,6 @@ cursor:pointer;
 width:100%;
 border-radius:8px;
 }
-
-/* =========================
-RELATED
-========================= */
-#relatedWrap{
-padding:20px;
-position:relative;
-z-index:1;
-}
-
-.scrollWrap{
-display:flex;
-overflow-x:auto;
-gap:10px;
-scroll-behavior:smooth;
-}
-
-.scrollWrap::-webkit-scrollbar{
-display:none;
-}
-
-.relCard{
-min-width:140px;
-cursor:pointer;
-}
-
-.relCard img{
-width:100%;
-border-radius:10px;
-}
-
-.relTitle{
-font-size:12px;
-margin-top:5px;
-}
-
-/* FLOAT ARROW FINAL */
-.arrowFloat{
-position:fixed;
-top:50%;
-transform:translateY(-50%);
-background:rgba(20,20,20,.8);
-border:none;
-color:#fff;
-padding:12px 14px;
-cursor:pointer;
-z-index:99999;
-opacity:.85;
-backdrop-filter:blur(6px);
-}
-
-#leftArrow{
-left:0;
-border-radius:0 8px 8px 0;
-}
-
-#rightArrow{
-right:0;
-border-radius:8px 0 0 8px;
-}
-
-@media(max-width:768px){
-.arrowFloat{
-display:none;
-}
-}
 </style>
 </head>
 
@@ -229,20 +180,25 @@ display:none;
 </div>
 
 <ul id="navMenu">
-<li><a href="#" id="moviesBtn">Movies</a></li>
-<li><a href="#" id="seriesBtn">Series</a></li>
+<li><a onclick="setMode('movie')">Movies</a></li>
+<li><a onclick="setMode('tv')">Series</a></li>
 </ul>
 
 <div class="searchBox">
-<input type="text" id="search" placeholder="Cari film...">
+<input type="text" id="search" placeholder="Cari film..." oninput="searchMovie()">
 <i class="fa-solid fa-magnifying-glass"></i>
 </div>
 
 <div id="burger">
 <i class="fa-solid fa-bars"></i>
 </div>
-
 </nav>
+
+<div id="mobileMenu">
+<a onclick="setMode('movie')">Movies</a>
+<a onclick="setMode('tv')">Series</a>
+<input id="mobileSearch" oninput="searchMovie()" placeholder="Cari film...">
+</div>
 </header>
 
 <!-- PLAYER -->
@@ -251,7 +207,7 @@ display:none;
 <!-- INFO -->
 <div id="infoBox"></div>
 
-<!-- GRID MODE -->
+<!-- GRID MODE RESULT -->
 <div id="gridMode"></div>
 
 <!-- RELATED -->
@@ -267,13 +223,13 @@ display:none;
 <script>
 const KEY="b3b893873ed1bb7f175b2707afeea2a0";
 let moviesData=[];
+
 let mode="movie";
 let searchMode=false;
+
 const id=new URLSearchParams(location.search).get("id");
 
-fetch("movies.json")
-.then(r=>r.json())
-.then(d=>{moviesData=d;init();});
+fetch("movies.json").then(r=>r.json()).then(d=>{moviesData=d;init();});
 
 async function init(){
 const tmdb=await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`).then(r=>r.json());
@@ -283,6 +239,14 @@ const match=findMatch(tmdb.title||"");
 renderPlayer(match);
 renderInfo(match,tmdb);
 loadRelated();
+}
+
+/* MODE SWITCH */
+function setMode(m){
+mode=m;
+searchMode=true;
+toggleView();
+searchMovie();
 }
 
 /* SEARCH */
@@ -299,7 +263,7 @@ renderGrid(d.results||[]);
 });
 }
 
-/* VIEW TOGGLE */
+/* TOGGLE VIEW */
 function toggleView(showGrid=false){
 document.getElementById("heroPlayer").style.display=showGrid?"none":"flex";
 document.getElementById("infoBox").style.display=showGrid?"none":"block";
@@ -310,6 +274,7 @@ document.getElementById("gridMode").style.display=showGrid?"grid":"none";
 function renderGrid(list){
 const el=document.getElementById("gridMode");
 el.innerHTML="";
+
 list.forEach(m=>{
 if(!m.poster_path)return;
 
@@ -322,13 +287,9 @@ el.innerHTML+=`
 });
 }
 
-/* MATCH ENGINE */
+/* MATCH */
 function clean(t){
-return t.toLowerCase()
-.replace(/\(\d{4}\)/g,"")
-.replace(/[^a-z0-9 ]/g," ")
-.replace(/\s+/g," ")
-.trim();
+return t.toLowerCase().replace(/\(\d{4}\)/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
 }
 
 function similarity(a,b){
@@ -343,9 +304,7 @@ function findMatch(t){
 let best=null,score=0;
 moviesData.forEach(m=>{
 let s=similarity(t,m.title);
-if(s>=0.8&&s>score){
-best=m;score=s;
-}
+if(s>=0.8&&s>score){best=m;score=s;}
 });
 return best;
 }
@@ -363,12 +322,10 @@ el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
 /* INFO */
 function renderInfo(m,tmdb){
 const el=document.getElementById("infoBox");
-
 if(!m){
 el.innerHTML=`<h2>${tmdb.title}</h2><p>Video unavailable</p>`;
 return;
 }
-
 el.innerHTML=`
 <h2>${m.title}</h2>
 <div>
