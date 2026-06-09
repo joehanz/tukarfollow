@@ -16,7 +16,62 @@ color:#fff;
 font-family:Arial;
 }
 
-/* PLAYER */
+/* ================= NAVBAR (SAME AS INDEX STYLE) ================= */
+header{
+background:#111;
+padding:10px 15px;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:8px;
+font-weight:bold;
+}
+
+#navMenu{
+display:flex;
+gap:15px;
+list-style:none;
+}
+
+#navMenu li a{
+color:#fff;
+text-decoration:none;
+}
+
+.searchBox{
+display:flex;
+align-items:center;
+gap:5px;
+background:#222;
+padding:5px 10px;
+border-radius:8px;
+}
+
+#burger{
+display:none;
+cursor:pointer;
+}
+
+#mobileMenu{
+display:none;
+flex-direction:column;
+background:#111;
+padding:10px;
+}
+
+/* ================= PLAYER ================= */
 #heroPlayer{
 width:100%;
 height:60vh;
@@ -32,7 +87,7 @@ height:100%;
 border:none;
 }
 
-/* INFO */
+/* ================= INFO ================= */
 #infoBox{
 padding:20px;
 }
@@ -57,16 +112,25 @@ margin-right:5px;
 font-size:12px;
 }
 
-/* RELATED */
+/* ================= RELATED ================= */
 #relatedWrap{
 padding:20px;
 }
 
-.relatedHeader{
+/* ARROW DI ATAS GRID */
+.relatedTop{
 display:flex;
 justify-content:space-between;
-align-items:center;
 margin-bottom:10px;
+}
+
+.arrowBtn{
+background:#222;
+border:none;
+color:#fff;
+padding:8px 12px;
+cursor:pointer;
+border-radius:6px;
 }
 
 .scrollWrap{
@@ -91,29 +155,53 @@ font-size:12px;
 margin-top:5px;
 }
 
-/* ARROW */
-.arrowBtn{
-background:#222;
-border:none;
-color:#fff;
-padding:8px 12px;
-cursor:pointer;
-border-radius:6px;
-}
-
-/* HIDE SCROLLBAR */
 .scrollWrap::-webkit-scrollbar{
 display:none;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+#navMenu{display:none;}
+#burger{display:block;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- PLAYER -->
-<div id="heroPlayer">
-Loading...
+<!-- NAVBAR (COPY INDEX BEHAVIOR) -->
+<header>
+<nav class="navbar">
+
+<div class="logo">
+<i class="fa-solid fa-film"></i>
+<span>TukarFollow</span>
 </div>
+
+<ul id="navMenu">
+<li><a href="#" id="moviesBtn">Movies</a></li>
+<li><a href="#" id="seriesBtn">Series</a></li>
+</ul>
+
+<div class="searchBox">
+<input type="text" id="search" placeholder="Cari film...">
+<i class="fa-solid fa-magnifying-glass"></i>
+</div>
+
+<div id="burger">
+<i class="fa-solid fa-bars"></i>
+</div>
+</nav>
+
+<div id="mobileMenu">
+<a href="#" id="mobileMovies">Movies</a>
+<a href="#" id="mobileSeries">Series</a>
+<input type="text" id="mobileSearch" placeholder="Cari film...">
+</div>
+</header>
+
+<!-- PLAYER -->
+<div id="heroPlayer">Loading...</div>
 
 <!-- INFO -->
 <div id="infoBox"></div>
@@ -121,14 +209,9 @@ Loading...
 <!-- RELATED -->
 <div id="relatedWrap">
 
-<div class="relatedHeader">
-<h3>Related Movies</h3>
-
-<div>
+<div class="relatedTop">
 <button class="arrowBtn" onclick="scrollRel(-1)">‹</button>
 <button class="arrowBtn" onclick="scrollRel(1)">›</button>
-</div>
-
 </div>
 
 <div class="scrollWrap" id="relGrid"></div>
@@ -136,59 +219,29 @@ Loading...
 </div>
 
 <script>
-const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
+const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+let moviesData=[];
 
-let moviesData = [];
-
-/* LOAD MOVIES.JSON */
 fetch("movies.json")
-.then(r => r.json())
-.then(data => {
-moviesData = data;
-init();
-});
+.then(r=>r.json())
+.then(d=>{moviesData=d;init();});
 
-/* GET TMDB ID */
-const id = new URLSearchParams(location.search).get("id");
+const id=new URLSearchParams(location.search).get("id");
 
-/* INIT */
 async function init(){
-const tmdb = await fetch(
+const tmdb=await fetch(
 `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-).then(r => r.json());
+).then(r=>r.json());
 
-const title = tmdb.title || "";
+const title=tmdb.title||"";
+const match=findMatch(title);
 
-/* MATCH LOCAL MOVIE */
-const match = findMatch(title);
-
-/* RENDER PLAYER */
 renderPlayer(match);
-
-/* RENDER INFO */
-renderInfo(match, tmdb);
-
-/* RELATED */
+renderInfo(match,tmdb);
 loadRelated();
 }
 
-/* FUZZY MATCH 80% */
-function similarity(a,b){
-a = clean(a);
-b = clean(b);
-
-let aa = a.split(" ");
-let bb = b.split(" ");
-
-let hit = 0;
-
-aa.forEach(x=>{
-if(bb.includes(x)) hit++;
-});
-
-return hit / Math.max(aa.length,bb.length);
-}
-
+/* MATCH */
 function clean(t){
 return t.toLowerCase()
 .replace(/\(\d{4}\)/g,"")
@@ -197,79 +250,73 @@ return t.toLowerCase()
 .trim();
 }
 
-function findMatch(title){
-let best = null;
-let score = 0;
+function similarity(a,b){
+a=clean(a); b=clean(b);
+let aa=a.split(" ");
+let bb=b.split(" ");
+let hit=0;
+aa.forEach(x=>{if(bb.includes(x))hit++;});
+return hit/Math.max(aa.length,bb.length);
+}
 
+function findMatch(title){
+let best=null,score=0;
 moviesData.forEach(m=>{
-let s = similarity(title, m.title);
-if(s >= 0.8 && s > score){
-best = m;
-score = s;
+let s=similarity(title,m.title);
+if(s>=0.8 && s>score){
+best=m;score=s;
 }
 });
-
 return best;
 }
 
 /* PLAYER */
-function renderPlayer(movie){
-const el = document.getElementById("heroPlayer");
+function renderPlayer(m){
+const el=document.getElementById("heroPlayer");
 
-if(!movie || !movie.iframe){
-el.innerHTML = `<h2>Video unavailable</h2>`;
+if(!m||!m.iframe){
+el.innerHTML="<h2>Video unavailable</h2>";
 return;
 }
 
-el.innerHTML = `
-<iframe src="${movie.iframe}" allowfullscreen></iframe>
-`;
+el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
 }
 
 /* INFO */
-function renderInfo(movie, tmdb){
-const el = document.getElementById("infoBox");
+function renderInfo(m,tmdb){
+const el=document.getElementById("infoBox");
 
-if(!movie){
-el.innerHTML = `
-<h1>${tmdb.title}</h1>
-<p>⚠️ Video unavailable (not in database)</p>
-`;
+if(!m){
+el.innerHTML=`<h1>${tmdb.title}</h1><p>Video unavailable</p>`;
 return;
 }
 
-el.innerHTML = `
-<h1>${movie.title}</h1>
-
+el.innerHTML=`
+<h1>${m.title}</h1>
 <div class="meta">
-<span class="badge">${movie.genre?.join(", ") || "-"}</span>
-<span class="badge">${movie.release_date || "-"}</span>
-<span class="badge">${movie.country || "-"}</span>
+<span class="badge">${(m.genre||[]).join(", ")}</span>
+<span class="badge">${m.release_date||"-"}</span>
+<span class="badge">${m.country||"-"}</span>
 </div>
-
-<p>${movie.sinopsis || ""}</p>
+<p>${m.sinopsis||""}</p>
 `;
 }
 
-/* RELATED TMDB */
+/* RELATED */
 function loadRelated(){
-fetch(
-`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
-)
+fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
 .then(r=>r.json())
-.then(data=>{
-renderRelated(data.results || []);
-});
+.then(d=>renderRelated(d.results||[]));
 }
 
 function renderRelated(list){
-const el = document.getElementById("relGrid");
-el.innerHTML = "";
+const el=document.getElementById("relGrid");
+el.innerHTML="";
 
 list.slice(0,10).forEach(m=>{
-if(!m.poster_path) return;
+if(!m.poster_path)return;
 
-el.innerHTML += `
+el.innerHTML+=`
 <div class="relCard" onclick="go(${m.id})">
 <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div class="relTitle">${m.title}</div>
@@ -280,11 +327,11 @@ el.innerHTML += `
 
 function scrollRel(dir){
 document.getElementById("relGrid")
-.scrollBy({left: dir * 300, behavior:"smooth"});
+.scrollBy({left:dir*300,behavior:"smooth"});
 }
 
 function go(id){
-location.href = "watch.html?id=" + id;
+location.href="watch.html?id="+id;
 }
 </script>
 
