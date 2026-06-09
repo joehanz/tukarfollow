@@ -7,6 +7,8 @@
 
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
 </head>
 
 <body>
@@ -33,7 +35,6 @@
 <div id="burger">
 <i class="fa-solid fa-bars"></i>
 </div>
-
 </nav>
 
 <div id="mobileMenu">
@@ -49,189 +50,165 @@
 <!-- INFO -->
 <div id="infoBox"></div>
 
-<!-- GRID MODE -->
+<!-- GRID MODE RESULT -->
 <div id="gridMode"></div>
 
 <!-- RELATED -->
 <div id="relatedWrap">
 
-<button class="arrowFloat" id="leftArrow" onclick="scrollRel(-1)">‹</button>
-<button class="arrowFloat" id="rightArrow" onclick="scrollRel(1)">›</button>
+<button id="leftArrow" class="arrowFloat" onclick="scrollRel(-1)">‹</button>
+<button id="rightArrow" class="arrowFloat" onclick="scrollRel(1)">›</button>
 
 <div class="scrollWrap" id="relGrid"></div>
 
 </div>
 
 <script>
-const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
-const id = new URLSearchParams(location.search).get("id");
+const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+let moviesData=[];
 
-let moviesData = [];
-let mode = "movie";
+let mode="movie";
+let searchMode=false;
 
-/* LOAD LOCAL DB */
-fetch("movies.json")
-.then(r => r.json())
-.then(d => {
-  moviesData = d;
-  init();
-});
+const id=new URLSearchParams(location.search).get("id");
 
-/* =========================
-INIT
-========================= */
-async function init() {
+fetch("movies.json").then(r=>r.json()).then(d=>{moviesData=d;init();});
 
-  const local = moviesData.find(m =>
-    String(m.tmdb_id) === String(id)
-  );
+async function init(){
+const tmdb=await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`).then(r=>r.json());
 
-  let tmdb = await fetch(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-  ).then(r => r.json());
+const match=findMatch(tmdb.title||"");
 
-  if (local) {
-    renderPlayer(local);
-    renderInfo(local);
-  } else {
-    renderPlayer(null);
-    renderInfo(tmdb);
-  }
-
-  loadRelated();
+renderPlayer(match);
+renderInfo(match,tmdb);
+loadRelated();
 }
 
-/* =========================
-PLAYER
-========================= */
-function renderPlayer(m) {
-const el = document.getElementById("heroPlayer");
-
-if (!m || !m.iframe) {
-  el.innerHTML = "Video unavailable";
-  return;
-}
-
-el.innerHTML = `<iframe src="${m.iframe}" allowfullscreen></iframe>`;
-}
-
-/* =========================
-INFO
-========================= */
-function renderInfo(m) {
-const el = document.getElementById("infoBox");
-
-if (!m) {
-  el.innerHTML = "<h2>Data tidak ditemukan</h2>";
-  return;
-}
-
-/* LOCAL MOVIE */
-if (m.iframe) {
-  el.innerHTML = `
-    <h2>${m.title}</h2>
-    <div>
-      <span class="badge">${(m.genre || []).join(", ")}</span>
-      <span class="badge">${m.release_date || "-"}</span>
-      <span class="badge">${m.country || "-"}</span>
-    </div>
-    <p>${m.sinopsis || ""}</p>
-  `;
-  return;
-}
-
-/* TMDB MOVIE */
-el.innerHTML = `
-  <h2>${m.title}</h2>
-  <p>⭐ Rating: ${m.vote_average || "-"}</p>
-  <p>📅 Rilis: ${m.release_date || "-"}</p>
-  <p>${m.overview || ""}</p>
-`;
-}
-
-/* =========================
-SEARCH / MODE
-========================= */
-function setMode(m) {
-mode = m;
-toggleView(true);
+/* MODE SWITCH */
+function setMode(m){
+mode=m;
+searchMode=true;
+toggleView();
 searchMovie();
 }
 
-function searchMovie() {
-const q = document.getElementById("search").value;
-if (!q) return;
+/* SEARCH */
+function searchMovie(){
+const q=document.getElementById("search").value;
+if(!q)return;
 
 toggleView(true);
 
-fetch(`https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${q}`)
-.then(r => r.json())
-.then(d => renderGrid(d.results || []));
+fetch(`https://api.themoviedb.org/3/search/${mode}?api_key=${KEY}&query=${q}`)
+.then(r=>r.json())
+.then(d=>{
+renderGrid(d.results||[]);
+});
 }
 
-/* =========================
-VIEW TOGGLE
-========================= */
-function toggleView(showGrid = false) {
-document.getElementById("heroPlayer").style.display = showGrid ? "none" : "flex";
-document.getElementById("infoBox").style.display = showGrid ? "none" : "block";
-document.getElementById("gridMode").style.display = showGrid ? "grid" : "none";
+/* TOGGLE VIEW */
+function toggleView(showGrid=false){
+document.getElementById("heroPlayer").style.display=showGrid?"none":"flex";
+document.getElementById("infoBox").style.display=showGrid?"none":"block";
+document.getElementById("gridMode").style.display=showGrid?"grid":"none";
 }
 
-/* =========================
-GRID
-========================= */
-function renderGrid(list) {
-const el = document.getElementById("gridMode");
-el.innerHTML = "";
+/* GRID */
+function renderGrid(list){
+const el=document.getElementById("gridMode");
+el.innerHTML="";
 
-list.forEach(m => {
-if (!m.poster_path) return;
+list.forEach(m=>{
+if(!m.poster_path)return;
 
-el.innerHTML += `
-  <div class="card" onclick="go(${m.id})">
-    <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-    <div>${m.title || m.name}</div>
-  </div>
+el.innerHTML+=`
+<div class="card" onclick="go(${m.id})">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<div>${m.title||m.name}</div>
+</div>
 `;
 });
 }
 
-/* =========================
-RELATED
-========================= */
-function loadRelated() {
+/* MATCH */
+function clean(t){
+return t.toLowerCase().replace(/\(\d{4}\)/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+}
+
+function similarity(a,b){
+a=clean(a);b=clean(b);
+let aa=a.split(" "),bb=b.split(" ");
+let hit=0;
+aa.forEach(x=>{if(bb.includes(x))hit++;});
+return hit/Math.max(aa.length,bb.length);
+}
+
+function findMatch(t){
+let best=null,score=0;
+moviesData.forEach(m=>{
+let s=similarity(t,m.title);
+if(s>=0.8&&s>score){best=m;score=s;}
+});
+return best;
+}
+
+/* PLAYER */
+function renderPlayer(m){
+const el=document.getElementById("heroPlayer");
+if(!m||!m.iframe){
+el.innerHTML="Video unavailable";
+return;
+}
+el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
+}
+
+/* INFO */
+function renderInfo(m,tmdb){
+const el=document.getElementById("infoBox");
+if(!m){
+el.innerHTML=`<h2>${tmdb.title}</h2><p>Video unavailable</p>`;
+return;
+}
+el.innerHTML=`
+<h2>${m.title}</h2>
+<div>
+<span class="badge">${(m.genre||[]).join(", ")}</span>
+<span class="badge">${m.release_date||"-"}</span>
+<span class="badge">${m.country||"-"}</span>
+</div>
+<p>${m.sinopsis||""}</p>
+`;
+}
+
+/* RELATED */
+function loadRelated(){
 fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
-.then(r => r.json())
-.then(d => renderRelated(d.results || []));
+.then(r=>r.json())
+.then(d=>renderRelated(d.results||[]));
 }
 
-function renderRelated(list) {
-const el = document.getElementById("relGrid");
-el.innerHTML = "";
+function renderRelated(list){
+const el=document.getElementById("relGrid");
+el.innerHTML="";
+list.slice(0,10).forEach(m=>{
+if(!m.poster_path)return;
 
-list.slice(0, 10).forEach(m => {
-if (!m.poster_path) return;
-
-el.innerHTML += `
-  <div class="relCard" onclick="go(${m.id})">
-    <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-    <div class="relTitle">${m.title}</div>
-  </div>
+el.innerHTML+=`
+<div class="relCard" onclick="go(${m.id})">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<div class="relTitle">${m.title}</div>
+</div>
 `;
 });
 }
 
-/* =========================
-NAV
-========================= */
-function go(id) {
-location.href = "watch.html?id=" + id;
+function scrollRel(d){
+document.getElementById("relGrid")
+.scrollBy({left:d*300,behavior:"smooth"});
 }
 
-function scrollRel(d) {
-document.getElementById("relGrid")
-.scrollBy({ left: d * 300, behavior: "smooth" });
+function go(id){
+location.href="watch.html?id="+id;
 }
 </script>
 
