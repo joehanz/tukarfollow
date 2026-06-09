@@ -83,7 +83,7 @@ function renderGrid(data) {
     if (!m.poster_path) return;
 
     grid.innerHTML += `
-      <div class="card" onclick="goWatch('${m.id}')">
+      <div class="card" onclick="goWatch('${m.id}', \`${m.title || m.name}\`)">
         <img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
         <h3>${m.title || m.name}</h3>
       </div>
@@ -92,8 +92,9 @@ function renderGrid(data) {
 }
 
 /* NAV (LOCK FIX ONLY) */
-function goWatch(id) {
-  location.href = `watch.html?id=${encodeURIComponent(id)}`;
+function goWatch(id, title) {
+  location.href =
+    `watch.html?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title || "")}`;
 }
 
 /* PAGINATION */
