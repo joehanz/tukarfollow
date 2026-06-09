@@ -1,7 +1,17 @@
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 // =====================
-// ELEMENTS (SAFE INIT)
+// TRIAL STATE
+// =====================
+let page = 1;
+let mode = "movie";
+let query = "";
+let timer;
+
+let MOVIES_DB = [];
+
+// =====================
+// ELEMENTS INDEX
 // =====================
 const slider = document.getElementById("slider");
 const grid = document.getElementById("movieGrid");
@@ -12,7 +22,9 @@ const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
-// WATCH ELEMENTS
+// =====================
+// ELEMENTS WATCH
+// =====================
 const playerBox = document.getElementById("playerBox");
 const judul = document.getElementById("judul");
 const sinopsis = document.getElementById("sinopsis");
@@ -20,50 +32,35 @@ const meta = document.getElementById("meta");
 const recommend = document.getElementById("recommendGrid");
 
 // =====================
-// STATE
+// INIT JSON DB (TRIAL ONLY)
 // =====================
-let page = 1;
-let mode = "movie";
-let query = "";
-let timer;
+fetch("movies.json")
+.then(r => r.json())
+.then(data => {
+MOVIES_DB = data;
+bootTrial();
+});
 
 // =====================
-// BOOT DETECTOR (FIX STABLE)
+// BOOT DECISION
 // =====================
-function isWatchPage() {
-return document.getElementById("playerBox") !== null;
+function bootTrial() {
+if (document.getElementById("playerBox")) {
+initWatchTrial();
+} else {
+loadIndex();
+}
 }
 
 // =====================
-// MOBILE MENU
+// INDEX MODE
 // =====================
-burger?.addEventListener("click", () => {
-if (!mobileMenu) return;
-mobileMenu.style.display =
-mobileMenu.style.display === "flex" ? "none" : "flex";
-});
-
-// =====================
-// TOP BUTTON
-// =====================
-window.addEventListener("scroll", () => {
-if (topBtn) {
-topBtn.style.display = window.scrollY > 500 ? "block" : "none";
-}
-});
-
-topBtn?.addEventListener("click", () => {
-window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-// =====================
-// INDEX LOAD
-// =====================
-async function loadMovies() {
+async function loadIndex() {
 if (!grid) return;
 
 try {
-grid.innerHTML = `<div class="loading">Loading Movie...</div>`;
+
+grid.innerHTML = `<div class="loading">Loading...</div>`;
 
 let url = "";
 
@@ -77,31 +74,30 @@ const res = await fetch(url);
 const data = await res.json();
 
 renderHero(data.results?.[0]);
-renderMovies(data.results || []);
+renderGrid(data.results || []);
 renderPagination(Math.min(data.total_pages, 500));
 
 } catch (e) {
-grid.innerHTML = `<div class="loading">Gagal memuat film</div>`;
+grid.innerHTML = `<div class="loading">Error load</div>`;
 }
+
 }
 
 // =====================
 // HERO
 // =====================
-function renderHero(movie) {
-if (!slider || !movie) return;
-
-const title = movie.title || movie.name;
+function renderHero(m) {
+if (!slider || !m) return;
 
 slider.innerHTML = `
 <div style="width:100%;height:100%;
 background:linear-gradient(to top,rgba(0,0,0,.9),transparent),
-url(https://image.tmdb.org/t/p/original${movie.backdrop_path});
+url(https://image.tmdb.org/t/p/original${m.backdrop_path});
 background-size:cover;background-position:center;
 display:flex;align-items:end;padding:30px;">
 <div>
-<h1>${title}</h1>
-<p>${movie.overview || ""}</p>
+<h1>${m.title || m.name}</h1>
+<p>${m.overview || ""}</p>
 </div>
 </div>
 `;
@@ -110,24 +106,22 @@ display:flex;align-items:end;padding:30px;">
 // =====================
 // GRID
 // =====================
-function renderMovies(items) {
+function renderGrid(data) {
 if (!grid) return;
 
 grid.innerHTML = "";
 
-items
-.filter(m => m.poster_path)
-.forEach(movie => {
+data.forEach(m => {
+if (!m.poster_path) return;
 
-const title = movie.title || movie.name || "Untitled";
+const title = m.title || m.name;
 
 grid.innerHTML += `
 <div class="card" onclick="goWatch('${encodeURIComponent(title)}')">
-<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
+<img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
 <h3>${title}</h3>
 </div>
 `;
-
 });
 }
 
@@ -143,75 +137,62 @@ const group = 6;
 const start = Math.floor((page - 1) / group) * group + 1;
 const end = Math.min(start + group - 1, total);
 
-if (start > 1) {
-html += `<button onclick="gotoPage(${start - group})">&lt;</button>`;
-}
+if (start > 1) html += `<button onclick="goPage(${start - group})">&lt;</button>`;
 
 for (let i = start; i <= end; i++) {
-html += `<button class="${i === page ? "active" : ""}" onclick="gotoPage(${i})">${i}</button>`;
+html += `<button onclick="goPage(${i})" class="${i===page?'active':''}">${i}</button>`;
 }
 
-if (end < total) {
-html += `<button onclick="gotoPage(${end + 1})">&gt;</button>`;
-}
+if (end < total) html += `<button onclick="goPage(${end + 1})">&gt;</button>`;
 
 pagination.innerHTML = html;
 }
 
-// =====================
-// NAV
-// =====================
-function gotoPage(p) {
+function goPage(p) {
 page = p;
-window.scrollTo({ top: 0, behavior: "smooth" });
-loadMovies();
+window.scrollTo({top:0,behavior:"smooth"});
+loadIndex();
 }
 
-function doSearch(v) {
+// =====================
+// SEARCH
+// =====================
+search?.addEventListener("keyup", e => {
 clearTimeout(timer);
 timer = setTimeout(() => {
-query = v;
+query = e.target.value;
 page = 1;
-loadMovies();
+loadIndex();
 }, 400);
-}
+});
 
-search?.addEventListener("keyup", e => doSearch(e.target.value));
-mobileSearch?.addEventListener("keyup", e => doSearch(e.target.value));
+mobileSearch?.addEventListener("keyup", e => {
+clearTimeout(timer);
+timer = setTimeout(() => {
+query = e.target.value;
+page = 1;
+loadIndex();
+}, 400);
+});
 
 // =====================
 // MODE SWITCH
 // =====================
-document.getElementById("moviesBtn")?.addEventListener("click", e => {
-e.preventDefault();
-mode = "movie";
-query = "";
-page = 1;
-loadMovies();
+document.getElementById("moviesBtn")?.addEventListener("click", () => {
+mode = "movie"; query=""; page=1; loadIndex();
 });
 
-document.getElementById("seriesBtn")?.addEventListener("click", e => {
-e.preventDefault();
-mode = "tv";
-query = "";
-page = 1;
-loadMovies();
+document.getElementById("seriesBtn")?.addEventListener("click", () => {
+mode = "tv"; query=""; page=1; loadIndex();
 });
 
-document.getElementById("mobileMovies")?.addEventListener("click", e => {
-e.preventDefault();
-mode = "movie";
-query = "";
-page = 1;
-loadMovies();
-});
-
-document.getElementById("mobileSeries")?.addEventListener("click", e => {
-e.preventDefault();
-mode = "tv";
-query = "";
-page = 1;
-loadMovies();
+// =====================
+// NAV MENU
+// =====================
+burger?.addEventListener("click", () => {
+if (!mobileMenu) return;
+mobileMenu.style.display =
+mobileMenu.style.display === "flex" ? "none" : "flex";
 });
 
 // =====================
@@ -222,80 +203,78 @@ location.href = `watch2.html?title=${title}`;
 }
 
 // =====================
-// WATCH ENGINE (FINAL STABLE)
+// WATCH INIT (ISOLATED)
 // =====================
-async function loadWatch() {
-const rawTitle = new URLSearchParams(location.search).get("title") || "";
-const title = decodeURIComponent(rawTitle);
+function initWatchTrial() {
 
-const playerBox = document.getElementById("playerBox");
+const raw = new URLSearchParams(location.search).get("title") || "";
+const title = decodeURIComponent(raw);
+
+loadWatchTrial(title);
+
+}
+
+// =====================
+// WATCH ENGINE (PURE JSON ONLY)
+// =====================
+function loadWatchTrial(title) {
+
 if (!playerBox) return;
 
-const judul = document.getElementById("judul");
-const sinopsis = document.getElementById("sinopsis");
-const meta = document.getElementById("meta");
-const recommend = document.getElementById("recommendGrid");
-
-try {
-const data = await fetch(
-"https://raw.githubusercontent.com/joehanz/csstukarfollow/main/movies.json?v=" + Date.now()
-).then(r => r.json());
-
-let movie = null;
 let best = 0;
+let found = null;
 
-data.forEach(m => {
+MOVIES_DB.forEach(m => {
 const score = similarity(title, m.title);
 if (score > best) {
 best = score;
-movie = m;
+found = m;
 }
 });
 
-if (best < 0.65) movie = null;
+if (best < 0.65) found = null;
 
 // FOUND
-if (movie) {
+if (found) {
 
-judul.textContent = movie.title;
-sinopsis.textContent = movie.sinopsis || "Sinopsis belum tersedia";
+judul.textContent = found.title;
+sinopsis.textContent = found.sinopsis || "No synopsis";
 
 meta.innerHTML = `
-<span class="tag">${movie.release_date || "-"}</span>
-<span class="tag">${movie.country || "-"}</span>
-${(movie.genre || []).map(g => `<span class="tag">${g}</span>`).join("")}
+<span class="tag">${found.release_date || "-"}</span>
+<span class="tag">${found.country || "-"}</span>
+${(found.genre || []).map(g => `<span class="tag">${g}</span>`).join("")}
 `;
 
-playerBox.innerHTML = movie.iframe
-? `<iframe src="${movie.iframe}" allowfullscreen></iframe>`
-: `<div class="notfound">🎬 Video belum diupdate</div>`;
+playerBox.innerHTML = found.iframe
+? `<iframe src="${found.iframe}" allowfullscreen></iframe>`
+: `<div class="notfound">🎬 Video belum tersedia</div>`;
 
 } else {
 
-// NOT FOUND
-judul.textContent = title || "Film";
-sinopsis.textContent = "Film tidak tersedia di database.";
+judul.textContent = title || "Not Found";
+sinopsis.textContent = "Film tidak ada di database.";
 meta.innerHTML = "";
-playerBox.innerHTML = `<div class="notfound">🎬 Video belum diupdate</div>`;
+
+playerBox.innerHTML = `<div class="notfound">🎬 Video belum tersedia</div>`;
 }
 
-// RELATED ALWAYS
-renderRecommend(title);
-
-} catch (e) {
-playerBox.innerHTML = `<div class="notfound">⚠️ Gagal load data</div>`;
-}
-}
-
-// =====================
 // RELATED (TMDB ONLY)
+loadRelatedTrial(title);
+
+}
+
 // =====================
-async function renderRecommend(title) {
+// RELATED (SAFE TMDB)
+// =====================
+async function loadRelatedTrial(title) {
+
 if (!recommend) return;
 
 recommend.innerHTML = `<div class="loading">Loading...</div>`;
 
 try {
+
 const url = `https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(title)}`;
 
 const res = await fetch(url);
@@ -306,18 +285,18 @@ recommend.innerHTML = "";
 (data.results || [])
 .filter(m => m.poster_path)
 .slice(0, 8)
-.forEach(movie => {
+.forEach(m => {
 
 const div = document.createElement("div");
 div.className = "card";
 
 div.innerHTML = `
-<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
-<h3>${movie.title}</h3>
+<img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
+<h3>${m.title}</h3>
 `;
 
 div.onclick = () => {
-location.href = `watch2.html?title=${encodeURIComponent(movie.title)}`;
+location.href = `watch2.html?title=${encodeURIComponent(m.title)}`;
 };
 
 recommend.appendChild(div);
@@ -325,8 +304,9 @@ recommend.appendChild(div);
 });
 
 } catch (e) {
-recommend.innerHTML = `<div class="loading">Gagal load related</div>`;
+recommend.innerHTML = `<div class="loading">Error related</div>`;
 }
+
 }
 
 // =====================
@@ -335,33 +315,27 @@ recommend.innerHTML = `<div class="loading">Gagal load related</div>`;
 function cleanText(t) {
 return (t || "")
 .toLowerCase()
-.replace(/\(\d+\)/g, "")
-.replace(/[^\w\s]/g, "")
-.replace(/\s+/g, " ")
+.replace(/\(\d+\)/g,"")
+.replace(/[^\w\s]/g,"")
+.replace(/\s+/g," ")
 .trim();
 }
 
-function similarity(a, b) {
+function similarity(a,b) {
+
 a = cleanText(a);
 b = cleanText(b);
+
 if (!a || !b) return 0;
 
 const A = [...new Set(a.split(" "))];
 const B = new Set(b.split(" "));
 
 let same = 0;
-A.forEach(w => { if (B.has(w)) same++; });
 
-return same / Math.max(A.length, 1);
-}
-
-// =====================
-// INIT (DOM SAFE)
-// =====================
-document.addEventListener("DOMContentLoaded", () => {
-if (isWatchPage()) {
-loadWatch();
-} else {
-loadMovies();
-}
+A.forEach(w=>{
+if (B.has(w)) same++;
 });
+
+return same / Math.max(A.length,1);
+}
