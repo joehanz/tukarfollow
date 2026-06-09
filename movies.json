@@ -44,6 +44,7 @@
     "country": "Inggris"
   },
   {
+	"tmdb_id": 1280300,
     "title": "The Whistler (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/wisther.webp",
     "video": "",
@@ -54,6 +55,7 @@
     "country": "Kolombia, Amerika Serikat, Venezuela"
   },
   {
+	"tmdb_id": 1243741,
     "title": "Ballistic (2025)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ballistic-2025.webp",
     "video": "",
@@ -64,6 +66,7 @@
     "country": "Australia, Kanada, Amerika Serikat"
   },
   {
+	"tmdb_id": 1678192,
     "title": "Blood Witch (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/blood-witch.webp",
     "video": "",
@@ -74,6 +77,7 @@
     "country": "Inggris"
   },
   {
+	"tmdb_id": 1665860,
     "title": "Murder in the Dark (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/murder-in-the-dark.webp",
     "video": "",
