@@ -227,7 +227,7 @@ location.href = `watch2.html?title=${title}`;
 }
 
 // =====================
-// WATCH MODE
+// WATCH MODE (HYBRID FIX)
 // =====================
 async function loadWatch() {
 if (!playerBox) return;
@@ -265,17 +265,17 @@ ${(movie.genre || []).map(g => `<span class="tag">${g}</span>`).join("")}
 
 playerBox.innerHTML = movie.iframe
 ? `<iframe src="${movie.iframe}" allowfullscreen></iframe>`
-: `<div class="notfound">🎬 Video belum diupload</div>`;
+: `<div class="notfound">🎬 Video belum diupdate</div>`;
 
 } else {
 
 judul.textContent = title || "Film";
 sinopsis.textContent = "Film tidak tersedia di database.";
-
-playerBox.innerHTML = `<div class="notfound">🎬 Video belum diupload</div>`;
+meta.innerHTML = "";
+playerBox.innerHTML = `<div class="notfound">🎬 Video belum diupdate</div>`;
 }
 
-renderRecommend(data);
+renderRecommend(title);
 
 } catch (e) {
 playerBox.innerHTML = `<div class="notfound">⚠️ Gagal load data</div>`;
@@ -283,20 +283,31 @@ playerBox.innerHTML = `<div class="notfound">⚠️ Gagal load data</div>`;
 }
 
 // =====================
-// RECOMMEND
+// RELATED (TMDB)
 // =====================
-function renderRecommend(data) {
+async function renderRecommend(title) {
 if (!recommend) return;
+
+recommend.innerHTML = `<div class="loading">Loading...</div>`;
+
+try {
+const url = `https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(title)}`;
+
+const res = await fetch(url);
+const data = await res.json();
 
 recommend.innerHTML = "";
 
-data.slice(0, 8).forEach(movie => {
+(data.results || [])
+.filter(m => m.poster_path)
+.slice(0, 8)
+.forEach(movie => {
 
 const div = document.createElement("div");
 div.className = "card";
 
 div.innerHTML = `
-<img src="${movie.image}">
+<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
 <h3>${movie.title}</h3>
 `;
 
@@ -307,6 +318,10 @@ location.href = `watch2.html?title=${encodeURIComponent(movie.title)}`;
 recommend.appendChild(div);
 
 });
+
+} catch (e) {
+recommend.innerHTML = `<div class="loading">Gagal load related</div>`;
+}
 }
 
 // =====================
