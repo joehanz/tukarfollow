@@ -175,13 +175,8 @@ Loading Movie...
 
 <script src="script.js"></script>
   <script>
-    /* =========================
-MOBILE NAV FIX FINAL
-========================= */
-
 const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
-const burgerIcon = document.getElementById("burgerIcon");
 
 let menuOpen = false;
 
@@ -192,19 +187,10 @@ burger?.addEventListener("click", () => {
     mobileMenu.style.display = menuOpen ? "flex" : "none";
   }
 
-  if (burgerIcon) {
-    burgerIcon.classList.remove(menuOpen ? "fa-bars" : "fa-xmark");
-    burgerIcon.classList.add(menuOpen ? "fa-xmark" : "fa-bars");
-  }
-});
-
-/* DISABLE MOBILE BTN (FORCED RULE) */
-document.getElementById("moviesBtn")?.addEventListener("click", e => {
-  e.preventDefault();
-});
-
-document.getElementById("seriesBtn")?.addEventListener("click", e => {
-  e.preventDefault();
+  // FIX: force icon swap (NO CLASS BUG)
+  burger.innerHTML = menuOpen
+    ? `<i class="fa-solid fa-xmark"></i>`
+    : `<i class="fa-solid fa-bars"></i>`;
 });
   </script>
 
