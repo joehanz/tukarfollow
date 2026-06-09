@@ -1,4 +1,3 @@
-
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 let page = 1;
@@ -34,7 +33,7 @@ topBtn?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* LOAD INDEX (MASTER ENGINE) */
+/* LOAD INDEX */
 async function loadMovies() {
   if (!grid) return;
 
@@ -74,7 +73,7 @@ function renderHero(m) {
   `;
 }
 
-/* GRID */
+/* GRID (LOCK FIX ONLY) */
 function renderGrid(data) {
   if (!grid) return;
 
@@ -84,7 +83,7 @@ function renderGrid(data) {
     if (!m.poster_path) return;
 
     grid.innerHTML += `
-      <div class="card" onclick="goWatch(${m.id})">
+      <div class="card" onclick="goWatch('${m.id}')">
         <img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
         <h3>${m.title || m.name}</h3>
       </div>
@@ -92,9 +91,9 @@ function renderGrid(data) {
   });
 }
 
-/* NAV */
+/* NAV (LOCK FIX ONLY) */
 function goWatch(id) {
-  location.href = `watch.html?id=${id}`;
+  location.href = `watch.html?id=${encodeURIComponent(id)}`;
 }
 
 /* PAGINATION */
@@ -158,9 +157,7 @@ document.getElementById("seriesBtn")?.addEventListener("click", () => {
   loadMovies();
 });
 
-/* =========================
-ADS SYSTEM
-========================= */
+/* ADS SYSTEM (NO CHANGE) */
 const ads = [
   "https://rajarayap.com",
   "https://caturbangunsentosa.blogspot.com",
@@ -168,49 +165,15 @@ const ads = [
 ];
 
 let adsState = false;
-let items = [];
 
-/* =========================
-WATCH CONTENT TOGGLE
-========================= */
-function hideWatchContent() {
-  const player = document.querySelector(".player");
-  const info = document.querySelector(".info");
-  const related = document.querySelector(".rel-wrap");
-
-  if (player) player.style.display = "none";
-  if (info) info.style.display = "none";
-  if (related) related.style.display = "none";
-}
-
-function resetWatchView() {
-  const player = document.querySelector(".player");
-  const info = document.querySelector(".info");
-  const related = document.querySelector(".rel-wrap");
-
-  if (player) player.style.display = "block";
-  if (info) player.style.display = "block";
-  if (related) related.style.display = "block";
-
-  const ov = document.getElementById("overlay");
-  if (ov) ov.style.display = "none";
-}
-
-/* =========================
-PLAY LAYER ADS LOGIC
-========================= */
+/* PLAY LAYER ADS */
 const playLayer = document.getElementById("playLayer");
 
 if (playLayer) {
   playLayer.onclick = function () {
     if (!adsState) {
       adsState = true;
-
-      window.open(
-        ads[Math.floor(Math.random() * ads.length)],
-        "_blank"
-      );
-
+      window.open(ads[Math.floor(Math.random() * ads.length)], "_blank");
       return;
     }
 
@@ -223,9 +186,7 @@ if (playLayer) {
   };
 }
 
-/* =========================
-DETAIL PAGE
-========================= */
+/* DETAIL PAGE (UNCHANGED) */
 async function loadDetail() {
   const id = new URLSearchParams(location.search).get("id");
 
@@ -253,9 +214,7 @@ async function loadDetail() {
   `;
 }
 
-/* =========================
-OVERLAY SEARCH
-========================= */
+/* OVERLAY SEARCH (UNCHANGED) */
 let overlayPage = 1;
 let overlayMode = "";
 let currentQuery = "";
@@ -291,7 +250,7 @@ function showOverlay(data) {
     if (!v.poster_path) return;
 
     h += `
-      <div class="card" onclick="goWatch(${v.id})">
+      <div class="card" onclick="goWatch('${v.id}')">
         <img src="https://image.tmdb.org/t/p/w500${v.poster_path}">
         <div class="title">${v.title || v.name}</div>
       </div>
@@ -328,8 +287,5 @@ function changeOverlayPage(p) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* =========================
-BOOT MASTER
-========================= */
+/* BOOT */
 loadMovies();
-
