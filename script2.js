@@ -18,7 +18,7 @@ const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
 // =====================
-// MOBILE MENU
+// NAV MOBILE
 // =====================
 burger?.addEventListener("click", () => {
 if (!mobileMenu) return;
@@ -40,7 +40,7 @@ window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 // =====================
-// LOAD INDEX TMDB
+// LOAD TMDB INDEX
 // =====================
 async function loadMovies() {
 if (!grid) return;
@@ -60,31 +60,31 @@ const data = await res.json();
 
 renderHero(data.results?.[0]);
 renderGrid(data.results || []);
-renderPagination(Math.min(data.total_pages, 500));
+renderPagination(Math.min(data.total_pages || 1, 500));
 }
 
 // =====================
 // HERO
 // =====================
-function renderHero(movie) {
-if (!slider || !movie) return;
+function renderHero(m) {
+if (!slider || !m) return;
 
 slider.innerHTML = `
 <div style="width:100%;height:100%;
 background:linear-gradient(to top,rgba(0,0,0,.9),transparent),
-url(https://image.tmdb.org/t/p/original${movie.backdrop_path});
+url(https://image.tmdb.org/t/p/original${m.backdrop_path});
 background-size:cover;background-position:center;
 display:flex;align-items:end;padding:30px;">
 <div>
-<h1>${movie.title || movie.name}</h1>
-<p>${movie.overview || ""}</p>
+<h1>${m.title || m.name}</h1>
+<p>${m.overview || ""}</p>
 </div>
 </div>
 `;
 }
 
 // =====================
-// GRID (FEED TO MASTER WATCH)
+// GRID (ONLY LINK TO MASTER WATCH)
 // =====================
 function renderGrid(data) {
 if (!grid) return;
@@ -104,7 +104,7 @@ grid.innerHTML += `
 }
 
 // =====================
-// GO TO MASTER WATCH
+// ROUTE TO MASTER WATCH ONLY
 // =====================
 function goWatch(id) {
 location.href = `watch.html?id=${id}`;
@@ -125,7 +125,7 @@ const end = Math.min(start + group - 1, total);
 if (start > 1) html += `<button onclick="goto(${start - group})">&lt;</button>`;
 
 for (let i = start; i <= end; i++) {
-html += `<button onclick="goto(${i})" class="${i===page?'active':''}">${i}</button>`;
+html += `<button onclick="goto(${i})" class="${i === page ? "active" : ""}">${i}</button>`;
 }
 
 if (end < total) html += `<button onclick="goto(${end + 1})">&gt;</button>`;
@@ -135,7 +135,7 @@ pagination.innerHTML = html;
 
 function goto(p) {
 page = p;
-window.scrollTo({top:0,behavior:"smooth"});
+window.scrollTo({ top: 0, behavior: "smooth" });
 loadMovies();
 }
 
