@@ -1,159 +1,292 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TukarFollow: Situs Streaming Movie Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
-    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "tukarfollow",
-      "url": "https://github.io",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://github.ioindex.html?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Watch Movie</title>
+
+<link rel="stylesheet" href="style2.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+body{
+margin:0;
+background:#0f0f14;
+color:#fff;
+font-family:Arial;
+}
+
+/* PLAYER */
+#heroPlayer{
+width:100%;
+height:60vh;
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+#heroPlayer iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+/* INFO */
+#infoBox{
+padding:20px;
+}
+
+#infoBox h1{
+margin:0 0 10px;
+font-size:22px;
+}
+
+.meta{
+opacity:.8;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.badge{
+display:inline-block;
+padding:4px 10px;
+background:#222;
+border-radius:6px;
+margin-right:5px;
+font-size:12px;
+}
+
+/* RELATED */
+#relatedWrap{
+padding:20px;
+}
+
+.relatedHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.scrollWrap{
+display:flex;
+overflow-x:auto;
+gap:10px;
+scroll-behavior:smooth;
+}
+
+.relCard{
+min-width:140px;
+cursor:pointer;
+}
+
+.relCard img{
+width:100%;
+border-radius:10px;
+}
+
+.relTitle{
+font-size:12px;
+margin-top:5px;
+}
+
+/* ARROW */
+.arrowBtn{
+background:#222;
+border:none;
+color:#fff;
+padding:8px 12px;
+cursor:pointer;
+border-radius:6px;
+}
+
+/* HIDE SCROLLBAR */
+.scrollWrap::-webkit-scrollbar{
+display:none;
+}
+</style>
 </head>
 
 <body>
 
-<nav>
-
-<div class="logo"> 
-<a href="/"> TUKARFOLLOW </a>
+<!-- PLAYER -->
+<div id="heroPlayer">
+Loading...
 </div>
 
-<div class="nav-right">
+<!-- INFO -->
+<div id="infoBox"></div>
 
-<input id="search" placeholder="Search..." oninput="searchMovie()" onfocus="resetWatchView()">
+<!-- RELATED -->
+<div id="relatedWrap">
 
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="seriesMenu">
-<a href="javascript:void(0)">
-Series ▼
-</a>
-<div class="seriesDropdown">
-<a href="series.html">
-All Series
-</a>
-<a href="series.html?mode=id">
-ID Series
-</a>
-</div>
-</div>
+<div class="relatedHeader">
+<h3>Related Movies</h3>
 
-  <a href="tvlokal.html">ID TV</a>
-</div>
-
-<div
-class="burger"
-onclick="toggleMenu()"
->
-☰
-</div>
-
-</nav>
-
-<div class="mobile-menu" id="mobileMenu">
-
-<input id="search" placeholder="Search..." oninput="searchMovie()" onfocus="resetWatchView()">
-
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="mobileDrop">
-<div class="mobileDropBtn" onclick="toggleSeriesMobile()"> Series ▼ </div>
-  
-<div class="mobileDropContent" id="mobileSeries">
-<a href="series.html"> All Series </a>
-<a href="series.html?mode=id"> ID Series </a>
+<div>
+<button class="arrowBtn" onclick="scrollRel(-1)">‹</button>
+<button class="arrowBtn" onclick="scrollRel(1)">›</button>
 </div>
 
 </div>
 
-<a href="tvlokal.html">ID TV</a>
-  
+<div class="scrollWrap" id="relGrid"></div>
+
 </div>
 
-<!-- 🔥 OVERLAY SEARCH/LOCAL -->
-<div id="overlay">
-<div id="overlayGrid" class="overlay-grid"></div>
-
-<div id="overlayPagination" style="
-display:flex;
-justify-content:center;
-gap:8px;
-padding:25px;
-flex-wrap:wrap;
-"></div>
-</div>
-
-<div class="player">
-<iframe id="player" allowfullscreen></iframe>
-<div class="playLayer" id="playLayer">▶ PLAY</div>
-</div>
-
-<div class="info" id="info"></div>
-
-<div class="rel-wrap">
-<button class="arrow left" onclick="move(-1)">‹</button>
-<button class="arrow right" onclick="move(1)">›</button>
-<div class="rel-box" id="rel"></div>
-</div>
-<script src="script.js"></script>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="fluid"
-     data-ad-layout-key="-75+dp+2h-1m-4u"
-     data-ad-client="ca-pub-6458870303612779"
-     data-ad-slot="3026144006"></ins>
 <script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-    
-<!-- FOOTER -->
-<footer>
-<div class="footer-grid">
-<div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
-<div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
-<div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
-<div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
+const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
+
+let moviesData = [];
+
+/* LOAD MOVIES.JSON */
+fetch("movies.json")
+.then(r => r.json())
+.then(data => {
+moviesData = data;
+init();
+});
+
+/* GET TMDB ID */
+const id = new URLSearchParams(location.search).get("id");
+
+/* INIT */
+async function init(){
+const tmdb = await fetch(
+`https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
+).then(r => r.json());
+
+const title = tmdb.title || "";
+
+/* MATCH LOCAL MOVIE */
+const match = findMatch(title);
+
+/* RENDER PLAYER */
+renderPlayer(match);
+
+/* RENDER INFO */
+renderInfo(match, tmdb);
+
+/* RELATED */
+loadRelated();
+}
+
+/* FUZZY MATCH 80% */
+function similarity(a,b){
+a = clean(a);
+b = clean(b);
+
+let aa = a.split(" ");
+let bb = b.split(" ");
+
+let hit = 0;
+
+aa.forEach(x=>{
+if(bb.includes(x)) hit++;
+});
+
+return hit / Math.max(aa.length,bb.length);
+}
+
+function clean(t){
+return t.toLowerCase()
+.replace(/\(\d{4}\)/g,"")
+.replace(/[^a-z0-9 ]/g," ")
+.replace(/\s+/g," ")
+.trim();
+}
+
+function findMatch(title){
+let best = null;
+let score = 0;
+
+moviesData.forEach(m=>{
+let s = similarity(title, m.title);
+if(s >= 0.8 && s > score){
+best = m;
+score = s;
+}
+});
+
+return best;
+}
+
+/* PLAYER */
+function renderPlayer(movie){
+const el = document.getElementById("heroPlayer");
+
+if(!movie || !movie.iframe){
+el.innerHTML = `<h2>Video unavailable</h2>`;
+return;
+}
+
+el.innerHTML = `
+<iframe src="${movie.iframe}" allowfullscreen></iframe>
+`;
+}
+
+/* INFO */
+function renderInfo(movie, tmdb){
+const el = document.getElementById("infoBox");
+
+if(!movie){
+el.innerHTML = `
+<h1>${tmdb.title}</h1>
+<p>⚠️ Video unavailable (not in database)</p>
+`;
+return;
+}
+
+el.innerHTML = `
+<h1>${movie.title}</h1>
+
+<div class="meta">
+<span class="badge">${movie.genre?.join(", ") || "-"}</span>
+<span class="badge">${movie.release_date || "-"}</span>
+<span class="badge">${movie.country || "-"}</span>
 </div>
-</footer>
 
+<p>${movie.sinopsis || ""}</p>
+`;
+}
 
+/* RELATED TMDB */
+function loadRelated(){
+fetch(
+`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`
+)
+.then(r=>r.json())
+.then(data=>{
+renderRelated(data.results || []);
+});
+}
+
+function renderRelated(list){
+const el = document.getElementById("relGrid");
+el.innerHTML = "";
+
+list.slice(0,10).forEach(m=>{
+if(!m.poster_path) return;
+
+el.innerHTML += `
+<div class="relCard" onclick="go(${m.id})">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<div class="relTitle">${m.title}</div>
+</div>
+`;
+});
+}
+
+function scrollRel(dir){
+document.getElementById("relGrid")
+.scrollBy({left: dir * 300, behavior:"smooth"});
+}
+
+function go(id){
+location.href = "watch.html?id=" + id;
+}
+</script>
 
 </body>
 </html>
-
