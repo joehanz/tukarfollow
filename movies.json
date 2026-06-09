@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1631917,
+    "title": "18th Rose (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/pdREm8FPpC7ZMDD",
+    "sinopsis": "Remaja ceria pemimpi debut ideal bersekutu dengan pendatang baru, namun rasa cinta merusak rencana.",
+    "genre": ["Drama", "Romance"],
+    "release_date": "09-04-2026",
+    "country": "Philipina"
+  },
+	{
     "tmdb_id": 855435,
     "title": "Faces Of Death (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/faces-of-death.webp",
