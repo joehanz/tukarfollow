@@ -26,98 +26,36 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 
 <!-- NAVBAR -->
-
 <header>
 
 <nav class="navbar">
 
 <div class="logo">
-
 <i class="fa-solid fa-film"></i>
-
-<span>
-TukarFollow
-</span>
-
+<span>TukarFollow</span>
 </div>
-
 
 <ul id="navMenu">
-
-<li>
-
-<a href="#"
-id="moviesBtn">
-
-Movies
-
-</a>
-
-</li>
-
-<li>
-
-<a href="#"
-id="seriesBtn">
-
-Series
-
-</a>
-
-</li>
-
+<li><a href="#" id="moviesBtn">Movies</a></li>
+<li><a href="#" id="seriesBtn">Series</a></li>
 </ul>
 
-
-
 <div class="searchBox">
-
-<input
-type="text"
-id="search"
-placeholder="Cari film..."
->
-
+<input type="text" id="search" placeholder="Cari film...">
 <i class="fa-solid fa-magnifying-glass"></i>
-
 </div>
 
-
-
+<!-- BURGER -->
 <div id="burger">
-
-<i class="fa-solid fa-bars"></i>
-
+<i class="fa-solid fa-bars" id="burgerIcon"></i>
 </div>
-
 
 </nav>
 
-
+<!-- MOBILE MENU -->
 <div id="mobileMenu">
-
-<a href="#"
-id="mobileMovies">
-
-Movies
-
-</a>
-
-<a href="#"
-id="mobileSeries">
-
-Series
-
-</a>
-
-<input
-type="text"
-id="mobileSearch"
-placeholder="Cari film..."
->
-
+<input type="text" id="mobileSearch" placeholder="Cari film...">
 </div>
-
 
 </header>
 
@@ -236,6 +174,39 @@ Loading Movie...
 
 
 <script src="script.js"></script>
+  <script>
+    /* =========================
+MOBILE NAV FIX FINAL
+========================= */
+
+const burger = document.getElementById("burger");
+const mobileMenu = document.getElementById("mobileMenu");
+const burgerIcon = document.getElementById("burgerIcon");
+
+let menuOpen = false;
+
+burger?.addEventListener("click", () => {
+  menuOpen = !menuOpen;
+
+  if (mobileMenu) {
+    mobileMenu.style.display = menuOpen ? "flex" : "none";
+  }
+
+  if (burgerIcon) {
+    burgerIcon.classList.remove(menuOpen ? "fa-bars" : "fa-xmark");
+    burgerIcon.classList.add(menuOpen ? "fa-xmark" : "fa-bars");
+  }
+});
+
+/* DISABLE MOBILE BTN (FORCED RULE) */
+document.getElementById("moviesBtn")?.addEventListener("click", e => {
+  e.preventDefault();
+});
+
+document.getElementById("seriesBtn")?.addEventListener("click", e => {
+  e.preventDefault();
+});
+  </script>
 
 </body>
 </html>
