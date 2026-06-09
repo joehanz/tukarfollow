@@ -88,7 +88,8 @@
     "country": "Amerika Serikat"
   },
   {
-    "title": "戦いの向こう 侍たちの記録 2026 WORLD BASEBALL CLASSIC",
+	"tmdb_id": 1674644,
+    "title": "Beyond the Game: Samurai 2026 WORLD BASEBALL CLASSIC",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/beyond-the-game.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/hMbIKe7C9WCX1Fo",
@@ -98,6 +99,7 @@
     "country": "Jepang"
   },
   {
+	"tmdb_id": 1594264,
     "title": "Space Ranger: New Worlds (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/space-ranger.webp",
     "video": "",
