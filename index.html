@@ -46,8 +46,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 </div>
 
 <!-- BURGER -->
-<div id="burger">
-<i id="burgerIcon" class="fa-solid fa-bars"></i>
+<div id="burger" data-state="closed">
+  <i class="fa-solid fa-bars"></i>
 </div>
 
 </nav>
@@ -183,22 +183,23 @@ Loading Movie...
   <script>
 const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
-const burgerIcon = document.getElementById("burgerIcon");
-
-let menuOpen = false;
 
 burger?.addEventListener("click", () => {
-  menuOpen = !menuOpen;
+  const isOpen = burger.dataset.state === "open";
+
+  burger.dataset.state = isOpen ? "closed" : "open";
 
   if (mobileMenu) {
-    mobileMenu.style.display = menuOpen ? "flex" : "none";
+    mobileMenu.style.display = isOpen ? "none" : "flex";
   }
 
-  // FORCE ICON CHANGE (INI YANG BENAR)
-  if (burgerIcon) {
-    burgerIcon.className = menuOpen
-      ? "fa-solid fa-xmark"
-      : "fa-solid fa-bars";
+  // HARD SET ICON (NO INNERHTML REPLACE PARENT)
+  const icon = burger.querySelector("i");
+
+  if (icon) {
+    icon.className = isOpen
+      ? "fa-solid fa-bars"
+      : "fa-solid fa-xmark";
   }
 });
   </script>
