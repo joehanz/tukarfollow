@@ -15,6 +15,19 @@ const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
+/* LOCAL MOVIES (HYBRID SUPPORT) */
+let localMovies = [];
+
+async function loadLocalMovies() {
+  try {
+    const res = await fetch("movies.json");
+    localMovies = await res.json();
+  } catch (e) {
+    localMovies = [];
+  }
+}
+loadLocalMovies();
+
 /* MOBILE MENU */
 burger?.addEventListener("click", () => {
   if (!mobileMenu) return;
@@ -33,7 +46,7 @@ topBtn?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* LOAD INDEX (MASTER ENGINE) */
+/* LOAD INDEX (TMDB GRID) */
 async function loadMovies() {
   if (!grid) return;
 
@@ -158,93 +171,42 @@ document.getElementById("seriesBtn")?.addEventListener("click", () => {
 });
 
 /* =========================
-ADS SYSTEM
-========================= */
-const ads = [
-  "https://rajarayap.com",
-  "https://caturbangunsentosa.blogspot.com",
-  "https://ptdwiprima.blogspot.com"
-];
-
-let adsState = false;
-let items = [];
-
-/* =========================
-WATCH CONTENT TOGGLE
-========================= */
-function hideWatchContent() {
-  const player = document.querySelector(".player");
-  const info = document.querySelector(".info");
-  const related = document.querySelector(".rel-wrap");
-
-  if (player) player.style.display = "none";
-  if (info) info.style.display = "none";
-  if (related) related.style.display = "none";
-}
-
-function resetWatchView() {
-  const player = document.querySelector(".player");
-  const info = document.querySelector(".info");
-  const related = document.querySelector(".rel-wrap");
-
-  if (player) player.style.display = "block";
-  if (info) player.style.display = "block";
-  if (related) related.style.display = "block";
-
-  const ov = document.getElementById("overlay");
-  if (ov) ov.style.display = "none";
-}
-
-/* =========================
-PLAY LAYER ADS LOGIC
-========================= */
-const playLayer = document.getElementById("playLayer");
-
-if (playLayer) {
-  playLayer.onclick = function () {
-    if (!adsState) {
-      adsState = true;
-
-      window.open(
-        ads[Math.floor(Math.random() * ads.length)],
-        "_blank"
-      );
-
-      return;
-    }
-
-    this.style.display = "none";
-
-    const id = new URLSearchParams(location.search).get("id");
-
-    document.getElementById("player").src =
-      `https://vsembed.ru/embed/movie?tmdb=${id}`;
-  };
-}
-
-/* =========================
-DETAIL PAGE
+WATCH HYBRID SYSTEM FIX
 ========================= */
 async function loadDetail() {
   const id = new URLSearchParams(location.search).get("id");
 
+  await loadLocalMovies();
+
+  const local = localMovies.find(
+    m => String(m.tmdb_id) === String(id)
+  );
+
+  /* LOCAL MOVIE (movies.json) */
+  if (local) {
+    const player = document.getElementById("player");
+    if (player) player.src = local.iframe;
+
+    document.getElementById("info").innerHTML = `
+      <h2>${local.title}</h2>
+      <p>🌍 Negara : ${local.country}</p>
+      <p>🎭 Genre : ${(local.genre || []).join(", ")}</p>
+      <p style="margin-top:15px;line-height:1.7;opacity:.9;">
+        ${local.sinopsis}
+      </p>
+    `;
+    return;
+  }
+
+  /* FALLBACK TMDB */
   let m = await fetch(
     `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}&language=id-ID`
   ).then(r => r.json());
 
-  if (!m.overview) {
-    const backup = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-    ).then(r => r.json());
-
-    m.overview = backup.overview;
-  }
-
   document.getElementById("info").innerHTML = `
     <h2>${m.title}</h2>
-    <p>⭐ Rating : ${m.vote_average.toFixed(1)}</p>
+    <p>⭐ Rating : ${m.vote_average?.toFixed(1) || "-"}</p>
     <p>📅 Rilis : ${m.release_date || "-"}</p>
-    <p>🌍 Negara : ${(m.production_countries || []).map(c => c.name).join(", ")}</p>
     <p>🎭 Genre : ${(m.genres || []).map(g => g.name).join(", ")}</p>
     <p style="margin-top:15px;line-height:1.7;opacity:.9;">
       ${m.overview || "Sinopsis tidak tersedia"}
@@ -252,16 +214,12 @@ async function loadDetail() {
   `;
 }
 
-/* =========================
-OVERLAY SEARCH
-========================= */
+/* OVERLAY SYSTEM (UNCHANGED SAFE) */
 let overlayPage = 1;
 let overlayMode = "";
 let currentQuery = "";
 
 async function loadOverlay() {
-  const id = new URLSearchParams(location.search).get("id");
-
   let url = "";
 
   if (overlayMode === "search") {
@@ -314,10 +272,6 @@ function renderOverlayPagination(page, total) {
     ${i}</button>`;
   }
 
-  if (page < total) {
-    h += `<button onclick="changeOverlayPage(${page + 1})">›</button>`;
-  }
-
   el.innerHTML = h;
 }
 
@@ -327,7 +281,5 @@ function changeOverlayPage(p) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* =========================
-BOOT MASTER
-========================= */
+/* BOOT */
 loadMovies();
