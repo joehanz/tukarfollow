@@ -172,6 +172,7 @@ border-radius:8px;
 
 <!-- NAV -->
 <header>
+
 <nav class="navbar">
 
 <div class="logo">
@@ -180,27 +181,35 @@ border-radius:8px;
 </div>
 
 <ul id="navMenu">
-<li><a onclick="setMode('movie')">Movies</a></li>
-<li><a onclick="setMode('tv')">Series</a></li>
+<li><a href="#" id="moviesBtn">Movies</a></li>
+<li><a href="#" id="seriesBtn">Series</a></li>
 </ul>
 
 <div class="searchBox">
-<input type="text" id="search" placeholder="Cari film..." oninput="searchMovie()">
+<input type="text" id="search" placeholder="Cari film...">
 <i class="fa-solid fa-magnifying-glass"></i>
 </div>
 
-<div id="burger">
-<i class="fa-solid fa-bars"></i>
+<!-- BURGER -->
+<div id="burger" data-state="closed">
+  <i class="fa-solid fa-bars"></i>
 </div>
+
 </nav>
 
+<!-- MOBILE MENU -->
 <div id="mobileMenu">
-<a onclick="setMode('movie')">Movies</a>
-<a onclick="setMode('tv')">Series</a>
-<input id="mobileSearch" oninput="searchMovie()" placeholder="Cari film...">
-</div>
-</header>
+<input type="text" id="mobileSearch" placeholder="Cari film...">
+  <ul id="navMenu">
+<li><a href="#" id="moviesBtn">Movies</a></li>
+<li><a href="#" id="seriesBtn">Series</a></li>
+</ul>
 
+</div>
+  
+
+</header>
+  
 <!-- PLAYER -->
 <div id="heroPlayer">Loading...</div>
 
