@@ -1,32 +1,11 @@
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
-/* =========================
-STATE
-========================= */
 let page = 1;
 let mode = "movie";
 let query = "";
 let timer;
 
-/* WATCH SUPPORT STATE */
-let items = [];
-let adsState = false;
-
-/* OVERLAY STATE */
-let overlayPage = 1;
-let overlayMode = "";
-let currentQuery = "";
-
-/* ADS */
-const ads = [
-  "https://rajarayap.com",
-  "https://caturbangunsentosa.blogspot.com",
-  "https://ptdwiprima.blogspot.com"
-];
-
-/* =========================
-ELEMENTS
-========================= */
+/* ELEMENTS */
 const slider = document.getElementById("slider");
 const grid = document.getElementById("movieGrid");
 const pagination = document.getElementById("pagination");
@@ -36,18 +15,14 @@ const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
-/* =========================
-MOBILE MENU
-========================= */
+/* MOBILE MENU */
 burger?.addEventListener("click", () => {
   if (!mobileMenu) return;
   mobileMenu.style.display =
     mobileMenu.style.display === "flex" ? "none" : "flex";
 });
 
-/* =========================
-TOP BUTTON
-========================= */
+/* TOP BUTTON */
 window.addEventListener("scroll", () => {
   if (topBtn) {
     topBtn.style.display = window.scrollY > 500 ? "block" : "none";
@@ -58,9 +33,7 @@ topBtn?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* =========================
-LOAD MOVIES (MASTER INDEX)
-========================= */
+/* LOAD INDEX (MASTER ENGINE) */
 async function loadMovies() {
   if (!grid) return;
 
@@ -82,9 +55,7 @@ async function loadMovies() {
   renderPagination(Math.min(data.total_pages || 1, 500));
 }
 
-/* =========================
-HERO
-========================= */
+/* HERO */
 function renderHero(m) {
   if (!slider || !m) return;
 
@@ -102,9 +73,7 @@ function renderHero(m) {
   `;
 }
 
-/* =========================
-GRID
-========================= */
+/* GRID */
 function renderGrid(data) {
   if (!grid) return;
 
@@ -122,16 +91,12 @@ function renderGrid(data) {
   });
 }
 
-/* =========================
-NAVIGATE TO WATCH
-========================= */
+/* NAV */
 function goWatch(id) {
   location.href = `watch.html?id=${id}`;
 }
 
-/* =========================
-PAGINATION
-========================= */
+/* PAGINATION */
 function renderPagination(total) {
   if (!pagination) return;
 
@@ -158,9 +123,7 @@ function goto(p) {
   loadMovies();
 }
 
-/* =========================
-SEARCH (DEBOUNCE)
-========================= */
+/* SEARCH */
 search?.addEventListener("keyup", e => {
   clearTimeout(timer);
   timer = setTimeout(() => {
@@ -179,9 +142,7 @@ mobileSearch?.addEventListener("keyup", e => {
   }, 400);
 });
 
-/* =========================
-MODE SWITCH
-========================= */
+/* MODE SWITCH */
 document.getElementById("moviesBtn")?.addEventListener("click", () => {
   mode = "movie";
   query = "";
@@ -197,7 +158,19 @@ document.getElementById("seriesBtn")?.addEventListener("click", () => {
 });
 
 /* =========================
-WATCH UTILITIES (FROM script.js)
+ADS SYSTEM
+========================= */
+const ads = [
+  "https://rajarayap.com",
+  "https://caturbangunsentosa.blogspot.com",
+  "https://ptdwiprima.blogspot.com"
+];
+
+let adsState = false;
+let items = [];
+
+/* =========================
+WATCH CONTENT TOGGLE
 ========================= */
 function hideWatchContent() {
   const player = document.querySelector(".player");
@@ -223,7 +196,7 @@ function resetWatchView() {
 }
 
 /* =========================
-ADS PLAYER LOGIC
+PLAY LAYER ADS LOGIC
 ========================= */
 const playLayer = document.getElementById("playLayer");
 
@@ -242,13 +215,15 @@ if (playLayer) {
 
     this.style.display = "none";
 
+    const id = new URLSearchParams(location.search).get("id");
+
     document.getElementById("player").src =
-      `https://vsembed.ru/embed/movie?tmdb=${new URLSearchParams(location.search).get("id")}`;
+      `https://vsembed.ru/embed/movie?tmdb=${id}`;
   };
 }
 
 /* =========================
-WATCH DETAIL (script.js CORE)
+DETAIL PAGE
 ========================= */
 async function loadDetail() {
   const id = new URLSearchParams(location.search).get("id");
@@ -278,10 +253,14 @@ async function loadDetail() {
 }
 
 /* =========================
-OVERLAY SEARCH (WATCH)
+OVERLAY SEARCH
 ========================= */
+let overlayPage = 1;
+let overlayMode = "";
+let currentQuery = "";
+
 async function loadOverlay() {
-  let id = new URLSearchParams(location.search).get("id");
+  const id = new URLSearchParams(location.search).get("id");
 
   let url = "";
 
@@ -326,7 +305,6 @@ function renderOverlayPagination(page, total) {
   if (!el) return;
 
   let h = "";
-
   let start = Math.max(1, page - 2);
   let end = Math.min(total, start + 5);
 
@@ -350,6 +328,6 @@ function changeOverlayPage(p) {
 }
 
 /* =========================
-INIT
+BOOT MASTER
 ========================= */
 loadMovies();
