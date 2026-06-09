@@ -3,7 +3,7 @@ const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 // =====================
 // DETECT PAGE
 // =====================
-const isWatch = location.pathname.includes("watch2");
+const isWatch = document.getElementById("playerBox") !== null;
 
 // =====================
 // INDEX ELEMENTS
@@ -164,7 +164,7 @@ pagination.innerHTML = html;
 }
 
 // =====================
-// NAV FUNCTIONS
+// NAV
 // =====================
 function gotoPage(p) {
 page = p;
@@ -185,7 +185,7 @@ search?.addEventListener("keyup", e => doSearch(e.target.value));
 mobileSearch?.addEventListener("keyup", e => doSearch(e.target.value));
 
 // =====================
-// BUTTON MODE
+// MODE SWITCH
 // =====================
 document.getElementById("moviesBtn")?.addEventListener("click", e => {
 e.preventDefault();
@@ -227,12 +227,13 @@ location.href = `watch2.html?title=${title}`;
 }
 
 // =====================
-// WATCH MODE (HYBRID FIX)
+// WATCH ENGINE (FINAL FIX)
 // =====================
 async function loadWatch() {
 if (!playerBox) return;
 
-const title = new URLSearchParams(location.search).get("title") || "";
+const rawTitle = new URLSearchParams(location.search).get("title") || "";
+const title = decodeURIComponent(rawTitle);
 
 try {
 const data = await fetch(
@@ -242,6 +243,7 @@ const data = await fetch(
 let movie = null;
 let best = 0;
 
+// MATCH ENGINE
 data.forEach(m => {
 const score = similarity(title, m.title);
 if (score > best) {
@@ -250,8 +252,10 @@ movie = m;
 }
 });
 
-if (best < 0.8) movie = null;
+// THRESHOLD
+if (best < 0.65) movie = null;
 
+// FOUND
 if (movie) {
 
 judul.textContent = movie.title;
@@ -269,12 +273,14 @@ playerBox.innerHTML = movie.iframe
 
 } else {
 
+// NOT FOUND
 judul.textContent = title || "Film";
 sinopsis.textContent = "Film tidak tersedia di database.";
 meta.innerHTML = "";
 playerBox.innerHTML = `<div class="notfound">🎬 Video belum diupdate</div>`;
 }
 
+// RELATED ALWAYS RUN
 renderRecommend(title);
 
 } catch (e) {
@@ -283,7 +289,7 @@ playerBox.innerHTML = `<div class="notfound">⚠️ Gagal load data</div>`;
 }
 
 // =====================
-// RELATED (TMDB)
+// RELATED TMDB
 // =====================
 async function renderRecommend(title) {
 if (!recommend) return;
