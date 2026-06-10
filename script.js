@@ -1,9 +1,12 @@
+script.js
+
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 let page = 1;
 let mode = "movie";
 let query = "";
 let timer;
+let postedIds = new Set();
 
 /* ELEMENTS */
 const slider = document.getElementById("slider");
@@ -34,8 +37,26 @@ topBtn?.addEventListener("click", () => {
 });
 
 /* LOAD INDEX */
+/* LOAD INDEX */
 async function loadMovies() {
   if (!grid) return;
+
+  if (postedIds.size === 0) {
+    try {
+      const localMovies =
+        await fetch("movies.json")
+        .then(r => r.json());
+
+      postedIds =
+        new Set(
+          localMovies.map(
+            m => Number(m.tmdb_id)
+          )
+        );
+    } catch (e) {
+      console.log("movies.json gagal dimuat");
+    }
+  }
 
   grid.innerHTML = `<div class="loading">Loading...</div>`;
 
@@ -50,9 +71,27 @@ async function loadMovies() {
   const res = await fetch(url);
   const data = await res.json();
 
-  renderHero(data.results?.[0]);
-  renderGrid(data.results || []);
-  renderPagination(Math.min(data.total_pages || 1, 500));
+  const results = data.results || [];
+
+  results.sort((a, b) => {
+
+    const aMatch =
+      postedIds.has(Number(a.id));
+
+    const bMatch =
+      postedIds.has(Number(b.id));
+
+    if (aMatch && !bMatch) return -1;
+    if (!aMatch && bMatch) return 1;
+
+    return 0;
+  });
+
+  renderHero(results?.[0]);
+  renderGrid(results);
+  renderPagination(
+    Math.min(data.total_pages || 1, 500)
+  );
 }
 
 /* HERO */
