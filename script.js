@@ -1,5 +1,3 @@
-script.js
-
 const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
 
 let page = 1;
