@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1609104,
+    "title": "Love in the Countryside (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Love%20in%20the%20Countryside.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/0SF3SPWSTLaEwbY",
+    "sinopsis": "Dihukum sang ayah, gadis kota Ana diasingkan ke desa. Hidupnya jadi runyam tanpa internet dan becek.",
+    "genre": ["Comedy", "Romance"],
+    "release_date": "02-01-2026",
+    "country": "Romania"
+  },
+	{
     "tmdb_id": 1196946,
     "title": "Ikkis (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ikkis.webp",
