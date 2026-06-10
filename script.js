@@ -37,7 +37,6 @@ topBtn?.addEventListener("click", () => {
 });
 
 /* LOAD INDEX */
-/* LOAD INDEX */
 async function loadMovies() {
   if (!grid) return;
 
@@ -53,6 +52,9 @@ async function loadMovies() {
             m => Number(m.tmdb_id)
           )
         );
+
+      console.log("MATCH IDS:", postedIds.size);
+      
     } catch (e) {
       console.log("movies.json gagal dimuat");
     }
