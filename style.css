@@ -228,12 +228,12 @@ display:flex;
 justify-content:center;
 align-items:center;
 gap:10px;
-padding:40px 0;
+padding:20px 0;
 flex-wrap:wrap;
 }
 
 #pagination button{
-width:42px;
+width:22px;
 height:42px;
 border:none;
 border-radius:10px;
