@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1634301,
+    "title": "Vanaveera (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Vanaveera.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/7oJzcYCuSk4QD7Z",
+    "sinopsis": "Motornya disita kampanye Ravana modern, keturunan klan Vanara picu duel sengit demi harga dirinya.",
+    "genre": ["Action", "Drama"],
+    "release_date": "02-01-2026",
+    "country": "India"
+  },
+	{
     "tmdb_id": 1609104,
     "title": "Love in the Countryside (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Love%20in%20the%20Countryside.webp",
