@@ -227,7 +227,7 @@ text-overflow:ellipsis;
 display:flex;
 justify-content:center;
 align-items:center;
-gap:10px;
+gap:3px;
 padding:10px 0;
 flex-wrap:wrap;
 }
