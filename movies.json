@@ -10,6 +10,17 @@
     "release_date": "27-05-2026",
     "country": "Amerika Serikat"
   },
+	 {
+    "tmdb_id": 1614837,
+    "title": "Cuba Coocuyo Remix (2025)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/cuba-coocuyo-remix.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/PqA31zZoIyQxv2X",
+    "sinopsis": "Kisah nyata para DJ Kuba bagai kunang-kunang, hidupkan musik elektronik malam hari di tengah realita",
+    "genre": ["Comedy"],
+    "release_date": "01-01-2025",
+    "country": "Mexico"
+  },
 	{
     "tmdb_id": 816949,
     "title": "Daemon Mind (2024)",
