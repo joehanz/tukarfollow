@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1196946,
+    "title": "Ikkis (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ikkis.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/Te1zc22IgY4z2ls",
+    "sinopsis": "Gugur dalam perang 1971, kisah Arun Khetarpal ulas nestapa perang lewat reuni sang ayah di Pakistan.",
+    "genre": ["Drama", "History", "War"],
+    "release_date": "01-01-2026",
+    "country": "India"
+  },
+	{
     "tmdb_id": 1597608,
     "title": "Ainsley McGregor Mysteries A Case For The Watchmaker (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ainsley-mcgregor-mysteries-a-case-for-the-watchmaker.webp",
