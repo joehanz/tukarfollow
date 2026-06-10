@@ -10,6 +10,17 @@
     "release_date": "27-05-2026",
     "country": "Amerika Serikat"
   },
+	{
+    "tmdb_id": 1610418,
+    "title": "The House on Haunted Grounds (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/the-house-on-haunted-grounds.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/SSud6fYdaxSOvDQ",
+    "sinopsis": "Rekaman video tim investigator ungkap teror kerasukan dan pembunuhan sadis di sebuah rumah berhantu.",
+    "genre": ["Horor"],
+    "release_date": "01-01-2026",
+    "country": "Amerika Serikat"
+  },
 	 {
     "tmdb_id": 1614837,
     "title": "Cuba Coocuyo Remix (2025)",
