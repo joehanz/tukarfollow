@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 840464,
+    "title": "Greenland 2: Migration (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Greenland%202%20Migration.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/ULzO2rASfFu2JrG",
+    "sinopsis": "Selamat dari komet Clarke, keluarga Garrity nekat seberangi Eropa yang hancur demi rumah baru.",
+    "genre": ["Adventure", "Sci-fi", "Thriller"],
+    "release_date": "07-01-2026",
+    "country": "Inggris, Amerika Serikat"
+  },
+	{
     "tmdb_id": 1034716,
     "title": "People We Meet On Vacation (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/People%20We%20Meet%20on%20Vacation.webp",
