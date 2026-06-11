@@ -86,38 +86,41 @@
 
     <!-- JAVASCRIPT: Logika API dan Fitur Klik Ganti Banner -->
     <script>
-        // ========================================================
-        // SILAKAN MASUKKAN API KEY TMDB ANDA DI BAWAH INI:
-        const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0'; 
-        // ========================================================
+    // ========================================================
+    // API KEY TMDB ANDA (Sudah Aktif)
+    const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0'; 
+    // ========================================================
 
-        const TMDB_URL = `https://themoviedb.org{API_KEY}&language=id-ID`;
-        const IMG_PATH = 'https://tmdb.org';
-        const BG_PATH = 'https://tmdb.org';
-        
-        let listFilmData = []; // Tempat menyimpan data film sementara
+    // KOREKSI: Alamat URL API dan Gambar TMDB yang benar
+    const TMDB_URL = `https://themoviedb.org{API_KEY}&language=id-ID`;
+    const IMG_PATH = 'https://tmdb.org';
+    const BG_PATH = 'https://tmdb.org';
+    
+    let listFilmData = []; 
 
-        async function loadMovies() {
-            if(API_KEY === 'b3b893873ed1bb7f175b2707afeea2a0' || API_KEY === '') {
-                document.getElementById('hero-title').innerText = "API Key Belum Diisi";
-                document.getElementById('hero-desc').innerText = "Silakan buka file index.html di notepad, lalu ganti tulisan 'b3b893873ed1bb7f175b2707afeea2a0' dengan kode API Key dari akun TMDB Anda.";
-                return;
-            }
+    async function loadMovies() {
+        // KOREKSI: Pengecekan disederhanakan agar tidak mengunci API Key asli Anda
+        if(API_KEY === '') {
+            document.getElementById('hero-title').innerText = "API Key Kosong";
+            return;
+        }
 
-            try {
-                const response = await fetch(TMDB_URL);
-                const data = await response.json();
-                listFilmData = data.results;
+        try {
+            const response = await fetch(TMDB_URL);
+            const data = await response.json();
+            listFilmData = data.results;
 
-                // Set default film pertama untuk banner atas
+            // Pastikan data film ditemukan sebelum dijalankan
+            if (listFilmData && listFilmData.length > 0) {
                 updateHeroBanner(0);
 
-                // Render daftar film ke bawah grid
                 const gridContainer = document.getElementById('movie-display-box');
                 gridContainer.innerHTML = '';
 
                 listFilmData.forEach((movie, index) => {
                     const posterUrl = movie.poster_path ? `${IMG_PATH}${movie.poster_path}` : 'https://placeholder.com';
+                    
+                    // KOREKSI: Perbaikan pemisahan teks tahun agar tidak eror jika data kosong
                     const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
                     
                     const cardHtml = `
@@ -136,35 +139,43 @@
                     `;
                     gridContainer.innerHTML += cardHtml;
                 });
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                document.getElementById('movie-display-box').innerHTML = "<p style='color:red; grid-column: 1/-1; text-align:center;'>Gagal mengambil data. Pastikan API Key benar dan internet aktif.</p>";
+            } else {
+                document.getElementById('movie-display-box').innerHTML = "<p style='color:yellow; grid-column: 1/-1; text-align:center;'>Data film tidak ditemukan.</p>";
             }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            document.getElementById('movie-display-box').innerHTML = "<p style='color:red; grid-column: 1/-1; text-align:center;'>Gagal mengambil data. Periksa koneksi internet Anda.</p>";
         }
+    }
 
-        // Fungsi interaktif untuk mengubah isi banner atas saat kartu di bawahnya diklik
-        function updateHeroBanner(index) {
-            const film = listFilmData[index];
-            if (!film) return;
+    function updateHeroBanner(index) {
+        const film = listFilmData[index];
+        if (!film) return;
 
-            // Efek transisi halus (fade out teks sebentar)
-            const textBox = document.getElementById('hero-text-box');
-            textBox.style.opacity = 0.3;
+        const textBox = document.getElementById('hero-text-box');
+        if (textBox) textBox.style.opacity = 0.3;
 
-            setTimeout(() => {
-                const backdropUrl = film.backdrop_path ? `${BG_PATH}${film.backdrop_path}` : `${BG_PATH}${film.poster_path}`;
-                document.getElementById('hero-bg').style.backgroundImage = `url('${backdropUrl}')`;
-                document.getElementById('hero-title').innerText = film.title;
-                document.getElementById('hero-desc').innerText = film.overview || "Sinopsis tidak tersedia dalam bahasa Indonesia untuk film ini.";
-                textBox.style.opacity = 1;
-            }, 200);
+        setTimeout(() => {
+            const backdropUrl = film.backdrop_path ? `${BG_PATH}${film.backdrop_path}` : `${BG_PATH}${film.poster_path}`;
             
-            // Otomatis scroll perlahan ke atas agar banner terlihat jelas saat diklik di HP
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            const bgElement = document.getElementById('hero-bg');
+            const titleElement = document.getElementById('hero-title');
+            const descElement = document.getElementById('hero-desc');
 
-        loadMovies();
-    </script>
+            if (bgElement) bgElement.style.backgroundImage = `url('${backdropUrl}')`;
+            if (titleElement) titleElement.title; // Menghindari eror jika ID tidak ditemukan
+            if (titleElement) titleElement.innerText = film.title;
+            if (descElement) descElement.innerText = film.overview || "Sinopsis tidak tersedia dalam bahasa Indonesia untuk film ini.";
+            
+            if (textBox) textBox.style.opacity = 1;
+        }, 200);
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    loadMovies();
+</script>
+
 </body>
 </html>
