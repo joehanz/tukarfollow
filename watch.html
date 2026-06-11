@@ -214,6 +214,61 @@ el.innerHTML="This media is unavailable at the moment.";
 return;
 }
 
+// 1. Kunci posisi kontainer utama agar elemen di dalamnya bisa menumpuk rapi
+el.style.position = "relative";
+
+// 2. Buat struktur elemen: Iframe Film, Layer Transparan, dan Gambar Splash Screen
+el.innerHTML = `
+  <!-- Iframe Film Utama -->
+  <iframe id="mainIframe" src="${m.iframe}" style="width:100%; height:100%; border:none; position:absolute; top:0; left:0; z-index:1;" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  
+  <!-- Layer Transparan Kedua (Menangkap Klik Iklan + Play) -->
+  <div id="transparentLayer" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:5; background:transparent; cursor:pointer; display:none;"></div>
+  
+  <!-- Gambar Splash Screen Pertama (Menutup Penuh 100% Selama 3 Detik) -->
+  <div id="splashScreen" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; background-image:url('https://googleusercontent.com'); background-size:cover; background-position:center; transition:opacity 0.5s ease; opacity:1;"></div>
+`;
+
+const splash = document.getElementById("splashScreen");
+const layer = document.getElementById("transparentLayer");
+const iframe = document.getElementById("mainIframe");
+
+// 3. TIMER 3 DETIK: Gambar menutup total dan tidak bisa diapa-apakan
+setTimeout(() => {
+  splash.style.opacity = "0"; // Efek memudar halus (.smooth)
+  
+  // Setelah transisi memudar selesai (0.5 detik), hapus gambar dan aktifkan layer transparan
+  setTimeout(() => {
+    if(splash) splash.remove(); 
+    layer.style.display = "block"; // Layer transparan aktif dan siap diklik
+  }, 500);
+}, 3000);
+
+// 4. TRIGER 2 AKSI SEKALIGUS SAAT LAYER TRANSPARAN DIKLIK
+layer.addEventListener("click", () => {
+  // AKSI 1: Buka tab baru dengan salah satu situs acak (Silakan ganti url di bawah ini)
+  const sites = [
+    "https://site1.com",
+    "https://site2.com",
+    "https://site3.com"
+  ];
+  const randomSite = sites[Math.floor(Math.random() * sites.length)];
+  window.open(randomSite, "_blank");
+  
+  // AKSI 2: Paksa video di dalam iframe untuk berputar otomatis (Play Film)
+  let currentSrc = iframe.src;
+  if (currentSrc.includes("?")) {
+    iframe.src = currentSrc + "&autoplay=1&muted=0";
+  } else {
+    iframe.src = currentSrc + "?autoplay=1&muted=0";
+  }
+  
+  // 5. Hapus layer transparan selamanya agar user bisa mengontrol penuh tombol asli video
+  layer.remove();
+});
+}
+
+
 // Tambahkan container khusus agar posisi gambar dan layer bisa menutupi iframe dengan presisi
 el.innerHTML = `
   <div class="player-wrapper">
