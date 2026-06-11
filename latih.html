@@ -64,118 +64,119 @@
             <button class="btn-subscribe">Langganan</button>
         </div>
     </nav>
+
     <!-- HERO SECTION -->
     <header class="hero">
         <div id="hero-bg"></div>
         <div class="hero-overlay-v"></div>
         <div class="hero-content" id="hero-text-box">
             <span class="tag">SOROTAN UTAMA</span>
-            <h1 id="hero-title">Memuat...</h1>
-            <p id="hero-desc">Menghubungkan ke API Key TMDB Anda...</p>
+            <h1 id="hero-title">Menghubungkan...</h1>
+            <p id="hero-desc">Mencoba mengambil data film sinematik dari server pusat TMDB...</p>
             <button class="btn-play">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Tonton Sekarang
             </button>
         </div>
     </header>
-
     <!-- CONTENT SECTION -->
     <main class="content-container">
         <h2 class="section-title">Sedang Tren Sekarang</h2>
-        <div class="movie-grid" id="movie-display-box"></div>
+        <div class="movie-grid" id="movie-display-box">
+            <p style="grid-column: 1/-1; text-align: center; color: #9ca3af;">Sedang memuat daftar poster film...</p>
+        </div>
     </main>
 
-    <!-- JAVASCRIPT: Logika API dan Fitur Klik Ganti Banner -->
+    <!-- JAVASCRIPT FIXED -->
     <script>
-    // ========================================================
-    // API KEY TMDB ANDA (Sudah Aktif)
-    const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0'; 
-    // ========================================================
-
-    // KOREKSI: Alamat URL API dan Gambar TMDB yang benar
-    const TMDB_URL = `https://themoviedb.org{API_KEY}&language=id-ID`;
-    const IMG_PATH = 'https://tmdb.org';
-    const BG_PATH = 'https://tmdb.org';
-    
-    let listFilmData = []; 
-
-    async function loadMovies() {
-        // KOREKSI: Pengecekan disederhanakan agar tidak mengunci API Key asli Anda
-        if(API_KEY === '') {
-            document.getElementById('hero-title').innerText = "API Key Kosong";
-            return;
-        }
-
-        try {
-            const response = await fetch(TMDB_URL);
-            const data = await response.json();
-            listFilmData = data.results;
-
-            // Pastikan data film ditemukan sebelum dijalankan
-            if (listFilmData && listFilmData.length > 0) {
-                updateHeroBanner(0);
-
-                const gridContainer = document.getElementById('movie-display-box');
-                gridContainer.innerHTML = '';
-
-                listFilmData.forEach((movie, index) => {
-                    const posterUrl = movie.poster_path ? `${IMG_PATH}${movie.poster_path}` : 'https://placeholder.com';
-                    
-                    // KOREKSI: Perbaikan pemisahan teks tahun agar tidak eror jika data kosong
-                    const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
-                    
-                    const cardHtml = `
-                        <div class="movie-card" onclick="updateHeroBanner(${index})">
-                            <div class="poster-wrapper">
-                                <img src="${posterUrl}" class="poster-img" alt="${movie.title}">
-                            </div>
-                            <div class="card-details">
-                                <div class="card-meta">
-                                    <span>${releaseYear}</span>
-                                    <span class="rating">★ ${movie.vote_average.toFixed(1)}</span>
-                                </div>
-                                <h3 class="movie-title">${movie.title}</h3>
-                            </div>
-                        </div>
-                    `;
-                    gridContainer.innerHTML += cardHtml;
-                });
-            } else {
-                document.getElementById('movie-display-box').innerHTML = "<p style='color:yellow; grid-column: 1/-1; text-align:center;'>Data film tidak ditemukan.</p>";
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            document.getElementById('movie-display-box').innerHTML = "<p style='color:red; grid-column: 1/-1; text-align:center;'>Gagal mengambil data. Periksa koneksi internet Anda.</p>";
-        }
-    }
-
-    function updateHeroBanner(index) {
-        const film = listFilmData[index];
-        if (!film) return;
-
-        const textBox = document.getElementById('hero-text-box');
-        if (textBox) textBox.style.opacity = 0.3;
-
-        setTimeout(() => {
-            const backdropUrl = film.backdrop_path ? `${BG_PATH}${film.backdrop_path}` : `${BG_PATH}${film.poster_path}`;
-            
-            const bgElement = document.getElementById('hero-bg');
-            const titleElement = document.getElementById('hero-title');
-            const descElement = document.getElementById('hero-desc');
-
-            if (bgElement) bgElement.style.backgroundImage = `url('${backdropUrl}')`;
-            if (titleElement) titleElement.title; // Menghindari eror jika ID tidak ditemukan
-            if (titleElement) titleElement.innerText = film.title;
-            if (descElement) descElement.innerText = film.overview || "Sinopsis tidak tersedia dalam bahasa Indonesia untuk film ini.";
-            
-            if (textBox) textBox.style.opacity = 1;
-        }, 200);
+        // Memakai API Key Anda yang sudah diverifikasi bersih
+        const API_KEY = 'b3b893873ed1bb7f175b2707afeea2a0'; 
         
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        // Alamat end-point TMDB resmi untuk data Film Populer
+        const TMDB_URL = `https://themoviedb.org{API_KEY}&language=id-ID&page=1`;
+        const IMG_PATH = 'https://tmdb.org';
+        const BG_PATH = 'https://tmdb.org';
+        
+        let listFilmData = []; 
 
-    loadMovies();
-</script>
+        async function loadMovies() {
+            const displayBox = document.getElementById('movie-display-box');
+            try {
+                // Memakai mode cors eksplisit agar diizinkan oleh sistem browser lokal
+                const response = await fetch(TMDB_URL, { mode: 'cors' });
+                
+                // Cek jika status API diblokir atau kunci salah (seperti kode eror 401/404)
+                if(!response.ok) {
+                    displayBox.innerHTML = `<p style='color:yellow; grid-column: 1/-1; text-align:center; padding: 20px; line-height:1.6;'>Eror Server TMDB (Status: ${response.status}).<br>Kemungkinan API Key Anda ditolak server atau salah salin.</p>`;
+                    document.getElementById('hero-title').innerText = "Koneksi Ditolak";
+                    document.getElementById('hero-desc').innerText = "Gagal memverifikasi akun API Key ke pusat data TMDB.";
+                    return;
+                }
 
+                const data = await response.json();
+                listFilmData = data.results;
+
+                if (listFilmData && listFilmData.length > 0) {
+                    // Isi spanduk atas dengan data film pertama
+                    updateHeroBanner(0);
+
+                    // Kosongkan loading teks
+                    displayBox.innerHTML = '';
+
+                    // Munculkan poster film ke dalam grid halaman bawah
+                    listFilmData.slice(0, 10).forEach((movie, index) => {
+                        const posterUrl = movie.poster_path ? `${IMG_PATH}${movie.poster_path}` : 'https://placeholder.com';
+                        const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+                        
+                        const cardHtml = `
+                            <div class="movie-card" onclick="updateHeroBanner(${index})">
+                                <div class="poster-wrapper">
+                                    <img src="${posterUrl}" class="poster-img" alt="${movie.title}">
+                                </div>
+                                <div class="card-details">
+                                    <div class="card-meta">
+                                        <span>${releaseYear}</span>
+                                        <span class="rating">★ ${movie.vote_average.toFixed(1)}</span>
+                                    </div>
+                                    <h3 class="movie-title">${movie.title}</h3>
+                                </div>
+                            </div>
+                        `;
+                        displayBox.innerHTML += cardHtml;
+                    });
+                } else {
+                    displayBox.innerHTML = "<p style='color:orange; grid-column: 1/-1; text-align:center;'>Data film kosong dari server.</p>";
+                }
+
+            } catch (error) {
+                console.error("Detail Kendala:", error);
+                displayBox.innerHTML = `<p style='color:#ef4444; grid-column: 1/-1; text-align:center; line-height: 1.8; padding: 20px;'>
+                    <b>Gagal Memuat Komponen.</b><br>
+                    Sistem Browser Anda memblokir penarikan data lokal (CORS Issue).<br>
+                    <span style='color: #9ca3af; font-size:13px;'>Solusi: Klik kanan file index.html ini -> pilih 'Open With' -> coba buka menggunakan browser lain seperti <b>Microsoft Edge</b> atau <b>Firefox</b>.</span>
+                </p>`;
+            }
+        }
+
+        function updateHeroBanner(index) {
+            const film = listFilmData[index];
+            if (!film) return;
+
+            const textBox = document.getElementById('hero-text-box');
+            if (textBox) textBox.style.opacity = 0.3;
+
+            setTimeout(() => {
+                const backdropUrl = film.backdrop_path ? `${BG_PATH}${film.backdrop_path}` : `${BG_PATH}${film.poster_path}`;
+                
+                document.getElementById('hero-bg').style.backgroundImage = `url('${backdropUrl}')`;
+                document.getElementById('hero-title').innerText = film.title;
+                document.getElementById('hero-desc').innerText = film.overview || "Sinopsis cerita tidak tersedia dalam bahasa Indonesia untuk katalog film ini.";
+                
+                if (textBox) textBox.style.opacity = 1;
+            }, 200);
+        }
+
+        // Jalankan program otomatis
+        loadMovies();
+    </script>
 </body>
 </html>
