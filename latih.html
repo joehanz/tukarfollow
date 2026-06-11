@@ -4,109 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mozi Style - Premium Movie Streaming</title>
-    <!-- Memuat Tailwind CSS dari CDN -->
-    <script src="https://jsdelivr.net"></script>
     <style>
-        .glassmorphism {
-            background: rgba(25, 25, 35, 0.65);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        /* Gaya Dasar & Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #0d0d12; color: #f3f4f6; overflow-x: hidden; line-height: 1.5; }
+        a { text-decoration: none; color: inherit; }
+
+        /* Desain Kaca Melayang (Navbar) */
+        .navbar {
+            position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 1140px; z-index: 100; padding: 16px 24px;
+            border-radius: 16px; display: flex; justify-content: space-between; items-center: center;
+            background: rgba(25, 25, 35, 0.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+        .logo { font-size: 24px; font-weight: 900; tracking: 1px; background: linear-gradient(to right, #ef4444, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: #9ca3af; }
+        .nav-links a:hover { color: #ef4444; transition: 0.2s; }
+        .nav-right { display: flex; items-center: center; gap: 16px; }
+        .btn-subscribe { background: linear-gradient(to right, #dc2626, #7c3aed); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(220,38,38,0.3); transition: 0.2s; }
+        .btn-subscribe:hover { opacity: 0.9; transform: scale(0.98); }
+
+        /* Banner Sinematik (Hero) */
+        .hero { position: relative; width: 100%; height: 75vh; display: flex; align-items: flex-end; padding-top: 96px; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; background-image: url('https://unsplash.com'); background-size: cover; background-position: center; filter: brightness(45%); z-index: 0; transform: scale(1.02); }
+        .hero-overlay-v { position: absolute; inset: 0; background: linear-gradient(to top, #0d0d12, rgba(13,13,18,0.4), transparent); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; width: 90%; max-width: 1140px; margin: 0 auto; padding-bottom: 48px; }
+        .tag { display: inline-block; background: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 6px; margin-bottom: 16px; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .title { font-size: 48px; font-weight: 800; margin-bottom: 16px; background: linear-gradient(to bottom, #ffffff, #d1d5db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; max-w: 600px; }
+        .desc { font-size: 15px; color: #9ca3af; max-width: 550px; margin-bottom: 24px; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); }
+        .btn-group { display: flex; gap: 16px; }
+        .btn-play { background: #dc2626; color: white; border: none; font-weight: 700; padding: 12px 24px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 20px rgba(229, 9, 20, 0.4); transition: 0.2s; }
+        .btn-play:hover { background: #b91c1c; }
+        .btn-info { background: rgba(25, 25, 35, 0.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.05); color: white; font-weight: 600; padding: 12px 20px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-info:hover { background: rgba(255,255,255,0.1); }
+
+        /* Grid Daftar Film (Content) */
+        .content-container { width: 90%; max-width: 1140px; margin: 0 auto; padding-bottom: 96px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .section-title { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .see-all { font-size: 12px; font-weight: 600; color: #ef4444; }
+        .see-all:hover { text-decoration: underline; }
+        
+        .movie-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+        .movie-card { background: #15151f; border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .movie-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+        .poster-wrapper { aspect-ratio: 2/3; width: 100%; overflow: hidden; background: #1f2937; }
+        .poster-img { width: 100%; h-height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .movie-card:hover .poster-img { transform: scale(1.05); }
+        .card-details { padding: 16px; }
+        .card-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+        .rating { color: #f59e0b; font-weight: 700; }
+        .movie-title { font-size: 14px; font-weight: 700; color: #e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; }
+        .movie-card:hover .movie-title { color: #ef4444; }
+
+        /* Responsif untuk Layar HP & Tablet */
+        @media (max-width: 1024px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .title { font-size: 32px; }
+            .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
         }
-        body { background-color: #0d0d12; }
+        @media (max-width: 480px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
     </style>
 </head>
-<body class="text-gray-100 font-sans antialiased selection:bg-red-600 selection:text-white">
+<body>
 
-    <!-- NAVIGATION: Floating Glassmorphism Navbar -->
-    <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-6xl glassmorphism z-50 px-6 py-4 rounded-2xl flex items-center justify-between shadow-2xl">
-        <div class="flex items-center gap-8">
-            <span class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-violet-500">MOZI</span>
-            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
-                <a href="#" class="text-white hover:text-red-500 transition">Beranda</a>
-                <a href="#" class="hover:text-red-500 transition">Film</a>
-                <a href="#" class="hover:text-red-500 transition">Serial TV</a>
-                <a href="#" class="hover:text-red-500 transition">Populer</a>
-            </div>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">MOZI</div>
+        <div class="nav-links">
+            <a href="#">Beranda</a>
+            <a href="#">Film</a>
+            <a href="#">Serial TV</a>
+            <a href="#">Populer</a>
         </div>
-        <div class="flex items-center gap-4">
-            <button class="p-2 hover:bg-white/10 rounded-xl transition text-gray-400 hover:text-white">
-                <svg xmlns="http://w3.org" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </button>
-            <button class="bg-gradient-to-r from-red-600 to-violet-600 text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition transform active:scale-95">Langganan</button>
+        <div class="nav-right">
+            <button class="btn-subscribe">Langganan</button>
         </div>
     </nav>
-    <!-- HERO SECTION: Cinematic Spotlight -->
-    <header class="relative w-full h-[70vh] md:h-[85vh] flex items-end overflow-hidden pt-24">
-        <div class="absolute inset-0 bg-cover bg-center z-0 scale-105 filter brightness-50" style="background-image: url('https://unsplash.com');"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d12] via-[#0d0d12]/40 to-transparent z-10"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#0d0d12] via-transparent to-transparent z-10 hidden md:block"></div>
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay-v"></div>
 
-        <div class="relative z-20 w-[90%] max-w-6xl mx-auto pb-12 md:pb-20">
-            <span class="inline-block bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded-md mb-4 border border-red-500/30">TRENDING #1</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 max-w-2xl bg-gradient-to-b from-white to-gray-300 bg-clip-text text-transparent">Cyberpunk: Neo Horizon</h1>
-            <p class="text-sm md:text-base text-gray-400 max-w-xl mb-6 line-clamp-3 leading-relaxed">Di bawah naungan lampu neon kota futuristik, seorang mantan agen siber harus memilih antara loyalitas kepada korporasi raksasa atau menyelamatkan distrik tempat tinggalnya.</p>
-            <div class="flex flex-wrap items-center gap-4">
-                <button class="neon-glow bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition transform active:scale-95 cursor-pointer"><svg xmlns="http://w3.org" class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Tonton Sekarang</button>
-                <button class="glassmorphism hover:bg-white/10 text-white font-semibold px-5 py-3 rounded-xl flex items-center gap-2 transition cursor-pointer">Detail Info</button>
+        <div class="hero-content">
+            <span class="tag">TRENDING #1</span>
+            <h1 class="title">Cyberpunk: Neo Horizon</h1>
+            <p class="desc">Di bawah naungan lampu neon kota futuristik, seorang mantan agen siber harus memilih antara loyalitas kepada korporasi raksasa atau menyelamatkan distrik tempat tinggalnya.</p>
+            
+            <div class="btn-group">
+                <button class="btn-play">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Tonton Sekarang
+                </button>
+                <button class="btn-info">Detail Info</button>
             </div>
         </div>
     </header>
 
-    <!-- CONTENT SECTION: Grid Kartu Vertikal Estetik Mozi -->
-    <main class="w-[90%] max-w-6xl mx-auto pb-24">
-        <section class="mb-12">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl md:text-2xl font-bold tracking-wide">Rekomendasi Untuk Anda</h2>
-                <a href="#" class="text-xs font-semibold text-red-500 hover:underline">Lihat Semua</a>
+    <!-- CONTENT SECTION -->
+    <main class="content-container">
+        <section style="margin-top: 32px;">
+            <div class="section-header">
+                <h2 class="section-title">Rekomendasi Untuk Anda</h2>
+                <a href="#" class="see-all">Lihat Semua</a>
             </div>
             
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div class="movie-grid">
                 <!-- Kartu Film 1 -->
-                <div class="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#15151f] shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-800"><img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"></div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1"><span>Aksi, Sci-Fi</span><span class="text-amber-500 font-bold">★ 8.7</span></div>
-                        <h3 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition line-clamp-1">The Midnight Odyssey</h3>
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img src="https://unsplash.com" class="poster-img" alt="Poster">
+                    </div>
+                    <div class="card-details">
+                        <div class="card-meta"><span>Aksi, Sci-Fi</span><span class="rating">★ 8.7</span></div>
+                        <h3 class="movie-title">The Midnight Odyssey</h3>
                     </div>
                 </div>
 
                 <!-- Kartu Film 2 -->
-                <div class="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#15151f] shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-800"><img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"></div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1"><span>Petualangan</span><span class="text-amber-500 font-bold">★ 9.0</span></div>
-                        <h3 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition line-clamp-1">Lost In Deep Space</h3>
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img src="https://unsplash.com" class="poster-img" alt="Poster">
+                    </div>
+                    <div class="card-details">
+                        <div class="card-meta"><span>Petualangan</span><span class="rating">★ 9.0</span></div>
+                        <h3 class="movie-title">Lost In Deep Space</h3>
                     </div>
                 </div>
 
                 <!-- Kartu Film 3 -->
-                <div class="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#15151f] shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-800"><img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"></div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1"><span>Misteri</span><span class="text-amber-500 font-bold">★ 8.2</span></div>
-                        <h3 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition line-clamp-1">Silent Echoes</h3>
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img src="https://unsplash.com" class="poster-img" alt="Poster">
+                    </div>
+                    <div class="card-details">
+                        <div class="card-meta"><span>Misteri</span><span class="rating">★ 8.2</span></div>
+                        <h3 class="movie-title">Silent Echoes</h3>
                     </div>
                 </div>
 
                 <!-- Kartu Film 4 -->
-                <div class="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#15151f] shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-800"><img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"></div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1"><span>Horor</span><span class="text-amber-500 font-bold">★ 7.9</span></div>
-                        <h3 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition line-clamp-1">Shadows of Nether</h3>
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img src="https://unsplash.com" class="poster-img" alt="Poster">
+                    </div>
+                    <div class="card-details">
+                        <div class="card-meta"><span>Horor</span><span class="rating">★ 7.9</span></div>
+                        <h3 class="movie-title">Shadows of Nether</h3>
                     </div>
                 </div>
 
                 <!-- Kartu Film 5 -->
-                <div class="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#15151f] shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="aspect-[2/3] w-full overflow-hidden bg-gray-800"><img src="https://unsplash.com" alt="Poster" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"></div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1"><span>Fantasi</span><span class="text-amber-500 font-bold">★ 8.5</span></div>
-                        <h3 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition line-clamp-1">Chronicles of Eldoria</h3>
+                <div class="movie-card">
+                    <div class="poster-wrapper">
+                        <img src="https://unsplash.com" class="poster-img" alt="Poster">
+                    </div>
+                    <div class="card-details">
+                        <div class="card-meta"><span>Fantasi</span><span class="rating">★ 8.5</span></div>
+                        <h3 class="movie-title">Chronicles of Eldoria</h3>
                     </div>
                 </div>
             </div>
