@@ -25,7 +25,60 @@
     </script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
+<style>
+    /* Container pembungkus area player */
+.player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 360px; /* Sesuaikan dengan tinggi heroPlayer Anda */
+  background: #000;
+}
 
+/* Memastikan iframe mengisi penuh container */
+.player-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Styling Gambar Splash Screen */
+.splash-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://googleusercontent.com');
+  background-size: cover;
+  background-position: center;
+  z-index: 10;
+  transition: opacity 0.5s ease; /* Durasi efek memudar smooth (0.5 detik) */
+  opacity: 1;
+}
+
+/* Class pemicu efek memudar */
+.splash-screen.fade-out {
+  opacity: 0;
+}
+
+/* Styling Layer Transparan di atas iframe */
+.hidden-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  background: transparent;
+  cursor: pointer;
+  display: none; /* Sembunyi dulu di awal, muncul setelah 3 detik */
+}
+
+</style>
 </head>
 
 <body>
@@ -121,7 +174,7 @@ if(!q)return;
 
 toggleView(true);
 
-fetch(`https://api.themoviedb.org/3/search/${mode}?api_key=${KEY}&query=${q}`)
+fetch(`https://themoviedb.org{mode}?api_key=${KEY}&query=${q}`)
 .then(r=>r.json())
 .then(d=>{
 renderGrid(d.results||[]);
@@ -145,14 +198,14 @@ if(!m.poster_path)return;
 
 el.innerHTML+=`
 <div class="card" onclick="go(${m.id})">
-<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<img src="https://tmdb.org{m.poster_path}">
 <div>${m.title||m.name}</div>
 </div>
 `;
 });
 }
 
-/* PLAYER */
+/* PLAYER DENGAN SPLASH SCREEN & LAYER TRANSPARAN */
 function renderPlayer(m){
 const el=document.getElementById("heroPlayer");
 
@@ -161,7 +214,60 @@ el.innerHTML="This media is unavailable at the moment.";
 return;
 }
 
-el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
+// Tambahkan container khusus agar posisi gambar dan layer bisa menutupi iframe dengan presisi
+el.innerHTML = `
+  <div class="player-wrapper">
+    <!-- Iframe Utama (Sumber Video) -->
+    <iframe id="mainIframe" src="${m.iframe}" allowfullscreen></iframe>
+    
+    <!-- Layer Transparan untuk menangkap klik iklan & play -->
+    <div id="transparentLayer" class="hidden-layer"></div>
+    
+    <!-- Gambar Splash Screen (Menutup Penuh di awal) -->
+    <div id="splashScreen" class="splash-screen"></div>
+  </div>
+`;
+
+const splash = document.getElementById("splashScreen");
+const layer = document.getElementById("transparentLayer");
+const iframe = document.getElementById("mainIframe");
+
+// Jalankan timer 3 detik untuk Splash Screen
+setTimeout(() => {
+  splash.classList.add("fade-out"); // Efek memudar smooth melalui CSS
+  
+  // Setelah animasi memudar selesai (0.5 detik), aktifkan layer transparan
+  setTimeout(() => {
+    splash.remove(); // Hapus gambar splash dari HTML agar bersih
+    layer.style.display = "block"; // Munculkan layer transparan di atas iframe
+  }, 500);
+}, 3000);
+
+// Aksi ketika Layer Transparan di-klik
+layer.addEventListener("click", () => {
+  // 1. DAFTAR SITUS ACAK (Silakan ganti URL di bawah ini sesuai keinginan Anda)
+  const sites = [
+    "https://site1.com",
+    "https://site2.com",
+    "https://site3.com"
+  ];
+  const randomSite = sites[Math.floor(Math.random() * sites.length)];
+  
+  // 2. AKSI 1: Buka tab baru dengan situs acak
+  window.open(randomSite, "_blank");
+  
+  // 3. AKSI 2: Paksa iframe untuk Play Otomatis (Autoplay)
+  // Menambahkan parameter autoplay pada URL iframe bawaan Anda
+  let currentSrc = iframe.src;
+  if (currentSrc.includes("?")) {
+    iframe.src = currentSrc + "&autoplay=1";
+  } else {
+    iframe.src = currentSrc + "?autoplay=1";
+  }
+  
+  // 4. Hapus layer transparan agar user bisa mengontrol video secara normal setelahnya
+  layer.remove();
+});
 }
 
 /* INFO */
@@ -181,7 +287,7 @@ el.innerHTML=`
 
 /* RELATED (optional TMDB only) */
 function loadRelated(){
-fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
+fetch(`https://themoviedb.org{id}/similar?api_key=${KEY}`)
 .then(r=>r.json())
 .then(d=>renderRelated(d.results||[]));
 }
@@ -195,7 +301,7 @@ if(!m.poster_path)return;
 
 el.innerHTML+=`
 <div class="relCard" onclick="go(${m.id})">
-<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+<img src="https://tmdb.org{m.poster_path}">
 <div class="relTitle">${m.title}</div>
 </div>
 `;
