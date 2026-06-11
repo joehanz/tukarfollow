@@ -156,7 +156,7 @@ async function init(){
 
   renderPlayer(movie);
   renderInfo(movie);
-  loadRelated(); // MEMBAIKKAN RELATED VIDEO YANG HILANG
+  loadRelated();
 }
 
 /* SEARCH MODE (TMDB ONLY UI) */
@@ -174,7 +174,7 @@ if(!q)return;
 
 toggleView(true);
 
-fetch(`https://themoviedb.org{mode}?api_key=${KEY}&query=${q}`)
+fetch(`https://api.themoviedb.org/3/search/${mode}?api_key=${KEY}&query=${q}`)
 .then(r=>r.json())
 .then(d=>{
 renderGrid(d.results||[]);
@@ -198,14 +198,14 @@ if(!m.poster_path)return;
 
 el.innerHTML+=`
 <div class="card" onclick="go(${m.id})">
-<img src="https://tmdb.org{m.poster_path}">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div>${m.title||m.name}</div>
 </div>
 `;
 });
 }
 
-/* PLAYER DENGAN SPLASH SCREEN & LAYER TRANSPARAN */
+/* PLAYER */
 function renderPlayer(m){
 const el=document.getElementById("heroPlayer");
 
@@ -214,61 +214,7 @@ el.innerHTML="This media is unavailable at the moment.";
 return;
 }
 
-// 1. Kunci posisi kontainer utama agar elemen di dalamnya bisa menumpuk rapi
-el.style.position = "relative";
-
-// 2. Buat struktur elemen: Iframe Film, Layer Transparan, dan Gambar Splash Screen
-el.innerHTML = `
-  <!-- Iframe Film Utama -->
-  <iframe id="mainIframe" src="${m.iframe}" style="width:100%; height:100%; border:none; position:absolute; top:0; left:0; z-index:1;" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  
-  <!-- Layer Transparan Kedua (Menangkap Klik Iklan + Play) -->
-  <div id="transparentLayer" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:5; background:transparent; cursor:pointer; display:none;"></div>
-  
-  <!-- Gambar Splash Screen Pertama (Menutup Penuh 100% Selama 3 Detik) -->
-  <div id="splashScreen" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; background-image:url(https://googleusercontent.com); background-size:cover; background-position:center; transition:opacity 0.5s ease; opacity:1;"></div>
-`;
-
-const splash = document.getElementById("splashScreen");
-const layer = document.getElementById("transparentLayer");
-const iframe = document.getElementById("mainIframe");
-
-// 3. TIMER 3 DETIK: Gambar menutup total dan tidak bisa diapa-apakan
-setTimeout(() => {
-  if (splash) {
-    splash.style.opacity = "0"; // Efek memudar halus
-  }
-  
-  // Setelah transisi memudar selesai (0.5 detik), hapus gambar dan aktifkan layer transparan
-  setTimeout(() => {
-    if (splash) splash.remove(); 
-    if (layer) layer.style.display = "block"; // Layer transparan aktif dan siap diklik
-  }, 500);
-}, 3000);
-
-// 4. TRIGGER 2 AKSI SEKALIGUS SAAT LAYER TRANSPARAN DIKLIK
-layer.addEventListener("click", () => {
-  // AKSI 1: Buka tab baru dengan salah satu situs acak
-  const sites = [
-    "https://site1.com",
-    "https://site2.com",
-    "https://site3.com"
-  ];
-  const randomSite = sites[Math.floor(Math.random() * sites.length)];
-  window.open(randomSite, "_blank");
-  
-  // AKSI 2: Paksa video di dalam iframe untuk berputar otomatis (Play Film)
-  // Menambahkan autoplay=1 dan muted=1 agar lolos proteksi keamanan browser modern
-  let currentSrc = iframe.src;
-  if (currentSrc.includes("?")) {
-    iframe.src = currentSrc + "&autoplay=1&muted=1";
-  } else {
-    iframe.src = currentSrc + "?autoplay=1&muted=1";
-  }
-  
-  // 5. Hapus layer transparan selamanya agar user bisa mengontrol penuh tombol asli video
-  layer.remove();
-});
+el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
 }
 
 /* INFO */
@@ -288,7 +234,7 @@ el.innerHTML=`
 
 /* RELATED (optional TMDB only) */
 function loadRelated(){
-fetch(`https://themoviedb.org{id}/similar?api_key=${KEY}`)
+fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
 .then(r=>r.json())
 .then(d=>renderRelated(d.results||[]));
 }
@@ -302,7 +248,7 @@ if(!m.poster_path)return;
 
 el.innerHTML+=`
 <div class="relCard" onclick="go(${m.id})">
-<img src="https://tmdb.org{m.poster_path}">
+<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
 <div class="relTitle">${m.title}</div>
 </div>
 `;
