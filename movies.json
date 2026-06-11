@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1592021,
+    "title": "Lost In Paradise (2026)",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lost%20In%20Paradise.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/byTHAYj56qbFF5R",
+    "sinopsis": "Terdampar di pulau terpencil bersama seorang koki, benih cinta tumbuh pada pemilik perusahaan mode.",
+    "genre": ["Comedy", "Romance", "TV Movies"],
+    "release_date": "03-01-2026",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 1591582,
     "title": "Best Served Cold (2026)",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Best%20Served%20Cold.webp",
