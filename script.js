@@ -4,59 +4,30 @@ let page = 1;
 let mode = "movie";
 let query = "";
 let timer;
-let postedIds = new Set();
+let localDB = [];
 
-/* ELEMENTS */
+/* ELEMENT */
 const slider = document.getElementById("slider");
 const grid = document.getElementById("movieGrid");
 const pagination = document.getElementById("pagination");
 const search = document.getElementById("search");
 const mobileSearch = document.getElementById("mobileSearch");
-const burger = document.getElementById("burger");
-const mobileMenu = document.getElementById("mobileMenu");
 const topBtn = document.getElementById("topBtn");
 
-/* MOBILE MENU */
-burger?.addEventListener("click", () => {
-  if (!mobileMenu) return;
-  mobileMenu.style.display =
-    mobileMenu.style.display === "flex" ? "none" : "flex";
-});
+/* LOAD LOCAL DB */
+fetch("movies.json")
+  .then(r => r.json())
+  .then(d => {
+    localDB = d;
+    loadMovies();
+  });
 
-/* TOP BUTTON */
-window.addEventListener("scroll", () => {
-  if (topBtn) {
-    topBtn.style.display = window.scrollY > 500 ? "block" : "none";
-  }
-});
+/* =======================
+   INDEX SYSTEM (TMDB + MARK)
+======================= */
 
-topBtn?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-/* LOAD INDEX */
 async function loadMovies() {
   if (!grid) return;
-
-  if (postedIds.size === 0) {
-    try {
-      const localMovies =
-        await fetch("movies.json")
-        .then(r => r.json());
-
-      postedIds =
-        new Set(
-          localMovies.map(
-            m => Number(m.tmdb_id)
-          )
-        );
-
-      console.log("MATCH IDS:", postedIds.size);
-      
-    } catch (e) {
-      console.log("movies.json gagal dimuat");
-    }
-  }
 
   grid.innerHTML = `<div class="loading">Loading...</div>`;
 
@@ -70,28 +41,16 @@ async function loadMovies() {
 
   const res = await fetch(url);
   const data = await res.json();
-
   const results = data.results || [];
 
-  results.sort((a, b) => {
-
-    const aMatch =
-      postedIds.has(Number(a.id));
-
-    const bMatch =
-      postedIds.has(Number(b.id));
-
-    if (aMatch && !bMatch) return -1;
-    if (!aMatch && bMatch) return 1;
-
-    return 0;
+  // MARK LOCAL MATCH
+  results.forEach(r => {
+    r._local = localDB.find(l => String(l.tmdb_id) === String(r.id));
   });
 
-  renderHero(results?.[0]);
+  renderHero(results[0]);
   renderGrid(results);
-  renderPagination(
-    Math.min(data.total_pages || 1, 500)
-  );
+  renderPagination(Math.min(data.total_pages || 1, 500));
 }
 
 /* HERO */
@@ -99,30 +58,32 @@ function renderHero(m) {
   if (!slider || !m) return;
 
   slider.innerHTML = `
-  <div style="width:100%;height:100%;
-  background:linear-gradient(to top,rgba(0,0,0,.9),transparent),
-  url(https://image.tmdb.org/t/p/original${m.backdrop_path});
-  background-size:cover;background-position:center;
-  display:flex;align-items:end;padding:30px;">
-  <div>
-  <h1>${m.title || m.name}</h1>
-  <p>${m.overview || ""}</p>
-  </div>
-  </div>
+    <div style="width:100%;height:100%;
+    background:linear-gradient(to top,rgba(0,0,0,.9),transparent),
+    url(https://image.tmdb.org/t/p/original${m.backdrop_path});
+    background-size:cover;background-position:center;
+    display:flex;align-items:end;padding:30px;">
+      <div>
+        <h1>${m.title || m.name}</h1>
+        <p>${m.overview || ""}</p>
+      </div>
+    </div>
   `;
 }
 
-/* GRID (LOCK FIX ONLY) */
+/* GRID */
 function renderGrid(data) {
   if (!grid) return;
-
   grid.innerHTML = "";
 
   data.forEach(m => {
     if (!m.poster_path) return;
 
+    const badge = m._local ? "WEBP" : (mode === "tv" ? "SERIES" : "MOVIE");
+
     grid.innerHTML += `
-      <div class="card" onclick="goWatch('${m.id}', \`${m.title || m.name}\`)">
+      <div class="card" onclick="goWatch('${m.id}','${m.title || m.name}')">
+        <div class="badge">${badge}</div>
         <img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
         <h3>${m.title || m.name}</h3>
       </div>
@@ -130,10 +91,9 @@ function renderGrid(data) {
   });
 }
 
-/* NAV (LOCK FIX ONLY) */
+/* NAV TO WATCH */
 function goWatch(id, title) {
-  location.href =
-    `watch.html?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title || "")}`;
+  location.href = `watch.html?id=${id}&title=${encodeURIComponent(title || "")}`;
 }
 
 /* PAGINATION */
@@ -146,13 +106,15 @@ function renderPagination(total) {
   const start = Math.floor((page - 1) / group) * group + 1;
   const end = Math.min(start + group - 1, total);
 
-  if (start > 1) html += `<button onclick="goto(${start - group})">&lt;</button>`;
+  if (start > 1)
+    html += `<button onclick="goto(${start - group})">&lt;</button>`;
 
   for (let i = start; i <= end; i++) {
     html += `<button onclick="goto(${i})" class="${i === page ? "active" : ""}">${i}</button>`;
   }
 
-  if (end < total) html += `<button onclick="goto(${end + 1})">&gt;</button>`;
+  if (end < total)
+    html += `<button onclick="goto(${end + 1})">&gt;</button>`;
 
   pagination.innerHTML = html;
 }
@@ -164,7 +126,7 @@ function goto(p) {
 }
 
 /* SEARCH */
-search?.addEventListener("keyup", e => {
+search?.addEventListener("input", e => {
   clearTimeout(timer);
   timer = setTimeout(() => {
     query = e.target.value;
@@ -173,7 +135,7 @@ search?.addEventListener("keyup", e => {
   }, 400);
 });
 
-mobileSearch?.addEventListener("keyup", e => {
+mobileSearch?.addEventListener("input", e => {
   clearTimeout(timer);
   timer = setTimeout(() => {
     query = e.target.value;
@@ -182,150 +144,160 @@ mobileSearch?.addEventListener("keyup", e => {
   }, 400);
 });
 
-/* MODE SWITCH */
-document.getElementById("moviesBtn")?.addEventListener("click", () => {
-  mode = "movie";
-  query = "";
-  page = 1;
-  loadMovies();
-});
+/* WATCH INIT */
+const urlParams = new URLSearchParams(location.search);
+const id = urlParams.get("id");
+const titleParam = urlParams.get("title");
 
-document.getElementById("seriesBtn")?.addEventListener("click", () => {
-  mode = "tv";
-  query = "";
-  page = 1;
-  loadMovies();
-});
-
-/* ADS SYSTEM (NO CHANGE) */
-const ads = [
-  "https://rajarayap.com",
-  "https://caturbangunsentosa.blogspot.com",
-  "https://ptdwiprima.blogspot.com"
-];
-
-let adsState = false;
-
-/* PLAY LAYER ADS */
-const playLayer = document.getElementById("playLayer");
-
-if (playLayer) {
-  playLayer.onclick = function () {
-    if (!adsState) {
-      adsState = true;
-      window.open(ads[Math.floor(Math.random() * ads.length)], "_blank");
-      return;
-    }
-
-    this.style.display = "none";
-
-    const id = new URLSearchParams(location.search).get("id");
-
-    document.getElementById("player").src =
-      `https://vsembed.ru/embed/movie?tmdb=${id}`;
-  };
+/* FIND LOCAL DATA */
+function getLocalMovie(id) {
+  return localDB.find(m => String(m.tmdb_id) === String(id));
 }
 
-/* DETAIL PAGE (UNCHANGED) */
-async function loadDetail() {
-  const id = new URLSearchParams(location.search).get("id");
+/* INIT WATCH */
+if (document.getElementById("heroPlayer")) {
+  initWatch();
+}
 
-  let m = await fetch(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}&language=id-ID`
-  ).then(r => r.json());
+/* WATCH ENGINE */
+async function initWatch() {
+  const container = document.getElementById("heroPlayer");
+  const info = document.getElementById("infoBox");
 
-  if (!m.overview) {
-    const backup = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${KEY}`
-    ).then(r => r.json());
+  const local = getLocalMovie(id);
 
-    m.overview = backup.overview;
+  let data = local;
+
+  // fallback jika tidak ada local data
+  if (!data) {
+    data = {
+      tmdb_id: id,
+      title: titleParam || "Unknown",
+      iframe: "",
+      sinopsis: "",
+      genre: [],
+      release_date: "",
+      country: ""
+    };
   }
 
-  document.getElementById("info").innerHTML = `
+  renderInfo(data);
+  runPlayer(data);
+  loadRelated(id);
+}
+
+/* PLAYER LOGIC (INTI 6 DETIK SYSTEM) */
+function runPlayer(m) {
+  const el = document.getElementById("heroPlayer");
+
+  let finalSrc = "";
+
+  // PRIORITY 1: iframe manual
+  if (m.iframe && m.iframe.trim() !== "") {
+    finalSrc = m.iframe;
+  }
+
+  // PRIORITY 2: VSEmbed fallback
+  else {
+    finalSrc = `https://vsembed.ru/embed/movie?tmdb=${m.tmdb_id}`;
+  }
+
+  el.innerHTML = `
+    <div class="player-wrapper">
+      
+      <!-- LAYER 1: SEGERA DIMULAI -->
+      <div id="layer1" class="splash-screen"></div>
+
+      <!-- LAYER 2: SPONSOR -->
+      <div id="layer2" class="hidden-layer"></div>
+
+      <!-- PLAYER -->
+      <iframe id="player" src="" allowfullscreen></iframe>
+
+    </div>
+  `;
+
+  const layer1 = document.getElementById("layer1");
+  const layer2 = document.getElementById("layer2");
+  const player = document.getElementById("player");
+
+  /* LOAD SPLASH 3 DETIK */
+  setTimeout(() => {
+    layer1.classList.add("fade-out");
+  }, 3000);
+
+  /* SHOW SPONSOR LAYER */
+  setTimeout(() => {
+    layer1.style.display = "none";
+    layer2.style.display = "block";
+  }, 3000);
+
+  /* SPONSOR CLICK */
+  let clicked = false;
+
+  layer2.onclick = () => {
+    if (!clicked) {
+      clicked = true;
+      window.open(
+        ["https://rajarayap.com","https://caturbangunsentosa.blogspot.com","https://ptdwiprima.blogspot.com"]
+        [Math.floor(Math.random()*3)],
+        "_blank"
+      );
+    }
+  };
+
+  /* AUTO ENTER PLAYER AFTER 6s */
+  setTimeout(() => {
+    layer2.style.display = "none";
+    player.src = finalSrc;
+  }, 6000);
+}
+
+/* INFO BOX */
+
+function renderInfo(m) {
+  const el = document.getElementById("infoBox");
+
+  if (!el) return;
+
+  el.innerHTML = `
     <h2>${m.title}</h2>
-    <p>⭐ Rating : ${m.vote_average.toFixed(1)}</p>
-    <p>📅 Rilis : ${m.release_date || "-"}</p>
-    <p>🌍 Negara : ${(m.production_countries || []).map(c => c.name).join(", ")}</p>
-    <p>🎭 Genre : ${(m.genres || []).map(g => g.name).join(", ")}</p>
-    <p style="margin-top:15px;line-height:1.7;opacity:.9;">
-      ${m.overview || "Sinopsis tidak tersedia"}
-    </p>
+    <div>
+      <span class="badge">${(m.genre || []).join(", ")}</span>
+      <span class="badge">${m.release_date || "-"}</span>
+      <span class="badge">${m.country || "-"}</span>
+    </div>
+    <p>${m.sinopsis || "No description available"}</p>
   `;
 }
 
-/* OVERLAY SEARCH (UNCHANGED) */
-let overlayPage = 1;
-let overlayMode = "";
-let currentQuery = "";
+/* RELATED SYSTEM (12 ITEM) */
+async function loadRelated() {
+  const url = mode === "tv"
+    ? `https://api.themoviedb.org/3/tv/${id}/similar?api_key=${KEY}`
+    : `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`;
 
-async function loadOverlay() {
-  const id = new URLSearchParams(location.search).get("id");
+  const res = await fetch(url);
+  const data = await res.json();
 
-  let url = "";
-
-  if (overlayMode === "search") {
-    url = `https://api.themoviedb.org/3/search/movie?api_key=${KEY}&query=${encodeURIComponent(currentQuery)}&page=${overlayPage}`;
-  }
-
-  if (overlayMode === "local") {
-    url = `https://api.themoviedb.org/3/discover/movie?api_key=${KEY}&with_origin_country=ID&page=${overlayPage}`;
-  }
-
-  const data = await fetch(url).then(r => r.json());
-
-  showOverlay(data.results);
-  renderOverlayPagination(data.page, data.total_pages);
+  renderRelated(data.results || []);
 }
 
-function showOverlay(data) {
-  const overlay = document.getElementById("overlay");
-  if (!overlay) return;
+function renderRelated(list) {
+  const el = document.getElementById("relGrid");
+  if (!el) return;
 
-  overlay.style.display = "block";
+  el.innerHTML = "";
 
-  let h = "";
+  list.slice(0, 12).forEach(m => {
+    if (!m.poster_path) return;
 
-  data.forEach(v => {
-    if (!v.poster_path) return;
-
-    h += `
-      <div class="card" onclick="goWatch('${v.id}')">
-        <img src="https://image.tmdb.org/t/p/w500${v.poster_path}">
-        <div class="title">${v.title || v.name}</div>
+    el.innerHTML += `
+      <div class="relCard" onclick="goWatch('${m.id}','${m.title || m.name}')">
+        <img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
+        <div>${m.title || m.name}</div>
       </div>
     `;
   });
-
-  document.getElementById("overlayGrid").innerHTML = h;
 }
 
-function renderOverlayPagination(page, total) {
-  const el = document.getElementById("overlayPagination");
-  if (!el) return;
-
-  let h = "";
-  let start = Math.max(1, page - 2);
-  let end = Math.min(total, start + 5);
-
-  for (let i = start; i <= end; i++) {
-    h += `<button onclick="changeOverlayPage(${i})"
-    style="padding:8px 14px;background:${i===page?'#ff2e2e':'#1a1a22'};color:#fff;border:none;border-radius:8px;">
-    ${i}</button>`;
-  }
-
-  if (page < total) {
-    h += `<button onclick="changeOverlayPage(${page + 1})">›</button>`;
-  }
-
-  el.innerHTML = h;
-}
-
-function changeOverlayPage(p) {
-  overlayPage = p;
-  loadOverlay();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-/* BOOT */
-loadMovies();
