@@ -137,34 +137,20 @@ top:27px;
 }
 
 /* =========================
-   MOBILE MENU (FINAL FIX)
+   MOBILE MENU
 ========================= */
-
 .mobile-menu{
 display:none;
 flex-direction:column;
 gap:12px;
-
 position:fixed;
-top:60px; /* sesuaikan tinggi navbar */
-left:0;
-right:0;
-
-z-index:9999;
 
 padding:15px;
 
 background:#111821;
 border-bottom:1px solid rgba(255,255,255,.05);
-box-shadow:0 10px 25px rgba(0,0,0,.4);
 }
 
-/* SHOW STATE */
-.mobile-menu.active{
-display:flex;
-}
-
-/* INPUT & SELECT */
 .mobile-menu input,
 .mobile-menu select{
 height:45px;
@@ -175,6 +161,7 @@ background:#141b22;
 color:#fff;
 padding:0 12px;
 }
+
 
 /* =========================
    HERO
