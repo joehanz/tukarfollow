@@ -437,6 +437,20 @@ padding-top:30px;
 opacity:.6;
 }
 
+.burger.active span:nth-child(1){
+top:19px;
+transform:rotate(45deg);
+}
+
+.burger.active span:nth-child(2){
+opacity:0;
+transform:scale(0);
+}
+
+.burger.active span:nth-child(3){
+top:19px;
+transform:rotate(-45deg);
+}
 /* =========================
    MOBILE
 ========================= */
