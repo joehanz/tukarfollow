@@ -97,50 +97,21 @@ cursor:pointer;
 
 .burger{
 display:none;
-
-width:42px;
-height:42px;
-
-position:relative;
-
 background:none;
 border:none;
-
+font-size:32px;
+color:#fff;
 cursor:pointer;
 }
 
-.burger span{
-position:absolute;
+/* =========================
+   MOBILE MENU
+========================= */
 
-left:8px;
-
-width:26px;
-height:3px;
-
-background:#fff;
-
-border-radius:10px;
-
-transition:.35s ease;
-}
-
-.burger span:nth-child(1){
-top:11px;
-}
-
-.burger span:nth-child(2){
-top:19px;
-}
-
-.burger span:nth-child(3){
-top:27px;
-}
-
-ini mobile menu kalau habis diklik di scroll mobile menu ikut ke atas gimna cara agar tetep diam seperti nav .mobile-menu{
+.mobile-menu{
 display:none;
 flex-direction:column;
 gap:12px;
-position:
 
 padding:15px;
 
@@ -434,20 +405,6 @@ padding-top:30px;
 opacity:.6;
 }
 
-.burger.active span:nth-child(1){
-top:19px;
-transform:rotate(45deg);
-}
-
-.burger.active span:nth-child(2){
-opacity:0;
-transform:scale(0);
-}
-
-.burger.active span:nth-child(3){
-top:19px;
-transform:rotate(-45deg);
-}
 /* =========================
    MOBILE
 ========================= */
@@ -492,141 +449,6 @@ height:225px;
 .footer-grid{
 grid-template-columns:
 repeat(2,1fr);
-}
-
-}
-
-
-/* =========================
-   WATCH PAGE
-========================= */
-
-.player-section{
-padding:30px 0;
-}
-
-.player-wrapper{
-position:relative;
-width:100%;
-height:80vh;
-background:#000;
-border-radius:14px;
-overflow:hidden;
-}
-
-.player-wrapper iframe{
-width:100%;
-height:100%;
-border:none;
-}
-
-.player-overlay{
-position:absolute;
-inset:0;
-z-index:999;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#000;
-cursor:pointer;
-}
-
-.player-overlay img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-#movieInfo{
-padding:30px 0;
-}
-
-#movieDetail{
-line-height:1.8;
-}
-
-.related-section{
-position:relative;
-padding:30px 0 60px;
-}
-
-.related-section h2{
-margin-bottom:20px;
-}
-
-.related-wrapper{
-position:relative;
-}
-
-.related-slider{
-display:flex;
-gap:12px;
-overflow-x:auto;
-scroll-behavior:smooth;
-scrollbar-width:none;
-}
-
-.related-slider::-webkit-scrollbar{
-display:none;
-}
-
-.related-card{
-flex:0 0 auto;
-width:180px;
-}
-
-.related-card img{
-width:100%;
-height:270px;
-object-fit:cover;
-border-radius:10px;
-}
-
-.related-arrow{
-position:absolute;
-top:50%;
-transform:translateY(-50%);
-
-width:60px;
-height:60px;
-
-border:none;
-border-radius:50%;
-
-background:rgba(0,0,0,.7);
-color:#fff;
-
-font-size:24px;
-cursor:pointer;
-
-z-index:50;
-}
-
-#relatedPrev{
-left:-30px;
-}
-
-#relatedNext{
-right:-30px;
-}
-
-.related-arrow:hover{
-background:#00d4ff;
-color:#000;
-}
-
-@media(max-width:768px){
-
-.related-arrow{
-display:none;
-}
-
-.related-card{
-width:150px;
-}
-
-.related-card img{
-height:225px;
 }
 
 }
