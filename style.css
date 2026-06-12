@@ -144,6 +144,7 @@ top:27px;
 display:none;
 flex-direction:column;
 gap:12px;
+position:fixed;
 
 padding:15px;
 
