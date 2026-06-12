@@ -1,50 +1,75 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Movie Hub</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream - Nonton Film & Series Gratis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body>
 
-<header class="nav">
-  <div class="nav-left">
-    <div class="logo">MOVIEHUB</div>
-  </div>
+    <!-- NAV BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Cine<span>Stream</span></a>
+            
+            <button class="burger-menu" id="burgerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-  <div class="nav-right" id="navMenu">
-    <input type="text" id="search" placeholder="Search movie...">
+            <div class="nav-menu" id="navMenu">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari film atau series...">
+                    <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                
+                <div class="nav-links">
+                    <div class="dropdown">
+                        <button class="dropbtn">Genre <i class="fa-solid fa-caret-down"></i></button>
+                        <div class="dropdown-content" id="genreDropdown">
+                            <!-- Diisi via TMDB API -->
+                        </div>
+                    </div>
 
-    <select id="genre">
-      <option value="">Genre</option>
-      <option>Horor</option>
-      <option>Sci-fi</option>
-      <option>Thriller</option>
-    </select>
+                    <div class="dropdown year-dropdown">
+                        <button class="dropbtn">Tahun <i class="fa-solid fa-caret-down"></i></button>
+                        <div class="dropdown-content">
+                            <a href="#" class="year-link" data-year="2026">2026</a>
+                            <a href="#" class="year-link" data-year="2025">2025</a>
+                            <a href="#" class="year-link" data-year="2024">2024</a>
+                            <a href="#" class="year-link" data-year="classic">Klasik</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <select id="year">
-      <option value="">Rilis</option>
-      <option value="2026">2026</option>
-      <option value="2025">2025</option>
-      <option value="2024">2024</option>
-      <option value="classic">Klasik</option>
-    </select>
-  </div>
+    <!-- HERO BANNER -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="trending-tag">Sedang Tren</span>
+            <h1 id="heroTitle">Backrooms (2026)</h1>
+            <p id="heroSynopsis">Seorang terapis harus memasuki dimensi mengerikan untuk menyelamatkan pasien yang hilang.</p>
+            <a href="watch.html?id=1083381" class="btn-play"><i class="fa-solid fa-play"></i> Tonton Sekarang</a>
+        </div>
+    </header>
 
-  <div class="burger" id="burger">☰</div>
-</header>
+    <!-- MAIN GRID CONTAINER -->
+    <main class="container">
+        <h2 class="section-title" id="gridTitle">Eksplorasi Tayangan</h2>
+        <div class="movie-grid" id="movieGrid">
+            <!-- Grid item di-generate via JavaScript -->
+        </div>
 
-<main>
-  <div id="grid" class="grid"></div>
+        <!-- PAGINATION -->
+        <div class="pagination" id="pagination">
+            <!-- Di-generate via JavaScript -->
+        </div>
+    </main>
 
-  <div class="pagination" id="pagination"></div>
-</main>
-
-<footer class="footer">
-  <div>Home</div><div>Trending</div><div>Genre</div><div>Profile</div>
-</footer>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
