@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tukar Movie</title>
 
+<meta name="theme-color" content="#0b0f14">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+<div class="nav-logo">
+<a href="index.html">TUKARMOVIE</a>
+</div>
+
+<div class="nav-right desktop-only">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Cari film atau series..."
+autocomplete="off">
+
+<select id="genreFilter">
+<option value="">Semua Genre</option>
+</select>
+
+<select id="yearFilter">
+<option value="">Tahun Rilis</option>
+<option value="2026">2026</option>
+<option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="classic">Klasik</option>
+</select>
+
+</div>
+
+<button id="burgerBtn" class="burger mobile-only">
+
+<span></span>
+<span></span>
+<span></span>
+
+</button>
+
+</nav>
+
+<!-- MOBILE MENU -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+<input
+type="text"
+id="mobileSearchInput"
+placeholder="Cari film atau series..."
+autocomplete="off">
+
+<select id="mobileGenreFilter">
+<option value="">Semua Genre</option>
+</select>
+
+<select id="mobileYearFilter">
+<option value="">Tahun Rilis</option>
+<option value="2026">2026</option>
+<option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="classic">Klasik</option>
+</select>
+
+</div>
+
+<!-- HERO -->
+
+<section id="heroSection" class="hero">
+
+<div class="hero-overlay"></div>
+
+<div class="hero-content">
+
+<span class="hero-badge">
+FEATURED
+</span>
+
+<h1 id="heroTitle">
+Loading...
+</h1>
+
+<p id="heroOverview">
+Memuat film pilihan...
+</p>
+
+<a id="heroWatchBtn" href="#">
+WATCH NOW
+</a>
+
+</div>
+
+</section>
+
+<!-- CONTENT -->
+
+<main class="container">
+
+<section class="section-title-wrap">
+
+<h2 class="section-title">
+Movies & Series
+</h2>
+
+</section>
+
+<div id="movieGrid" class="movie-grid">
+
+<!-- TMDB Render -->
+
+</div>
+
+<!-- PAGINATION -->
+
+<div id="pagination" class="pagination">
+
+<button id="prevPage">
+&lt;
+</button>
+
+<div id="pageNumbers">
+
+</div>
+
+<button id="nextPage">
+&gt;
+</button>
+
+</div>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+<div class="footer-grid">
+
+<div class="footer-col">
+
+<h3>About</h3>
+
+<a href="#">
+Tentang Kami
+</a>
+
+<a href="#">
+Kontak
+</a>
+
+<a href="#">
+DMCA
+</a>
+
+</div>
+
+<div class="footer-col">
+
+<h3>Genres</h3>
+
+<a href="#">
+Action
+</a>
+
+<a href="#">
+Drama
+</a>
+
+<a href="#">
+Horror
+</a>
+
+</div>
+
+<div class="footer-col">
+
+<h3>Pages</h3>
+
+<a href="#">
+Movies
+</a>
+
+<a href="#">
+Series
+</a>
+
+<a href="#">
+Popular
+</a>
+
+</div>
+
+<div class="footer-col">
+
+<h3>Legal</h3>
+
+<a href="#">
+Privacy Policy
+</a>
+
+<a href="#">
+Terms
+</a>
+
+<a href="#">
+Disclaimer
+</a>
+
+</div>
+
+</div>
+
+<div class="copyright">
+© 2026 Tukar Movie
+</div>
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
