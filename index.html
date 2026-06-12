@@ -1,37 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TukarFollow: Streaming Movie Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
-    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
-    <link rel="stylesheet" href="style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779" crossorigin="anonymous"></script>
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "tukarfollow",
-      "url": "https://github.io",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://github.ioindex.html?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TukarFollow</title>
 
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
 <body>
 
-
-<!-- NAVBAR -->
+<!-- NAVBAR CLEAN -->
 <header class="navbar">
 
   <a href="index.html" class="logo">
@@ -39,8 +21,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     <span>TukarFollow</span>
   </a>
 
-  <div class="nav-right">
-    <input type="text" id="search" placeholder="Cari film...">
+  <!-- DESKTOP TOOLS -->
+  <div class="nav-tools">
+
+    <input type="text" id="search" placeholder="Search movie...">
 
     <select id="genreFilter">
       <option value="">Genre</option>
@@ -53,8 +37,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
       <option value="2024">2024</option>
       <option value="classic">Classic</option>
     </select>
+
   </div>
 
+  <!-- BURGER MOBILE -->
   <div id="burger">
     <i class="fa-solid fa-bars"></i>
   </div>
@@ -64,7 +50,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 <!-- MOBILE MENU -->
 <div id="mobileMenu">
 
-  <input type="text" id="mobileSearch" placeholder="Cari film...">
+  <input type="text" id="mobileSearch" placeholder="Search...">
 
   <select id="mobileGenre"></select>
 
@@ -78,169 +64,40 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 </div>
 
-
-
 <!-- HERO -->
+<section id="slider"></section>
 
-<section id="hero">
-
-<div id="slider">
-
-<div class="loading">
-
-Loading...
-
-</div>
-
-</div>
-
+<!-- GRID -->
+<section>
+  <div id="movieGrid"></div>
 </section>
-
-
-
-<!-- MOVIES -->
-
-<section class="movies">
-
-<div class="titleBar">
-
-<h2>
-
-Trending Movies
-
-</h2>
-
-</div>
-
-
-
-<div id="movieGrid">
-
-<div class="loading">
-
-Loading Movie...
-
-</div>
-
-</div>
-
-</section>
-
-
 
 <!-- PAGINATION -->
-
-<div id="pagination">
-
-<button>
-
-&lt;
-
-</button>
-
-<button class="active">
-
-1
-
-</button>
-
-<button>
-
-2
-
-</button>
-
-<button>
-
-3
-
-</button>
-
-<button>
-
-4
-
-</button>
-
-<button>
-
-5
-
-</button>
-
-<button>
-
-6
-
-</button>
-
-<button>
-
-&gt;
-
-</button>
-
-</div>
-
-
-
-<button id="topBtn">
-
-<i class="fa-solid fa-arrow-up"></i>
-
-</button>
+<div id="pagination"></div>
 
 <!-- FOOTER -->
 <footer>
-<div class="footer-grid">
-<div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
-<div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
-<div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
-<div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
-</div>
+  <p style="text-align:center;padding:20px;color:#aaa;">
+    © TukarFollow
+  </p>
 </footer>
 
 <script src="script.js"></script>
-  <script>
+
+<!-- BURGER LOGIC CLEAN -->
+<script>
 const burger = document.getElementById("burger");
 const mobileMenu = document.getElementById("mobileMenu");
 
 burger?.addEventListener("click", () => {
-  const isOpen = burger.dataset.state === "open";
+  const open = mobileMenu.style.display === "flex";
+  mobileMenu.style.display = open ? "none" : "flex";
 
-  burger.dataset.state = isOpen ? "closed" : "open";
-
-  if (mobileMenu) {
-    mobileMenu.style.display = isOpen ? "none" : "flex";
-  }
-
-  // HARD SET ICON (NO INNERHTML REPLACE PARENT)
-  const icon = burger.querySelector("i");
-
-  if (icon) {
-    icon.className = isOpen
-      ? "fa-solid fa-bars"
-      : "fa-solid fa-xmark";
-  }
+  burger.innerHTML = open
+    ? `<i class="fa-solid fa-bars"></i>`
+    : `<i class="fa-solid fa-xmark"></i>`;
 });
-  </script>
+</script>
 
 </body>
 </html>
-
