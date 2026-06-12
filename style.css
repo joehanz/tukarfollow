@@ -511,7 +511,7 @@ padding:30px 0;
 .player-wrapper{
 position:relative;
 width:100%;
-aspect-ratio:16/9;
+height:70vh; /* bikin seperti hero */
 background:#000;
 overflow:hidden;
 border-radius:12px;
@@ -526,12 +526,12 @@ border:none;
 .player-overlay{
 position:absolute;
 inset:0;
-z-index:20;
-background:#000;
+z-index:50;
 display:flex;
 align-items:center;
 justify-content:center;
-overflow:hidden;
+background:#000;
+cursor:pointer;
 }
 
 .player-overlay img{
