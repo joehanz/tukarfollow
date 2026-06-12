@@ -71,7 +71,7 @@ return "https://via.placeholder.com/500x750?text=No+Poster";
 
 }
 
-return `https://image.tmdb.org/t/p/w1280${path}`;
+return `https://image.tmdb.org/t/p/w500${path}`;
 
 }
 
@@ -410,7 +410,8 @@ pageNumbers.appendChild(btn);
 
 }
 
-  /* =========================
+
+/* =========================
    FILTER
 ========================= */
 
@@ -701,5 +702,3 @@ console.log("GRID OK");
 }
 
 init();
-
-  
