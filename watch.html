@@ -1,51 +1,43 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memutar Film - MovieID</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">🚀 MovieID</a>
-            <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
-            <div class="nav-menu" id="navMenu">
-                <form class="search-form" id="searchForm">
-                    <input type="text" id="searchInput" placeholder="Cari film atau series...">
-                </form>
-                <div class="dropdown">
-                    <button class="dropbtn">Genre ▾</button>
-                    <div class="dropdown-content" id="genreMenu"></div>
-                </div>
-                <div class="dropdown">
-                    <button class="dropbtn">Tahun ▾</button>
-                    <div class="dropdown-content">
-                        <a href="index.html?year=2026">2026</a>
-                        <a href="index.html?year=2025">2025</a>
-                        <a href="index.html?year=2024">2024</a>
-                        <a href="index.html?year=classic">Klasik</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <main class="container watch-container">
-        <div class="player-wrapper">
-            <div class="ads-layer" id="adsLayer">
-                <img id="adsImage" src="https://googleusercontent.com" alt="Iklan">
-            </div>
-            <iframe id="videoPlayer" allowfullscreen></iframe>
-        </div>
-        <div class="movie-details">
-            <h1 id="movieTitle">Loading...</h1>
-            <p id="movieMeta"></p>
-            <p id="movieSynopsis"></p>
-        </div>
-    </main>
+<nav class="navbar">
+  <div class="nav-container">
+    <a class="logo" href="index.html">MovieID</a>
 
-    <script src="script.js"></script>
+    <button class="burger" id="burgerBtn">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="nav-menu" id="navMenu"></div>
+  </div>
+</nav>
+
+<main class="container">
+
+  <div class="player">
+    <div class="layer" id="layer">
+      <img id="layerImg">
+    </div>
+    <iframe id="frame"></iframe>
+  </div>
+
+  <h1 id="mTitle"></h1>
+  <p id="mMeta"></p>
+  <p id="mDesc"></p>
+
+  <h3>Related</h3>
+  <div class="related" id="related"></div>
+
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
