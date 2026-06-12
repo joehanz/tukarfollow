@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+tolong dicek bro krn layer 2 msh blm mau muncul <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -177,16 +177,10 @@ const data=await res.json();
 custom=data.find(m=>String(m.tmdb_id)===String(id));
 }catch(e){}
 
-function startVideo(){
-
-const player=document.getElementById("player");
-
 if(custom && custom.iframe){
-player.dataset.src=custom.iframe;
+player.src=custom.iframe;
 }else{
-player.dataset.src=`https://vsembed.su/embed/movie/${id}`;
-}
-
+player.src=`https://vsembed.su/embed/movie/${id}`;
 }
 
 try{
@@ -232,18 +226,23 @@ const banners=[
 {img:"https://via.placeholder.com/1280x720?text=situs3.com",url:"https://situs3.com"}
 ];
 
+let stage=0;
 let clicked=false;
 
-/* STAGE 1 */
-overlayImg.src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
+/* STAGE 1 (0–3 detik) */
+overlayImg.src =
+"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
 
-/* STAGE 2 */
+/* STAGE 2 (3–6 detik) */
 setTimeout(()=>{
+
+stage=1;
 
 const pick=banners[Math.floor(Math.random()*banners.length)];
 
 overlayImg.src=pick.img;
 
+/* klik aktif hanya di stage ini */
 overlay.onclick=()=>{
 
 clicked=true;
@@ -253,16 +252,17 @@ window.open(pick.url,"_blank");
 
 },3000);
 
-/* STAGE 3 */
+/* STAGE 3 (6 detik selesai) */
 setTimeout(()=>{
 
 overlay.style.display="none";
 
-/* baru start video */
-const player=document.getElementById("player");
-
-if(!player.src){
-player.src=player.dataset.src;
+/* kalau user tidak klik, tetap lanjut iframe normal */
+if(!clicked){
+const iframe=document.getElementById("player");
+if(iframe && !iframe.src){
+iframe.src=`https://vsembed.su/embed/movie/${id}`;
+}
 }
 
 },6000);
