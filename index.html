@@ -1,49 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Movie App</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="nav-container">
-    <a class="logo" href="index.html">MovieID</a>
-
-    <button class="burger" id="burgerBtn">
-      <span></span><span></span><span></span>
-    </button>
-
-    <div class="nav-menu" id="navMenu">
-      <form id="searchForm" class="search">
-        <input id="searchInput" placeholder="Cari film...">
-      </form>
-
-      <div class="dropdown">
-        <button>Genre</button>
-        <div class="dropdown-content" id="genreMenu"></div>
-      </div>
-
-      <div class="dropdown">
-        <button>Rilis</button>
-        <div class="dropdown-content">
-          <a href="#" class="year" data-year="2026">2026</a>
-          <a href="#" class="year" data-year="2025">2025</a>
-          <a href="#" class="year" data-year="2024">2024</a>
-          <a href="#" class="year" data-year="classic">Classic</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<main class="container">
-  <h2 id="title">Trending</h2>
-  <div class="grid" id="grid"></div>
-  <div class="pagination" id="pagination"></div>
-</main>
+<div id="feed"></div>
 
 <script src="script.js"></script>
 </body>
