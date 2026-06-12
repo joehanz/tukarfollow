@@ -2,136 +2,48 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Watch - TukarFollow</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
-
 <body>
 
-<!-- NAVBAR SAME AS INDEX -->
-<header class="navbar">
-
-  <a href="index.html" class="logo">
-    <i class="fa-solid fa-film"></i>
-    <span>TukarFollow</span>
-  </a>
-
-  <div class="nav-tools">
-
-    <input type="text" id="search" placeholder="Search...">
-
-    <select id="genreFilter">
-      <option value="">Genre</option>
-    </select>
-
-    <select id="yearFilter">
-      <option value="">Year</option>
-      <option value="2026">2026</option>
-      <option value="2025">2025</option>
-      <option value="2024">2024</option>
-      <option value="classic">Classic</option>
-    </select>
-
+<header class="nav">
+  <div class="nav-left">
+    <div class="logo">MOVIEHUB</div>
   </div>
 
-  <div id="burger">
-    <i class="fa-solid fa-bars"></i>
+  <div class="nav-right" id="navMenu">
+    <input type="text" id="search" placeholder="Search movie...">
+    <select id="genre"><option>Genre</option></select>
+    <select id="year"><option>Rilis</option></select>
   </div>
 
+  <div class="burger" id="burger">☰</div>
 </header>
 
-<!-- MOBILE MENU -->
-<div id="mobileMenu">
+<main>
 
-  <input type="text" id="mobileSearch" placeholder="Search...">
-
-  <select id="mobileGenre"></select>
-
-  <select id="mobileYear">
-    <option value="">Year</option>
-    <option value="2026">2026</option>
-    <option value="2025">2025</option>
-    <option value="2024">2024</option>
-    <option value="classic">Classic</option>
-  </select>
-
+<div id="playerWrap">
+  <div id="overlay" class="overlay hidden"></div>
+  <iframe id="player" allowfullscreen></iframe>
 </div>
 
-<!-- PLAYER -->
-<div id="playerBox"></div>
+<div id="info"></div>
 
-<!-- INFO -->
-<div id="infoBox"></div>
+<h3>Related</h3>
+<div class="relatedWrap">
+  <button class="left">‹</button>
+  <div id="related" class="related"></div>
+  <button class="right">›</button>
+</div>
 
-<!-- RELATED -->
-<div id="related"></div>
+</main>
+
+<footer class="footer">
+  <div>Home</div><div>Trending</div><div>Genre</div><div>Profile</div>
+</footer>
 
 <script src="script.js"></script>
-
-<!-- WATCH ENGINE CLEAN -->
-<script>
-const KEY = "b3b893873ed1bb7f175b2707afeea2a0";
-const id = new URLSearchParams(location.search).get("id");
-
-let moviesData = [];
-
-/* LOAD LOCAL DB */
-fetch("movies.json")
-.then(r => r.json())
-.then(d => {
-  moviesData = d;
-  init();
-});
-
-function init() {
-  const movie = moviesData.find(m => String(m.tmdb_id) === String(id));
-
-  if (movie && movie.iframe) {
-    renderPlayer(movie.iframe);
-    renderInfo(movie);
-  } else {
-    renderFallback(id);
-  }
-}
-
-/* PLAYER */
-function renderPlayer(url) {
-  document.getElementById("playerBox").innerHTML = `
-    <iframe src="${url}" allowfullscreen
-    style="width:100%;height:70vh;border:none;"></iframe>
-  `;
-}
-
-/* INFO */
-function renderInfo(m) {
-  document.getElementById("infoBox").innerHTML = `
-    <h2>${m.title}</h2>
-    <p>${(m.genre || []).join(", ")}</p>
-    <p>${m.release_date || ""}</p>
-    <p>${m.country || ""}</p>
-    <p>${m.sinopsis || ""}</p>
-  `;
-}
-
-/* FALLBACK VSEMBED */
-function renderFallback(id) {
-  document.getElementById("playerBox").innerHTML = `
-    <iframe src="https://vsembed.ru/embed/movie?tmdb=${id}"
-    style="width:100%;height:70vh;border:none;" allowfullscreen></iframe>
-  `;
-
-  document.getElementById("infoBox").innerHTML = `
-    <p>Streaming via fallback server</p>
-  `;
-}
-
-</script>
-
 </body>
 </html>
