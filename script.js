@@ -71,15 +71,7 @@ return "https://via.placeholder.com/500x750?text=No+Poster";
 
 }
 
-function getImage(path, size="w500"){
-
-if(!path){
-return "https://via.placeholder.com/500x750?text=No+Image";
-}
-
-/* fallback aman */
-return `https://image.tmdb.org/t/p/${size}${path}`;
-}
+return `https://image.tmdb.org/t/p/w500${path}`;
 
 }
 
