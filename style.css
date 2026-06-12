@@ -498,3 +498,138 @@ repeat(2,1fr);
 }
 
 }
+
+
+/* =========================
+   WATCH PAGE
+========================= */
+
+.player-section{
+padding:30px 0;
+}
+
+.player-wrapper{
+position:relative;
+width:100%;
+aspect-ratio:16/9;
+background:#000;
+overflow:hidden;
+border-radius:12px;
+}
+
+.player-wrapper iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+.player-overlay{
+position:absolute;
+inset:0;
+z-index:20;
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.player-overlay img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+#movieInfo{
+padding:30px 0;
+}
+
+#movieDetail{
+line-height:1.8;
+}
+
+.related-section{
+position:relative;
+padding:30px 0 60px;
+}
+
+.related-section h2{
+margin-bottom:20px;
+}
+
+.related-wrapper{
+position:relative;
+}
+
+.related-slider{
+display:flex;
+gap:12px;
+overflow-x:auto;
+scroll-behavior:smooth;
+scrollbar-width:none;
+}
+
+.related-slider::-webkit-scrollbar{
+display:none;
+}
+
+.related-card{
+flex:0 0 auto;
+width:180px;
+}
+
+.related-card img{
+width:100%;
+height:270px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.related-arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+
+width:60px;
+height:60px;
+
+border:none;
+border-radius:50%;
+
+background:rgba(0,0,0,.7);
+color:#fff;
+
+font-size:24px;
+cursor:pointer;
+
+z-index:50;
+}
+
+#relatedPrev{
+left:-30px;
+}
+
+#relatedNext{
+right:-30px;
+}
+
+.related-arrow:hover{
+background:#00d4ff;
+color:#000;
+}
+
+@media(max-width:768px){
+
+.related-arrow{
+display:none;
+}
+
+.related-card{
+width:150px;
+}
+
+.related-card img{
+height:225px;
+}
+
+}
