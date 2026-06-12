@@ -32,34 +32,51 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 
 <!-- NAVBAR -->
-<header>
+<header class="navbar">
 
-<nav class="navbar">
+  <a href="index.html" class="logo">
+    <i class="fa-solid fa-film"></i>
+    <span>TukarFollow</span>
+  </a>
 
-<a href="/" class="logo">
-  <i class="fa-solid fa-film"></i>
-  <span>TukarFollow</span>
-</a>
+  <div class="nav-right">
+    <input type="text" id="search" placeholder="Cari film...">
 
-<div class="searchBox">
-<input type="text" id="search" placeholder="Cari film...">
-<i class="fa-solid fa-magnifying-glass"></i>
-</div>
+    <select id="genreFilter">
+      <option value="">Genre</option>
+    </select>
 
-<!-- BURGER -->
-<div id="burger" data-state="closed">
-  <i class="fa-solid fa-bars"></i>
-</div>
+    <select id="yearFilter">
+      <option value="">Year</option>
+      <option value="2026">2026</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="classic">Classic</option>
+    </select>
+  </div>
 
-</nav>
+  <div id="burger">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+
+</header>
 
 <!-- MOBILE MENU -->
 <div id="mobileMenu">
-<input type="text" id="mobileSearch" placeholder="Cari film...">
-</div>
-  
 
-</header>
+  <input type="text" id="mobileSearch" placeholder="Cari film...">
+
+  <select id="mobileGenre"></select>
+
+  <select id="mobileYear">
+    <option value="">Year</option>
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+    <option value="classic">Classic</option>
+  </select>
+
+</div>
 
 
 
