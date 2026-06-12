@@ -97,11 +97,43 @@ cursor:pointer;
 
 .burger{
 display:none;
+
+width:42px;
+height:42px;
+
+position:relative;
+
 background:none;
 border:none;
-font-size:32px;
-color:#fff;
+
 cursor:pointer;
+}
+
+.burger span{
+position:absolute;
+
+left:8px;
+
+width:26px;
+height:3px;
+
+background:#fff;
+
+border-radius:10px;
+
+transition:.35s ease;
+}
+
+.burger span:nth-child(1){
+top:11px;
+}
+
+.burger span:nth-child(2){
+top:19px;
+}
+
+.burger span:nth-child(3){
+top:27px;
 }
 
 /* =========================
@@ -405,6 +437,20 @@ padding-top:30px;
 opacity:.6;
 }
 
+.burger.active span:nth-child(1){
+top:19px;
+transform:rotate(45deg);
+}
+
+.burger.active span:nth-child(2){
+opacity:0;
+transform:scale(0);
+}
+
+.burger.active span:nth-child(3){
+top:19px;
+transform:rotate(-45deg);
+}
 /* =========================
    MOBILE
 ========================= */
