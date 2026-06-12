@@ -2,102 +2,49 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TukarFollow</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movie Hub</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
-
 <body>
 
-<!-- NAVBAR CLEAN -->
-<header class="navbar">
+<header class="nav">
+  <div class="nav-left">
+    <div class="logo">MOVIEHUB</div>
+  </div>
 
-  <a href="index.html" class="logo">
-    <i class="fa-solid fa-film"></i>
-    <span>TukarFollow</span>
-  </a>
-
-  <!-- DESKTOP TOOLS -->
-  <div class="nav-tools">
-
+  <div class="nav-right" id="navMenu">
     <input type="text" id="search" placeholder="Search movie...">
 
-    <select id="genreFilter">
+    <select id="genre">
       <option value="">Genre</option>
+      <option>Horor</option>
+      <option>Sci-fi</option>
+      <option>Thriller</option>
     </select>
 
-    <select id="yearFilter">
-      <option value="">Year</option>
+    <select id="year">
+      <option value="">Rilis</option>
       <option value="2026">2026</option>
       <option value="2025">2025</option>
       <option value="2024">2024</option>
-      <option value="classic">Classic</option>
+      <option value="classic">Klasik</option>
     </select>
-
   </div>
 
-  <!-- BURGER MOBILE -->
-  <div id="burger">
-    <i class="fa-solid fa-bars"></i>
-  </div>
-
+  <div class="burger" id="burger">☰</div>
 </header>
 
-<!-- MOBILE MENU -->
-<div id="mobileMenu">
+<main>
+  <div id="grid" class="grid"></div>
 
-  <input type="text" id="mobileSearch" placeholder="Search...">
+  <div class="pagination" id="pagination"></div>
+</main>
 
-  <select id="mobileGenre"></select>
-
-  <select id="mobileYear">
-    <option value="">Year</option>
-    <option value="2026">2026</option>
-    <option value="2025">2025</option>
-    <option value="2024">2024</option>
-    <option value="classic">Classic</option>
-  </select>
-
-</div>
-
-<!-- HERO -->
-<section id="slider"></section>
-
-<!-- GRID -->
-<section>
-  <div id="movieGrid"></div>
-</section>
-
-<!-- PAGINATION -->
-<div id="pagination"></div>
-
-<!-- FOOTER -->
-<footer>
-  <p style="text-align:center;padding:20px;color:#aaa;">
-    © TukarFollow
-  </p>
+<footer class="footer">
+  <div>Home</div><div>Trending</div><div>Genre</div><div>Profile</div>
 </footer>
 
 <script src="script.js"></script>
-
-<!-- BURGER LOGIC CLEAN -->
-<script>
-const burger = document.getElementById("burger");
-const mobileMenu = document.getElementById("mobileMenu");
-
-burger?.addEventListener("click", () => {
-  const open = mobileMenu.style.display === "flex";
-  mobileMenu.style.display = open ? "none" : "flex";
-
-  burger.innerHTML = open
-    ? `<i class="fa-solid fa-bars"></i>`
-    : `<i class="fa-solid fa-xmark"></i>`;
-});
-</script>
-
 </body>
 </html>
