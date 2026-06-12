@@ -1,126 +1,75 @@
 const API = "b3b893873ed1bb7f175b2707afeea2a0";
 const BASE = "https://api.themoviedb.org/3";
 
-let page=1,genre="",year="",query="";
+let page = 1;
+let list = [];
+let index = 0;
 
-document.addEventListener("DOMContentLoaded",()=>{
-  burger();
-
-  if(document.getElementById("grid")){
-    genres();
-    load();
-    search();
-    years();
-  }
-
-  if(document.getElementById("frame")) watch();
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("feed")) loadFeed();
 });
 
-/* NAV */
-function burger(){
-  const b=document.getElementById("burgerBtn");
-  const m=document.getElementById("navMenu");
-  b.onclick=()=>m.classList.toggle("active");
+async function loadFeed() {
+  const r = await fetch(`${BASE}/trending/all/week?api_key=${API}&page=${page}`);
+  const d = await r.json();
+
+  list = d.results || [];
+  render();
+  swipe();
 }
 
-/* GENRE */
-async function genres(){
-  const r=await fetch(`${BASE}/genre/movie/list?api_key=${API}`);
-  const d=await r.json();
+function render() {
+  const f = document.getElementById("feed");
 
-  document.getElementById("genreMenu").innerHTML=
-  d.genres.map(g=>`<a href="#" onclick="setG(${g.id},'${g.name}')">${g.name}</a>`).join("");
-}
-
-function setG(id,name){
-  genre=id;query="";year="";page=1;
-  document.getElementById("title").innerText=name;
-  load();
-}
-
-/* LOAD */
-async function load(){
-  let url=`${BASE}/trending/all/week?api_key=${API}&page=${page}`;
-
-  if(query) url=`${BASE}/search/multi?api_key=${API}&query=${query}`;
-  if(genre) url=`${BASE}/discover/movie?api_key=${API}&with_genres=${genre}`;
-  if(year) url=`${BASE}/discover/movie?api_key=${API}&primary_release_year=${year}`;
-
-  const r=await fetch(url);
-  const d=await r.json();
-
-  render(d.results);
-}
-
-/* GRID */
-function render(items){
-  const g=document.getElementById("grid");
-
-  g.innerHTML=items.map(i=>{
-    const t=i.title||i.name;
-    const y=(i.release_date||"").split("-")[0]||"-";
-    const img=`https://image.tmdb.org/t/p/w500${i.poster_path}`;
+  f.innerHTML = list.map((i, idx) => {
+    const title = i.title || i.name;
+    const img = i.poster_path
+      ? `https://image.tmdb.org/t/p/w500${i.poster_path}`
+      : "";
 
     return `
-<div class="card" onclick="go(${i.id},'${encodeURIComponent(t)}')">
-<img src="${img}">
-<div class="badge left">WEBRIP</div>
-<div class="badge right">${y}</div>
-<div class="title">${t}</div>
-</div>`;
+    <div class="slide ${idx === 0 ? "active" : ""}" data-id="${i.id}">
+      <img src="${img}">
+      <div class="overlay">
+        <h2>${title}</h2>
+        <button onclick="go(${i.id},'${encodeURIComponent(title)}')">Play</button>
+      </div>
+    </div>`;
   }).join("");
 }
 
-function go(id,title){
-  location.href=`watch.html?id=${id}&title=${title}`;
+function go(id, title) {
+  location.href = `watch.html?id=${id}&title=${title}`;
 }
 
-/* SEARCH */
-function search(){
-  document.getElementById("searchForm").onsubmit=e=>{
-    e.preventDefault();
-    query=document.getElementById("searchInput").value;
-    load();
-  };
-}
+/* SWIPE SIMPLE */
+function swipe() {
+  let startY = 0;
 
-/* YEAR */
-function years(){
-  document.querySelectorAll(".year").forEach(x=>{
-    x.onclick=e=>{
-      e.preventDefault();
-      year=x.dataset.year;
-      load();
-    };
+  document.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+  });
+
+  document.addEventListener("touchend", e => {
+    let endY = e.changedTouches[0].clientY;
+
+    if (startY - endY > 50) next();
+    if (endY - startY > 50) prev();
   });
 }
 
-/* WATCH */
-async function watch(){
-  const id=new URLSearchParams(location.search).get("id");
-
-  const local=await fetch("movies.json").then(r=>r.json());
-  const m=local.find(x=>x.tmdb_id==id);
-
-  let iframe="";
-
-  if(m){
-    document.getElementById("mTitle").innerText=m.title;
-    document.getElementById("mMeta").innerText=m.release_date+" | "+m.country;
-    document.getElementById("mDesc").innerText=m.sinopsis;
-    iframe=m.iframe;
-  }
-
-  if(iframe) document.getElementById("frame").src=iframe;
-
-  layer();
+function next() {
+  if (index < list.length - 1) index++;
+  update();
 }
 
-/* LAYER 6 DETIK */
-function layer(){
-  const l=document.getElementById("layer");
-  const img=document.getElementById("layerImg");
+function prev() {
+  if (index > 0) index--;
+  update();
+}
 
-  setTimeout(()=>img.src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp",0);
-  setTimeout(()=>l.style.display="none",6000);
+function update() {
+  document.querySelectorAll(".slide").forEach((s, i) => {
+    s.style.transform = `translateY(${(i - index) * 100}%)`;
+  });
 }
