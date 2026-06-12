@@ -103,6 +103,10 @@ right:-10px;
 .related-card{width:140px;}
 .related-card img{height:200px;}
 }
+
+  .related-track{
+overflow:hidden;
+}
 </style>
 
 </head>
@@ -118,8 +122,14 @@ right:-10px;
 <div class="watch-container">
 
 <!-- PLAYER -->
-<div class="player-wrap">
+<div class="player-wrapper">
+
+<div id="playerOverlay" class="player-overlay">
+<img id="overlayImg" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp">
+</div>
+
 <iframe id="player"></iframe>
+
 </div>
 
 <!-- INFO -->
@@ -205,6 +215,35 @@ document.getElementById("next").onclick=()=>related.scrollBy({left:800,behavior:
 }
 
 load();
+
+
+  const overlay=document.getElementById("playerOverlay");
+const overlayImg=document.getElementById("overlayImg");
+
+const banners=[
+"https://via.placeholder.com/1280x720?text=situs1.com",
+"https://via.placeholder.com/1280x720?text=situs2.com",
+"https://via.placeholder.com/1280x720?text=situs3.com"
+];
+
+/* 0–3 detik gambar utama sudah dari HTML */
+
+/* 3–6 detik banner random */
+setTimeout(()=>{
+
+const rnd=banners[Math.floor(Math.random()*banners.length)];
+overlayImg.src=rnd;
+
+overlay.onclick=()=>{
+window.open(rnd,"_blank");
+};
+
+},3000);
+
+/* 6 detik hilang */
+setTimeout(()=>{
+overlay.style.display="none";
+},6000);
 </script>
 
 </body>
