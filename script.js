@@ -301,3 +301,113 @@ function renderRelated(list) {
   });
 }
 
+/* MODE SWITCH FIX (INDEX + NAV) */
+
+document.getElementById("moviesBtn")?.addEventListener("click", () => {
+  mode = "movie";
+  query = "";
+  page = 1;
+  loadMovies();
+});
+
+document.getElementById("seriesBtn")?.addEventListener("click", () => {
+  mode = "tv";
+  query = "";
+  page = 1;
+  loadMovies();
+});
+
+/* GENRE AUTO BUILD (DARI TMDB RESULT) */
+function extractGenres(list) {
+  const set = new Set();
+  list.forEach(m => {
+    if (m.genre_ids) {
+      m.genre_ids.forEach(g => set.add(g));
+    }
+  });
+  return [...set];
+}
+
+/* YEAR FILTER LOGIC */
+
+function getYear(date) {
+  if (!date) return "unknown";
+  return new Date(date).getFullYear();
+}
+
+/* CARD UPGRADE (WEBP + BADGE FIX FINAL) */
+function renderGrid(data) {
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  data.forEach(m => {
+    if (!m.poster_path) return;
+
+    const isLocal = !!m._local;
+
+    const badge =
+      isLocal
+        ? "WEBP"
+        : (mode === "tv" ? "SERIES" : "MOVIE");
+
+    const year = getYear(m.release_date || m.first_air_date);
+
+    grid.innerHTML += `
+      <div class="card" onclick="goWatch('${m.id}','${m.title || m.name}')">
+
+        <div class="badge">${badge}</div>
+        <div class="year">${year}</div>
+
+        <img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
+        
+        <div class="titleOverlay">
+          ${m.title || m.name}
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+/* SMART SEARCH FIX (ANTI SPAM + GLOBAL) */
+function smartSearch(q) {
+  query = q;
+  page = 1;
+  loadMovies();
+}
+
+search?.addEventListener("input", e => {
+  clearTimeout(timer);
+  timer = setTimeout(() => smartSearch(e.target.value), 400);
+});
+
+mobileSearch?.addEventListener("input", e => {
+  clearTimeout(timer);
+  timer = setTimeout(() => smartSearch(e.target.value), 400);
+});
+
+
+/* MOBILE MENU FIX FINAL */
+burger?.addEventListener("click", () => {
+  if (!mobileMenu) return;
+
+  const open = mobileMenu.style.display === "flex";
+
+  mobileMenu.style.display = open ? "none" : "flex";
+
+  burger.innerHTML = open
+    ? `<i class="fa-solid fa-bars"></i>`
+    : `<i class="fa-solid fa-xmark"></i>`;
+});
+
+
+
+/* AUTO INIT (WAJIB BIAR TIDAK BLANK) */
+window.addEventListener("load", () => {
+  if (grid) {
+    loadMovies();
+  }
+});
+
+
+
