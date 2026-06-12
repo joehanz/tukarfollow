@@ -1,49 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Watch</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memutar Film - CineStream</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body>
 
-<header class="nav">
-  <div class="nav-left">
-    <div class="logo">MOVIEHUB</div>
-  </div>
+    <!-- NAV BAR (Sama dengan Index) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Cine<span>Stream</span></a>
+            <button class="burger-menu" id="burgerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="nav-menu" id="navMenu">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari film atau series...">
+                    <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="nav-links">
+                    <div class="dropdown">
+                        <button class="dropbtn">Genre <i class="fa-solid fa-caret-down"></i></button>
+                        <div class="dropdown-content" id="genreDropdown"></div>
+                    </div>
+                    <div class="dropdown year-dropdown">
+                        <button class="dropbtn">Tahun <i class="fa-solid fa-caret-down"></i></button>
+                        <div class="dropdown-content">
+                            <a href="index.html?year=2026">2026</a>
+                            <a href="index.html?year=2025">2025</a>
+                            <a href="index.html?year=2024">2024</a>
+                            <a href="index.html?year=classic">Klasik</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <div class="nav-right" id="navMenu">
-    <input type="text" id="search" placeholder="Search movie...">
-    <select id="genre"><option>Genre</option></select>
-    <select id="year"><option>Rilis</option></select>
-  </div>
+    <!-- PLAYER AREA -->
+    <div class="player-container">
+        <div class="video-wrapper">
+            <!-- Iframe Placeholder -->
+            <div id="playerArea" class="player-area"></div>
 
-  <div class="burger" id="burger">☰</div>
-</header>
+            <!-- DOUBLE LAYER ADS OVERLAY -->
+            <div id="adsOverlay" class="ads-overlay active">
+                <!-- Layer 1: Segera Dimulai -->
+                <div id="layer1" class="layer active">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp" alt="Segera Dimulai">
+                </div>
+                <!-- Layer 2: Banner Situs Iklan -->
+                <div id="layer2" class="layer">
+                    <div class="banner-ads">
+                        <div class="banner-title">SPONSOR UTAMA</div>
+                        <div class="banner-grid">
+                            <a href="https://situs1.com" target="_blank" class="banner-link">SITUS1.COM</a>
+                            <a href="https://situs2.com" target="_blank" class="banner-link">SITUS2.COM</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Countdown Teks -->
+                <div class="countdown-text" id="countdownTxt">Video siap dalam 6s</div>
+            </div>
+        </div>
+    </div>
 
-<main>
+    <!-- MOVIE INFO SECTION -->
+    <div class="container watch-info">
+        <div class="movie-details">
+            <h1 id="watchTitle">Memuat Judul...</h1>
+            <div class="meta-info">
+                <span id="watchYear"><i class="fa-regular fa-calendar"></i> -</span>
+                <span id="watchCountry"><i class="fa-solid fa-earth-asia"></i> -</span>
+            </div>
+            <div class="genres" id="watchGenres"></div>
+            <p class="synopsis" id="watchSynopsis">Memuat sinopsis...</p>
+        </div>
+    </div>
 
-<div id="playerWrap">
-  <div id="overlay" class="overlay hidden"></div>
-  <iframe id="player" allowfullscreen></iframe>
-</div>
-
-<div id="info"></div>
-
-<h3>Related</h3>
-<div class="relatedWrap">
-  <button class="left">‹</button>
-  <div id="related" class="related"></div>
-  <button class="right">›</button>
-</div>
-
-</main>
-
-<footer class="footer">
-  <div>Home</div><div>Trending</div><div>Genre</div><div>Profile</div>
-</footer>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
