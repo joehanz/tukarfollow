@@ -71,7 +71,7 @@ return "https://via.placeholder.com/500x750?text=No+Poster";
 
 }
 
-return `https://image.tmdb.org/t/p/w500${path}`;
+https://image.tmdb.org/t/p/original${poster_path}
 
 }
 
