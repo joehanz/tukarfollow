@@ -1,84 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TukarFollow: Streaming Movie Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
-    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
-    <link rel="stylesheet" href="style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779" crossorigin="anonymous"></script>
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "tukarfollow",
-      "url": "https://github.io",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://github.ioindex.html?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Watch - TukarFollow</title>
+
+<link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-<style>
-    /* Container pembungkus area player */
-.player-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 360px; /* Sesuaikan dengan tinggi heroPlayer Anda */
-  background: #000;
-}
-
-/* Memastikan iframe mengisi penuh container */
-.player-wrapper iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* Styling Gambar Splash Screen */
-.splash-screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://googleusercontent.com');
-  background-size: cover;
-  background-position: center;
-  z-index: 10;
-  transition: opacity 0.5s ease; /* Durasi efek memudar smooth (0.5 detik) */
-  opacity: 1;
-}
-
-/* Class pemicu efek memudar */
-.splash-screen.fade-out {
-  opacity: 0;
-}
-
-/* Styling Layer Transparan di atas iframe */
-.hidden-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  background: transparent;
-  cursor: pointer;
-  display: none; /* Sembunyi dulu di awal, muncul setelah 3 detik */
-}
-
-</style>
 </head>
 
 <body>
@@ -93,19 +22,21 @@
 </a>
 
 <div class="searchBox">
-<input type="text" id="search" placeholder="Cari film..." oninput="searchMovie()">
+<input type="text" id="search" placeholder="Cari film...">
 <i class="fa-solid fa-magnifying-glass"></i>
 </div>
 
 <div id="burger">
 <i class="fa-solid fa-bars"></i>
 </div>
+
 </nav>
 
+<!-- MOBILE MENU -->
 <div id="mobileMenu">
-<a onclick="setMode('movie')">Movies</a>
-<a onclick="setMode('tv')">Series</a>
-<input id="mobileSearch" oninput="searchMovie()" placeholder="Cari film...">
+<a onclick="mode='movie'">Movies</a>
+<a onclick="mode='tv'">Series</a>
+<input id="mobileSearch" placeholder="Cari film...">
 </div>
 </header>
 
@@ -115,183 +46,19 @@
 <!-- INFO -->
 <div id="infoBox"></div>
 
-<!-- GRID MODE RESULT -->
-<div id="gridMode"></div>
-
 <!-- RELATED -->
 <div id="relatedWrap">
-
-<button id="leftArrow" class="arrowFloat" onclick="scrollRel(-1)">‹</button>
-<button id="rightArrow" class="arrowFloat" onclick="scrollRel(1)">›</button>
-
-<div class="scrollWrap" id="relGrid"></div>
-
+  <div class="scrollWrap" id="relGrid"></div>
 </div>
 
-    <!-- FOOTER -->
-<footer>
-<div class="footer-grid">
-<div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
-<div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
-<div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
-<div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
-</div>
-</footer>
+<!-- GRID MODE (SEARCH RESULT) -->
+<div id="gridMode"></div>
 
-<script>
-const KEY="b3b893873ed1bb7f175b2707afeea2a0";
+<!-- TOP BUTTON -->
+<button id="topBtn">↑</button>
 
-let moviesData=[];
-
-const id=new URLSearchParams(location.search).get("id");
-
-/* LOAD DATABASE */
-fetch("movies.json")
-  .then(r=>r.json())
-  .then(d=>{
-    moviesData=d;
-    init();
-  });
-
-/* INIT */
-async function init(){
-
-  const movie = moviesData.find(m => String(m.tmdb_id) === String(id));
-
-  if(!movie){
-    document.getElementById("heroPlayer").innerHTML="This media is unavailable at the moment.";
-    document.getElementById("infoBox").innerHTML="<p>Fresh content is cooking! Stay tuned</p>";
-    return;
-  }
-
-  renderPlayer(movie);
-  renderInfo(movie);
-  loadRelated();
-}
-
-/* SEARCH MODE (TMDB ONLY UI) */
-let mode="movie";
-
-function setMode(m){
-mode=m;
-toggleView();
-searchMovie();
-}
-
-function searchMovie(){
-const q=document.getElementById("search").value;
-if(!q)return;
-
-toggleView(true);
-
-fetch(`https://api.themoviedb.org/3/search/${mode}?api_key=${KEY}&query=${q}`)
-.then(r=>r.json())
-.then(d=>{
-renderGrid(d.results||[]);
-});
-}
-
-/* VIEW TOGGLE */
-function toggleView(showGrid=false){
-document.getElementById("heroPlayer").style.display=showGrid?"none":"flex";
-document.getElementById("infoBox").style.display=showGrid?"none":"block";
-document.getElementById("gridMode").style.display=showGrid?"grid":"none";
-}
-
-/* GRID RESULT */
-function renderGrid(list){
-const el=document.getElementById("gridMode");
-el.innerHTML="";
-
-list.forEach(m=>{
-if(!m.poster_path)return;
-
-el.innerHTML+=`
-<div class="card" onclick="go(${m.id})">
-<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-<div>${m.title||m.name}</div>
-</div>
-`;
-});
-}
-
-/* PLAYER */
-function renderPlayer(m){
-const el=document.getElementById("heroPlayer");
-
-if(!m || !m.iframe){
-el.innerHTML="This media is unavailable at the moment.";
-return;
-}
-
-el.innerHTML=`<iframe src="${m.iframe}" allowfullscreen></iframe>`;
-}
-
-/* INFO */
-function renderInfo(m){
-const el=document.getElementById("infoBox");
-
-el.innerHTML=`
-<h2>${m.title}</h2>
-<div>
-<span class="badge">${(m.genre||[]).join(", ")}</span>
-<span class="badge">${m.release_date||"-"}</span>
-<span class="badge">${m.country||"-"}</span>
-</div>
-<p>${m.sinopsis||""}</p>
-`;
-}
-
-/* RELATED (optional TMDB only) */
-function loadRelated(){
-fetch(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${KEY}`)
-.then(r=>r.json())
-.then(d=>renderRelated(d.results||[]));
-}
-
-function renderRelated(list){
-const el=document.getElementById("relGrid");
-el.innerHTML="";
-
-list.slice(0,10).forEach(m=>{
-if(!m.poster_path)return;
-
-el.innerHTML+=`
-<div class="relCard" onclick="go(${m.id})">
-<img src="https://image.tmdb.org/t/p/w300${m.poster_path}">
-<div class="relTitle">${m.title}</div>
-</div>
-`;
-});
-}
-
-function scrollRel(d){
-document.getElementById("relGrid")
-.scrollBy({left:d*300,behavior:"smooth"});
-}
-
-/* NAV */
-function go(id){
-location.href="watch.html?id="+id;
-}
-</script>
-
+<!-- SCRIPT ENGINE (WAJIB) -->
+<script src="script.js"></script>
 
 </body>
 </html>
