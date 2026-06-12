@@ -1,125 +1,257 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TukarFollow: Situs Streaming Movie Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
-    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
-    <link rel="stylesheet" href="style.css">
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      TukarFollow: Situs Streaming Movie Terlengkap & Bioskop Keren Gratis
+    </title>
+    <meta
+      name="description"
+      content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet."
+    />
+    <meta
+      name="keywords"
+      content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp"
+    />
+    <link rel="stylesheet" href="style.css" />
+
     <!-- Struktur SEO JSON-LD Sitelink Search Box -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "tukarfollow",
-      "url": "https://github.io",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://github.ioindex.html?search={search_term_string}",
-        "query-input": "required name=search_term_string"
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "tukarfollow",
+        "url": "https://github.io",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://github.ioindex.html?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }
-    }
     </script>
-</head>
+  </head>
 <body>
 
-<!-- NAV -->
-<nav>
+<!-- NAVBAR -->
 
-<div class="logo">
-<a href="/">TUKARFOLLOW</a>
+<nav class="navbar">
+
+<div class="nav-logo">
+<a href="index.html">TUKARFOLLOW</a>
 </div>
 
-<div class="nav-right">
+<div class="nav-right desktop-only">
 
 <input
-id="search"
-placeholder="Search..."
-oninput="searchMovie()"
->
+type="text"
+id="searchInput"
+placeholder="Cari film atau series..."
+autocomplete="off">
 
-<a href="index.html">All Movies</a>
-<a href="subindo.html">Sub ID Movies</a>
-<a href="idmovies.html">ID Movies</a>
-<a href="tvlokal.html">ID TV</a>
+<select id="genreFilter">
+<option value="">Semua Genre</option>
+</select>
+
+<select id="yearFilter">
+<option value="">Tahun Rilis</option>
+<option value="2026">2026</option>
+<option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="classic">Klasik</option>
+</select>
 
 </div>
 
-<div
-class="burger"
-onclick="toggleMenu()"
->
-☰
-</div>
+<button id="burgerBtn" class="burger mobile-only">
+
+<span></span>
+<span></span>
+<span></span>
+
+</button>
 
 </nav>
 
 <!-- MOBILE MENU -->
 
-<div
-class="mobile-menu"
-id="mobileMenu"
->
+<div id="mobileMenu" class="mobile-menu">
 
 <input
-placeholder="Search..."
-oninput="searchMovieMobile()"
->
+type="text"
+id="mobileSearchInput"
+placeholder="Cari film atau series..."
+autocomplete="off">
 
-<a href="index.html">All Movies</a>
-<a href="subindo.html">Sub ID Movies</a>
-<a href="idmovies.html">ID Movies</a>
-<a href="tvlokal.html">ID TV</a>
+<select id="mobileGenreFilter">
+<option value="">Semua Genre</option>
+</select>
+
+<select id="mobileYearFilter">
+<option value="">Tahun Rilis</option>
+<option value="2026">2026</option>
+<option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="classic">Klasik</option>
+</select>
 
 </div>
 
-<!-- GRID -->
+<!-- HERO -->
 
-<div
-id="grid"
-class="grid"
->
+<section id="heroSection" class="hero">
+
+
+<div class="hero-content">
+
+
+
+<h1 id="heroTitle">
+Loading...
+</h1>
+
+<p id="heroOverview">
+Memuat film pilihan...
+</p>
+
+<a id="heroWatchBtn" href="#">
+WATCH NOW
+</a>
+
+</div>
+
+</section>
+
+<!-- CONTENT -->
+
+<main class="container">
+
+<section class="section-title-wrap">
+
+<h2 class="section-title">
+Movies & Series
+</h2>
+
+</section>
+
+<div id="movieGrid" class="movie-grid">
+
+<!-- TMDB Render -->
+
 </div>
 
 <!-- PAGINATION -->
 
-<div
-class="pagination"
-id="pagination"
->
+<div id="pagination" class="pagination">
+
+<button id="prevPage">
+&lt;
+</button>
+
+<div id="pageNumbers">
+
 </div>
+
+<button id="nextPage">
+&gt;
+</button>
+
+</div>
+
+</main>
 
 <!-- FOOTER -->
-<footer>
+
+<footer class="footer">
+
 <div class="footer-grid">
-<div><h3>Genre</h3>
-            <!-- FIX: Menggunakan class dropdown-content agar terbaca otomatis oleh script.js -->
-            <p>
-                Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western
-            </p></div>
-<div><h3>About</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.
-            </p></div>
-<div><h3>Ads Disclosure</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.
-            </p></div>
-<div><h3>Disclaimer</h3>
-            <p>
-                <a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a>
-                hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.
-            </p></div>
+
+<div class="footer-col">
+
+<h3>About</h3>
+
+<a href="#">
+Tentang Kami
+</a>
+
+<a href="#">
+Kontak
+</a>
+
+<a href="#">
+DMCA
+</a>
+
 </div>
+
+<div class="footer-col">
+
+<h3>Genres</h3>
+
+<a href="#">
+Action
+</a>
+
+<a href="#">
+Drama
+</a>
+
+<a href="#">
+Horror
+</a>
+
+</div>
+
+<div class="footer-col">
+
+<h3>Pages</h3>
+
+<a href="#">
+Movies
+</a>
+
+<a href="#">
+Series
+</a>
+
+<a href="#">
+Popular
+</a>
+
+</div>
+
+<div class="footer-col">
+
+<h3>Legal</h3>
+
+<a href="#">
+Privacy Policy
+</a>
+
+<a href="#">
+Terms
+</a>
+
+<a href="#">
+Disclaimer
+</a>
+
+</div>
+
+</div>
+
+<div class="copyright">
+© 2026 TukarFollow
+</div>
+
 </footer>
 
-<script src="subindo.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
-
