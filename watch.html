@@ -217,32 +217,54 @@ document.getElementById("next").onclick=()=>related.scrollBy({left:800,behavior:
 load();
 
 
-  const overlay=document.getElementById("playerOverlay");
+const overlay=document.getElementById("playerOverlay");
 const overlayImg=document.getElementById("overlayImg");
 
 const banners=[
-"https://via.placeholder.com/1280x720?text=situs1.com",
-"https://via.placeholder.com/1280x720?text=situs2.com",
-"https://via.placeholder.com/1280x720?text=situs3.com"
+{img:"https://via.placeholder.com/1280x720?text=situs1.com",url:"https://situs1.com"},
+{img:"https://via.placeholder.com/1280x720?text=situs2.com",url:"https://situs2.com"},
+{img:"https://via.placeholder.com/1280x720?text=situs3.com",url:"https://situs3.com"}
 ];
 
-/* 0–3 detik gambar utama sudah dari HTML */
+let stage=0;
+let clicked=false;
 
-/* 3–6 detik banner random */
+/* STAGE 1 (0–3 detik) */
+overlayImg.src =
+"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
+
+/* STAGE 2 (3–6 detik) */
 setTimeout(()=>{
 
-const rnd=banners[Math.floor(Math.random()*banners.length)];
-overlayImg.src=rnd;
+stage=1;
 
+const pick=banners[Math.floor(Math.random()*banners.length)];
+
+overlayImg.src=pick.img;
+
+/* klik aktif hanya di stage ini */
 overlay.onclick=()=>{
-window.open(rnd,"_blank");
+
+clicked=true;
+window.open(pick.url,"_blank");
+
 };
 
 },3000);
 
-/* 6 detik hilang */
+/* STAGE 3 (6 detik selesai) */
 setTimeout(()=>{
+
 overlay.style.display="none";
+
+/* kalau user tidak klik, tetap lanjut iframe normal */
+if(!clicked){
+const iframe=document.getElementById("player");
+if(iframe && !iframe.src){
+iframe.src=`https://vsembed.su/embed/movie/${id}`;
+}
+}
+
 },6000);
 </script>
 
