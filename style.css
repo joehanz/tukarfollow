@@ -136,14 +136,11 @@ top:19px;
 top:27px;
 }
 
-/* =========================
-   MOBILE MENU
-========================= */
-.mobile-menu{
+ini mobile menu kalau habis diklik di scroll mobile menu ikut ke atas gimna cara agar tetep diam seperti nav .mobile-menu{
 display:none;
 flex-direction:column;
 gap:12px;
-position:fixed;
+position:
 
 padding:15px;
 
@@ -161,7 +158,6 @@ background:#141b22;
 color:#fff;
 padding:0 12px;
 }
-
 
 /* =========================
    HERO
