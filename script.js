@@ -575,3 +575,360 @@ return [];
 }
 
 }
+
+
+/* =====================================
+   WATCH PAGE ENGINE
+===================================== */
+
+const isWatchPage =
+location.pathname
+.toLowerCase()
+.includes("watch.html");
+
+if(isWatchPage){
+
+initWatch();
+
+}
+
+async function initWatch(){
+
+const params =
+new URLSearchParams(
+location.search
+);
+
+const movieId =
+params.get("id");
+
+if(!movieId) return;
+
+let customMovie = null;
+
+try{
+
+const res =
+await fetch(
+"movies.json"
+);
+
+const movies =
+await res.json();
+
+customMovie =
+movies.find(
+m => String(m.tmdb_id) === String(movieId)
+);
+
+}catch(err){
+
+console.log(err);
+
+}
+
+loadPlayer(
+movieId,
+customMovie
+);
+
+loadMovieInfo(
+movieId,
+customMovie
+);
+
+loadRelatedMovies(
+movieId
+);
+
+startOverlay();
+
+}
+
+/* =====================================
+   PLAYER
+===================================== */
+
+function loadPlayer(
+movieId,
+customMovie
+){
+
+const player =
+document.getElementById(
+"moviePlayer"
+);
+
+if(!player) return;
+
+if(
+customMovie &&
+customMovie.iframe
+){
+
+player.src =
+customMovie.iframe;
+
+}else{
+
+player.src =
+`https://vsembed.su/embed/movie/${movieId}`;
+
+}
+
+}
+
+/* =====================================
+   OVERLAY 6 DETIK
+===================================== */
+
+function startOverlay(){
+
+const overlay =
+document.getElementById(
+"playerOverlay"
+);
+
+if(!overlay) return;
+
+const ads = [
+
+{
+img:"https://via.placeholder.com/1200x675?text=Situs+1",
+url:"https://situs1.com"
+},
+
+{
+img:"https://via.placeholder.com/1200x675?text=Situs+2",
+url:"https://situs2.com"
+},
+
+{
+img:"https://via.placeholder.com/1200x675?text=Situs+3",
+url:"https://situs3.com"
+}
+
+];
+
+setTimeout(()=>{
+
+const random =
+ads[
+Math.floor(
+Math.random()*ads.length
+)
+];
+
+overlay.innerHTML =
+
+`
+<img
+src="${random.img}"
+style="width:100%;height:100%;object-fit:cover;cursor:pointer">
+`;
+
+overlay.onclick = ()=>{
+
+window.open(
+random.url,
+"_blank"
+);
+
+};
+
+},3000);
+
+setTimeout(()=>{
+
+overlay.style.display =
+"none";
+
+},6000);
+
+}
+
+/* =====================================
+   MOVIE INFO
+===================================== */
+
+async function loadMovieInfo(
+movieId,
+customMovie
+){
+
+const target =
+document.getElementById(
+"movieDetail"
+);
+
+if(!target) return;
+
+try{
+
+const res =
+await fetch(
+
+`${TMDB}/movie/${movieId}?api_key=${API_KEY}&language=id-ID`
+
+);
+
+const movie =
+await res.json();
+
+target.innerHTML =
+
+`
+<h1>${movie.title}</h1>
+
+<p>
+${movie.overview||""}
+</p>
+
+<br>
+
+<p>
+<b>Rilis:</b>
+${movie.release_date||"-"}
+</p>
+
+<p>
+<b>Negara:</b>
+${movie.production_countries?.[0]?.name||"-"}
+</p>
+
+<p>
+<b>Genre:</b>
+${movie.genres?.map(
+g=>g.name
+).join(", ")}
+</p>
+
+${
+customMovie?.sinopsis
+?
+`<p><br>${customMovie.sinopsis}</p>`
+:
+""
+}
+
+`;
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* =====================================
+   RELATED MOVIES
+===================================== */
+
+async function loadRelatedMovies(
+movieId
+){
+
+const slider =
+document.getElementById(
+"relatedSlider"
+);
+
+if(!slider) return;
+
+try{
+
+const res =
+await fetch(
+
+`${TMDB}/movie/${movieId}/recommendations?api_key=${API_KEY}`
+
+);
+
+const data =
+await res.json();
+
+slider.innerHTML = "";
+
+(data.results || [])
+.slice(0,12)
+.forEach(movie=>{
+
+slider.insertAdjacentHTML(
+
+"beforeend",
+
+`
+<a
+class="related-card"
+href="watch.html?id=${movie.id}&title=${encodeURIComponent(movie.title)}"
+>
+
+<img
+src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+alt="${movie.title}"
+>
+
+</a>
+`
+
+);
+
+});
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* =====================================
+   RELATED ARROW
+===================================== */
+
+const relatedPrev =
+document.getElementById(
+"relatedPrev"
+);
+
+const relatedNext =
+document.getElementById(
+"relatedNext"
+);
+
+const relatedSlider =
+document.getElementById(
+"relatedSlider"
+);
+
+if(
+relatedPrev &&
+relatedNext &&
+relatedSlider
+){
+
+relatedPrev.onclick = ()=>{
+
+relatedSlider.scrollBy({
+
+left:-1200,
+behavior:"smooth"
+
+});
+
+};
+
+relatedNext.onclick = ()=>{
+
+relatedSlider.scrollBy({
+
+left:1200,
+behavior:"smooth"
+
+});
+
+};
+
+}
