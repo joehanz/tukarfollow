@@ -260,5 +260,66 @@ document.getElementById("next").onclick=()=>related.scrollBy({left:800,behavior:
 load();
 </script>
 
+<script>
+  const overlayHTML = document.createElement("div");
+
+overlayHTML.style.position="absolute";
+overlayHTML.style.inset="0";
+overlayHTML.style.zIndex="999";
+overlayHTML.style.cursor="pointer";
+overlayHTML.style.display="flex";
+overlayHTML.style.alignItems="center";
+overlayHTML.style.justifyContent="center";
+overlayHTML.style.background="#000";
+
+const img=document.createElement("img");
+img.style.width="100%";
+img.style.height="100%";
+img.style.objectFit="cover";
+
+overlayHTML.appendChild(img);
+
+const playerWrap=document.querySelector(".player-wrap");
+playerWrap.style.position="relative";
+playerWrap.appendChild(overlayHTML);
+
+/* ===== DATA ===== */
+const startImg="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
+
+const banners=[
+{img:"https://via.placeholder.com/1280x720?text=situs1.com",url:"https://situs1.com"},
+{img:"https://via.placeholder.com/1280x720?text=situs2.com",url:"https://situs2.com"},
+{img:"https://via.placeholder.com/1280x720?text=situs3.com",url:"https://situs3.com"}
+];
+
+/* ===== STAGE 1 ===== */
+img.src=startImg;
+
+/* ===== STAGE 2 (3 detik) ===== */
+let clicked=false;
+let currentLink="";
+
+setTimeout(()=>{
+
+const pick=banners[Math.floor(Math.random()*banners.length)];
+
+img.src=pick.img;
+currentLink=pick.url;
+
+overlayHTML.onclick=()=>{
+clicked=true;
+window.open(currentLink,"_blank");
+};
+
+},3000);
+
+/* ===== STAGE 3 (6 detik selesai) ===== */
+setTimeout(()=>{
+
+overlayHTML.remove();
+
+},6000);
+</script>
+  
 </body>
 </html>
