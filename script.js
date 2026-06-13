@@ -32,9 +32,12 @@ const pageNumbers=document.getElementById("pageNumbers");
 const prevPage=document.getElementById("prevPage");
 const nextPage=document.getElementById("nextPage");
 
-const burgerBtn=document.getElementById("burgerBtn");
-const mobileMenu=document.getElementById("mobileMenu");
+const burger=document.getElementById("burgerBtn");
+const menu=document.getElementById("mobileMenu");
 
+burger.onclick=()=>{
+menu.classList.toggle("active");
+};
 /* =========================
 BURGER
 ========================= */
