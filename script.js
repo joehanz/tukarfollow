@@ -52,26 +52,23 @@ mobileMenu.classList.toggle("active");
 
 }
 
-/* =========================
-HELPERS
-========================= */
-
 function safeYear(date){
-
 if(!date) return "";
-
 return String(date).substring(0,4);
+}
 
+function getImage(path, size="w500"){
+if(!path){
+return "https://via.placeholder.com/500x750?text=No+Image";
+}
+return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
 function poster(path){
-
-if(!path){
-
-return "https://via.placeholder.com/500x750?text=No+Poster";
-
+return getImage(path, "w500");
 }
 
+function heroImage(path){
 return getImage(path, "w1280");
 }
 
