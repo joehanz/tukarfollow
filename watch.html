@@ -277,8 +277,9 @@ load();
 </script>
 
 <script>
-  console.log("overlay script running");
-  const overlayHTML = document.createElement("div");
+console.log("overlay script running");
+
+const overlayHTML=document.createElement("div");
 
 overlayHTML.style.position="absolute";
 overlayHTML.style.inset="0";
@@ -290,9 +291,13 @@ overlayHTML.style.justifyContent="center";
 overlayHTML.style.background="#000";
 
 const img=document.createElement("img");
+
+/* ===== FIX BANNER ===== */
 img.style.width="100%";
 img.style.height="100%";
-img.style.objectFit="cover";
+img.style.objectFit="contain";
+img.style.background="#000";
+img.style.display="block";
 
 overlayHTML.appendChild(img);
 
@@ -301,19 +306,30 @@ playerWrap.style.position="relative";
 playerWrap.appendChild(overlayHTML);
 
 /* ===== DATA ===== */
+
 const startImg="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
 
 const banners=[
-{img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rajarayapjakarta.webp",url:"https://rajarayap.com"},
-{img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/caturbangunsentosa.webp",url:"https://caturbangunsentosa.blogspot.com"},
-{img:"https://via.placeholder.com/1280x720?text=situs3.com",url:"https://ptdwiprima.blogspot.com"}
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rajarayapjakarta.webp",
+url:"https://rajarayap.com"
+},
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/caturbangunsentosa.webp",
+url:"https://caturbangunsentosa.blogspot.com"
+},
+{
+img:"https://via.placeholder.com/1280x720?text=situs3.com",
+url:"https://ptdwiprima.blogspot.com"
+}
 ];
 
 /* ===== STAGE 1 ===== */
+
 img.src=startImg;
 
-/* ===== STAGE 2 (3 detik) ===== */
-let clicked=false;
+/* ===== STAGE 2 ===== */
+
 let currentLink="";
 
 setTimeout(()=>{
@@ -323,19 +339,26 @@ const pick=banners[Math.floor(Math.random()*banners.length)];
 img.src=pick.img;
 currentLink=pick.url;
 
-overlayHTML.onclick=()=>{
-clicked=true;
-window.open(currentLink,"_blank");
-};
-
 },3000);
 
-/* ===== STAGE 3 (6 detik selesai) ===== */
+/* ===== CLICK ===== */
+
+overlayHTML.addEventListener("click",()=>{
+
+if(currentLink){
+window.open(currentLink,"_blank");
+}
+
+});
+
+/* ===== STAGE 3 ===== */
+
 setTimeout(()=>{
 
 overlayHTML.remove();
 
 },6000);
+
 </script>
   
 </body>
