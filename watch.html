@@ -303,6 +303,47 @@ const playerWrap=document.querySelector(".player-wrap");
 playerWrap.style.position="relative";
 playerWrap.appendChild(overlayHTML);
 
+/* ===== COUNTDOWN ===== */
+
+const countdown=document.createElement("div");
+
+countdown.style.position="absolute";
+countdown.style.top="10px";
+countdown.style.right="10px";
+countdown.style.zIndex="1000";
+countdown.style.background="rgba(0,0,0,.75)";
+countdown.style.color="#fff";
+countdown.style.padding="6px 10px";
+countdown.style.borderRadius="8px";
+countdown.style.fontSize="14px";
+countdown.style.fontWeight="bold";
+countdown.style.fontFamily="Arial,sans-serif";
+countdown.style.pointerEvents="none";
+
+overlayHTML.appendChild(countdown);
+
+/* total banner 12 detik (15s - 3s) */
+let seconds=12;
+
+setTimeout(()=>{
+
+countdown.textContent=seconds+"s";
+
+const timer=setInterval(()=>{
+
+seconds--;
+
+if(seconds<=0){
+clearInterval(timer);
+countdown.remove();
+}else{
+countdown.textContent=seconds+"s";
+}
+
+},1000);
+
+},3000);
+
 /* ===== DATA ===== */
 
 const startImg="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
