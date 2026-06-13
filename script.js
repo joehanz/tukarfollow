@@ -60,19 +60,19 @@ if(!date) return "";
 return String(date).substring(0,4);
 }
 
-function getImage(path, size="w500"){
+function getImage(path, size="w780"){
 if(!path){
 return "https://via.placeholder.com/500x750?text=No+Image";
 }
 return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
-/* GRID POSTER (ringan) */
+/* GRID POSTER (lebih tajam di desktop) */
 function poster(path){
-return getImage(path, "w500");
+return getImage(path, "w780");
 }
 
-/* HERO (besar & tajam) */
+/* HERO (paling tajam) */
 function heroImage(path){
 return getImage(path, "w1280");
 }
