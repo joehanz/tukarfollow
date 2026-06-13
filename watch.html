@@ -58,9 +58,17 @@ margin-bottom:10px;
 .related-track{
 display:flex;
 gap:10px;
-overflow-x:hidden;
+overflow-x:auto;
 scroll-behavior:smooth;
 padding:10px 0;
+
+/* hide scrollbar tapi tetap bisa swipe */
+scrollbar-width:none;      /* Firefox */
+-ms-overflow-style:none;   /* IE/Edge lama */
+}
+
+.related-track::-webkit-scrollbar{
+display:none;              /* Chrome/Safari */
 }
 
 .related-card{
