@@ -190,8 +190,8 @@ opacity:1;
 
 .hero{
 position:relative;
-height:65vh;
-min-height:520px;
+height:50vh;
+min-height:500px;
 
 display:flex;
 align-items:flex-end;
