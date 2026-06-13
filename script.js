@@ -52,6 +52,9 @@ mobileMenu.classList.toggle("active");
 
 }
 
+/* =========================
+HELPERS
+========================= */
 function safeYear(date){
 if(!date) return "";
 return String(date).substring(0,4);
@@ -64,13 +67,16 @@ return "https://via.placeholder.com/500x750?text=No+Image";
 return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
+/* GRID POSTER (ringan) */
 function poster(path){
 return getImage(path, "w500");
 }
 
+/* HERO (besar & tajam) */
 function heroImage(path){
 return getImage(path, "w1280");
 }
+
 
 /* =========================
 MOVIES.JSON
