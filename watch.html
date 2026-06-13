@@ -292,10 +292,8 @@ overlayHTML.style.background="#000";
 
 const img=document.createElement("img");
 
-/* ===== FIX BANNER ===== */
 img.style.width="100%";
 img.style.height="100%";
-img.style.objectFit="contain";
 img.style.background="#000";
 img.style.display="block";
 
@@ -324,11 +322,12 @@ url:"https://ptdwiprima.blogspot.com"
 }
 ];
 
-/* ===== STAGE 1 ===== */
+/* ===== STAGE 1 (0-3 detik) ===== */
 
+img.style.objectFit="cover";
 img.src=startImg;
 
-/* ===== STAGE 2 ===== */
+/* ===== STAGE 2 (3-8 detik) ===== */
 
 let currentLink="";
 
@@ -336,6 +335,7 @@ setTimeout(()=>{
 
 const pick=banners[Math.floor(Math.random()*banners.length)];
 
+img.style.objectFit="contain";
 img.src=pick.img;
 currentLink=pick.url;
 
@@ -351,13 +351,13 @@ window.open(currentLink,"_blank");
 
 });
 
-/* ===== STAGE 3 ===== */
+/* ===== STAGE 3 (8 detik selesai) ===== */
 
 setTimeout(()=>{
 
 overlayHTML.remove();
 
-},6000);
+},8000);
 
 </script>
   
