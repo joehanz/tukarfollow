@@ -111,7 +111,9 @@ right:-10px;
 <!-- NAV (reuse index style) -->
 <nav class="navbar">
 <div class="nav-logo">
-<a href="index.html">TUKARMOVIE</a>
+<a onclick="if(document.referrer){history.back()}else{location.href='index.html'}" style="cursor:pointer;">
+&lt;--- kembali
+</a>
 </div>
 </nav>
 
