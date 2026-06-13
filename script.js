@@ -35,9 +35,7 @@ const nextPage=document.getElementById("nextPage");
 const burger=document.getElementById("burgerBtn");
 const menu=document.getElementById("mobileMenu");
 
-burger.onclick=()=>{
-menu.classList.toggle("active");
-};
+
 /* =========================
 BURGER
 ========================= */
