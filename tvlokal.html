@@ -1,336 +1,434 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TukarFollow: Streaming Movie Terlengkap & Bioskop Keren Gratis</title>
-    <meta name="description" content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet.">
-    <meta name="keywords" content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp">
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "tukarfollow",
-      "url": "https://github.io",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://github.ioindex.html?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-</head>
-</body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TV Lokal Indonesia</title>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
-/* POPUP TV */
-.tv-popup{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.95);
-justify-content:center;
-align-items:center;
-z-index:99999;
-padding:15px;
+
+/* ================= TV LOKAL ================= */
+
+.watch-container{
+padding:20px;
+max-width:1200px;
+margin:auto;
 }
 
-.tv-box{
+.player-wrap{
+position:relative;
 width:100%;
-height:95vh;
+aspect-ratio:16/9;
+background:#000;
+border-radius:14px;
+overflow:hidden;
+}
+
+@media(min-width:1024px){
+.player-wrap{
+height:72vh;
+aspect-ratio:auto;
+}
+}
+
+.player-wrap iframe{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+border:none;
+}
+
+.channel-info{
+margin-top:20px;
+color:#fff;
+}
+
+.channel-info h1{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.channel-info p{
+opacity:.85;
+line-height:1.6;
+}
+
+.related{
+margin-top:30px;
 position:relative;
 }
 
-.close-tv{
-position:absolute;
-top:-10px;
-right:0;
-font-size:30px;
+.related h2{
+margin-bottom:10px;
+}
+
+.related-track{
+display:flex;
+gap:10px;
+overflow-x:auto;
+scroll-behavior:smooth;
+padding:10px 0;
+scrollbar-width:none;
+-ms-overflow-style:none;
+}
+
+.related-track::-webkit-scrollbar{
+display:none;
+}
+
+.related-card{
+flex:0 0 auto;
+width:160px;
 cursor:pointer;
-z-index:5;
 }
 
-.tv-frame{
+.related-card img{
 width:100%;
-height:100%;
-overflow:hidden;
+height:90px;
+object-fit:contain;
+background:#111;
 border-radius:10px;
-background:#000;
+padding:10px;
 }
 
-.tv-frame iframe{
-width:100%;
-height:100%;
-border:0;
+.arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:50px;
+height:50px;
+border:none;
+border-radius:50%;
+background:rgba(0,0,0,.7);
+color:#fff;
+font-size:22px;
+cursor:pointer;
+z-index:10;
 }
+
+#prev{
+left:-10px;
+}
+
+#next{
+right:-10px;
+}
+
+@media(max-width:768px){
+
+.arrow{
+display:none;
+}
+
+.related-card{
+width:130px;
+}
+
+.related-card img{
+height:70px;
+}
+
+}
+
 </style>
 
+</head>
+<body>
 
-
-<nav>
-
-<div class="logo"> 
-<a href="/"> TUKARFOLLOW </a>
-</div>
-
-<div class="nav-right">
-
-<input
-id="search"
-placeholder="Search..."
-oninput="searchSeries()"
->
-
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="seriesMenu">
-<a href="javascript:void(0)">
-Series ▼
-</a>
-<div class="seriesDropdown">
-<a href="series.html">
-All Series
-</a>
-<a href="series.html?mode=id">
-ID Series
+<nav class="navbar">
+<div class="nav-logo">
+<a onclick="if(document.referrer){history.back()}else{location.href='index.html'}" style="cursor:pointer;">
+&lt;--- kembali
 </a>
 </div>
-</div>
-
-  <a href="tvlokal.html">ID TV</a>
-</div>
-
-<div
-class="burger"
-onclick="toggleMenu()"
->
-☰
-</div>
-
 </nav>
 
-<div class="mobile-menu" id="mobileMenu">
+<div class="watch-container">
 
-<input placeholder="Search..." oninput="searchSeriesMobile()">
+<div class="player-wrap">
+<iframe id="player" allowfullscreen></iframe>
+</div>
 
-<a href="index.html">All Movies</a>
-<a href="idmovies.html">ID Movies</a>
-  
-<div class="mobileDrop">
-<div class="mobileDropBtn" onclick="toggleSeriesMobile()"> Series ▼ </div>
-  
-<div class="mobileDropContent" id="mobileSeries">
-<a href="series.html"> All Series </a>
-<a href="series.html?mode=id"> ID Series </a>
+<div class="channel-info" id="info">
+<h1>RCTI</h1>
+<p>Live Streaming TV Nasional</p>
+</div>
+
+<div class="related">
+
+<h2>TV CHANNELS</h2>
+
+<button id="prev" class="arrow">◀</button>
+<button id="next" class="arrow">▶</button>
+
+<div class="related-track" id="related"></div>
+
 </div>
 
 </div>
 
-<a href="tvlokal.html">ID TV</a>
-  
-</div>
+<footer class="footer">
 
-
-
-<!-- WADAH UTAMA KONTEN TV LOKAL -->
-<div id="mainTVContent">
-  <div id="tvGrid" class="grid">
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGcmN0aSUyRmluZXdzaWQmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU=')">
-      <img src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rcti.webp">
-      <div class="title">RCTI</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGZ3R2JTJGaW5ld3NpZCZoZWlnaHQ9MTAwJTI1JndpZHRoPTEwMCUyNQ==')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjiu-Khd7AaRd76KWyEwgvkJUlYvuDT9bW57BFvO1P1KtTaZKqPRRCOqf6y3xf0KWSxVPNjMWHjKQBrZ6g18j39zAqQkTBK7PQN6cjPF_SKAN1ud-kngVWI-h4GivQF_VgdjtWmuyV1kjYM4iyFrzipkf19cfInZ2_YiLIdocboYZ-bZa8fghE8S-ntVZ0/s800/gtv-by-caturbangunsentosa.blogspot.com.webp">
-      <div class="title">GTV</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGaW5ld3MlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhilUq6BOXHtpJExGhcXK53uvoIasMTVK1WnKw-H79jcxRzSsUJNWQzeH9oFNjgJ0iPadiGZeHnskankzd7BhlxmCF5syURKmX8hm5QlrqZVdyp9LEXUrDmlDYagUPkJP71QqVPCvKMaMA_gbKIzKMYNj_DwUfbMn6n-VGKnqEfXFrEALBtZbcbwuyfVE8/s830/streaming-inews-tv-by-caturbangunsentosa.blogspot.com.webp">
-      <div class="title">INews TV</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1')">
-      <img src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/mnctv.jpg">
-      <div class="title">MNC TV</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgiFFhC_2ijvegsF-MAVKsfi8CWrKx3ki3cQ2AtwD7e7ByTOyW-x2KPN_w2iauzRLm12n1avBIuPvlYMjJ4XiTc05H_0QBBXMzfsPOpqZDF35yzg_PdMnrfTO5oFSzsgP3nrH6SC_wsoH7MdKgnqusZKUVMHPM8FXdUFYQXTCUF7RdSNMmgo2wGo6eup_U/s512/idxtv-by-caturbangunsentosa.blogspot.com.webp">
-      <div class="title">IDX TV</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZjZG4tbGl2ZXR2LXN0dWRpby5tZXR1YmUuaWQlMkZtbmNuZXdzLm0zdTgmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU=')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpS7l-onR2vuMzAWhzLk-e4pz4On4Sa1AFwHj6DXuFCrCMwpzMGTY-QZVIEJKuRjtb9q8EfPwrgLjgNUXTar_eM4elqhAOOAv2KM5_6DgUeuoUAZnz0aG5BqtNO2lS3Z6AAqItpS0ld-bohib4uUig3jYfWVujSuo2LP2jsDqxRjhwuneZ6g983uAi8S8/s850/mnc-news-channel-terbaik-yang-paling-banyak-ditonton-fnc.webp">
-      <div class="title">MNC NEWS</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://20.detik.com/watch/livestreaming-transtv')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUmbEHj_4KxR_blYRzRC12OEZIjUwZp3RmqsdBVooEb6dtNx9xgIWWN9Upy3oF2Uap1wVfrVfFM6XZaDfV7DC5CfO599DDSHjjwwgveAYDs6_1uyhBIZYmazqKmshiCH-gq9p89OraeKCe6kP263KVGeOy59inLt2ZeM6QZ51X-amEQLsqx6xjlzzecfo/s900/png-clipart-trans-tv-logo-television-trans7-december-15-trans-television-angle.png">
-      <div class="title">TRANS TV</div>
-    </div>
-
-    <div class="card" onclick="openTV('https://20.detik.com/watch/livestreaming-trans7')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvPIR-tfsq3_0ZhvZE9othCG0R7fpU4-aMjriG2iXr4l6zmyD7RPA5f-XuDus2XRocbr8n-Aj4vwAsGdXTwXIIEGajMjWqUIMlC-zMUK8c0t2SvSKxBPLjKnoA9hztb6HLzfJoc2UbVHE9diorRZJRngLnnP_qiWkj2YeikqhUWNGz0m-srOCbKxKMFyY/s343/TRANS7.png">
-      <div class="title">TRANS 7</div>
-    </div>
-
-     <div class="card" onclick="openTV('https://www.cnnindonesia.com/tv/embed?smartautoplay=true')">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilfhG9oWJ14rNjgr8cNxTSl3aqxBpxX3gbl2NXsX4xUE1Pz__NOkhM2BLCI702x-Z3azAqqCXrMbi85tNIkqSCALiGPyy7aYfklSHxVL45xxXRq3tIPDQV8zqeHUDLsVP-y8MproyZ6NTBR5IeE5rLk7AJw9UEr10UZaJKv6D6jSc0sl-IWRF_DxWGDhQ/s1080/logo-cnn-indonesia-peta-indonesia-by-caturbangunsentosa.blogspot.com.webp">
-      <div class="title">CNN</div>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- POPUP TV PLAYER -->
-<div class="tv-popup" id="tvPopup">
-<div class="tv-box">
-<div class="close-tv" onclick="closeTV()">✖</div>
-<div class="tv-frame">
-<iframe id="tvFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
-</div>
-</div>
-</div>
-
-
-<!-- FOOTER -->
-<footer>
 <div class="footer-grid">
-<div><h3>Genre</h3>
-<p>Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Drama Korea, Family, Fantasy, History, Horror, Music, Mystey, Romenace, Science Fiction, Scify & Fantasy, Thriller, TV-Movie, War, Western</p></div>
-<div><h3>About</h3>
-<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> adalah situs streaming film gratis. Anda dapat menikmati koleksi film terbaru dan terpopuler dari berbagai negara dengan kualitas HD di sini.</p></div>
-<div><h3>Ads Disclosure</h3>
-<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> menampilkan iklan di situs ini, baik AdSense maupun iklan afiliasi. Mengklik iklan-iklan ini turut mendukung upaya kami untuk menjaga layanan kami tetap gratis.</p></div>
-<div><h3>Disclaimer</h3>
-<p><a onclick='location.href=&apos;/&apos;' style='cursor: pointer;'>TUKARFOLLOW</a> hanya menyediakan informasi tautan film yang tersedia di internet. Kami tidak menyimpan file video di server kami sendiri. Seluruh konten adalah milik dari penyedia asli masing-masing.</p></div>
+
+<div>
+<h3>TV Nasional</h3>
+<p>
+RCTI, GTV, iNews, MNC TV, IDX TV,
+MNC News, Trans TV, Trans7 dan CNN Indonesia.
+</p>
 </div>
+
+<div>
+<h3>About</h3>
+<p>
+TUKARFOLLOW menyediakan akses cepat ke berbagai siaran TV lokal Indonesia.
+</p>
+</div>
+
+<div>
+<h3>Ads Disclosure</h3>
+<p>
+Beberapa banner promosi ditampilkan untuk membantu operasional situs.
+</p>
+</div>
+
+<div>
+<h3>Disclaimer</h3>
+<p>
+Semua siaran berasal dari sumber resmi pihak ketiga.
+</p>
+</div>
+
+</div>
+
+<div class="copyright">
+© 2026 TukarFollow
+</div>
+
 </footer>
-  
-<!-- CORE LOGIC / JAVASCRIPT SYSTEM -->
-<script>
-function toggleMenu(){
-  document.getElementById("mobileMenu").classList.toggle("show");
+
+    <script>
+
+/* ================= CHANNEL DATA ================= */
+
+const channels=[
+
+{
+name:"RCTI",
+desc:"Live Streaming TV Nasional",
+logo:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rcti.webp",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGcmN0aSUyRmluZXdzaWQmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU="
+},
+
+{
+name:"GTV",
+desc:"Live Streaming GTV",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjiu-Khd7AaRd76KWyEwgvkJUlYvuDT9bW57BFvO1P1KtTaZKqPRRCOqf6y3xf0KWSxVPNjMWHjKQBrZ6g18j39zAqQkTBK7PQN6cjPF_SKAN1ud-kngVWI-h4GivQF_VgdjtWmuyV1kjYM4iyFrzipkf19cfInZ2_YiLIdocboYZ-bZa8fghE8S-ntVZ0/s800/gtv-by-caturbangunsentosa.blogspot.com.webp",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGZ3R2JTJGaW5ld3NpZCZoZWlnaHQ9MTAwJTI1JndpZHRoPTEwMCUyNQ=="
+},
+
+{
+name:"iNews TV",
+desc:"Live Streaming iNews",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhilUq6BOXHtpJExGhcXK53uvoIasMTVK1WnKw-H79jcxRzSsUJNWQzeH9oFNjgJ0iPadiGZeHnskankzd7BhlxmCF5syURKmX8hm5QlrqZVdyp9LEXUrDmlDYagUPkJP71QqVPCvKMaMA_gbKIzKMYNj_DwUfbMn6n-VGKnqEfXFrEALBtZbcbwuyfVE8/s830/streaming-inews-tv-by-caturbangunsentosa.blogspot.com.webp",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGaW5ld3MlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1"
+},
+
+{
+name:"MNC TV",
+desc:"Live Streaming MNC TV",
+logo:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/mnctv.jpg",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1"
+},
+
+{
+name:"IDX TV",
+desc:"Live Streaming IDX TV",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgiFFhC_2ijvegsF-MAVKsfi8CWrKx3ki3cQ2AtwD7e7ByTOyW-x2KPN_w2iauzRLm12n1avBIuPvlYMjJ4XiTc05H_0QBBXMzfsPOpqZDF35yzg_PdMnrfTO5oFSzsgP3nrH6SC_wsoH7MdKgnqusZKUVMHPM8FXdUFYQXTCUF7RdSNMmgo2wGo6eup_U/s512/idxtv-by-caturbangunsentosa.blogspot.com.webp",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZlbWJlZC5yY3RpcGx1cy5jb20lMkZsaXZlJTJGbW5jdHYlMkZpbmV3c2lkJmhlaWdodD0xMDAlMjUmd2lkdGg9MTAwJTI1"
+},
+
+{
+name:"MNC NEWS",
+desc:"Live Streaming MNC News",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpS7l-onR2vuMzAWhzLk-e4pz4On4Sa1AFwHj6DXuFCrCMwpzMGTY-QZVIEJKuRjtb9q8EfPwrgLjgNUXTar_eM4elqhAOOAv2KM5_6DgUeuoUAZnz0aG5BqtNO2lS3Z6AAqItpS0ld-bohib4uUig3jYfWVujSuo2LP2jsDqxRjhwuneZ6g983uAi8S8/s850/mnc-news-channel-terbaik-yang-paling-banyak-ditonton-fnc.webp",
+url:"https://sindikasi.inews.id/embed/video/YWdlbnQ9ZGVza3RvcCZ1cmw9aHR0cHMlM0ElMkYlMkZjZG4tbGl2ZXR2LXN0dWRpby5tZXR1YmUuaWQlMkZtbmNuZXdzLm0zdTgmaGVpZ2h0PTEwMCUyNSZ3aWR0aD0xMDAlMjU="
+},
+
+{
+name:"TRANS TV",
+desc:"Live Streaming Trans TV",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUmbEHj_4KxR_blYRzRC12OEZIjUwZp3RmqsdBVooEb6dtNx9xgIWWN9Upy3oF2Uap1wVfrVfFM6XZaDfV7DC5CfO599DDSHjjwwgveAYDs6_1uyhBIZYmazqKmshiCH-gq9p89OraeKCe6kP263KVGeOy59inLt2ZeM6QZ51X-amEQLsqx6xjlzzecfo/s900/png-clipart-trans-tv-logo-television-trans7-december-15-trans-television-angle.png",
+url:"https://20.detik.com/watch/livestreaming-transtv"
+},
+
+{
+name:"TRANS 7",
+desc:"Live Streaming Trans7",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvPIR-tfsq3_0ZhvZE9othCG0R7fpU4-aMjriG2iXr4l6zmyD7RPA5f-XuDus2XRocbr8n-Aj4vwAsGdXTwXIIEGajMjWqUIMlC-zMUK8c0t2SvSKxBPLjKnoA9hztb6HLzfJoc2UbVHE9diorRZJRngLnnP_qiWkj2YeikqhUWNGz0m-srOCbKxKMFyY/s343/TRANS7.png",
+url:"https://20.detik.com/watch/livestreaming-trans7"
+},
+
+{
+name:"CNN Indonesia",
+desc:"Live News Channel",
+logo:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilfhG9oWJ14rNjgr8cNxTSl3aqxBpxX3gbl2NXsX4xUE1Pz__NOkhM2BLCI702x-Z3azAqqCXrMbi85tNIkqSCALiGPyy7aYfklSHxVL45xxXRq3tIPDQV8zqeHUDLsVP-y8MproyZ6NTBR5IeE5rLk7AJw9UEr10UZaJKv6D6jSc0sl-IWRF_DxWGDhQ/s1080/logo-cnn-indonesia-peta-indonesia-by-caturbangunsentosa.blogspot.com.webp",
+url:"https://www.cnnindonesia.com/tv/embed?smartautoplay=true"
 }
 
-function openTV(url){
-  document.getElementById("tvPopup").style.display = "flex";
-  document.getElementById("tvFrame").src = url;
-}
+];
 
-function closeTV(){
-  document.getElementById("tvPopup").style.display = "none";
-  document.getElementById("tvFrame").src = "";
-}
+/* ================= PLAYER ================= */
 
-/* ========================================================
-   LOGIKA FILTER TV LOKAL AMAN & ANTI-BLOKIR (TANPA TMDB)
-   ======================================================== */
-function searchMovie() {
-  const query = document.getElementById("search").value.toLowerCase().trim();
-  filterTV(query);
-}
+const player=document.getElementById("player");
+const related=document.getElementById("related");
+const info=document.getElementById("info");
 
-function searchMovieMobile() {
-  const query = document.getElementById("searchMobile").value.toLowerCase().trim();
-  filterTV(query);
-}
+function loadChannel(ch){
 
-function filterTV(keyword) {
-  const grid = document.getElementById("tvGrid");
-  if (!grid) return;
-  
-  const cards = grid.getElementsByClassName("card");
-  
-  for (let i = 0; i < cards.length; i++) {
-    const titleContainer = cards[i].getElementsByClassName("title")[0];
-    if (titleContainer) {
-      const tvName = titleContainer.textContent.toLowerCase();
-      if (tvName.includes(keyword)) {
-        cards[i].style.display = "block";
-      } else {
-        cards[i].style.display = "none";
-      }
-    }
-  }
-}
-</script>
+player.src=ch.url;
 
-<script type='text/javascript'>
-//<![CDATA[
-(function () {
-  /* =======================================================
-     FIXED SECURITY SCRIPT: BEBAS DARI ERROR SYNTAX BARIS 299
-  ======================================================= */
-  var REDIRECT_URL = "/akses-ditolak.html";
-  var DETECT_DELAY = 1200;
-
-  function showWarning(msg){
-    if(document.getElementById('antiWarn')) return;
-    var d = document.createElement('div');
-    d.id = 'antiWarn';
-    d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
-    d.style = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);color:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;text-align:center;font-size:22px;font-family:Arial,sans-serif`;
-    document.body.appendChild(d);
-    setTimeout(function(){ location.href = REDIRECT_URL; }, 2500);
-  }
-
-  document.addEventListener('contextmenu', function (e) { e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan'); });
-  
-  document.addEventListener('keydown', function (e) {
-    // Memperbaiki validasi array keyCode agar tidak merusak interpretasi browser
-    var blockKeys =;
-    if (
-      (e.ctrlKey && blockKeys.indexOf(e.keyCode) !== -1) || 
-      e.keyCode === 123
-    ) {
-      e.preventDefault();
-      showWarning('🚫 Akses developer tidak diizinkan');
-    }
-  });
-
-  setInterval(function(){
-    var t = new Image();
-    Object.defineProperty(t,'id',{ get:function(){ showWarning('🛑 DevTools terdeteksi'); throw 'DevTools Blocked'; } });
-    console.log(t);
-  }, DETECT_DELAY);
-
-  var css = document.createElement('style');
-  css.innerHTML = `body {-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;} img {pointer-events:none;}`;
-  document.head.appendChild(css);
-
-  var wm = document.createElement('div');
-  wm.innerHTML = 'Web design by joehanz';
-  wm.title = 'Providing website creation services at affordable prices';
-  wm.onclick = function(){ window.open('https://freelancer.co.id'); };
-  wm.style = `position:fixed;bottom:6px;right:5%;opacity:.25;font-size:11px;z-index:999999;color:#fff;cursor:pointer;`;
-  document.body.appendChild(wm);
-})();
-//]]>
-
-      </script>
-
-</script>
-    function toggleSeriesMobile(){
-
-document
-.getElementById(
-"mobileSeries"
-)
-.classList
-.toggle(
-"show"
-);
+info.innerHTML=`
+<h1>${ch.name}</h1>
+<p>${ch.desc}</p>
+`;
 
 }
+
+/* DEFAULT CHANNEL = RCTI */
+
+loadChannel(channels[0]);
+
+/* ================= REMOTE TV ================= */
+
+channels.forEach(ch=>{
+
+related.innerHTML+=`
+<div class="related-card">
+<img src="${ch.logo}" alt="${ch.name}">
+</div>
+`;
+
+});
+
+document.querySelectorAll(".related-card").forEach((card,index)=>{
+
+card.onclick=()=>{
+
+loadChannel(channels[index]);
+
+};
+
+});
+
+/* ================= SLIDER ================= */
+
+document.getElementById("prev").onclick=()=>{
+
+related.scrollBy({
+left:-800,
+behavior:"smooth"
+});
+
+};
+
+document.getElementById("next").onclick=()=>{
+
+related.scrollBy({
+left:800,
+behavior:"smooth"
+});
+
+};
+
+/* ================= CTA OVERLAY ================= */
+
+const overlayHTML=document.createElement("div");
+
+overlayHTML.style.position="absolute";
+overlayHTML.style.inset="0";
+overlayHTML.style.zIndex="999";
+overlayHTML.style.display="flex";
+overlayHTML.style.alignItems="center";
+overlayHTML.style.justifyContent="center";
+overlayHTML.style.background="#000";
+overlayHTML.style.cursor="pointer";
+
+const img=document.createElement("img");
+
+img.style.width="100%";
+img.style.height="100%";
+img.style.objectFit="contain";
+
+overlayHTML.appendChild(img);
+
+document.querySelector(".player-wrap").appendChild(overlayHTML);
+
+/* countdown */
+
+const countdown=document.createElement("div");
+
+countdown.style.position="absolute";
+countdown.style.top="10px";
+countdown.style.right="10px";
+countdown.style.background="rgba(0,0,0,.75)";
+countdown.style.color="#fff";
+countdown.style.padding="6px 10px";
+countdown.style.borderRadius="8px";
+countdown.style.fontWeight="bold";
+countdown.style.zIndex="1000";
+
+overlayHTML.appendChild(countdown);
+
+/* banners */
+
+const banners=[
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rajarayapjakarta.webp",
+url:"https://rajarayap.com"
+},
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/caturbangunsentosa.webp",
+url:"https://caturbangunsentosa.blogspot.com"
+}
+];
+
+const pick=banners[Math.floor(Math.random()*banners.length)];
+
+img.src=pick.img;
+
+overlayHTML.onclick=()=>{
+
+window.open(pick.url,"_blank");
+
+};
+
+let seconds=12;
+
+countdown.textContent=seconds+"s";
+
+const timer=setInterval(()=>{
+
+seconds--;
+
+if(seconds<=0){
+
+clearInterval(timer);
+
+overlayHTML.remove();
+
+}else{
+
+countdown.textContent=seconds+"s";
+
+}
+
+},1000);
+
 </script>
 
 </body>
