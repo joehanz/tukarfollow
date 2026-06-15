@@ -1,304 +1,368 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Series Streaming</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Series Streaming - TukarFollow</title>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#0b0b0b;
+
+/* =========================
+SERIES GRID
+========================= */
+
+.series-container{
+max-width:1400px;
+margin:auto;
+padding:20px;
+}
+
+.series-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fill,minmax(180px,1fr));
+gap:20px;
+padding-bottom:40px;
+}
+
+.series-card{
+position:relative;
+overflow:hidden;
+border-radius:14px;
+background:#141b22;
+cursor:pointer;
+transition:.3s;
+}
+
+.series-card:hover{
+transform:translateY(-5px);
+box-shadow:
+0 0 25px rgba(0,212,255,.25);
+}
+
+.series-poster{
+width:100%;
+height:270px;
+object-fit:cover;
+display:block;
+}
+
+.series-title{
+padding:10px;
+font-size:14px;
+font-weight:600;
+text-align:center;
 color:#fff;
 }
 
-/* ===== GRID ===== */
-#gridView{
-padding:15px;
+.series-year{
+position:absolute;
+top:10px;
+right:10px;
+background:#00d4ff;
+color:#000;
+font-size:12px;
+font-weight:bold;
+padding:4px 8px;
+border-radius:8px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-gap:10px;
-}
+/* =========================
+PAGINATION
+========================= */
 
-.card{
-cursor:pointer;
-transition:.2s;
-}
-
-.card img{
-width:100%;
-height:220px;
-object-fit:cover;
-border-radius:10px;
-}
-
-.card:hover{
-transform:scale(1.05);
-}
-
-/* ===== PAGINATION ===== */
-.pagination{
+.pagination-wrap{
 display:flex;
 justify-content:center;
 align-items:center;
-gap:10px;
-padding:15px;
+gap:8px;
 flex-wrap:wrap;
+margin:30px 0;
 }
 
-.pagination button{
-background:#222;
-color:#fff;
+.pagination-wrap button{
+padding:10px 14px;
 border:none;
-padding:8px 12px;
-border-radius:6px;
+border-radius:8px;
+background:#141b22;
+color:#fff;
 cursor:pointer;
 }
 
-.pagination button.active{
-background:#e50914;
-}
-
-/* ===== PLAYER ===== */
-#playerView{
-display:none;
-padding:15px;
-}
-
-.player-box{
-width:100%;
-aspect-ratio:16/9;
-background:#000;
-border-radius:10px;
-overflow:hidden;
-}
-
-.player-box iframe{
-width:100%;
-height:100%;
-border:none;
-}
-
-/* ===== CONTROL ===== */
-.controls{
-margin-top:10px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-align-items:center;
-}
-
-select{
-padding:8px;
-border-radius:6px;
-border:none;
-background:#222;
-color:#fff;
-}
-
-#playBtn{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-background:#e50914;
-color:#fff;
-cursor:pointer;
+.pagination-wrap button.active{
+background:#00d4ff;
+color:#000;
 font-weight:bold;
 }
 
-.backBtn{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-background:#444;
-color:#fff;
-cursor:pointer;
+@media(max-width:768px){
+
+.series-grid{
+grid-template-columns:
+repeat(auto-fill,minmax(140px,1fr));
+gap:12px;
 }
+
+.series-poster{
+height:220px;
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
 
-<!-- GRID -->
-<div id="gridView">
-<div class="grid" id="grid"></div>
-<div class="pagination" id="pagination"></div>
-</div>
+<nav class="navbar">
 
-<!-- PLAYER -->
-<div id="playerView">
+<div class="nav-logo">
 
-<div class="player-box">
-<iframe id="iframe"></iframe>
-</div>
+<a href="index.html">
 
-<div class="controls">
+TUKARFOLLOW
 
-<button class="backBtn" onclick="backToGrid()">← Back</button>
-
-<select id="seasonSel"></select>
-<select id="episodeSel"></select>
-
-<button id="playBtn">▶ Play</button>
+</a>
 
 </div>
 
+</nav>
+
+<div class="series-container">
+
+<div
+class="series-grid"
+id="seriesGrid">
 </div>
 
-<script>
-const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
-
-let page = 1;
-let totalPages = 1000;
-
-let currentId = null;
-
-let selectedSeason = 1;
-let selectedEpisode = 1;
-
-/* ===== ELEMENT ===== */
-const grid = document.getElementById("grid");
-const pagination = document.getElementById("pagination");
-
-const gridView = document.getElementById("gridView");
-const playerView = document.getElementById("playerView");
-
-const iframe = document.getElementById("iframe");
-
-const seasonSel = document.getElementById("seasonSel");
-const episodeSel = document.getElementById("episodeSel");
-
-const playBtn = document.getElementById("playBtn");
-
-/* ================= LOAD SERIES ================= */
-async function loadSeries(p){
-page = p;
-
-const res = await fetch(
-`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&page=${p}`
-);
-const data = await res.json();
-
-grid.innerHTML = "";
-
-data.results.forEach(tv=>{
-grid.innerHTML += `
-<div class="card" onclick="openSeries(${tv.id})">
-<img src="https://image.tmdb.org/t/p/w500${tv.poster_path}">
+<div
+class="pagination-wrap"
+id="pagination">
 </div>
-`;
-});
 
-totalPages = data.total_pages;
-renderPagination();
+</div>
+
+  <script>
+
+const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
+
+let currentPage=1;
+let totalPages=1;
+
+const seriesGrid=
+document.getElementById("seriesGrid");
+
+const pagination=
+document.getElementById("pagination");
+
+/* =========================
+HELPER
+========================= */
+
+function safeYear(date){
+
+if(!date) return "";
+
+return String(date).substring(0,4);
+
 }
 
-/* ================= PAGINATION INDEX STYLE ================= */
+function poster(path){
+
+if(!path){
+
+return "https://via.placeholder.com/500x750?text=No+Image";
+
+}
+
+return `https://image.tmdb.org/t/p/w500${path}`;
+
+}
+
+/* =========================
+LOAD SERIES
+========================= */
+
+async function loadSeries(page=1){
+
+currentPage=page;
+
+try{
+
+const res=
+await fetch(
+`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&page=${page}`
+);
+
+const data=
+await res.json();
+
+totalPages=
+Math.min(
+data.total_pages || 1,
+500
+);
+
+renderGrid(
+data.results || []
+);
+
+renderPagination();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+/* =========================
+GRID
+========================= */
+
+function renderGrid(list){
+
+seriesGrid.innerHTML="";
+
+list.forEach(tv=>{
+
+const title=
+tv.name || "Unknown";
+
+const year=
+safeYear(
+tv.first_air_date
+);
+
+seriesGrid.innerHTML+=`
+
+<a
+class="series-card"
+href="serieswatch.html?id=${tv.id}">
+
+<span class="series-year">
+${year}
+</span>
+
+<img
+class="series-poster"
+src="${poster(tv.poster_path)}"
+alt="${title}"
+loading="lazy">
+
+<div class="series-title">
+${title}
+</div>
+
+</a>
+
+`;
+
+});
+
+}
+
+/* =========================
+PAGINATION
+========================= */
+
 function renderPagination(){
 
-pagination.innerHTML = "";
+pagination.innerHTML="";
 
-let start = Math.floor((page-1)/5)*5 + 1;
-let end = start + 4;
+let start=
+Math.floor(
+(currentPage-1)/5
+)*5+1;
 
-if(start > 1){
-pagination.innerHTML += `<button onclick="loadSeries(${start-1})"><</button>`;
-}
+let end=
+start+4;
 
-for(let i=start;i<=end;i++){
-if(i > totalPages) break;
+/* tombol < */
 
-pagination.innerHTML += `
-<button class="${i===page?'active':''}" onclick="loadSeries(${i})">${i}</button>
+if(start>1){
+
+pagination.innerHTML+=`
+
+<button
+onclick="loadSeries(${start-1})">
+
+&lt;
+
+</button>
+
 `;
+
 }
 
-if(end < totalPages){
-pagination.innerHTML += `<button onclick="loadSeries(${end+1})">></button>`;
-}
-}
+/* nomor */
 
-/* ================= OPEN SERIES ================= */
-async function openSeries(id){
+for(
+let i=start;
+i<=end;
+i++
+){
 
-currentId = id;
+if(i>totalPages)
+break;
 
-gridView.style.display = "none";
-playerView.style.display = "block";
+pagination.innerHTML+=`
 
-/* get TV detail */
-const res = await fetch(
-`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}`
-);
-const tv = await res.json();
+<button
+class="${
+i===currentPage
+?
+'active'
+:
+''
+}"
 
-/* seasons */
-seasonSel.innerHTML = "";
+onclick="loadSeries(${i})">
 
-tv.seasons.forEach(s=>{
-if(s.season_number !== undefined){
-seasonSel.innerHTML += `
-<option value="${s.season_number}">Season ${s.season_number}</option>
+${i}
+
+</button>
+
 `;
-}
-});
 
-selectedSeason = tv.seasons[0]?.season_number || 1;
-
-loadEpisodes(selectedSeason);
 }
 
-/* ================= LOAD EPISODES ================= */
-async function loadEpisodes(season){
+/* tombol > */
 
-selectedSeason = season;
+if(end<totalPages){
 
-const res = await fetch(
-`https://api.themoviedb.org/3/tv/${currentId}/season/${season}?api_key=${API_KEY}`
-);
-const data = await res.json();
+pagination.innerHTML+=`
 
-episodeSel.innerHTML = "";
+<button
+onclick="loadSeries(${end+1})">
 
-data.episodes.forEach(ep=>{
-episodeSel.innerHTML += `
-<option value="${ep.episode_number}">Episode ${ep.episode_number}</option>
+&gt;
+
+</button>
+
 `;
-});
 
-selectedEpisode = 1;
 }
 
-/* ================= PLAY ================= */
-function playVideo(){
-
-iframe.src = `https://vsembed.su/embed/tv/${currentId}/${selectedSeason}/${selectedEpisode}`;
 }
 
-/* ================= EVENTS ================= */
-seasonSel.onchange = ()=>{
-loadEpisodes(seasonSel.value);
-};
+/* =========================
+INIT
+========================= */
 
-episodeSel.onchange = ()=>{
-selectedEpisode = episodeSel.value;
-};
-
-playBtn.onclick = ()=>{
-playVideo();
-};
-
-function backToGrid(){
-playerView.style.display = "none";
-gridView.style.display = "block";
-}
-
-/* INIT */
 loadSeries(1);
+
 </script>
 
 </body>
