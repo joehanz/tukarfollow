@@ -54,12 +54,21 @@ id="searchInput"
 placeholder="Cari film atau series..."
 autocomplete="off">
 
-<select id="nn">
-<option value="">Menu</option>
-<option value="index.html">Film</option>
-<option value="series.html">Series</option>
-<option value="tvlokal.html">TV Lokal</option>
-</select>
+<div class="nav-menu">
+
+<span onclick="location.href='index.html'">
+🎬 Film
+</span>
+
+<span onclick="location.href='series.html'">
+📺 Series
+</span>
+
+<span onclick="location.href='tvlokal.html'">
+📡 TV Lokal
+</span>
+
+</div>
 
 <select id="genreFilter">
 <option value="">Semua Genre</option>
@@ -72,8 +81,6 @@ autocomplete="off">
 <option value="2024">2024</option>
 <option value="classic">Klasik</option>
 </select>
-
-<a href="tvlokal.html">TV Lokal</a>
   
 </div>
 
