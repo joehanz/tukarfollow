@@ -11,171 +11,178 @@
 
 <style>
 
-/* =========================
-NAVBAR
-========================= */
+  /* =========================
+  NAVBAR
+  ========================= */
 
-.navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-flex-wrap:wrap;
-padding:15px 20px;
-}
+  .navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  padding:15px 20px;
+  }
 
-.nav-tools{
-display:flex;
-gap:10px;
-align-items:center;
-flex-wrap:wrap;
-}
+  .nav-logo{
+  font-weight:bold;
+  white-space:nowrap;
+  }
 
-.nav-tools input,
-.nav-tools select{
-height:42px;
-padding:0 12px;
-border:none;
-border-radius:8px;
-background:#141b22;
-color:#fff;
-}
+  .nav-tools{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  flex:1;
+  }
 
-#searchInput{
-width:260px;
-}
+  /* input & select */
+  .nav-tools input,
+  .nav-tools select{
+  height:42px;
+  padding:0 12px;
+  border:none;
+  border-radius:8px;
+  background:#141b22;
+  color:#fff;
+  }
 
-#genreFilter{
-width:180px;
-}
+  /* search fleksibel */
+  #searchInput{
+  flex:1;
+  min-width:180px;
+  }
 
-#yearFilter{
-width:140px;
-}
+  /* dropdown filter */
+  #genreFilter,
+  #yearFilter,
+  #menuFilter{
+  min-width:140px;
+  }
 
-/* =========================
-SERIES GRID
-========================= */
+  /* =========================
+  SERIES GRID
+  ========================= */
 
-.series-container{
-max-width:1400px;
-margin:auto;
-padding:20px;
-}
+  .series-container{
+  max-width:1400px;
+  margin:auto;
+  padding:20px;
+  }
 
-.series-grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fill,minmax(180px,1fr));
-gap:20px;
-padding-bottom:40px;
-}
+  .series-grid{
+  display:grid;
+  grid-template-columns:
+  repeat(auto-fill,minmax(180px,1fr));
+  gap:20px;
+  padding-bottom:40px;
+  }
 
-.series-card{
-position:relative;
-overflow:hidden;
-border-radius:14px;
-background:#141b22;
-cursor:pointer;
-transition:.3s;
-text-decoration:none;
-}
+  .series-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  background:#141b22;
+  cursor:pointer;
+  transition:.3s;
+  text-decoration:none;
+  }
 
-.series-card:hover{
-transform:translateY(-5px);
-box-shadow:
-0 0 25px rgba(0,212,255,.25);
-}
+  .series-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 25px rgba(0,212,255,.25);
+  }
 
-.series-poster{
-width:100%;
-height:270px;
-object-fit:cover;
-display:block;
-}
+  .series-poster{
+  width:100%;
+  height:270px;
+  object-fit:cover;
+  display:block;
+  }
 
-.series-title{
-padding:10px;
-font-size:14px;
-font-weight:600;
-text-align:center;
-color:#fff;
-}
+  .series-title{
+  padding:10px;
+  font-size:14px;
+  font-weight:600;
+  text-align:center;
+  color:#fff;
+  }
 
-.series-year{
-position:absolute;
-top:10px;
-right:10px;
-background:#00d4ff;
-color:#000;
-font-size:12px;
-font-weight:bold;
-padding:4px 8px;
-border-radius:8px;
-}
+  .series-year{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#00d4ff;
+  color:#000;
+  font-size:12px;
+  font-weight:bold;
+  padding:4px 8px;
+  border-radius:8px;
+  }
 
-/* =========================
-PAGINATION
-========================= */
+  /* =========================
+  PAGINATION
+  ========================= */
 
-.pagination-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:8px;
-flex-wrap:wrap;
-margin:30px 0;
-}
+  .pagination-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:30px 0;
+  }
 
-.pagination-wrap button{
-padding:10px 14px;
-border:none;
-border-radius:8px;
-background:#141b22;
-color:#fff;
-cursor:pointer;
-}
+  .pagination-wrap button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#141b22;
+  color:#fff;
+  cursor:pointer;
+  }
 
-.pagination-wrap button.active{
-background:#00d4ff;
-color:#000;
-font-weight:bold;
-}
+  .pagination-wrap button.active{
+  background:#00d4ff;
+  color:#000;
+  font-weight:bold;
+  }
 
-/* =========================
-MOBILE
-========================= */
+  /* =========================
+  MOBILE
+  ========================= */
 
-@media(max-width:768px){
+  @media(max-width:768px){
 
-.navbar{
-flex-direction:column;
-align-items:stretch;
-}
+  .navbar{
+  flex-direction:column;
+  align-items:stretch;
+  }
 
-.nav-tools{
-width:100%;
-flex-direction:column;
-}
+  .nav-tools{
+  width:100%;
+  flex-direction:column;
+  }
 
-#searchInput,
-#genreFilter,
-#yearFilter{
-width:100%;
-}
+  #searchInput,
+  #genreFilter,
+  #yearFilter,
+  #menuFilter{
+  width:100%;
+  }
 
-.series-grid{
-grid-template-columns:
-repeat(auto-fill,minmax(140px,1fr));
-gap:12px;
-}
+  .series-grid{
+  grid-template-columns:
+  repeat(auto-fill,minmax(140px,1fr));
+  gap:12px;
+  }
 
-.series-poster{
-height:220px;
-}
+  .series-poster{
+  height:220px;
+  }
 
-}
-
+  }
 </style>
 
   
