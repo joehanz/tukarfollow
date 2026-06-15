@@ -419,91 +419,92 @@ Semua siaran berasal dari sumber resmi pihak ketiga.
 
 const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
-let currentPage=1;
-let totalPages=1;
+/* =========================
+ELEMENTS
+========================= */
 
-const seriesGrid=
-document.getElementById("seriesGrid");
+const seriesGrid=document.getElementById("seriesGrid");
+const pagination=document.getElementById("pagination");
 
-const pagination=
-document.getElementById("pagination");
+const searchInput=document.getElementById("searchInput");
+const genreFilter=document.getElementById("genreFilter");
+const yearFilter=document.getElementById("yearFilter");
 
-const searchInput=
-document.getElementById("searchInput");
+const menuFilter=document.getElementById("menuFilter");
 
-const genreFilter=
-document.getElementById("genreFilter");
+const burgerBtn=document.getElementById("burgerBtn");
+const mobileMenu=document.getElementById("mobileMenu");
 
-const yearFilter=
-document.getElementById("yearFilter");
+const mobileSearchInput=document.getElementById("mobileSearchInput");
 
 let allSeries=[];
 let filteredSeries=[];
 let genreMap={};
+
+let currentPage=1;
+let totalPages=1;
 
 /* =========================
 HELPER
 ========================= */
 
 function safeYear(date){
-
 if(!date) return "";
-
 return String(date).substring(0,4);
-
 }
 
 function poster(path){
-
 if(!path){
-
 return "https://via.placeholder.com/500x750?text=No+Image";
-
 }
-
 return `https://image.tmdb.org/t/p/w500${path}`;
-
 }
 
 /* =========================
-LOAD GENRES
+MENU NAV
+========================= */
+
+if(menuFilter){
+menuFilter.onchange=function(){
+if(this.value){
+window.location.href=this.value;
+}
+};
+}
+
+/* =========================
+BURGER
+========================= */
+
+if(burgerBtn && mobileMenu){
+burgerBtn.addEventListener("click",()=>{
+burgerBtn.classList.toggle("active");
+mobileMenu.classList.toggle("active");
+});
+}
+
+/* =========================
+GENRES
 ========================= */
 
 async function loadGenres(){
-
 try{
-
-const res=
-await fetch(
+const res=await fetch(
 `https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`
 );
+const data=await res.json();
 
-const data=
-await res.json();
-
-(data.genres||[])
-.forEach(g=>{
-
+(data.genres||[]).forEach(g=>{
 genreMap[g.id]=g.name;
 
 if(genreFilter){
-
-genreFilter.innerHTML+=`
-<option value="${g.name}">
-${g.name}
-</option>
-`;
-
+genreFilter.innerHTML+=`<option value="${g.name}">${g.name}</option>`;
 }
-
 });
 
 }catch(e){
-
 console.log(e);
-
 }
-
 }
 
 /* =========================
@@ -516,39 +517,62 @@ currentPage=page;
 
 try{
 
-const res=
-await fetch(
+const res=await fetch(
 `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&page=${page}`
 );
 
-const data=
-await res.json();
+const data=await res.json();
 
-allSeries=
-data.results||[];
+allSeries=data.results||[];
+filteredSeries=[...allSeries];
 
-filteredSeries=
-[...allSeries];
-
-totalPages=
-Math.min(
-data.total_pages||1,
-500
-);
+totalPages=Math.min(data.total_pages||1,500);
 
 applyFilters(false);
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+window.scrollTo({top:0,behavior:"smooth"});
 
 }catch(e){
-
 console.log(e);
+}
 
 }
 
+/* =========================
+FILTER
+========================= */
+
+function applyFilters(resetPage=true){
+
+const keyword=(searchInput?.value||"").toLowerCase();
+const genre=genreFilter?.value||"";
+const year=yearFilter?.value||"";
+
+filteredSeries=allSeries.filter(tv=>{
+
+const title=(tv.name||"").toLowerCase();
+const tvYear=String(tv.first_air_date||"").substring(0,4);
+
+const genres=(tv.genre_ids||[]).map(id=>genreMap[id]||"");
+
+const passSearch=title.includes(keyword);
+const passGenre=!genre || genres.includes(genre);
+
+let passYear=true;
+
+if(year==="2026") passYear=tvYear==="2026";
+else if(year==="2025") passYear=tvYear==="2025";
+else if(year==="2024") passYear=tvYear==="2024";
+else if(year==="classic") passYear=parseInt(tvYear||0)<2024;
+
+return passSearch && passGenre && passYear;
+
+});
+
+if(resetPage) currentPage=1;
+
+renderGrid(filteredSeries);
+renderPagination();
 }
 
 /* =========================
@@ -561,36 +585,15 @@ seriesGrid.innerHTML="";
 
 list.forEach(tv=>{
 
-const title=
-tv.name || "Unknown";
-
-const year=
-safeYear(
-tv.first_air_date
-);
+const title=tv.name||"Unknown";
+const year=safeYear(tv.first_air_date);
 
 seriesGrid.innerHTML+=`
-
-<a
-class="series-card"
-href="serieswatch.html?id=${tv.id}">
-
-<span class="series-year">
-${year}
-</span>
-
-<img
-class="series-poster"
-src="${poster(tv.poster_path)}"
-alt="${title}"
-loading="lazy">
-
-<div class="series-title">
-${title}
-</div>
-
+<a class="series-card" href="serieswatch.html?id=${tv.id}">
+<span class="series-year">${year}</span>
+<img class="series-poster" src="${poster(tv.poster_path)}" alt="${title}" loading="lazy">
+<div class="series-title">${title}</div>
 </a>
-
 `;
 
 });
@@ -605,175 +608,54 @@ function renderPagination(){
 
 pagination.innerHTML="";
 
-let start=
-Math.floor(
-(currentPage-1)/5
-)*5+1;
-
-let end=
-start+4;
+let start=Math.floor((currentPage-1)/5)*5+1;
+let end=start+4;
 
 if(start>1){
-
-pagination.innerHTML+=`
-
-<button
-onclick="loadSeries(${start-1})">
-
-&lt;
-
-</button>
-
-`;
-
+pagination.innerHTML+=`<button onclick="loadSeries(${start-1})">&lt;</button>`;
 }
 
-for(
-let i=start;
-i<=end;
-i++
-){
-
-if(i>totalPages)
-break;
+for(let i=start;i<=end;i++){
+if(i>totalPages) break;
 
 pagination.innerHTML+=`
-
-<button
-class="${
-i===currentPage
-?
-'active'
-:
-''
-}"
-
-onclick="loadSeries(${i})">
-
-${i}
-
-</button>
-
+<button class="${i===currentPage?'active':''}" onclick="loadSeries(${i})">${i}</button>
 `;
-
 }
 
 if(end<totalPages){
-
-pagination.innerHTML+=`
-
-<button
-onclick="loadSeries(${end+1})">
-
-&gt;
-
-</button>
-
-`;
-
+pagination.innerHTML+=`<button onclick="loadSeries(${end+1})">&gt;</button>`;
 }
 
 }
 
 /* =========================
-FILTER
-========================= */
-
-function applyFilters(resetPage=true){
-
-const keyword=
-(searchInput?.value||"")
-.toLowerCase();
-
-const genre=
-genreFilter?.value||"";
-
-const year=
-yearFilter?.value||"";
-
-filteredSeries=
-allSeries.filter(tv=>{
-
-const title=
-(tv.name||"")
-.toLowerCase();
-
-const tvYear=
-String(
-tv.first_air_date||""
-).substring(0,4);
-
-const genres=
-(tv.genre_ids||[])
-.map(id=>genreMap[id]||"");
-
-const passSearch=
-title.includes(keyword);
-
-const passGenre=
-!genre ||
-genres.includes(genre);
-
-let passYear=true;
-
-if(year==="2026"){
-passYear=tvYear==="2026";
-}
-else if(year==="2025"){
-passYear=tvYear==="2025";
-}
-else if(year==="2024"){
-passYear=tvYear==="2024";
-}
-else if(year==="classic"){
-passYear=
-parseInt(tvYear||0)<2024;
-}
-
-return(
-passSearch &&
-passGenre &&
-passYear
-);
-
-});
-
-if(resetPage){
-
-currentPage=1;
-
-}
-
-renderGrid(
-filteredSeries
-);
-
-renderPagination();
-
-}
-
-/* =========================
-EVENTS
+EVENTS (SYNC + FILTER)
 ========================= */
 
 if(searchInput){
-
-searchInput.oninput=
-()=>applyFilters();
-
+searchInput.oninput=()=>applyFilters();
 }
 
 if(genreFilter){
-
-genreFilter.onchange=
-()=>applyFilters();
-
+genreFilter.onchange=()=>applyFilters();
 }
 
 if(yearFilter){
+yearFilter.onchange=()=>applyFilters();
+}
 
-yearFilter.onchange=
-()=>applyFilters();
+/* mobile sync search */
+if(searchInput && mobileSearchInput){
+
+searchInput.addEventListener("input",()=>{
+mobileSearchInput.value=searchInput.value;
+});
+
+mobileSearchInput.addEventListener("input",()=>{
+searchInput.value=mobileSearchInput.value;
+applyFilters();
+});
 
 }
 
@@ -782,33 +664,12 @@ INIT
 ========================= */
 
 async function init(){
-
 await loadGenres();
-
 await loadSeries(1);
-
 }
 
 init();
 
-</script>
-
-  <script>
-document.getElementById("menuFilter").onchange = function () {
-if (this.value) {
-window.location.href = this.value;
-}
-};
-</script>
-
-  <script>
-const burgerBtn=document.getElementById("burgerBtn");
-const mobileMenu=document.getElementById("mobileMenu");
-
-burgerBtn.addEventListener("click",()=>{
-burgerBtn.classList.toggle("active");
-mobileMenu.classList.toggle("active");
-});
 </script>
 
 
