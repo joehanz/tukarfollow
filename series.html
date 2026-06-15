@@ -51,6 +51,7 @@ padding:15px 20px;
 position:sticky;
 top:0;
 z-index:9999;
+background:#0b0b0b;
 }
 
 .nav-logo{
@@ -78,13 +79,13 @@ background:#141b22;
 color:#fff;
 }
 
-/* search fleksibel */
+/* search */
 #searchInput{
 width:260px;
 flex:0 0 auto;
 }
 
-/* dropdown filter */
+/* dropdown */
 #genreFilter,
 #yearFilter,
 #menuFilter{
@@ -102,7 +103,7 @@ gap:5px;
 background:none;
 border:none;
 cursor:pointer;
-z-index:9999;
+z-index:10000;
 }
 
 .burger span{
@@ -113,18 +114,18 @@ display:block;
 }
 
 /* =========================
-MOBILE MENU
+MOBILE MENU (FIX UTAMA)
 ========================= */
 
 .mobile-menu{
 display:none;
-position:absolute;
+position:fixed;
 top:60px;
 left:0;
 width:100%;
 background:#0b0b0b;
 padding:15px;
-z-index:999;
+z-index:9999;
 flex-direction:column;
 gap:10px;
 }
@@ -240,7 +241,7 @@ right:15px;
 top:15px;
 }
 
-/* mobile menu input full */
+/* mobile inputs */
 .mobile-menu input,
 .mobile-menu select{
 width:100%;
@@ -252,7 +253,7 @@ background:#141b22;
 color:#fff;
 }
 
-/* grid lebih rapat */
+/* grid */
 .series-grid{
 grid-template-columns:
 repeat(auto-fill,minmax(140px,1fr));
