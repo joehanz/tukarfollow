@@ -196,18 +196,17 @@ TUKARFOLLOW
 <input
 type="text"
 id="searchInput"
-placeholder="🔍 Cari Series...">
+placeholder="Cari Series...">
 
 <select id="genreFilter">
 <option value="">Semua Genre</option>
 </select>
 
-<select id="yearFilter">
-<option value="">Semua Tahun</option>
-<option value="2026">2026</option>
-<option value="2025">2025</option>
-<option value="2024">2024</option>
-<option value="classic">Classic</option>
+<select id="menuFilter">
+<option value="">Menu</option>
+<option value="index.html">Movies</option>
+<option value="series.html">TV Series</option>
+<option value="tvlokal.html">TV Lokal</option>
 </select>
 
 </div>
@@ -604,6 +603,14 @@ await loadSeries(1);
 
 init();
 
+</script>
+
+  <script>
+document.getElementById("menuFilter").onchange = function () {
+if (this.value) {
+window.location.href = this.value;
+}
+};
 </script>
 
 
