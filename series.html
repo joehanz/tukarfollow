@@ -12,6 +12,48 @@
 <style>
 
 /* =========================
+NAVBAR
+========================= */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+padding:15px 20px;
+}
+
+.nav-tools{
+display:flex;
+gap:10px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.nav-tools input,
+.nav-tools select{
+height:42px;
+padding:0 12px;
+border:none;
+border-radius:8px;
+background:#141b22;
+color:#fff;
+}
+
+#searchInput{
+width:260px;
+}
+
+#genreFilter{
+width:180px;
+}
+
+#yearFilter{
+width:140px;
+}
+
+/* =========================
 SERIES GRID
 ========================= */
 
@@ -20,28 +62,6 @@ max-width:1400px;
 margin:auto;
 padding:20px;
 }
-
-.series-filters{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:20px;
-}
-
-.series-filters input,
-.series-filters select{
-padding:12px;
-border:none;
-border-radius:10px;
-background:#141b22;
-color:#fff;
-}
-
-.series-filters input{
-flex:1;
-min-width:250px;
-}
-
 
 .series-grid{
 display:grid;
@@ -58,6 +78,7 @@ border-radius:14px;
 background:#141b22;
 cursor:pointer;
 transition:.3s;
+text-decoration:none;
 }
 
 .series-card:hover{
@@ -121,7 +142,27 @@ color:#000;
 font-weight:bold;
 }
 
+/* =========================
+MOBILE
+========================= */
+
 @media(max-width:768px){
+
+.navbar{
+flex-direction:column;
+align-items:stretch;
+}
+
+.nav-tools{
+width:100%;
+flex-direction:column;
+}
+
+#searchInput,
+#genreFilter,
+#yearFilter{
+width:100%;
+}
 
 .series-grid{
 grid-template-columns:
@@ -137,6 +178,7 @@ height:220px;
 
 </style>
 
+  
 </head>
 
 <body>
@@ -144,25 +186,17 @@ height:220px;
 <nav class="navbar">
 
 <div class="nav-logo">
-
 <a href="index.html">
-
 TUKARFOLLOW
-
 </a>
-
 </div>
 
-</nav>
-
-<div class="series-container">
-
-  <div class="series-filters">
+<div class="nav-tools">
 
 <input
 type="text"
 id="searchInput"
-placeholder="Cari series...">
+placeholder="🔍 Cari Series...">
 
 <select id="genreFilter">
 <option value="">Semua Genre</option>
@@ -178,6 +212,9 @@ placeholder="Cari series...">
 
 </div>
 
+</nav>
+
+<div class="series-container">
 
 <div
 class="series-grid"
