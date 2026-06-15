@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TukarFollow Series Watch</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+/* ================= WATCH ================= */
+
+.watch-container{
+padding:20px;
+max-width:1200px;
+margin:auto;
+}
+
+.player-wrap{
+position:relative;
+width:100%;
+aspect-ratio:16/9;
+background:#000;
+border-radius:14px;
+overflow:hidden;
+}
+
+@media(min-width:1024px){
+
+.player-wrap{
+height:72vh;
+aspect-ratio:auto;
+}
+
+}
+
+.player-wrap iframe{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+border:none;
+}
+
+.controls{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:15px;
+align-items:center;
+}
+
+.controls select{
+padding:10px;
+border:none;
+border-radius:8px;
+background:#141b22;
+color:#fff;
+}
+
+.controls button{
+padding:10px 16px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+#playBtn{
+background:#00d4ff;
+color:#000;
+font-weight:bold;
+}
+
+.movie-info{
+margin-top:20px;
+color:#fff;
+}
+
+.movie-info h1{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.movie-info p{
+opacity:.85;
+line-height:1.6;
+}
+
+.related{
+margin-top:30px;
+position:relative;
+}
+
+.related h2{
+margin-bottom:10px;
+}
+
+.related-track{
+display:flex;
+gap:10px;
+overflow-x:auto;
+scroll-behavior:smooth;
+padding:10px 0;
+
+scrollbar-width:none;
+-ms-overflow-style:none;
+}
+
+.related-track::-webkit-scrollbar{
+display:none;
+}
+
+.related-card{
+flex:0 0 auto;
+width:160px;
+cursor:pointer;
+}
+
+.related-card img{
+width:100%;
+height:240px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:50px;
+height:50px;
+border:none;
+border-radius:50%;
+background:rgba(0,0,0,.7);
+color:#fff;
+font-size:22px;
+cursor:pointer;
+z-index:10;
+}
+
+#prev{
+left:-10px;
+}
+
+#next{
+right:-10px;
+}
+
+@media(max-width:768px){
+
+.arrow{
+display:none;
+}
+
+.related-card{
+width:140px;
+}
+
+.related-card img{
+height:200px;
+}
+
+}
+
+</style>
+
+</head>
+<body>
+
+<nav class="navbar">
+
+<div class="nav-logo">
+
+<a
+href="series.html"
+style="cursor:pointer;">
+
+<--- kembali
+
+</a>
+
+</div>
+
+</nav>
+
+<div class="watch-container">
+
+<!-- PLAYER -->
+
+<div class="player-wrap">
+
+<iframe
+id="player"
+allowfullscreen>
+</iframe>
+
+</div>
+
+<!-- CONTROL -->
+
+<div class="controls">
+
+<select id="seasonSel">
+<option>Season</option>
+</select>
+
+<select id="episodeSel">
+<option>Episode</option>
+</select>
+
+<button id="playBtn">
+
+▶ PLAY
+
+</button>
+
+</div>
+
+<!-- INFO -->
+
+<div
+class="movie-info"
+id="info">
+
+Loading...
+
+</div>
+
+<!-- RELATED -->
+
+<div class="related">
+
+<h2>
+Related Series
+</h2>
+
+<button
+id="prev"
+class="arrow">
+
+◀
+
+</button>
+
+<button
+id="next"
+class="arrow">
+
+▶
+
+</button>
+
+<div
+class="related-track"
+id="related">
+</div>
+
+</div>
+
+</div>
+
+<footer class="footer">
+
+<div class="footer-grid">
+
+<div>
+<h3>Genres</h3>
+<p>
+Action, Adventure, Animation, Biography,
+Comedy, Crime, Drama, Korean Drama,
+Family, Fantasy, History, Horror,
+Music, Mystery, Romance,
+Science Fiction, Thriller.
+</p>
+</div>
+
+<div>
+<h3>About</h3>
+<p>
+TUKARFOLLOW adalah situs streaming
+film dan series gratis.
+</p>
+</div>
+
+<div>
+<h3>Ads Disclosure</h3>
+<p>
+Situs ini dapat menampilkan iklan
+untuk mendukung operasional.
+</p>
+</div>
+
+<div>
+<h3>Disclaimer</h3>
+<p>
+Kami tidak menyimpan file video
+di server kami.
+</p>
+</div>
+
+</div>
+
+<div class="copyright">
+© 2026 TukarFollow
+</div>
+
+</footer>
+
+<script>
+
+const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
+
+const params=
+new URLSearchParams(location.search);
+
+const id=
+params.get("id");
+
+const player=
+document.getElementById("player");
+
+const info=
+document.getElementById("info");
+
+const related=
+document.getElementById("related");
+
+const seasonSel=
+document.getElementById("seasonSel");
+
+const episodeSel=
+document.getElementById("episodeSel");
+
+const playBtn=
+document.getElementById("playBtn");
+
+let currentSeason=1;
+let currentEpisode=1;
+
+/* =========================
+LOAD SERIES DETAIL
+========================= */
+
+async function loadSeries(){
+
+try{
+
+const res=
+await fetch(
+`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}`
+);
+
+const tv=
+await res.json();
+
+info.innerHTML=`
+
+<h1>
+${tv.name||""}
+</h1>
+
+<p>
+${tv.overview||""}
+</p>
+
+<p>
+<b>First Air:</b>
+${tv.first_air_date||"-"}
+</p>
+
+<p>
+<b>Genre:</b>
+${(tv.genres||[])
+.map(g=>g.name)
+.join(", ")}
+</p>
+
+`;
+
+seasonSel.innerHTML="";
+
+(tv.seasons||[]).forEach(s=>{
+
+if(s.season_number<1)
+return;
+
+seasonSel.innerHTML+=`
+
+<option
+value="${s.season_number}">
+
+Season ${s.season_number}
+
+</option>
+
+`;
+
+});
+
+currentSeason=
+(tv.seasons||[])
+.find(x=>x.season_number>0)
+?.season_number || 1;
+
+seasonSel.value=
+currentSeason;
+
+await loadEpisodes();
+
+loadRelated();
+
+}
+catch(e){
+
+console.log(e);
+
+}
+
+}
+
+/* =========================
+LOAD EPISODES
+========================= */
+
+async function loadEpisodes(){
+
+try{
+
+const res=
+await fetch(
+`https://api.themoviedb.org/3/tv/${id}/season/${currentSeason}?api_key=${API_KEY}`
+);
+
+const data=
+await res.json();
+
+episodeSel.innerHTML="";
+
+(data.episodes||[])
+.forEach(ep=>{
+
+episodeSel.innerHTML+=`
+
+<option
+value="${ep.episode_number}">
+
+Episode ${ep.episode_number}
+
+</option>
+
+`;
+
+});
+
+currentEpisode=1;
+
+episodeSel.value=1;
+
+}
+catch(e){
+
+console.log(e);
+
+}
+
+}
+
+/* =========================
+PLAY
+========================= */
+
+function playEpisode(){
+
+player.src=
+`https://vsembed.su/embed/tv/${id}/${currentSeason}/${currentEpisode}`;
+
+}
+
+playBtn.onclick=()=>{
+
+currentSeason=
+seasonSel.value;
+
+currentEpisode=
+episodeSel.value;
+
+playEpisode();
+
+};
+
+seasonSel.onchange=
+async ()=>{
+
+currentSeason=
+seasonSel.value;
+
+await loadEpisodes();
+
+};
+
+episodeSel.onchange=
+()=>{
+
+currentEpisode=
+episodeSel.value;
+
+};
+
+/* =========================
+RELATED
+========================= */
+
+async function loadRelated(){
+
+try{
+
+const res=
+await fetch(
+`https://api.themoviedb.org/3/tv/${id}/recommendations?api_key=${API_KEY}`
+);
+
+const data=
+await res.json();
+
+related.innerHTML="";
+
+(data.results||[])
+.slice(0,12)
+.forEach(tv=>{
+
+related.innerHTML+=`
+
+<div
+class="related-card"
+onclick="location.href='serieswatch.html?id=${tv.id}'">
+
+<img
+src="https://image.tmdb.org/t/p/w500${tv.poster_path}">
+
+</div>
+
+`;
+
+});
+
+}
+catch(e){
+
+console.log(e);
+
+}
+
+}
+
+/* =========================
+ARROWS
+========================= */
+
+document.getElementById("prev")
+.onclick=()=>{
+
+related.scrollBy({
+left:-800,
+behavior:"smooth"
+});
+
+};
+
+document.getElementById("next")
+.onclick=()=>{
+
+related.scrollBy({
+left:800,
+behavior:"smooth"
+});
+
+};
+
+/* =========================
+OVERLAY IKLAN
+========================= */
+
+const overlay=
+document.createElement("div");
+
+overlay.style.position="absolute";
+overlay.style.inset="0";
+overlay.style.background="#000";
+overlay.style.zIndex="999";
+overlay.style.display="flex";
+overlay.style.alignItems="center";
+overlay.style.justifyContent="center";
+overlay.style.cursor="pointer";
+
+const img=
+document.createElement("img");
+
+img.style.width="100%";
+img.style.height="100%";
+img.style.objectFit="cover";
+
+overlay.appendChild(img);
+
+document
+.querySelector(".player-wrap")
+.appendChild(overlay);
+
+const countdown=
+document.createElement("div");
+
+countdown.style.position="absolute";
+countdown.style.top="10px";
+countdown.style.right="10px";
+countdown.style.background="rgba(0,0,0,.7)";
+countdown.style.color="#fff";
+countdown.style.padding="6px 10px";
+countdown.style.borderRadius="8px";
+countdown.style.fontWeight="bold";
+
+overlay.appendChild(countdown);
+
+const startImg=
+"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
+
+const banners=[
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rajarayapjakarta.webp",
+url:"https://rajarayap.com"
+},
+{
+img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/caturbangunsentosa.webp",
+url:"https://caturbangunsentosa.blogspot.com"
+},
+{
+img:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQXOqzPeiZ0EC-Ialhvk_SQEbXNdML9CZ52pCz3mbbxf4YZVFInAgP0-REJl46OwwB5IEa0254Y4hwMTnIVc5w438A-ROckDftl_2TuzqqTgaYxCbhnVrm2g4oQvTEY-WKF-bcEpcLolzjSIWqb6-NtgW5RHlKo5t4HvHdDob4Rr2jX9V5Frws_QP-PBU/s320/imageedit_2_6786243421.png",
+url:"https://ptdwiprima.blogspot.com"
+}
+];
+
+img.src=startImg;
+
+let currentLink="";
+
+setTimeout(()=>{
+
+const pick=
+banners[
+Math.floor(
+Math.random()*banners.length
+)
+];
+
+img.src=pick.img;
+img.style.objectFit="contain";
+
+currentLink=
+pick.url;
+
+},3000);
+
+let sec=12;
+
+setTimeout(()=>{
+
+countdown.textContent=
+sec+"s";
+
+const timer=
+setInterval(()=>{
+
+sec--;
+
+if(sec<=0){
+
+clearInterval(timer);
+
+countdown.remove();
+
+}else{
+
+countdown.textContent=
+sec+"s";
+
+}
+
+},1000);
+
+},3000);
+
+overlay.onclick=()=>{
+
+if(currentLink){
+
+window.open(
+currentLink,
+"_blank"
+);
+
+}
+
+};
+
+setTimeout(()=>{
+
+overlay.remove();
+
+},15000);
+
+/* =========================
+INIT
+========================= */
+
+loadSeries();
+
+</script>
+
+
+</body>
+</html>
