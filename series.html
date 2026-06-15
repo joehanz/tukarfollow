@@ -21,6 +21,28 @@ margin:auto;
 padding:20px;
 }
 
+.series-filters{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.series-filters input,
+.series-filters select{
+padding:12px;
+border:none;
+border-radius:10px;
+background:#141b22;
+color:#fff;
+}
+
+.series-filters input{
+flex:1;
+min-width:250px;
+}
+
+
 .series-grid{
 display:grid;
 grid-template-columns:
@@ -135,6 +157,28 @@ TUKARFOLLOW
 
 <div class="series-container">
 
+  <div class="series-filters">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Cari series...">
+
+<select id="genreFilter">
+<option value="">Semua Genre</option>
+</select>
+
+<select id="yearFilter">
+<option value="">Semua Tahun</option>
+<option value="2026">2026</option>
+<option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="classic">Classic</option>
+</select>
+
+</div>
+
+
 <div
 class="series-grid"
 id="seriesGrid">
@@ -147,7 +191,7 @@ id="pagination">
 
 </div>
 
-  <script>
+<script>
 
 const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
 
@@ -159,6 +203,19 @@ document.getElementById("seriesGrid");
 
 const pagination=
 document.getElementById("pagination");
+
+const searchInput=
+document.getElementById("searchInput");
+
+const genreFilter=
+document.getElementById("genreFilter");
+
+const yearFilter=
+document.getElementById("yearFilter");
+
+let allSeries=[];
+let filteredSeries=[];
+let genreMap={};
 
 /* =========================
 HELPER
@@ -185,6 +242,47 @@ return `https://image.tmdb.org/t/p/w500${path}`;
 }
 
 /* =========================
+LOAD GENRES
+========================= */
+
+async function loadGenres(){
+
+try{
+
+const res=
+await fetch(
+`https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`
+);
+
+const data=
+await res.json();
+
+(data.genres||[])
+.forEach(g=>{
+
+genreMap[g.id]=g.name;
+
+if(genreFilter){
+
+genreFilter.innerHTML+=`
+<option value="${g.name}">
+${g.name}
+</option>
+`;
+
+}
+
+});
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+/* =========================
 LOAD SERIES
 ========================= */
 
@@ -202,17 +300,19 @@ await fetch(
 const data=
 await res.json();
 
+allSeries=
+data.results||[];
+
+filteredSeries=
+[...allSeries];
+
 totalPages=
 Math.min(
-data.total_pages || 1,
+data.total_pages||1,
 500
 );
 
-renderGrid(
-data.results || []
-);
-
-renderPagination();
+applyFilters(false);
 
 window.scrollTo({
 top:0,
@@ -289,8 +389,6 @@ Math.floor(
 let end=
 start+4;
 
-/* tombol < */
-
 if(start>1){
 
 pagination.innerHTML+=`
@@ -305,8 +403,6 @@ onclick="loadSeries(${start-1})">
 `;
 
 }
-
-/* nomor */
 
 for(
 let i=start;
@@ -338,8 +434,6 @@ ${i}
 
 }
 
-/* tombol > */
-
 if(end<totalPages){
 
 pagination.innerHTML+=`
@@ -358,12 +452,123 @@ onclick="loadSeries(${end+1})">
 }
 
 /* =========================
+FILTER
+========================= */
+
+function applyFilters(resetPage=true){
+
+const keyword=
+(searchInput?.value||"")
+.toLowerCase();
+
+const genre=
+genreFilter?.value||"";
+
+const year=
+yearFilter?.value||"";
+
+filteredSeries=
+allSeries.filter(tv=>{
+
+const title=
+(tv.name||"")
+.toLowerCase();
+
+const tvYear=
+String(
+tv.first_air_date||""
+).substring(0,4);
+
+const genres=
+(tv.genre_ids||[])
+.map(id=>genreMap[id]||"");
+
+const passSearch=
+title.includes(keyword);
+
+const passGenre=
+!genre ||
+genres.includes(genre);
+
+let passYear=true;
+
+if(year==="2026"){
+passYear=tvYear==="2026";
+}
+else if(year==="2025"){
+passYear=tvYear==="2025";
+}
+else if(year==="2024"){
+passYear=tvYear==="2024";
+}
+else if(year==="classic"){
+passYear=
+parseInt(tvYear||0)<2024;
+}
+
+return(
+passSearch &&
+passGenre &&
+passYear
+);
+
+});
+
+if(resetPage){
+
+currentPage=1;
+
+}
+
+renderGrid(
+filteredSeries
+);
+
+renderPagination();
+
+}
+
+/* =========================
+EVENTS
+========================= */
+
+if(searchInput){
+
+searchInput.oninput=
+()=>applyFilters();
+
+}
+
+if(genreFilter){
+
+genreFilter.onchange=
+()=>applyFilters();
+
+}
+
+if(yearFilter){
+
+yearFilter.onchange=
+()=>applyFilters();
+
+}
+
+/* =========================
 INIT
 ========================= */
 
-loadSeries(1);
+async function init(){
+
+await loadGenres();
+
+await loadSeries(1);
+
+}
+
+init();
 
 </script>
+
 
 </body>
 </html>
