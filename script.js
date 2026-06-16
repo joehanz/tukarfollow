@@ -357,59 +357,37 @@ movieCard(movie)
 /* =========================
 PAGINATION
 ========================= */
-
-function renderPagination(){
+maksudmu ini direplace semua function renderPagination(){
 
 if(!pageNumbers) return;
 
-totalPages=Math.ceil(
+totalPages=
+Math.ceil(
 filteredMovies.length/24
 );
 
 pageNumbers.innerHTML="";
 
-const start=
-Math.floor((currentPage-1)/5)*5+1;
-
-const end=
-Math.min(start+4,totalPages);
-
-/* tombol kiri */
-
-prevPage.style.display=
-start>1
-?
-"inline-block"
-:
-"none";
-
-prevPage.onclick=()=>{
-
-currentPage=start-1;
-
-renderGrid();
-renderPagination();
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-};
-
-/* nomor */
-
-for(let i=start;i<=end;i++){
+for(
+let i=1;
+i<=totalPages;
+i++
+){
 
 const btn=
-document.createElement("button");
+document.createElement(
+"button"
+);
 
 btn.textContent=i;
 
 if(i===currentPage){
 
-btn.style.background="#00d4ff";
-btn.style.color="#000";
+btn.style.background=
+"#00d4ff";
+
+btn.style.color=
+"#000";
 
 }
 
@@ -418,6 +396,7 @@ btn.onclick=()=>{
 currentPage=i;
 
 renderGrid();
+
 renderPagination();
 
 window.scrollTo({
@@ -431,31 +410,7 @@ pageNumbers.appendChild(btn);
 
 }
 
-/* tombol kanan */
-
-nextPage.style.display=
-end<totalPages
-?
-"inline-block"
-:
-"none";
-
-nextPage.onclick=()=>{
-
-currentPage=end+1;
-
-renderGrid();
-renderPagination();
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-};
-
 }
-
 
 /* =========================
 TMDB SEARCH
@@ -732,20 +687,14 @@ applyFilters();
 /* =========================
    PREV NEXT
 ========================= */
-
 if(prevPage){
 
 prevPage.onclick=()=>{
 
-const groupSize=5;
+if(currentPage<=1)
+return;
 
-const start=
-Math.floor((currentPage-1)/groupSize)
-*groupSize+1;
-
-if(start<=1) return;
-
-currentPage=start-groupSize;
+currentPage--;
 
 renderGrid();
 
@@ -764,19 +713,10 @@ if(nextPage){
 
 nextPage.onclick=()=>{
 
-const groupSize=5;
-
-const start=
-Math.floor((currentPage-1)/groupSize)
-*groupSize+1;
-
-const nextGroup=
-start+groupSize;
-
-if(nextGroup>totalPages)
+if(currentPage>=totalPages)
 return;
 
-currentPage=nextGroup;
+currentPage++;
 
 renderGrid();
 
@@ -790,6 +730,7 @@ behavior:"smooth"
 };
 
 }
+
 
 /* =========================
    INIT
