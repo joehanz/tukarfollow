@@ -1,430 +1,325 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      TukarFollow: Situs Streaming Movie Terlengkap & Bioskop Keren Gratis
-    </title>
-    <meta
-      name="description"
-      content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet."
-    />
-    <meta
-      name="keywords"
-      content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp"
-    />
-    <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "tukarfollow",
-        "url": "https://github.io",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://github.ioindex.html?search={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
+<title>Watch Movie</title>
 
-<style>
-/* ================= WATCH FIX ================= */
-
-.watch-container{
-padding:20px;
-max-width:1200px;
-margin:auto;
-}
-
-.player-wrap{
-position:relative;
-width:100%;
-aspect-ratio:16/9;
-background:#000;
-border-radius:14px;
-overflow:hidden;
-}
-
-/* Desktop lebih tinggi */
-@media(min-width:1024px){
-.player-wrap{
-height:72vh;
-aspect-ratio:auto;
-}
-}
-
-.player-wrap iframe{
-position:absolute;
-inset:0;
-width:100%;
-height:100%;
-border:none;
-}
-
-.movie-info{
-margin-top:20px;
-color:#fff;
-}
-
-.movie-info h1{
-font-size:24px;
-margin-bottom:10px;
-}
-
-.movie-info p{
-opacity:.85;
-line-height:1.6;
-}
-
-.related{
-margin-top:30px;
-position:relative;
-}
-
-.related h2{
-margin-bottom:10px;
-}
-
-.related-track{
-display:flex;
-gap:10px;
-overflow-x:auto;
-scroll-behavior:smooth;
-padding:10px 0;
-
-/* hide scrollbar tapi tetap bisa swipe */
-scrollbar-width:none;
--ms-overflow-style:none;
-}
-
-.related-track::-webkit-scrollbar{
-display:none;
-}
-
-.related-card{
-flex:0 0 auto;
-width:160px;
-}
-
-.related-card img{
-width:100%;
-height:240px;
-object-fit:cover;
-border-radius:10px;
-}
-
-.arrow{
-position:absolute;
-top:50%;
-transform:translateY(-50%);
-width:50px;
-height:50px;
-border:none;
-border-radius:50%;
-background:rgba(0,0,0,.7);
-color:#fff;
-font-size:22px;
-cursor:pointer;
-z-index:10;
-}
-
-#prev{
-left:-10px;
-}
-
-#next{
-right:-10px;
-}
-
-@media(max-width:768px){
-.arrow{display:none;}
-
-.related-card{
-width:140px;
-}
-
-.related-card img{
-height:200px;
-}
-}
-</style>
+<link rel="stylesheet" href="style.css">
 
 </head>
 <body>
 
-<!-- NAV (reuse index style) -->
-<nav class="navbar">
-<div class="nav-logo">
-<a onclick="if(document.referrer){history.back()}else{location.href='index.html'}" style="cursor:pointer;">
-&lt;--- kembali
-</a>
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+  <div class="nav-left">
+    <a href="index.html" class="logo-wrap">
+      <div class="logo-icon">▶</div>
+      <div class="logo-text">MovieHub</div>
+    </a>
+  </div>
+
+  <div class="nav-right desktop-nav">
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari film atau series..."
+      class="search-input"
+    >
+
+    <select id="genreSelect">
+      <option value="">Semua Genre</option>
+    </select>
+
+    <select id="yearSelect">
+      <option value="">Semua Rilis</option>
+      <option value="2026">2026</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="classic">Klasik</option>
+    </select>
+
+  </div>
+
+  <button id="burgerBtn" class="burger-btn">
+    ☰
+  </button>
+
+</header>
+
+<!-- =========================
+     MOBILE MENU
+========================= -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+  <input
+    type="text"
+    id="searchInputMobile"
+    placeholder="Cari film atau series..."
+    class="search-input"
+  >
+
+  <select id="genreSelectMobile">
+    <option value="">Semua Genre</option>
+  </select>
+
+  <select id="yearSelectMobile">
+    <option value="">Semua Rilis</option>
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+    <option value="classic">Klasik</option>
+  </select>
+
 </div>
-</nav>
 
-<div class="watch-container">
+<!-- =========================
+     PLAYER SECTION
+========================= -->
 
-<!-- PLAYER -->
-<div class="player-wrap">
-<iframe id="player" allowfullscreen=""></iframe>
-</div>
+<section class="watch-container">
 
-<!-- INFO -->
-<div class="movie-info" id="info">
-Loading...
-</div>
+  <div class="player-wrap">
 
-<!-- RELATED -->
-<div class="related">
-<h2>Related Movies</h2>
+    <iframe
+      id="playerFrame"
+      class="player-frame"
+      allowfullscreen
+      frameborder="0">
+    </iframe>
 
-<button id="prev" class="arrow">◀</button>
-<button id="next" class="arrow">▶</button>
+    <!-- =====================
+         LAYER 1
+    ====================== -->
 
-<div class="related-track" id="related"></div>
+    <div id="overlayOne" class="overlay-layer">
 
-</div>
+      <img
+        src="images/layer1.webp"
+        alt=""
+        class="overlay-image"
+      >
 
-</div>
+    </div>
+
+    <!-- =====================
+         LAYER 2
+    ====================== -->
+
+    <div id="overlayTwo" class="overlay-layer hidden">
+
+      <img
+        id="bannerImage"
+        src=""
+        alt=""
+        class="overlay-image"
+      >
+
+      <div class="overlay-buttons">
+
+        <button
+          id="supportBtn"
+          class="support-btn">
+          SUPPORT
+        </button>
+
+        <button
+          id="skipBtn"
+          class="skip-btn">
+          SKIP
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+     INFO MOVIE
+========================= -->
+
+<section class="movie-info-wrap">
+
+  <div class="movie-info-grid">
+
+    <div class="movie-poster-box">
+
+      <img
+        id="moviePoster"
+        src=""
+        alt=""
+      >
+
+    </div>
+
+    <div class="movie-detail-box">
+
+      <h1 id="movieTitle">
+        Loading...
+      </h1>
+
+      <div id="movieMeta"
+           class="movie-meta">
+      </div>
+
+      <p id="movieOverview"
+         class="movie-overview">
+      </p>
+
+      <!-- =====================
+           SERIES ONLY
+      ====================== -->
+
+      <div
+        id="tvControls"
+        class="tv-controls hidden">
+
+        <select id="seasonSelect">
+
+        </select>
+
+        <select id="episodeSelect">
+
+        </select>
+
+        <button id="playEpisodeBtn">
+          Play
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+     RELATED MOVIES
+========================= -->
+
+<section class="related-section">
+
+  <h2>
+    Related Movies
+  </h2>
+
+  <div class="related-wrap">
+
+    <button
+      id="relatedPrev"
+      class="related-arrow left-arrow">
+      ❮
+    </button>
+
+    <div
+      id="relatedRow"
+      class="related-row">
+
+    </div>
+
+    <button
+      id="relatedNext"
+      class="related-arrow right-arrow">
+      ❯
+    </button>
+
+  </div>
+
+</section>
+
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer class="footer">
 
-<div class="footer-grid">
+  <div class="footer-col">
+    <h3>Tentang</h3>
+    <p>
+      Portal film dan series berbasis TMDB.
+    </p>
+  </div>
 
-<div>
-<h3>Genres</h3>
-<p>
-Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Korean Drama, Family, Fantasy,
-History, Horror, Music, Mystery, Romance, Science Fiction, Sci-Fi & Fantasy, Thriller,
-TV Movie, War, Western
-</p>
-</div>
+  <div class="footer-col">
+    <h3>Kategori</h3>
+    <ul>
+      <li>Movie</li>
+      <li>TV Series</li>
+      <li>Indonesia</li>
+    </ul>
+  </div>
 
-<div>
-<h3>About</h3>
-<p>
-TUKARFOLLOW menyediakan akses cepat ke berbagai siaran TV lokal Indonesia.
-</p>
-</div>
+  <div class="footer-col">
+    <h3>Informasi</h3>
+    <ul>
+      <li>Disclaimer</li>
+      <li>Privacy Policy</li>
+      <li>DMCA</li>
+    </ul>
+  </div>
 
-<div>
-<h3>Ads Disclosure</h3>
-<p>
-Beberapa banner promosi ditampilkan untuk membantu operasional situs.
-</p>
-</div>
-
-<div>
-<h3>Disclaimer</h3>
-<p>
-Semua siaran berasal dari sumber resmi pihak ketiga.
-</p>
-</div>
-
-</div>
-
-<div class="copyright">
-© 2026 TukarFollow
-</div>
+  <div class="footer-col">
+    <h3>Kontak</h3>
+    <ul>
+      <li>Email</li>
+      <li>Telegram</li>
+      <li>Facebook</li>
+    </ul>
+  </div>
 
 </footer>
 
-<script src="script.js"></script>
+<!-- =========================
+     CONFIG
+========================= -->
 
 <script>
-/* ================= WATCH ENGINE ================= */
 
-const params=new URLSearchParams(location.search);
-const id=params.get("id");
-const title=params.get("title");
+const TMDB_API =
+"b3b893873ed1bb7f175b2707afeea2a0";
 
-const player=document.getElementById("player");
-const info=document.getElementById("info");
-const related=document.getElementById("related");
+const MOVIES_JSON =
+"https://raw.githubusercontent.com/joehanz/csstukarfollow/main/movies.json";
 
-async function load(){
+/* =========================
+   RANDOM BANNERS
+========================= */
 
-let custom=null;
+const BANNERS = [
 
-try{
-const res=await fetch("movies.json");
-const data=await res.json();
-custom=data.find(m=>String(m.tmdb_id)===String(id));
-}catch(e){}
-
-if(custom && custom.iframe){
-player.src=custom.iframe;
-}else{
-player.src=`https://vsembed.su/embed/movie/${id}`;
-}
-
-try{
-const res=await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`);
-const movie=await res.json();
-
-info.innerHTML=`
-<h1>${movie.title}</h1>
-<p>${movie.overview||""}</p>
-<p><b>Release:</b> ${movie.release_date||"-"}</p>
-<p><b>Genre:</b> ${(movie.genres||[]).map(g=>g.name).join(", ")}</p>
-`;
-}catch(e){}
-
-try{
-const res=await fetch(`https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${API_KEY}`);
-const data=await res.json();
-
-related.innerHTML="";
-
-(data.results||[]).slice(0,12).forEach(m=>{
-related.innerHTML+=`
-<a class="related-card" href="watch.html?id=${m.id}&title=${encodeURIComponent(m.title)}">
-<img src="https://image.tmdb.org/t/p/w500${m.poster_path}">
-</a>`;
-});
-}catch(e){}
-
-/* arrows */
-document.getElementById("prev").onclick=()=>related.scrollBy({left:-800,behavior:"smooth"});
-document.getElementById("next").onclick=()=>related.scrollBy({left:800,behavior:"smooth"});
-}
-
-load();
-</script>
-
-<script>
-console.log("overlay script running");
-
-const overlayHTML=document.createElement("div");
-
-overlayHTML.style.position="absolute";
-overlayHTML.style.inset="0";
-overlayHTML.style.zIndex="999";
-overlayHTML.style.cursor="pointer";
-overlayHTML.style.display="flex";
-overlayHTML.style.alignItems="center";
-overlayHTML.style.justifyContent="center";
-overlayHTML.style.background="#000";
-
-const img=document.createElement("img");
-
-img.style.width="100%";
-img.style.height="100%";
-img.style.background="#000";
-img.style.display="block";
-
-overlayHTML.appendChild(img);
-
-const playerWrap=document.querySelector(".player-wrap");
-playerWrap.style.position="relative";
-playerWrap.appendChild(overlayHTML);
-
-/* ===== COUNTDOWN ===== */
-
-const countdown=document.createElement("div");
-
-countdown.style.position="absolute";
-countdown.style.top="10px";
-countdown.style.right="10px";
-countdown.style.zIndex="1000";
-countdown.style.background="rgba(0,0,0,.75)";
-countdown.style.color="#fff";
-countdown.style.padding="6px 10px";
-countdown.style.borderRadius="8px";
-countdown.style.fontSize="14px";
-countdown.style.fontWeight="bold";
-countdown.style.fontFamily="Arial,sans-serif";
-countdown.style.pointerEvents="none";
-
-overlayHTML.appendChild(countdown);
-
-/* total banner 12 detik (15s - 3s) */
-let seconds=12;
-
-setTimeout(()=>{
-
-countdown.textContent=seconds+"s";
-
-const timer=setInterval(()=>{
-
-seconds--;
-
-if(seconds<=0){
-clearInterval(timer);
-countdown.remove();
-}else{
-countdown.textContent=seconds+"s";
-}
-
-},1000);
-
-},3000);
-
-/* ===== DATA ===== */
-
-const startImg="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp";
-
-const banners=[
 {
-img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rajarayapjakarta.webp",
-url:"https://rajarayap.com"
+ image:"images/banner1.webp",
+ url:"https://site1.com"
 },
+
 {
-img:"https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/caturbangunsentosa.webp",
-url:"https://caturbangunsentosa.blogspot.com"
+ image:"images/banner2.webp",
+ url:"https://site2.com"
 },
+
 {
-img:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQXOqzPeiZ0EC-Ialhvk_SQEbXNdML9CZ52pCz3mbbxf4YZVFInAgP0-REJl46OwwB5IEa0254Y4hwMTnIVc5w438A-ROckDftl_2TuzqqTgaYxCbhnVrm2g4oQvTEY-WKF-bcEpcLolzjSIWqb6-NtgW5RHlKo5t4HvHdDob4Rr2jX9V5Frws_QP-PBU/s320/imageedit_2_6786243421.png",
-url:"https://ptdwiprima.blogspot.com"
+ image:"images/banner3.webp",
+ url:"https://site3.com"
 }
+
 ];
 
-/* ===== STAGE 1 (0-3 detik) ===== */
-
-img.style.objectFit="cover";
-img.src=startImg;
-
-/* ===== STAGE 2 (3-8 detik) ===== */
-
-let currentLink="";
-
-setTimeout(()=>{
-
-const pick=banners[Math.floor(Math.random()*banners.length)];
-
-img.style.objectFit="contain";
-img.src=pick.img;
-currentLink=pick.url;
-
-},3000);
-
-/* ===== CLICK ===== */
-
-overlayHTML.addEventListener("click",()=>{
-
-if(currentLink){
-window.open(currentLink,"_blank");
-}
-
-});
-
-/* ===== STAGE 3 (8 detik selesai) ===== */
-
-setTimeout(()=>{
-
-overlayHTML.remove();
-
-},15000);
-
 </script>
-  
+
+<script src="script.html"></script>
+
 </body>
 </html>
+```
