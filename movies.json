@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 1291335,
+    "title": "Solo Mio",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/solo-mio.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/RWDmZtFfnvfaGAz",
+    "sinopsis": "Ditinggal di altar, Matt bulan madu sendiri keliling Italia, menikmati kuliner & bertemu Gia.",
+    "genre": ["Comedy", "Romance"],
+    "release_date": "05-02-2026",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 840464,
     "title": "Greenland 2: Migration",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Greenland%202%20Migration.webp",
