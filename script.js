@@ -1422,15 +1422,42 @@ closeBannerLayer();
 
 }
 
-/* ==========================================
-   BOOT
-========================================== */
-
 document.addEventListener(
 "DOMContentLoaded",
 async ()=>{
 
 initMobileMenu();
+
+/* ==========================
+   GLOBAL SEARCH REDIRECT
+========================== */
+
+function initGlobalSearchRedirect() {
+
+  const input = document.getElementById("searchInput");
+  const inputMobile = document.getElementById("searchInputMobile");
+
+  function bind(el) {
+    if (!el) return;
+
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+
+        const q = el.value.trim();
+        if (!q) return;
+
+        // selalu lempar ke index
+        window.location.href =
+          `index.html?search=${encodeURIComponent(q)}`;
+      }
+    });
+  }
+
+  bind(input);
+  bind(inputMobile);
+}
+
+initGlobalSearchRedirect();
 
 /* ==========================
    INDEX
@@ -1463,4 +1490,3 @@ await initWatchPage();
 }
 
 });
-
