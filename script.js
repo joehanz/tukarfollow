@@ -572,6 +572,7 @@ applyFilters();
 });
 
 } 
+
 if(mobileSearchInput){
 
 mobileSearchInput.addEventListener(
@@ -585,12 +586,22 @@ mobileSearchInput.value;
 
 }
 
+const q=
+mobileSearchInput.value.trim();
+
+if(q.length>=2){
+
+searchTMDB(q);
+
+}else{
+
 applyFilters();
+
+}
 
 });
 
 }
-
 /* =========================
    GENRE
 ========================= */
