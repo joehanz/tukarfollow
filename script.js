@@ -373,13 +373,20 @@ document.getElementById(
    SEARCH DESKTOP
 ========================== */
 
+let searchTimerDesktop;
+
 if(searchDesktop){
 
 searchDesktop.addEventListener(
-"keyup",
-(e)=>{
+"input",
+()=>{
 
-if(e.key==="Enter"){
+clearTimeout(
+searchTimerDesktop
+);
+
+searchTimerDesktop =
+setTimeout(()=>{
 
 currentKeyword =
 searchDesktop.value.trim();
@@ -388,7 +395,7 @@ currentPage = 1;
 
 loadDiscover();
 
-}
+},500);
 
 }
 );
@@ -399,13 +406,20 @@ loadDiscover();
    SEARCH MOBILE
 ========================== */
 
+let searchTimerMobile;
+
 if(searchMobile){
 
 searchMobile.addEventListener(
-"keyup",
-(e)=>{
+"input",
+()=>{
 
-if(e.key==="Enter"){
+clearTimeout(
+searchTimerMobile
+);
+
+searchTimerMobile =
+setTimeout(()=>{
 
 currentKeyword =
 searchMobile.value.trim();
@@ -414,13 +428,13 @@ currentPage = 1;
 
 loadDiscover();
 
-}
+},500);
 
 }
 );
 
 }
-
+   
 /* ==========================
    GENRE
 ========================== */
