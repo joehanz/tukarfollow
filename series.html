@@ -430,12 +430,15 @@ const searchInput=document.getElementById("searchInput");
 const genreFilter=document.getElementById("genreFilter");
 const yearFilter=document.getElementById("yearFilter");
 
+const mobileSearchInput=document.getElementById("mobileSearchInput");
+const mobileGenreFilter=document.getElementById("mobileGenreFilter");
+const mobileYearFilter=document.getElementById("mobileYearFilter");
+
 const menuFilter=document.getElementById("menuFilter");
+const mobileMenuFilter=document.getElementById("mobileMenuFilter");
 
 const burgerBtn=document.getElementById("burgerBtn");
 const mobileMenu=document.getElementById("mobileMenu");
-
-const mobileSearchInput=document.getElementById("mobileSearchInput");
 
 let allSeries=[];
 let filteredSeries=[];
@@ -449,28 +452,29 @@ HELPER
 ========================= */
 
 function safeYear(date){
-if(!date) return "";
-return String(date).substring(0,4);
+return date ? String(date).substring(0,4) : "";
 }
 
 function poster(path){
-if(!path){
-return "https://via.placeholder.com/500x750?text=No+Image";
-}
+if(!path) return "https://via.placeholder.com/500x750?text=No+Image";
 return `https://image.tmdb.org/t/p/w500${path}`;
 }
 
 /* =========================
-MENU NAV
+MENU NAV (FIX 2 ARAH)
 ========================= */
 
-if(menuFilter){
-menuFilter.onchange=function(){
+function setupMenu(el){
+if(!el) return;
+el.onchange=function(){
 if(this.value){
 window.location.href=this.value;
 }
 };
 }
+
+setupMenu(menuFilter);
+setupMenu(mobileMenuFilter);
 
 /* =========================
 BURGER
@@ -492,14 +496,17 @@ try{
 const res=await fetch(
 `https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`
 );
+
 const data=await res.json();
 
 (data.genres||[]).forEach(g=>{
 genreMap[g.id]=g.name;
 
-if(genreFilter){
+if(genreFilter)
 genreFilter.innerHTML+=`<option value="${g.name}">${g.name}</option>`;
-}
+
+if(mobileGenreFilter)
+mobileGenreFilter.innerHTML+=`<option value="${g.name}">${g.name}</option>`;
 });
 
 }catch(e){
@@ -515,8 +522,6 @@ async function loadSeries(page=1){
 
 currentPage=page;
 
-try{
-
 const res=await fetch(
 `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&page=${page}`
 );
@@ -529,30 +534,35 @@ filteredSeries=[...allSeries];
 totalPages=Math.min(data.total_pages||1,500);
 
 applyFilters(false);
-
 window.scrollTo({top:0,behavior:"smooth"});
-
-}catch(e){
-console.log(e);
-}
-
 }
 
 /* =========================
-FILTER
+FILTER CORE (SYNC DESKTOP + MOBILE)
 ========================= */
 
 function applyFilters(resetPage=true){
 
-const keyword=(searchInput?.value||"").toLowerCase();
-const genre=genreFilter?.value||"";
-const year=yearFilter?.value||"";
+const keyword=(
+searchInput?.value ||
+mobileSearchInput?.value ||
+""
+).toLowerCase();
+
+const genre=
+genreFilter?.value ||
+mobileGenreFilter?.value ||
+"";
+
+const year=
+yearFilter?.value ||
+mobileYearFilter?.value ||
+"";
 
 filteredSeries=allSeries.filter(tv=>{
 
 const title=(tv.name||"").toLowerCase();
 const tvYear=String(tv.first_air_date||"").substring(0,4);
-
 const genres=(tv.genre_ids||[]).map(id=>genreMap[id]||"");
 
 const passSearch=title.includes(keyword);
@@ -566,7 +576,6 @@ else if(year==="2024") passYear=tvYear==="2024";
 else if(year==="classic") passYear=parseInt(tvYear||0)<2024;
 
 return passSearch && passGenre && passYear;
-
 });
 
 if(resetPage) currentPage=1;
@@ -574,6 +583,44 @@ if(resetPage) currentPage=1;
 renderGrid(filteredSeries);
 renderPagination();
 }
+
+/* =========================
+SYNC INPUT MOBILE <-> DESKTOP
+========================= */
+
+function syncInputs(a,b){
+if(!a || !b) return;
+
+a.addEventListener("input",()=>{
+b.value=a.value;
+applyFilters();
+});
+
+b.addEventListener("input",()=>{
+a.value=b.value;
+applyFilters();
+});
+}
+
+syncInputs(searchInput, mobileSearchInput);
+
+/* select sync */
+function syncSelect(a,b){
+if(!a || !b) return;
+
+a.addEventListener("change",()=>{
+b.value=a.value;
+applyFilters();
+});
+
+b.addEventListener("change",()=>{
+a.value=b.value;
+applyFilters();
+});
+}
+
+syncSelect(genreFilter, mobileGenreFilter);
+syncSelect(yearFilter, mobileYearFilter);
 
 /* =========================
 GRID
@@ -597,7 +644,6 @@ seriesGrid.innerHTML+=`
 `;
 
 });
-
 }
 
 /* =========================
@@ -626,36 +672,6 @@ pagination.innerHTML+=`
 if(end<totalPages){
 pagination.innerHTML+=`<button onclick="loadSeries(${end+1})">&gt;</button>`;
 }
-
-}
-
-/* =========================
-EVENTS (SYNC + FILTER)
-========================= */
-
-if(searchInput){
-searchInput.oninput=()=>applyFilters();
-}
-
-if(genreFilter){
-genreFilter.onchange=()=>applyFilters();
-}
-
-if(yearFilter){
-yearFilter.onchange=()=>applyFilters();
-}
-
-/* mobile sync search */
-if(searchInput && mobileSearchInput){
-
-searchInput.addEventListener("input",()=>{
-mobileSearchInput.value=searchInput.value;
-});
-
-mobileSearchInput.addEventListener("input",()=>{
-searchInput.value=mobileSearchInput.value;
-applyFilters();
-});
 
 }
 
