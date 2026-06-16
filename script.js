@@ -413,6 +413,48 @@ pageNumbers.appendChild(btn);
 
 }
 
+
+/* =========================
+TMDB SEARCH
+========================= */
+
+async function searchTMDB(keyword){
+
+if(!keyword){
+
+filteredMovies=[...allMovies];
+
+currentPage=1;
+
+renderGrid();
+renderPagination();
+
+return;
+
+}
+
+try{
+
+const res=await fetch(
+`${TMDB}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(keyword)}`
+);
+
+const data=await res.json();
+
+filteredMovies=data.results||[];
+
+currentPage=1;
+
+renderGrid();
+renderPagination();
+
+}catch(e){
+
+console.log("search gagal");
+
+}
+
+}
 /* =========================
    FILTER
 ========================= */
@@ -514,12 +556,22 @@ searchInput.value;
 
 }
 
-applyFilters();
+const q=
+searchInput.value.trim();
 
-});
+if(q.length>=2){
+
+searchTMDB(q);
+
+}else{
+
+applyFilters();
 
 }
 
+});
+
+} 
 if(mobileSearchInput){
 
 mobileSearchInput.addEventListener(
