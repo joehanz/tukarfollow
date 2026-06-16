@@ -1,647 +1,1089 @@
-const API_KEY="b3b893873ed1bb7f175b2707afeea2a0";
-const TMDB="https://api.themoviedb.org/3";
+/* ==========================================
+   GLOBAL CONFIG
+========================================== */
 
-let allMovies=[];
-let filteredMovies=[];
-let currentPage=1;
-let totalPages=1;
-let genreMap={};
-let customMovies=[];
+const IMG =
+"https://image.tmdb.org/t/p/w500";
 
-/* =========================
-ELEMENTS
-========================= */
+let currentPage = 1;
+let currentGenre = "";
+let currentKeyword = "";
+let currentYear = "";
 
-const heroSection=document.getElementById("heroSection");
-const heroTitle=document.getElementById("heroTitle");
-const heroOverview=document.getElementById("heroOverview");
-const heroWatchBtn=document.getElementById("heroWatchBtn");
+let genreMap = {};
+let allGenres = [];
 
-const movieGrid=document.getElementById("movieGrid");
+/* ==========================================
+   URL PARAMS
+========================================== */
 
-const searchInput=document.getElementById("searchInput");
-const mobileSearchInput=document.getElementById("mobileSearchInput");
+const urlParams =
+new URLSearchParams(
+window.location.search
+);
 
-const genreFilter=document.getElementById("genreFilter");
-const mobileGenreFilter=document.getElementById("mobileGenreFilter");
+const tmdbId =
+urlParams.get("id");
 
-const yearFilter=document.getElementById("yearFilter");
-const mobileYearFilter=document.getElementById("mobileYearFilter");
+const mediaType =
+urlParams.get("type");
 
-const pageNumbers=document.getElementById("pageNumbers");
-const prevPage=document.getElementById("prevPage");
-const nextPage=document.getElementById("nextPage");
+/* ==========================================
+   HELPERS
+========================================== */
 
-const burger=document.getElementById("burgerBtn");
-const menu=document.getElementById("mobileMenu");
+function qs(el){
+  return document.querySelector(el);
+}
 
+function qsa(el){
+  return document.querySelectorAll(el);
+}
 
-/* =========================
-BURGER
-========================= */
+function safe(v){
+  return v || "";
+}
 
-if(burgerBtn){
+/* ==========================================
+   MOBILE MENU
+========================================== */
 
-burgerBtn.addEventListener("click",()=>{
+const burgerBtn =
+document.getElementById(
+"burgerBtn"
+);
 
-burgerBtn.classList.toggle("active");
+const mobileMenu =
+document.getElementById(
+"mobileMenu"
+);
 
-mobileMenu.classList.toggle("active");
+if(
+burgerBtn &&
+mobileMenu
+){
 
+burgerBtn.addEventListener(
+"click",
+()=>{
+mobileMenu.classList.toggle(
+"active"
+);
 });
 
 }
 
-/* =========================
-HELPERS
-========================= */
-function safeYear(date){
-if(!date) return "";
-return String(date).substring(0,4);
-}
-
-function getImage(path, size="w780"){
-if(!path){
-return "https://via.placeholder.com/500x750?text=No+Image";
-}
-return `https://image.tmdb.org/t/p/${size}${path}`;
-}
-
-/* GRID POSTER (lebih tajam di desktop) */
-function poster(path){
-return getImage(path, "w780");
-}
-
-/* HERO (paling tajam) */
-function heroImage(path){
-return getImage(path, "w1280");
-}
-
-
-/* =========================
-MOVIES.JSON
-========================= */
-
-async function loadCustomMovies(){
-
-try{
-
-const res=await fetch("movies.json");
-
-customMovies=await res.json();
-
-}catch(e){
-
-console.log("movies.json gagal");
-
-customMovies=[];
-
-}
-
-}
-
-/* =========================
-GENRES
-========================= */
+/* ==========================================
+   LOAD GENRES
+========================================== */
 
 async function loadGenres(){
 
+if(
+!document.getElementById(
+"genreSelect"
+)
+){
+return;
+}
+
 try{
 
-const res=await fetch(
-`${TMDB}/genre/movie/list?api_key=${API_KEY}&language=en-US`
+const movieGenres =
+await fetch(
+`https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_API}&language=id-ID`
 );
 
-const data=await res.json();
+const movieData =
+await movieGenres.json();
 
-genreMap={};
+allGenres =
+movieData.genres || [];
 
-(data.genres||[]).forEach(g=>{
+const desktop =
+document.getElementById(
+"genreSelect"
+);
 
-genreMap[g.id]=g.name;
+const mobile =
+document.getElementById(
+"genreSelectMobile"
+);
 
-const opt1=document.createElement("option");
-opt1.value=g.name;
-opt1.textContent=g.name;
+allGenres.forEach(g=>{
 
-const opt2=opt1.cloneNode(true);
+genreMap[g.id] = g.name;
 
-genreFilter.appendChild(opt1);
+desktop.insertAdjacentHTML(
+"beforeend",
+`
+<option value="${g.id}">
+${g.name}
+</option>
+`
+);
 
-mobileGenreFilter.appendChild(opt2);
+mobile.insertAdjacentHTML(
+"beforeend",
+`
+<option value="${g.id}">
+${g.name}
+</option>
+`
+);
 
 });
 
-}catch(e){
+}
+catch(err){
 
-console.log("genre gagal");
+console.log(err);
 
 }
 
 }
 
-/* =========================
-HERO
-========================= */
+/* ==========================================
+   YEAR FILTER
+========================================== */
 
-function renderHero(movie){
+function getYearFilter(){
 
-if(!movie) return;
+if(currentYear==="2026"){
+return "&primary_release_year=2026";
+}
 
-const bg=
-movie.backdrop_path
+if(currentYear==="2025"){
+return "&primary_release_year=2025";
+}
+
+if(currentYear==="2024"){
+return "&primary_release_year=2024";
+}
+
+if(currentYear==="classic"){
+return "&primary_release_date.lte=2010-12-31";
+}
+
+return "";
+
+}
+
+/* ==========================================
+   CARD HTML
+========================================== */
+
+function createCard(item,type){
+
+const title =
+item.title ||
+item.name ||
+"Untitled";
+
+const poster =
+item.poster_path
 ?
-`https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+IMG + item.poster_path
 :
-poster(movie.poster_path);
+"https://via.placeholder.com/500x750";
 
-heroSection.style.backgroundImage=
-`url('${bg}')`;
-
-heroTitle.textContent=
-movie.title||
-movie.name||
-"Unknown";
-
-heroOverview.textContent=
-movie.overview||
-"Sinopsis belum tersedia";
-
-heroWatchBtn.href=
-`watch.html?id=${movie.id}&title=${encodeURIComponent(movie.title||movie.name)}`;
-
-}
-
-
-/* =========================
-HERO LOAD
-========================= */
-
-async function loadHero(){
-
-try{
-
-if(customMovies.length){
-
-const item=
-customMovies[
-Math.floor(
-Math.random()*customMovies.length
-)
-];
-
-heroSection.style.backgroundImage=
-`url('${item.image}')`;
-
-heroTitle.textContent=
-item.title;
-
-heroOverview.textContent=
-item.sinopsis||
-"Sinopsis belum tersedia";
-
-heroWatchBtn.href=
-`watch.html?id=${item.tmdb_id}&title=${encodeURIComponent(item.title)}`;
-
-return;
-
-}
-
-const res=await fetch(
-
-`${TMDB}/trending/movie/week?api_key=${API_KEY}`
-
-);
-
-const data=await res.json();
-
-if(data.results?.length){
-
-const movie=
-data.results[
-Math.floor(
-Math.random()*data.results.length
-)
-];
-
-renderHero(movie);
-
-}
-
-}catch(e){
-
-console.log("hero gagal");
-
-}
-
-}
-
-/* =========================
-TMDB LOAD
-========================= */
-
-async function loadTMDBMovies(){
-
-try{
-
-let results=[];
-
-for(let page=1;page<=5;page++){
-
-const res=await fetch(
-
-`${TMDB}/movie/popular?api_key=${API_KEY}&page=${page}`
-
-);
-
-const data=await res.json();
-
-results.push(
-...(data.results||[])
-);
-
-}
-
-allMovies=results;
-
-filteredMovies=[...allMovies];
-
-}catch(e){
-
-console.log("tmdb gagal");
-
-}
-
-}
-
-/* =========================
-CARD
-========================= */
-
-function movieCard(movie){
-
-const title=
-movie.title||
-movie.name||
-"Unknown";
-
-const year=
-safeYear(
-movie.release_date||
-movie.first_air_date
-);
+const release =
+item.release_date ||
+item.first_air_date ||
+"-";
 
 return `
 
-<a
+<div
 class="movie-card"
-href="watch.html?id=${movie.id}&title=${encodeURIComponent(title)}"
-
+data-id="${item.id}"
+data-type="${type}"
 >
 
-<span class="badge-webrip">
-WEBRIP
-</span>
-
-<span class="badge-year">
-${year}
-</span>
+<a href="
+watch.html
+?id=${item.id}
+&type=${type}
+">
 
 <img
-class="movie-poster"
-src="${poster(movie.poster_path)}"
-alt="${title}"
 loading="lazy"
-
+src="${poster}"
+alt="${title}"
 >
 
-<div class="movie-title">
+<div class="movie-card-info">
+
+<h3>
 ${title}
+</h3>
+
+<span>
+${release}
+</span>
+
 </div>
 
 </a>
+
+</div>
 
 `;
 
 }
 
-/* =========================
-GRID
-========================= */
+/* ==========================================
+   PAGINATION BLOCK
+========================================== */
 
-function renderGrid(){
+function buildPagination(){
 
-if(!movieGrid) return;
-
-movieGrid.innerHTML="";
-
-const start=
-(currentPage-1)*24;
-
-const end=
-start+24;
-
-filteredMovies
-.slice(start,end)
-.forEach(movie=>{
-
-movieGrid.insertAdjacentHTML(
-"beforeend",
-movieCard(movie)
+const wrap =
+document.getElementById(
+"paginationNumbers"
 );
 
-});
+if(!wrap) return;
 
-}
+wrap.innerHTML = "";
 
-/* =========================
-PAGINATION
-========================= */
-
-function renderPagination(){
-
-if(!pageNumbers) return;
-
-totalPages=
-Math.ceil(
-filteredMovies.length/24
-);
-
-pageNumbers.innerHTML="";
+const start =
+Math.floor(
+(currentPage-1)/5
+)*5+1;
 
 for(
-let i=1;
-i<=totalPages;
+let i=start;
+i<start+5;
 i++
 ){
 
-const btn=
+const btn =
 document.createElement(
 "button"
 );
 
-btn.textContent=i;
+btn.className =
+"page-btn";
 
-if(i===currentPage){
-
-btn.style.background=
-"#00d4ff";
-
-btn.style.color=
-"#000";
-
+if(
+i===currentPage
+){
+btn.classList.add(
+"active"
+);
 }
+
+btn.textContent = i;
 
 btn.onclick=()=>{
 
 currentPage=i;
 
-renderGrid();
-
-renderPagination();
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+loadDiscover();
 
 };
 
-pageNumbers.appendChild(btn);
+wrap.appendChild(btn);
 
 }
 
 }
 
-/* =========================
-   FILTER
-========================= */
+/* ==========================================
+   PAGINATION BUTTONS
+========================================== */
 
-function applyFilters(){
-
-const keyword=
-(
-searchInput?.value ||
-mobileSearchInput?.value ||
-""
-)
-.toLowerCase();
-
-const genre=
-genreFilter?.value ||
-mobileGenreFilter?.value ||
-"";
-
-const year=
-yearFilter?.value ||
-mobileYearFilter?.value ||
-"";
-
-filteredMovies=
-allMovies.filter(movie=>{
-
-const title=
-(
-movie.title||
-movie.name||
-""
-)
-.toLowerCase();
-
-const movieYear=
-safeYear(
-movie.release_date||
-movie.first_air_date
+const nextBlock =
+document.getElementById(
+"nextBlock"
 );
 
-const genres=
-(movie.genre_ids||[])
-.map(id=>genreMap[id]||"");
+if(nextBlock){
 
-const passSearch=
-title.includes(keyword);
+nextBlock.onclick=()=>{
 
-const passGenre=
-!genre ||
-genres.includes(genre);
+currentPage += 5;
 
-let passYear=true;
+loadDiscover();
 
-if(year==="2026"){
-passYear=(movieYear==="2026");
-}
-else if(year==="2025"){
-passYear=(movieYear==="2025");
-}
-else if(year==="2024"){
-passYear=(movieYear==="2024");
-}
-else if(year==="classic"){
-passYear=
-parseInt(movieYear||0)<2024;
+};
+
 }
 
-return (
-passSearch &&
-passGenre &&
-passYear
+const prevBlock =
+document.getElementById(
+"prevBlock"
 );
+
+if(prevBlock){
+
+prevBlock.onclick=()=>{
+
+currentPage -= 5;
+
+if(currentPage<1){
+currentPage=1;
+}
+
+loadDiscover();
+
+};
+
+}
+
+/* ==========================================
+   FILTER EVENTS
+========================================== */
+
+function bindFilters(){
+
+const searchDesktop =
+document.getElementById(
+"searchInput"
+);
+
+const searchMobile =
+document.getElementById(
+"searchInputMobile"
+);
+
+const genreDesktop =
+document.getElementById(
+"genreSelect"
+);
+
+const genreMobile =
+document.getElementById(
+"genreSelectMobile"
+);
+
+const yearDesktop =
+document.getElementById(
+"yearSelect"
+);
+
+const yearMobile =
+document.getElementById(
+"yearSelectMobile"
+);
+
+if(searchDesktop){
+
+searchDesktop.addEventListener(
+"keyup",
+function(e){
+
+if(e.key==="Enter"){
+
+currentKeyword =
+this.value.trim();
+
+currentPage = 1;
+
+loadDiscover();
+
+}
 
 });
+
+}
+
+if(searchMobile){
+
+searchMobile.addEventListener(
+"keyup",
+function(e){
+
+if(e.key==="Enter"){
+
+currentKeyword =
+this.value.trim();
+
+currentPage = 1;
+
+loadDiscover();
+
+}
+
+});
+
+}
+
+if(genreDesktop){
+
+genreDesktop.onchange=()=>{
+
+currentGenre =
+genreDesktop.value;
+
+genreMobile.value =
+genreDesktop.value;
 
 currentPage=1;
 
-renderGrid();
+loadDiscover();
 
-renderPagination();
-
-}
-
-/* =========================
-   SEARCH
-========================= */
-
-if(searchInput){
-
-searchInput.addEventListener(
-"input",
-()=>{
-
-if(mobileSearchInput){
-
-mobileSearchInput.value=
-searchInput.value;
+};
 
 }
 
-applyFilters();
+if(genreMobile){
+
+genreMobile.onchange=()=>{
+
+currentGenre =
+genreMobile.value;
+
+genreDesktop.value =
+genreMobile.value;
+
+currentPage=1;
+
+loadDiscover();
+
+};
+
+}
+
+if(yearDesktop){
+
+yearDesktop.onchange=()=>{
+
+currentYear =
+yearDesktop.value;
+
+yearMobile.value =
+yearDesktop.value;
+
+currentPage=1;
+
+loadDiscover();
+
+};
+
+}
+
+if(yearMobile){
+
+yearMobile.onchange=()=>{
+
+currentYear =
+yearMobile.value;
+
+yearDesktop.value =
+yearMobile.value;
+
+currentPage=1;
+
+loadDiscover();
+
+};
+
+}
+
+}
+
+```
+```html
+/* ==========================================
+   DISCOVER MOVIES + TV
+========================================== */
+
+async function loadDiscover(){
+
+const grid =
+document.getElementById(
+"movieGrid"
+);
+
+if(!grid) return;
+
+grid.innerHTML =
+`
+<div class="loading">
+Loading...
+</div>
+`;
+
+try{
+
+let movieUrl =
+`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API}&language=id-ID&page=${currentPage}`;
+
+let tvUrl =
+`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API}&language=id-ID&page=${currentPage}`;
+
+if(currentGenre){
+
+movieUrl +=
+`&with_genres=${currentGenre}`;
+
+tvUrl +=
+`&with_genres=${currentGenre}`;
+
+}
+
+movieUrl += getYearFilter();
+tvUrl += getYearFilter();
+
+/* ======================
+   SEARCH MODE
+====================== */
+
+if(currentKeyword){
+
+movieUrl =
+`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API}&language=id-ID&query=${encodeURIComponent(currentKeyword)}&page=${currentPage}`;
+
+tvUrl =
+`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_API}&language=id-ID&query=${encodeURIComponent(currentKeyword)}&page=${currentPage}`;
+
+}
+
+const movieReq =
+await fetch(movieUrl);
+
+const tvReq =
+await fetch(tvUrl);
+
+const movieData =
+await movieReq.json();
+
+const tvData =
+await tvReq.json();
+
+const movieResults =
+movieData.results || [];
+
+const tvResults =
+tvData.results || [];
+
+let html = "";
+
+/* ======================
+   MOVIES
+====================== */
+
+movieResults.forEach(item=>{
+
+html += createCard(
+item,
+"movie"
+);
+
+});
+
+/* ======================
+   TV SERIES
+====================== */
+
+tvResults.forEach(item=>{
+
+html += createCard(
+item,
+"tv"
+);
+
+});
+
+/* ======================
+   EMPTY
+====================== */
+
+if(!html){
+
+html =
+`
+<div class="empty-state">
+Tidak ada data ditemukan.
+</div>
+`;
+
+}
+
+grid.innerHTML = html;
+
+buildPagination();
+
+}
+catch(err){
+
+console.log(err);
+
+grid.innerHTML =
+`
+<div class="empty-state">
+Gagal memuat data.
+</div>
+`;
+
+}
+
+}
+
+/* ==========================================
+   WATCH PAGE
+========================================== */
+
+async function initWatchPage(){
+
+if(!tmdbId) return;
+
+const titleBox =
+document.getElementById(
+"movieTitle"
+);
+
+if(!titleBox) return;
+
+try{
+
+/* ======================
+   LOAD MANUAL JSON
+====================== */
+
+let manualMovie = null;
+
+try{
+
+const jsonReq =
+await fetch(
+MOVIES_JSON
+);
+
+const jsonData =
+await jsonReq.json();
+
+manualMovie =
+jsonData.find(item=>{
+
+return (
+String(item.tmdb_id) ===
+String(tmdbId)
+);
 
 });
 
 }
+catch(e){
 
-if(mobileSearchInput){
-
-mobileSearchInput.addEventListener(
-"input",
-()=>{
-
-if(searchInput){
-
-searchInput.value=
-mobileSearchInput.value;
+console.log(e);
 
 }
 
-applyFilters();
+/* ======================
+   MATCH FOUND
+====================== */
 
-});
+if(manualMovie){
 
-}
+renderManualMovie(
+manualMovie
+);
 
-/* =========================
-   GENRE
-========================= */
-
-if(genreFilter){
-
-genreFilter.addEventListener(
-"change",
-()=>{
-
-if(mobileGenreFilter){
-
-mobileGenreFilter.value=
-genreFilter.value;
-
-}
-
-applyFilters();
-
-});
-
-}
-
-if(mobileGenreFilter){
-
-mobileGenreFilter.addEventListener(
-"change",
-()=>{
-
-if(genreFilter){
-
-genreFilter.value=
-mobileGenreFilter.value;
-
-}
-
-applyFilters();
-
-});
-
-}
-
-/* =========================
-   YEAR
-========================= */
-
-if(yearFilter){
-
-yearFilter.addEventListener(
-"change",
-()=>{
-
-if(mobileYearFilter){
-
-mobileYearFilter.value=
-yearFilter.value;
-
-}
-
-applyFilters();
-
-});
-
-}
-
-if(mobileYearFilter){
-
-mobileYearFilter.addEventListener(
-"change",
-()=>{
-
-if(yearFilter){
-
-yearFilter.value=
-mobileYearFilter.value;
-
-}
-
-applyFilters();
-
-});
-
-}
-
-/* =========================
-   PREV NEXT
-========================= */
-
-if(prevPage){
-
-prevPage.onclick=()=>{
-
-if(currentPage<=1)
 return;
 
-currentPage--;
+}
 
-renderGrid();
+/* ======================
+   TMDB DETAIL
+====================== */
 
-renderPagination();
+const detailUrl =
+mediaType==="tv"
+?
+`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${TMDB_API}&language=id-ID`
+:
+`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API}&language=id-ID`;
 
-window.scrollTo({
-top:0,
+const detailReq =
+await fetch(detailUrl);
+
+const detail =
+await detailReq.json();
+
+renderTmdbMovie(
+detail
+);
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* ==========================================
+   MANUAL MOVIE
+========================================== */
+
+function renderManualMovie(movie){
+
+const player =
+document.getElementById(
+"playerFrame"
+);
+
+const poster =
+document.getElementById(
+"moviePoster"
+);
+
+const title =
+document.getElementById(
+"movieTitle"
+);
+
+const meta =
+document.getElementById(
+"movieMeta"
+);
+
+const overview =
+document.getElementById(
+"movieOverview"
+);
+
+player.src =
+movie.iframe || "";
+
+poster.src =
+movie.image || "";
+
+title.textContent =
+movie.title || "";
+
+meta.innerHTML =
+`
+<span>${safe(movie.country)}</span>
+<span>${safe(movie.release_date)}</span>
+`;
+
+overview.textContent =
+movie.sinopsis || "";
+
+loadRelatedMovies();
+
+}
+
+/* ==========================================
+   TMDB MOVIE
+========================================== */
+
+function renderTmdbMovie(data){
+
+const player =
+document.getElementById(
+"playerFrame"
+);
+
+const poster =
+document.getElementById(
+"moviePoster"
+);
+
+const title =
+document.getElementById(
+"movieTitle"
+);
+
+const meta =
+document.getElementById(
+"movieMeta"
+);
+
+const overview =
+document.getElementById(
+"movieOverview"
+);
+
+const genres =
+(data.genres || [])
+.map(x=>x.name)
+.join(", ");
+
+if(mediaType==="tv"){
+
+player.src =
+`https://vsembed.ru/embed/tv?tmdb=${tmdbId}&season=1&episode=1`;
+
+}
+else{
+
+player.src =
+`https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+
+}
+
+poster.src =
+data.poster_path
+?
+IMG + data.poster_path
+:
+"";
+
+title.textContent =
+data.title ||
+data.name ||
+"";
+
+meta.innerHTML =
+`
+<span>${genres}</span>
+`;
+
+overview.textContent =
+data.overview || "";
+
+if(mediaType==="tv"){
+
+showTvControls(
+data.number_of_seasons
+);
+
+}
+
+loadRelatedMovies();
+
+}
+```
+```html id="z1v5kq"
+/* ==========================================
+   TV CONTROLS
+========================================== */
+
+function showTvControls(
+seasonCount
+){
+
+const wrap =
+document.getElementById(
+"tvControls"
+);
+
+if(!wrap) return;
+
+wrap.classList.remove(
+"hidden"
+);
+
+const seasonSelect =
+document.getElementById(
+"seasonSelect"
+);
+
+const episodeSelect =
+document.getElementById(
+"episodeSelect"
+);
+
+const playBtn =
+document.getElementById(
+"playEpisodeBtn"
+);
+
+seasonSelect.innerHTML = "";
+
+for(
+let i=1;
+i<=seasonCount;
+i++
+){
+
+seasonSelect.insertAdjacentHTML(
+"beforeend",
+`
+<option value="${i}">
+Season ${i}
+</option>
+`
+);
+
+}
+
+loadEpisodes(1);
+
+seasonSelect.onchange=()=>{
+
+loadEpisodes(
+seasonSelect.value
+);
+
+};
+
+playBtn.onclick=()=>{
+
+const season =
+seasonSelect.value;
+
+const episode =
+episodeSelect.value;
+
+const iframe =
+document.getElementById(
+"playerFrame"
+);
+
+iframe.src =
+`https://vsembed.ru/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`;
+
+};
+
+}
+
+/* ==========================================
+   LOAD EPISODES
+========================================== */
+
+async function loadEpisodes(
+season
+){
+
+try{
+
+const req =
+await fetch(
+`https://api.themoviedb.org/3/tv/${tmdbId}/season/${season}?api_key=${TMDB_API}&language=id-ID`
+);
+
+const data =
+await req.json();
+
+const episodeSelect =
+document.getElementById(
+"episodeSelect"
+);
+
+episodeSelect.innerHTML = "";
+
+(data.episodes || [])
+.forEach(ep=>{
+
+episodeSelect.insertAdjacentHTML(
+"beforeend",
+`
+<option value="${ep.episode_number}">
+Episode ${ep.episode_number}
+</option>
+`
+);
+
+});
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* ==========================================
+   RELATED MOVIES
+========================================== */
+
+async function loadRelatedMovies(){
+
+const row =
+document.getElementById(
+"relatedRow"
+);
+
+if(!row) return;
+
+try{
+
+const endpoint =
+mediaType==="tv"
+?
+`https://api.themoviedb.org/3/tv/${tmdbId}/recommendations?api_key=${TMDB_API}&language=id-ID&page=1`
+:
+`https://api.themoviedb.org/3/movie/${tmdbId}/recommendations?api_key=${TMDB_API}&language=id-ID&page=1`;
+
+const req =
+await fetch(endpoint);
+
+const data =
+await req.json();
+
+const results =
+(data.results || [])
+.slice(0,24);
+
+let html = "";
+
+results.forEach(item=>{
+
+const title =
+item.title ||
+item.name ||
+"Untitled";
+
+const poster =
+item.poster_path
+?
+IMG + item.poster_path
+:
+"https://via.placeholder.com/500x750";
+
+html +=
+`
+<a
+class="related-card"
+href="watch.html?id=${item.id}&type=${mediaType}"
+>
+
+<img
+src="${poster}"
+alt="${title}"
+loading="lazy"
+>
+
+</a>
+`;
+
+});
+
+row.innerHTML = html;
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* ==========================================
+   RELATED SCROLLER
+========================================== */
+
+const relatedPrev =
+document.getElementById(
+"relatedPrev"
+);
+
+const relatedNext =
+document.getElementById(
+"relatedNext"
+);
+
+if(relatedPrev){
+
+relatedPrev.onclick=()=>{
+
+const row =
+document.getElementById(
+"relatedRow"
+);
+
+row.scrollBy({
+left:-1200,
 behavior:"smooth"
 });
 
@@ -649,21 +1091,17 @@ behavior:"smooth"
 
 }
 
-if(nextPage){
+if(relatedNext){
 
-nextPage.onclick=()=>{
+relatedNext.onclick=()=>{
 
-if(currentPage>=totalPages)
-return;
+const row =
+document.getElementById(
+"relatedRow"
+);
 
-currentPage++;
-
-renderGrid();
-
-renderPagination();
-
-window.scrollTo({
-top:0,
+row.scrollBy({
+left:1200,
 behavior:"smooth"
 });
 
@@ -671,36 +1109,211 @@ behavior:"smooth"
 
 }
 
-/* =========================
-   INIT
-========================= */
+/* ==========================================
+   OVERLAY SYSTEM
+========================================== */
 
-async function init(){
+let currentBannerUrl = "";
 
-console.log("INIT");
+function startOverlaySystem(){
 
-await loadCustomMovies();
+const layerOne =
+document.getElementById(
+"overlayOne"
+);
 
-console.log("CUSTOM OK");
+const layerTwo =
+document.getElementById(
+"overlayTwo"
+);
+
+if(
+!layerOne ||
+!layerTwo
+){
+return;
+}
+
+/* ======================
+   LAYER 1
+====================== */
+
+setTimeout(()=>{
+
+layerOne.classList.add(
+"hidden"
+);
+
+showBannerLayer();
+
+},3000);
+
+}
+
+/* ==========================================
+   BANNER LAYER
+========================================== */
+
+function showBannerLayer(){
+
+const layerTwo =
+document.getElementById(
+"overlayTwo"
+);
+
+const bannerImage =
+document.getElementById(
+"bannerImage"
+);
+
+if(
+!layerTwo ||
+!bannerImage
+){
+return;
+}
+
+const selected =
+BANNERS[
+Math.floor(
+Math.random() *
+BANNERS.length
+)
+];
+
+currentBannerUrl =
+selected.url;
+
+bannerImage.src =
+selected.image;
+
+layerTwo.classList.remove(
+"hidden"
+);
+
+/* ======================
+   AUTO CLOSE
+====================== */
+
+setTimeout(()=>{
+
+closeBannerLayer();
+
+},10000);
+
+}
+
+/* ==========================================
+   CLOSE BANNER
+========================================== */
+
+function closeBannerLayer(){
+
+const layerTwo =
+document.getElementById(
+"overlayTwo"
+);
+
+if(layerTwo){
+
+layerTwo.classList.add(
+"hidden"
+);
+
+}
+
+}
+```
+```html id="v4b2ks"
+/* ==========================================
+   SUPPORT BUTTON
+========================================== */
+
+const supportBtn =
+document.getElementById(
+"supportBtn"
+);
+
+if(supportBtn){
+
+supportBtn.onclick=()=>{
+
+if(
+currentBannerUrl
+){
+
+window.open(
+currentBannerUrl,
+"_blank"
+);
+
+}
+
+};
+
+}
+
+/* ==========================================
+   SKIP BUTTON
+========================================== */
+
+const skipBtn =
+document.getElementById(
+"skipBtn"
+);
+
+if(skipBtn){
+
+skipBtn.onclick=()=>{
+
+closeBannerLayer();
+
+};
+
+}
+
+/* ==========================================
+   PAGE INIT
+========================================== */
+
+document.addEventListener(
+"DOMContentLoaded",
+async ()=>{
+
+/* ======================
+   INDEX PAGE
+====================== */
+
+if(
+document.getElementById(
+"movieGrid"
+)
+){
 
 await loadGenres();
 
-console.log("GENRE OK");
+bindFilters();
 
-await loadHero();
-
-console.log("HERO OK");
-
-await loadTMDBMovies();
-
-console.log("TMDB OK");
-
-renderGrid();
-
-renderPagination();
-
-console.log("GRID OK");
+loadDiscover();
 
 }
 
-init();
+/* ======================
+   WATCH PAGE
+====================== */
+
+if(
+document.getElementById(
+"playerFrame"
+)
+){
+
+startOverlaySystem();
+
+await initWatchPage();
+
+}
+
+});
+
+
