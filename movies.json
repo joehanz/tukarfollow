@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 629176,
+    "title": "Samaritan",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/samaritan.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/jZoVrAk8VX6mtya",
+    "sinopsis": "Sam (13) curiga tetangganya adalah Samaritan, pahlawan yang dikira sudah tewas, demi selamatkan kota.",
+    "genre": ["Action", "Sci-fi", "Crime"],
+    "release_date": "25-08-2022",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 1291335,
     "title": "Solo Mio",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/solo-mio.webp",
