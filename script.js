@@ -246,7 +246,7 @@ try{
 
 let results=[];
 
-for(let page=1;page<=6;page++){
+for(let page=1;page<=5;page++){
 
 const res=await fetch(
 
