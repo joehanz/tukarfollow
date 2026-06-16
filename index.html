@@ -1,243 +1,1067 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      TukarFollow: Situs Streaming Movie Terlengkap & Bioskop Keren Gratis
-    </title>
-    <meta
-      name="description"
-      content="Nonton and streaming movie sub indo terlengkap gratis dengan kualitas super jernih ala bioskop online tanpa ribet."
-    />
-    <meta
-      name="keywords"
-      content="streaming movie sub indo, nonton film gratis, bioskop online, streaming film"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/logo%20tukar%20follow.webp"
-    />
-    <link rel="stylesheet" href="style.css" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <!-- Struktur SEO JSON-LD Sitelink Search Box -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "tukarfollow",
-        "url": "https://github.io",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://github.ioindex.html?search={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-  </head>
-<body>
+<title>MovieHub</title>
 
-<!-- NAVBAR -->
+<meta name="theme-color" content="#0f1115">
+<meta name="description" content="Streaming Movie & TV Series">
+
+<link rel="preconnect" href="https://api.themoviedb.org">
+<link rel="preconnect" href="https://image.tmdb.org">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+background:#0b0f16;
+color:#fff;
+font-family:Arial,Helvetica,sans-serif;
+overflow-x:hidden;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+img{
+display:block;
+max-width:100%;
+}
+
+:root{
+--bg:#0b0f16;
+--card:#151b26;
+--border:#242c39;
+--text:#ffffff;
+--muted:#9ba7b8;
+--primary:#00b4ff;
+--radius:14px;
+}
+
+/* NAVBAR */
+
+.navbar{
+position:sticky;
+top:0;
+z-index:999;
+height:70px;
+background:rgba(11,15,22,.92);
+backdrop-filter:blur(12px);
+border-bottom:1px solid rgba(255,255,255,.06);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+}
+
+.logo{
+font-size:24px;
+font-weight:700;
+color:#00b4ff;
+letter-spacing:1px;
+}
+
+.search-box{
+width:320px;
+max-width:100%;
+position:relative;
+}
+
+.search-box input{
+width:100%;
+height:44px;
+background:#151b26;
+border:1px solid #222b38;
+outline:none;
+color:#fff;
+padding:0 15px;
+border-radius:999px;
+}
+
+.search-box input::placeholder{
+color:#8b96a7;
+}
+
+/* HERO */
+
+.hero{
+height:70vh;
+position:relative;
+display:flex;
+align-items:flex-end;
+padding:40px;
+overflow:hidden;
+}
+
+.hero-backdrop{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+filter:brightness(.45);
+}
+
+.hero-overlay{
+position:absolute;
+inset:0;
+background:
+linear-gradient(to top,#0b0f16 0%,rgba(0,0,0,.2) 60%);
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+max-width:700px;
+}
+
+.hero-title{
+font-size:clamp(30px,5vw,60px);
+font-weight:700;
+margin-bottom:12px;
+}
+
+.hero-desc{
+color:#c8d1dd;
+line-height:1.7;
+max-width:650px;
+}
+
+/* SECTION */
+
+.section{
+padding:25px 20px;
+}
+
+.section-title{
+font-size:24px;
+font-weight:700;
+margin-bottom:18px;
+}
+
+/* GRID */
+
+.movie-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fill,minmax(170px,1fr));
+gap:18px;
+}
+
+.movie-card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:var(--radius);
+overflow:hidden;
+cursor:pointer;
+transition:.25s;
+}
+
+.movie-card:hover{
+transform:translateY(-4px);
+}
+
+.movie-poster{
+width:100%;
+aspect-ratio:2/3;
+object-fit:cover;
+background:#111;
+}
+
+.movie-info{
+padding:10px;
+}
+
+.movie-title{
+font-size:14px;
+font-weight:700;
+line-height:1.4;
+height:38px;
+overflow:hidden;
+}
+
+.movie-meta{
+margin-top:6px;
+font-size:12px;
+color:var(--muted);
+}
+
+/* PAGINATION */
+
+.pagination{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+flex-wrap:wrap;
+padding:40px 20px;
+}
+
+.page-btn{
+min-width:42px;
+height:42px;
+border:none;
+cursor:pointer;
+border-radius:10px;
+background:#151b26;
+color:#fff;
+font-weight:bold;
+}
+
+.page-btn.active{
+background:#00b4ff;
+color:#000;
+}
+
+/* LOADER */
+
+.loader{
+display:flex;
+justify-content:center;
+padding:40px;
+}
+
+.spinner{
+width:45px;
+height:45px;
+border:4px solid #222;
+border-top:4px solid #00b4ff;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.navbar{
+padding:12px;
+flex-direction:column;
+height:auto;
+gap:10px;
+}
+
+.search-box{
+width:100%;
+}
+
+.hero{
+height:55vh;
+padding:20px;
+}
+
+.movie-grid{
+grid-template-columns:
+repeat(auto-fill,minmax(140px,1fr));
+gap:12px;
+}
+
+.hero-title{
+font-size:28px;
+}
+}
+</style>
+</head>
+
+  <body>
 
 <nav class="navbar">
 
-<div class="nav-logo">
-<a href="index.html">TUKARFOLLOW</a>
+<div class="logo">
+MOVIEHUB
 </div>
 
-<div class="nav-right desktop-only">
-
+<div class="search-box">
 <input
 type="text"
 id="searchInput"
-placeholder="Cari Movies..."
+placeholder="Cari film atau TV Series..."
 autocomplete="off">
-
-<select id="menuFilter">
-<option value="">Menu</option>
-<option value="index.html">Movies</option>
-<option value="series.html">TV Series</option>
-<option value="tvlokal.html">TV Lokal</option>
-</select>
-  
-<select id="genreFilter">
-<option value="">Semua Genre</option>
-</select>
-
-<select id="yearFilter">
-<option value="">Tahun Rilis</option>
-<option value="2026">2026</option>
-<option value="2025">2025</option>
-<option value="2024">2024</option>
-<option value="classic">Klasik</option>
-</select>
-  
 </div>
-
-<button id="burgerBtn" class="burger mobile-only">
-
-<span></span>
-<span></span>
-<span></span>
-
-</button>
 
 </nav>
 
-<!-- MOBILE MENU -->
-
-<div id="mobileMenu" class="mobile-menu">
-
-<input
-type="text"
-id="mobileSearchInput"
-placeholder="Cari film atau series..."
-autocomplete="off">
-
-<select id="mobileMenuFilter">
-<option value="">Menu</option>
-<option value="index.html">Movies</option>
-<option value="series.html">TV Series</option>
-<option value="tvlokal.html">TV Lokal</option>
-</select>
-
-<select id="mobileGenreFilter">
-<option value="">Semua Genre</option>
-</select>
-
-<select id="mobileYearFilter">
-<option value="">Tahun Rilis</option>
-<option value="2026">2026</option>
-<option value="2025">2025</option>
-<option value="2024">2024</option>
-<option value="classic">Klasik</option>
-</select>
-
-</div>
-
 <!-- HERO -->
 
-<section id="heroSection" class="hero">
+<header class="hero">
+
+<div
+class="hero-backdrop"
+id="heroBackdrop">
+</div>
 
 <div class="hero-overlay"></div>
 
 <div class="hero-content">
 
-<span class="hero-badge">
-FEATURED + ID CC
-</span>
-
-<h1 id="heroTitle">
+<h1
+class="hero-title"
+id="heroTitle">
 Loading...
 </h1>
 
-<p id="heroOverview">
-Memuat film pilihan...
+<p
+class="hero-desc"
+id="heroDesc">
+Mengambil data dari TMDB...
 </p>
-
-<a id="heroWatchBtn" href="#">
-WATCH NOW
-</a>
 
 </div>
 
-</section>
+</header>
 
-<!-- CONTENT -->
+<!-- HASIL SEARCH -->
 
-<main class="container">
-
-<section class="section-title-wrap">
+<section class="section" id="searchSection" style="display:none;">
 
 <h2 class="section-title">
-Movies & Series
+Hasil Pencarian
 </h2>
+
+<div
+class="movie-grid"
+id="searchGrid">
+</div>
 
 </section>
 
-<div id="movieGrid" class="movie-grid">
+<!-- TRENDING -->
 
-<!-- TMDB Render -->
+<section class="section">
 
-</div>
+<h2 class="section-title">
+🔥 Trending Movies
+</h2>
 
-<!-- PAGINATION -->
+<div
+class="movie-grid"
+id="trendingGrid">
 
-<div id="pagination" class="pagination">
-
-<button id="prevPage">
-&lt;
-</button>
-
-<div id="pageNumbers">
-
-</div>
-
-<button id="nextPage">
-&gt;
-</button>
-
-</div>
-
-</main>
-
-<!-- FOOTER -->
-<footer class="footer">
-
-<div class="footer-grid">
-
-<div>
-<h3>Genres</h3>
-<p>
-Action, Adventure, Animation, Biography, Comedy, Crime, Drama, Korean Drama, Family, Fantasy,
-History, Horror, Music, Mystery, Romance, Science Fiction, Sci-Fi & Fantasy, Thriller,
-TV Movie, War, Western
-</p>
-</div>
-
-<div>
-<h3>About</h3>
-<p>
-TUKARFOLLOW menyediakan akses cepat ke berbagai siaran TV lokal Indonesia.
-</p>
-</div>
-
-<div>
-<h3>Ads Disclosure</h3>
-<p>
-Beberapa banner promosi ditampilkan untuk membantu operasional situs.
-</p>
-</div>
-
-<div>
-<h3>Disclaimer</h3>
-<p>
-Semua siaran berasal dari sumber resmi pihak ketiga.
-</p>
+<div class="loader">
+<div class="spinner"></div>
 </div>
 
 </div>
 
-<div class="copyright">
-© 2026 TukarFollow
+</section>
+
+<!-- MOVIES -->
+
+<section class="section">
+
+<h2 class="section-title">
+🎬 Movies
+</h2>
+
+<div
+class="movie-grid"
+id="moviesGrid">
+
+<div class="loader">
+<div class="spinner"></div>
 </div>
 
-</footer>
+</div>
 
-<script src="script.js"></script>
+</section>
+
+<!-- TV SERIES -->
+
+<section class="section">
+
+<h2 class="section-title">
+📺 TV Series
+</h2>
+
+<div
+class="movie-grid"
+id="tvGrid">
+
+<div class="loader">
+<div class="spinner"></div>
+</div>
+
+</div>
+
+</section>
+
+<!-- INDONESIA -->
+
+<section class="section">
+
+<h2 class="section-title">
+🇮🇩 Indonesia Movies
+</h2>
+
+<div
+class="movie-grid"
+id="indoGrid">
+
+<div class="loader">
+<div class="spinner"></div>
+</div>
+
+</div>
+
+</section>
+
+<!-- PAGINATION MOVIES -->
+
+<section>
+
+<div
+class="pagination"
+id="moviePagination">
+</div>
+
+</section>
+
+<!-- PAGINATION TV -->
+
+<section>
+
+<div
+class="pagination"
+id="tvPagination">
+</div>
+
+</section>
+
+<!-- PAGINATION INDO -->
+
+<section>
+
+<div
+class="pagination"
+id="indoPagination">
+</div>
+
+</section>
+
+<!-- TEMPLATE CARD -->
+
 <script>
-document.getElementById("menuFilter").onchange = function () {
-if (this.value) {
-window.location.href = this.value;
+
+function createCard(item,type){
+
+const poster=item.poster_path
+?`https://image.tmdb.org/t/p/w500${item.poster_path}`
+:'https://via.placeholder.com/500x750?text=No+Image';
+
+const title=
+item.title ||
+item.name ||
+'Untitled';
+
+return `
+<div
+class="movie-card"
+onclick="openWatch('${type}',${item.id})">
+
+<img
+class="movie-poster"
+loading="lazy"
+src="${poster}"
+alt="${title}">
+
+<div class="movie-info">
+
+<div class="movie-title">
+${title}
+</div>
+
+<div class="movie-meta">
+
+⭐ ${item.vote_average||0}
+
+</div>
+
+</div>
+
+</div>
+`;
+
 }
+
+function openWatch(type,id){
+
+location.href=
+`watch.html?type=${type}&id=${id}`;
+
+}
+
+</script>
+
+    <script>
+
+/* ==========================================
+   TMDB CONFIG
+========================================== */
+
+const API_KEY = "b3b893873ed1bb7f175b2707afeea2a0";
+
+const IMG = "https://image.tmdb.org/t/p/original";
+
+let moviePage = 1;
+let tvPage = 1;
+let indoPage = 1;
+
+/* ==========================================
+   HELPERS
+========================================== */
+
+async function getJSON(url){
+
+try{
+
+const res = await fetch(url);
+
+if(!res.ok)
+throw new Error("TMDB Error");
+
+return await res.json();
+
+}catch(err){
+
+console.error(err);
+
+return {
+results:[]
 };
 
-document.getElementById("mobileMenuFilter").onchange = function () {
-if (this.value) {
-window.location.href = this.value;
 }
+
+}
+
+/* ==========================================
+   HERO
+========================================== */
+
+async function loadHero(){
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`
+);
+
+if(!data.results?.length)
+return;
+
+const hero = data.results[0];
+
+document.getElementById("heroBackdrop").style.backgroundImage =
+`url(${IMG}${hero.backdrop_path})`;
+
+document.getElementById("heroTitle").textContent =
+hero.title || hero.name || "Unknown";
+
+document.getElementById("heroDesc").textContent =
+hero.overview || "No description";
+
+}
+
+/* ==========================================
+   RENDER GRID
+========================================== */
+
+function renderGrid(container,data,type){
+
+container.innerHTML = "";
+
+if(!data.length){
+
+container.innerHTML =
+"<p>Tidak ada data.</p>";
+
+return;
+
+}
+
+container.innerHTML =
+data.map(item=>createCard(item,type))
+.join("");
+
+}
+
+/* ==========================================
+   TRENDING
+========================================== */
+
+async function loadTrending(){
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`
+);
+
+renderGrid(
+document.getElementById("trendingGrid"),
+data.results || [],
+"movie"
+);
+
+}
+
+/* ==========================================
+   MOVIES
+========================================== */
+
+async function loadMovies(page=1){
+
+moviePage = page;
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&page=${page}`
+);
+
+renderGrid(
+document.getElementById("moviesGrid"),
+data.results || [],
+"movie"
+);
+
+renderPagination(
+"moviePagination",
+moviePage,
+loadMovies
+);
+
+}
+
+/* ==========================================
+   TV SERIES
+========================================== */
+
+async function loadTV(page=1){
+
+tvPage = page;
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&page=${page}`
+);
+
+renderGrid(
+document.getElementById("tvGrid"),
+data.results || [],
+"tv"
+);
+
+renderPagination(
+"tvPagination",
+tvPage,
+loadTV
+);
+
+}
+
+/* ==========================================
+   INDONESIA MOVIES
+========================================== */
+
+async function loadIndonesia(page=1){
+
+indoPage = page;
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
+);
+
+renderGrid(
+document.getElementById("indoGrid"),
+data.results || [],
+"movie"
+);
+
+renderPagination(
+"indoPagination",
+indoPage,
+loadIndonesia
+);
+
+}
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+const searchInput =
+document.getElementById("searchInput");
+
+let searchTimer;
+
+searchInput.addEventListener("input",()=>{
+
+clearTimeout(searchTimer);
+
+searchTimer = setTimeout(async()=>{
+
+const q =
+searchInput.value.trim();
+
+const section =
+document.getElementById("searchSection");
+
+if(!q){
+
+section.style.display="none";
+return;
+
+}
+
+const data = await getJSON(
+`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(q)}`
+);
+
+const filtered =
+(data.results||[])
+.filter(x =>
+x.media_type==="movie" ||
+x.media_type==="tv"
+);
+
+renderGrid(
+document.getElementById("searchGrid"),
+filtered,
+"movie"
+);
+
+section.style.display="block";
+
+},500);
+
+});
+
+/* ==========================================
+   PAGINATION
+========================================== */
+
+function renderPagination(
+containerId,
+currentPage,
+callback
+){
+
+const container =
+document.getElementById(containerId);
+
+container.innerHTML="";
+
+const prev =
+document.createElement("button");
+
+prev.className="page-btn";
+
+prev.textContent="<";
+
+prev.onclick=()=>{
+
+if(currentPage>1)
+callback(currentPage-1);
+
 };
+
+container.appendChild(prev);
+
+let start =
+Math.max(1,currentPage-2);
+
+let end =
+start+4;
+
+for(let i=start;i<=end;i++){
+
+const btn =
+document.createElement("button");
+
+btn.className="page-btn";
+
+if(i===currentPage)
+btn.classList.add("active");
+
+btn.textContent=i;
+
+btn.onclick=()=>{
+
+callback(i);
+
+};
+
+container.appendChild(btn);
+
+}
+
+const next =
+document.createElement("button");
+
+next.className="page-btn";
+
+next.textContent=">";
+
+next.onclick=()=>{
+
+callback(currentPage+1);
+
+};
+
+container.appendChild(next);
+
+}
+
+/* ==========================================
+   INIT
+========================================== */
+
+loadHero();
+
+loadTrending();
+
+loadMovies(1);
+
+loadTV(1);
+
+loadIndonesia(1);
+
+</script>
+
+    <script>
+
+/* ==========================================
+   ADVANCED PAGINATION
+========================================== */
+
+function renderPagination(
+containerId,
+currentPage,
+callback
+){
+
+const container =
+document.getElementById(containerId);
+
+container.innerHTML="";
+
+const groupSize = 5;
+
+const group =
+Math.floor((currentPage-1)/groupSize);
+
+const start =
+(group * groupSize) + 1;
+
+const end =
+start + groupSize - 1;
+
+/* PREV GROUP */
+
+const prev =
+document.createElement("button");
+
+prev.className="page-btn";
+
+prev.textContent="<";
+
+prev.onclick=()=>{
+
+if(start > 1){
+
+callback(start - groupSize);
+
+}
+
+};
+
+container.appendChild(prev);
+
+/* PAGE NUMBERS */
+
+for(let i=start;i<=end;i++){
+
+const btn =
+document.createElement("button");
+
+btn.className="page-btn";
+
+if(i===currentPage){
+
+btn.classList.add("active");
+
+}
+
+btn.textContent=i;
+
+btn.onclick=()=>{
+
+callback(i);
+
+};
+
+container.appendChild(btn);
+
+}
+
+/* NEXT GROUP */
+
+const next =
+document.createElement("button");
+
+next.className="page-btn";
+
+next.textContent=">";
+
+next.onclick=()=>{
+
+callback(end + 1);
+
+};
+
+container.appendChild(next);
+
+}
+
+/* ==========================================
+   CACHE
+========================================== */
+
+const CACHE = {};
+
+async function getCached(url){
+
+if(CACHE[url]){
+
+return CACHE[url];
+
+}
+
+const data = await getJSON(url);
+
+CACHE[url] = data;
+
+return data;
+
+}
+
+/* ==========================================
+   REPLACE LOAD MOVIES
+========================================== */
+
+async function loadMovies(page=1){
+
+moviePage = page;
+
+const data =
+await getCached(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&page=${page}`
+);
+
+renderGrid(
+document.getElementById("moviesGrid"),
+data.results || [],
+"movie"
+);
+
+renderPagination(
+"moviePagination",
+moviePage,
+loadMovies
+);
+
+}
+
+/* ==========================================
+   REPLACE LOAD TV
+========================================== */
+
+async function loadTV(page=1){
+
+tvPage = page;
+
+const data =
+await getCached(
+`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&page=${page}`
+);
+
+renderGrid(
+document.getElementById("tvGrid"),
+data.results || [],
+"tv"
+);
+
+renderPagination(
+"tvPagination",
+tvPage,
+loadTV
+);
+
+}
+
+/* ==========================================
+   REPLACE LOAD INDONESIA
+========================================== */
+
+async function loadIndonesia(page=1){
+
+indoPage = page;
+
+const data =
+await getCached(
+`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=id&page=${page}`
+);
+
+renderGrid(
+document.getElementById("indoGrid"),
+data.results || [],
+"movie"
+);
+
+renderPagination(
+"indoPagination",
+indoPage,
+loadIndonesia
+);
+
+}
+
+/* ==========================================
+   ENTER SEARCH
+========================================== */
+
+searchInput.addEventListener(
+"keydown",
+e=>{
+
+if(e.key==="Enter"){
+
+searchInput.blur();
+
+}
+
+}
+);
+
+/* ==========================================
+   SCROLL TOP
+========================================== */
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
 </script>
 
 </body>
