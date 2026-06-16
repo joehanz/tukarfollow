@@ -1432,6 +1432,10 @@ async ()=>{
 
 initMobileMenu();
 
+/* ==========================
+   INDEX
+========================== */
+
 if(isIndexPage()){
 
 await loadGenres();
@@ -1444,12 +1448,19 @@ loadDiscover();
 
 }
 
+/* ==========================
+   WATCH
+========================== */
+
 if(isWatchPage()){
+
+await loadGenres();
+
+initFilters();
 
 await initWatchPage();
 
 }
 
 });
-
 
