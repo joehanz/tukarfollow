@@ -337,6 +337,28 @@ loadDiscover();
    FILTER EVENTS
 ========================================== */
 
+function redirectToIndex(){
+
+const keyword =
+document.getElementById("searchInput")?.value ||
+document.getElementById("searchInputMobile")?.value ||
+"";
+
+const genre =
+document.getElementById("genreSelect")?.value ||
+document.getElementById("genreSelectMobile")?.value ||
+"";
+
+const year =
+document.getElementById("yearSelect")?.value ||
+document.getElementById("yearSelectMobile")?.value ||
+"";
+
+window.location =
+`index.html?q=${encodeURIComponent(keyword)}&genre=${genre}&year=${year}`;
+
+}
+
 function initFilters(){
 
 const searchDesktop =
