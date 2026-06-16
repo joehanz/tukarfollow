@@ -357,7 +357,8 @@ movieCard(movie)
 /* =========================
 PAGINATION
 ========================= */
-maksudmu ini direplace semua function renderPagination(){
+
+function renderPagination(){
 
 if(!pageNumbers) return;
 
@@ -412,47 +413,6 @@ pageNumbers.appendChild(btn);
 
 }
 
-/* =========================
-TMDB SEARCH
-========================= */
-
-async function searchTMDB(keyword){
-
-if(!keyword){
-
-filteredMovies=[...allMovies];
-
-currentPage=1;
-
-renderGrid();
-renderPagination();
-
-return;
-
-}
-
-try{
-
-const res=await fetch(
-`${TMDB}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(keyword)}`
-);
-
-const data=await res.json();
-
-filteredMovies=data.results||[];
-
-currentPage=1;
-
-renderGrid();
-renderPagination();
-
-}catch(e){
-
-console.log("search gagal");
-
-}
-
-}
 /* =========================
    FILTER
 ========================= */
@@ -554,22 +514,11 @@ searchInput.value;
 
 }
 
-const q=
-searchInput.value.trim();
-
-if(q.length>=2){
-
-searchTMDB(q);
-
-}else{
-
 applyFilters();
-
-}
 
 });
 
-} 
+}
 
 if(mobileSearchInput){
 
@@ -584,22 +533,12 @@ mobileSearchInput.value;
 
 }
 
-const q=
-mobileSearchInput.value.trim();
-
-if(q.length>=2){
-
-searchTMDB(q);
-
-}else{
-
 applyFilters();
-
-}
 
 });
 
 }
+
 /* =========================
    GENRE
 ========================= */
@@ -687,6 +626,7 @@ applyFilters();
 /* =========================
    PREV NEXT
 ========================= */
+
 if(prevPage){
 
 prevPage.onclick=()=>{
@@ -730,7 +670,6 @@ behavior:"smooth"
 };
 
 }
-
 
 /* =========================
    INIT
