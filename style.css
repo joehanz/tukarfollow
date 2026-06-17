@@ -323,7 +323,7 @@ align-items:flex-start;
 .movie-poster-box img{
 width:100%;
 border-radius:12px;
-display:block;
+display:none;
 }
 
 .movie-detail-box h1{
