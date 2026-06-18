@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 207021,
+    "title": "Generation Iron",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/generation-iron.webp,
+    "video": "",
+    "iframe": "https://playcinematic.com/video/36h1g78uI7lDUQB",
+    "sinopsis": "Kisah 7 binaraga top dunia berlatih demi panggung Mr. Olympia. Intip kompetisi otot paling bergengsi.",
+    "genre": ["Documentary"],
+    "release_date": "20-09-2013",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 980431,
     "title": "Avatar Aang: The Last Airbender",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/avatar-aang-the-last-airbender.webp",
