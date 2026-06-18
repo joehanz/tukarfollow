@@ -11,6 +11,17 @@
     "country": "Amerika Serikat"
   },
 	{
+    "tmdb_id": 763285,
+    "title": "Ambulance",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ambulance.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/TLQFuwfgWPuahWP",
+    "sinopsis": "Will Sharp, veteran perang yang butuh biaya medis istri, diajak saudaranya merampok bank $32 juta.",
+    "genre": ["Action", "Drama", "Thriller"],
+    "release_date": "16-03-2022",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 207021,
     "title": "Generation Iron",
     "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/generation-iron.webp,
