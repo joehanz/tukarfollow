@@ -113,9 +113,20 @@ if(!btn || !menu) return;
 btn.addEventListener(
 "click",
 ()=>{
+
 menu.classList.toggle(
 "active"
 );
+
+btn.classList.toggle(
+"active"
+);
+
+btn.textContent =
+menu.classList.contains("active")
+? "✕"
+: "☰";
+
 }
 );
 
