@@ -1123,6 +1123,7 @@ meta.innerHTML =
 `
 <span>${safe(movie.country)}</span>
 <span>${safe(movie.release_date)}</span>
+<span>${Array.isArray(movie.genre) ? movie.genre.join(", ") : ""}</span>
 `;
 
 overview.textContent =
