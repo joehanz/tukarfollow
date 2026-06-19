@@ -1248,10 +1248,7 @@ data.first_air_date ||
 ========================== */
 
 overview.textContent =
-  data.overview ||
-  movie.sinopsis ||
-  movie.overview ||
-  "";
+movie.sinopsis || "";
    
 /* ==========================
    OVERVIEW
