@@ -1183,6 +1183,21 @@ const genres =
 .map(x=>x.name)
 .join(", ");
 
+const genres =
+(data.genres || [])
+.map(x=>x.name)
+.join(", ");
+
+const country =
+(data.production_countries || [])
+.map(x=>x.name)
+.join(", ");
+
+const releaseDate =
+data.release_date ||
+data.first_air_date ||
+"";
+   
 /* ==========================
    PLAYER
 ========================== */
@@ -1227,6 +1242,8 @@ data.name ||
 
 meta.innerHTML =
 `
+<span>${country}</span>
+<span>${releaseDate}</span>
 <span>${genres}</span>
 `;
 
