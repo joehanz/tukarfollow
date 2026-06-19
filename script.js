@@ -1246,7 +1246,10 @@ data.first_air_date ||
 /* ==========================
    OVERVIEW
 ========================== */
+console.log("OVERVIEW =", data.overview);
+console.log(data);
 
+   
 overview.textContent =
 data.overview || "";
 
