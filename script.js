@@ -614,7 +614,11 @@ genreDesktop.value;
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 };
 
@@ -632,7 +636,11 @@ genreMobile.value;
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 };
 
@@ -654,7 +662,11 @@ yearDesktop.value;
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 };
 
@@ -672,7 +684,11 @@ yearMobile.value;
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 };
 
