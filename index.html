@@ -42,66 +42,90 @@
     </script>
   </head>
   <body>
-    <!-- ========================= NAVBAR ========================= -->
+  <!-- =========================
+     NAVBAR
+========================= -->
 
-    <header class="navbar">
-      <div class="nav-left">
-        <a href="index.html" class="logo-wrap">
-          <img
-            class="logo-icon"
-            src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/klise.webp"
-            alt="Logo TukarFollow"
-          />
-          <div class="logo-text">TukarFollow</div>
-        </a>
+<header class="navbar">
+
+  <div class="nav-left">
+
+    <a href="index.html" class="logo-wrap">
+
+      <img
+        class="logo-icon"
+        src="https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/klise.webp"
+        alt="Logo TukarFollow"
+      >
+
+      <div class="logo-text">
+        TukarFollow
       </div>
 
-      <div class="nav-right desktop-nav">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Cari film atau series..."
-          class="search-input"
-        />
+    </a>
 
-        <!-- Perbaikan: Menambahkan pilihan (option) dan tag penutup </select> -->
-        <select id="genreSelect">
-          <option value="">Pilih Genre</option>
-        </select>
+  </div>
 
-        <select id="yearSelect">
-          <option value="">Semua Rilis</option>
-          <option value="2026">2026</option>
-          <option value="2025">2025</option>
-          <option value="2024">2024</option>
-          <option value="classic">Klasik</option>
-        </select>
-      </div>
-    </header>
+  <div class="nav-right desktop-nav">
 
-    <!-- ========================= MOBILE MENU ========================= -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari film atau series..."
+      class="search-input"
+    >
 
-    <div id="mobileMenu" class="mobile-menu">
-      <input
-        type="text"
-        id="searchInputMobile"
-        placeholder="Cari film atau series..."
-        class="search-input"
-      />
+    <select id="genreSelect">
+      <option value="">Pilih Genre</option>
+    </select>
 
-      <select id="genreSelectMobile">
-        <option value="">Semua Genre</option>
-      </select>
+    <select id="yearSelect">
+      <option value="">Semua Rilis</option>
+      <option value="2026">2026</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="classic">Klasik</option>
+    </select>
 
-      <select id="yearSelectMobile">
-        <option value="">Semua Rilis</option>
-        <option value="2026">2026</option>
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="classic">Klasik</option>
-      </select>
-    </div>
+  </div>
 
+  <button
+    id="burgerBtn"
+    class="burger-btn"
+    aria-label="Menu">
+
+    ☰
+
+  </button>
+
+</header>
+
+<!-- =========================
+     MOBILE MENU
+========================= -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+  <input
+    type="text"
+    id="searchInputMobile"
+    placeholder="Cari film atau series..."
+    class="search-input"
+  >
+
+  <select id="genreSelectMobile">
+    <option value="">Semua Genre</option>
+  </select>
+
+  <select id="yearSelectMobile">
+    <option value="">Semua Rilis</option>
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+    <option value="classic">Klasik</option>
+  </select>
+
+</div>
     <!-- ========================= CONTENT ========================= -->
 
     <main class="container">
