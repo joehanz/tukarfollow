@@ -1243,12 +1243,7 @@ data.first_air_date ||
 <span>${genres}</span>
 `;
 
-/* ==========================
-   OVERVIEW / SINOPSIS
-========================== */
 
-overview.textContent =
-movie.sinopsis || "";
    
 /* ==========================
    OVERVIEW
