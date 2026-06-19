@@ -1244,6 +1244,16 @@ data.first_air_date ||
 `;
 
 /* ==========================
+   OVERVIEW / SINOPSIS
+========================== */
+
+overview.textContent =
+  data.overview ||
+  movie.sinopsis ||
+  movie.overview ||
+  "";
+   
+/* ==========================
    OVERVIEW
 ========================== */
 console.log("OVERVIEW =", data.overview);
