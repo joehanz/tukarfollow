@@ -1739,3 +1739,54 @@ await initWatchPage();
 }
 
 });
+
+
+
+
+
+
+
+
+(function () {
+  function getMetaContainer() {
+    return document.querySelector(".meta");
+  }
+
+  function createBadge() {
+    let badge = document.querySelector(".badge");
+
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "badge";
+      badge.style.display = "inline-block";
+      badge.style.marginRight = "8px";
+      badge.style.padding = "4px 8px";
+      badge.style.borderRadius = "4px";
+      badge.style.fontSize = "12px";
+      badge.style.fontWeight = "bold";
+      badge.style.background = "red";
+      badge.style.color = "#fff";
+
+      const meta = getMetaContainer();
+      if (meta) meta.prepend(badge);
+    }
+
+    return badge;
+  }
+
+  window.setBadgeType = function (data) {
+    const badge = createBadge();
+
+    const isMovie =
+      data.media_type === "movie" ||
+      data.type === "movie" ||
+      !!data.release_date;
+
+    if (isMovie) {
+      badge.textContent = "WEBRIP";
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+  };
+})();
