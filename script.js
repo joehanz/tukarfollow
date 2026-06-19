@@ -49,6 +49,43 @@ return !!document.getElementById(
 );
 }
 
+function showWatchOverlay(){
+const ov=
+document.getElementById(
+"watchSearchOverlay"
+);
+
+if(!ov) return;
+
+ov.classList.remove(
+"hidden"
+);
+
+document.body.classList.add(
+"overlay-open"
+);
+}
+
+function hideWatchOverlay(){
+
+const ov=
+document.getElementById(
+"watchSearchOverlay"
+);
+
+if(!ov) return;
+
+ov.classList.add(
+"hidden"
+);
+
+document.body.classList.remove(
+"overlay-open"
+);
+
+}
+
+
 function isIndexPage(){
 return !!document.getElementById(
 "movieGrid"
@@ -287,6 +324,106 @@ wrap.appendChild(btn);
 
 }
 
+async function loadWatchSearch(){
+
+const grid =
+document.getElementById(
+"watchSearchGrid"
+);
+
+if(!grid) return;
+
+showWatchOverlay();
+
+grid.innerHTML =
+'<div class="loading">Loading...</div>';
+
+try{
+
+let movieUrl =
+`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API}&language=id-ID&page=1`;
+
+let tvUrl =
+`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API}&language=id-ID&page=1`;
+
+if(currentGenre){
+
+movieUrl +=
+`&with_genres=${currentGenre}`;
+
+tvUrl +=
+`&with_genres=${currentGenre}`;
+
+}
+
+movieUrl += buildYearFilter();
+tvUrl += buildYearFilter();
+
+if(currentKeyword){
+
+movieUrl =
+`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API}&language=id-ID&query=${encodeURIComponent(currentKeyword)}`;
+
+tvUrl =
+`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_API}&language=id-ID&query=${encodeURIComponent(currentKeyword)}`;
+
+}
+
+const movieReq =
+await fetch(movieUrl);
+
+const tvReq =
+await fetch(tvUrl);
+
+const movieData =
+await movieReq.json();
+
+const tvData =
+await tvReq.json();
+
+const merged = [];
+
+(movieData.results||[])
+.forEach(x=>
+merged.push({
+...x,
+_mediaType:"movie"
+})
+);
+
+(tvData.results||[])
+.forEach(x=>
+merged.push({
+...x,
+_mediaType:"tv"
+})
+);
+
+let html="";
+
+merged.forEach(item=>{
+
+html += createCard(
+item,
+item._mediaType
+);
+
+});
+
+grid.innerHTML = html;
+
+}
+catch(err){
+
+console.log(err);
+
+grid.innerHTML =
+'<div class="empty-state">Gagal memuat data</div>';
+
+}
+}
+
+
 /* ==========================================
    PAGINATION BUTTONS
 ========================================== */
@@ -415,7 +552,11 @@ searchDesktop.value.trim();
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 },500);
 
