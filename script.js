@@ -1228,6 +1228,18 @@ data.name ||
 
 meta.innerHTML =
 `
+<span>${
+(data.production_countries || [])
+.map(x=>x.name)
+.join(", ")
+}</span>
+
+<span>${
+data.release_date ||
+data.first_air_date ||
+""
+}</span>
+
 <span>${genres}</span>
 `;
 
