@@ -1,15 +1,4 @@
 [
-  {
-    "tmdb_id": 1083381,
-    "title": "Backrooms",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
-    "video": "",
-    "iframe": "https://abyssplayer.com/rxk82wdkK",
-    "sinopsis": "Sebuah pintu aneh muncul di ruang bawah tanah sebuah ruang pamer furnitur.",
-    "genre": ["Horor", "Sci-fi", "Thriller"],
-    "release_date": "27-05-2026",
-    "country": "Amerika Serikat"
-  },
 	{
     "tmdb_id": 763285,
     "title": "Ambulance",
@@ -19,6 +8,17 @@
     "sinopsis": "Will Sharp, veteran perang yang butuh biaya medis istri, diajak saudaranya merampok bank $32 juta.",
     "genre": ["Action", "Drama", "Thriller"],
     "release_date": "16-03-2022",
+    "country": "Amerika Serikat"
+  },
+  {
+    "tmdb_id": 1083381,
+    "title": "Backrooms",
+    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "video": "",
+    "iframe": "https://abyssplayer.com/rxk82wdkK",
+    "sinopsis": "Sebuah pintu aneh muncul di ruang bawah tanah sebuah ruang pamer furnitur.",
+    "genre": ["Horor", "Sci-fi", "Thriller"],
+    "release_date": "27-05-2026",
     "country": "Amerika Serikat"
   },
 	{
