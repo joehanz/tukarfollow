@@ -340,6 +340,10 @@ grid.innerHTML =
 
 try{
 
+console.log("LOAD WATCH SEARCH");
+console.log("GENRE =", currentGenre);
+console.log("YEAR =", currentYear);
+   
 let movieUrl =
 `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API}&language=id-ID&page=1`;
 
