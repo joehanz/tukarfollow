@@ -1183,12 +1183,6 @@ const genres =
 .map(x=>x.name)
 .join(", ");
 
-const genres =
-(data.genres || [])
-.map(x=>x.name)
-.join(", ");
-
-
    
 /* ==========================
    PLAYER
