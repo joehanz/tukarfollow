@@ -128,6 +128,27 @@ flex-direction:column;
 gap:10px;
 }
 
+.watch-search-overlay{
+position:fixed;
+top:67px;
+left:0;
+right:0;
+bottom:0;
+background:#0b0f14;
+overflow:auto;
+padding:20px;
+z-index:998;
+}
+
+.watch-search-overlay .movie-grid{
+max-width:1600px;
+margin:auto;
+}
+
+body.overlay-open{
+overflow:hidden;
+}
+
 /* ==========================================
    CONTAINER
 ========================================== */
