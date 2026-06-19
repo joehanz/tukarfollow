@@ -1,8 +1,19 @@
 [
 	{
+    "tmdb_id": 1688157,
+    "title": "Scissors",
+    "image": "https://raw.githubusercontent.com/joehanz/csscsscsscsscsstukarfollow/refs/heads/main/banner/Scissors.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/guxEMYDk8wnkHVQ",
+    "sinopsis": "Karina move on ke kapster jelita usai diselingkuhi. Mantan pacar balik, ia pun bimbang.",
+    "genre": ["Drama", "Vivamax"],
+    "release_date": "2026-05-08",
+    "country": "Philipina"
+  },
+	{
     "tmdb_id": 1669057,
     "title": "Check In",
-    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Check-In.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/csscsscsscsscsstukarfollow/refs/heads/main/banner/Check-In.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/cDfqj7KBX25nOg6",
     "sinopsis": "Aliya Raymundo & Anya Austria jadi resepsionis motel murah. Tamu misterius memicu konflik.",
@@ -13,7 +24,7 @@
 	{
     "tmdb_id": 763285,
     "title": "Ambulance",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ambulance.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/ambulance.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/TLQFuwfgWPuahWP",
     "sinopsis": "Will Sharp, veteran perang yang butuh biaya medis istri, diajak saudaranya merampok bank $32 juta.",
@@ -24,7 +35,7 @@
   {
     "tmdb_id": 1083381,
     "title": "Backrooms",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-backrooms-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/rxk82wdkK",
     "sinopsis": "Sebuah pintu aneh muncul di ruang bawah tanah sebuah ruang pamer furnitur.",
@@ -35,7 +46,7 @@
 	{
     "tmdb_id": 207021,
     "title": "Generation Iron",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/generation-iron.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/generation-iron.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/36h1g78uI7lDUQB",
     "sinopsis": "Kisah 7 binaraga top dunia berlatih demi panggung Mr. Olympia. Intip kompetisi otot paling bergengsi.",
@@ -46,7 +57,7 @@
 	{
     "tmdb_id": 980431,
     "title": "Avatar Aang: The Last Airbender",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/avatar-aang-the-last-airbender.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/avatar-aang-the-last-airbender.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/no38hMkE8FXoI3b",
     "sinopsis": "Aang dewasa dan kawan-kawan menjelajah dunia demi menemukan kekuatan kuno sebelum direbut musuh.",
@@ -57,7 +68,7 @@
 	{
     "tmdb_id": 814889,
     "title": "Never Let Go",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/never-let-go.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/never-let-go.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/ahsGRZFiTde2HAH",
     "sinopsis": "Saat kejahatan melanda, seorang ibu dan putra kembarnya harus bersatu demi bertahan hidup.",
@@ -68,7 +79,7 @@
 	{
     "tmdb_id": 629176,
     "title": "Samaritan",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/samaritan.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/samaritan.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/jZoVrAk8VX6mtya",
     "sinopsis": "Sam (13) curiga tetangganya adalah Samaritan, pahlawan yang dikira sudah tewas, demi selamatkan kota.",
@@ -79,7 +90,7 @@
 	{
     "tmdb_id": 1291335,
     "title": "Solo Mio",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/solo-mio.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/solo-mio.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/RWDmZtFfnvfaGAz",
     "sinopsis": "Ditinggal di altar, Matt bulan madu sendiri keliling Italia, menikmati kuliner & bertemu Gia.",
@@ -90,7 +101,7 @@
 	{
     "tmdb_id": 840464,
     "title": "Greenland 2: Migration",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Greenland%202%20Migration.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Greenland%202%20Migration.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/ULzO2rASfFu2JrG",
     "sinopsis": "Selamat dari komet Clarke, keluarga Garrity nekat seberangi Eropa yang hancur demi rumah baru.",
@@ -101,7 +112,7 @@
 	{
     "tmdb_id": 1034716,
     "title": "People We Meet On Vacation ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/People%20We%20Meet%20on%20Vacation.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/People%20We%20Meet%20on%20Vacation.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/JdPn90c61ZaemHi",
     "sinopsis": "Poppy si jiwa bebas. Alex si perencana. Sering liburan bareng, apa mereka cocok jadi kekasih?",
@@ -112,7 +123,7 @@
 	{
     "tmdb_id": 1656640,
     "title": "Black Men Dont Cheat 3 Outplayed ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Black%20Men%20Don%E2%80%99t%20Cheat%203.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Black%20Men%20Don%E2%80%99t%20Cheat%203.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/6Nv0hu4FybK8YNO",
     "sinopsis": "Slogan pria kulit hitam tak selingkuh terpatahkan, kebohongan terbongkar dan seret semua orang.",
@@ -123,7 +134,7 @@
 	{
     "tmdb_id": 1592021,
     "title": "Lost In Paradise ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lost%20In%20Paradise.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Lost%20In%20Paradise.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/byTHAYj56qbFF5R",
     "sinopsis": "Terdampar di pulau terpencil bersama seorang koki, benih cinta tumbuh pada pemilik perusahaan mode.",
@@ -134,7 +145,7 @@
 	{
     "tmdb_id": 1591582,
     "title": "Best Served Cold ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Best%20Served%20Cold.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Best%20Served%20Cold.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/ESYKxobcHN9ndE0",
     "sinopsis": "Tur kuliner Gwen dan Moira di Cile berujung petaka saat terjebak sekte kanibal di resort terpencil.",
@@ -145,7 +156,7 @@
 	{
     "tmdb_id": 1609104,
     "title": "Love in the Countryside ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Love%20in%20the%20Countryside.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Love%20in%20the%20Countryside.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/0SF3SPWSTLaEwbY",
     "sinopsis": "Dihukum sang ayah, gadis kota Ana diasingkan ke desa. Hidupnya jadi runyam tanpa internet dan becek.",
@@ -156,7 +167,7 @@
 	{
     "tmdb_id": 1196946,
     "title": "Ikkis ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ikkis.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/ikkis.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/Te1zc22IgY4z2ls",
     "sinopsis": "Gugur dalam perang 1971, kisah Arun Khetarpal ulas nestapa perang lewat reuni sang ayah di Pakistan.",
@@ -167,7 +178,7 @@
 	{
     "tmdb_id": 1597608,
     "title": "Ainsley McGregor Mysteries A Case For The Watchmaker ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ainsley-mcgregor-mysteries-a-case-for-the-watchmaker.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/ainsley-mcgregor-mysteries-a-case-for-the-watchmaker.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/okiNNIFhpbKsSL0",
     "sinopsis": "Kasus lama pembunuhan berkedok pencurian jam antik diulik kembali, Ainsley pacu waktu buru pembunuh.",
@@ -178,7 +189,7 @@
 	{
     "tmdb_id": 1610418,
     "title": "The House on Haunted Grounds ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/the-house-on-haunted-grounds.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/the-house-on-haunted-grounds.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/SSud6fYdaxSOvDQ",
     "sinopsis": "Rekaman video tim investigator ungkap teror kerasukan dan pembunuhan sadis di sebuah rumah berhantu.",
@@ -189,7 +200,7 @@
 	 {
     "tmdb_id": 1614837,
     "title": "Cuba Coocuyo Remix ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/cuba-coocuyo-remix.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/cuba-coocuyo-remix.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/PqA31zZoIyQxv2X",
     "sinopsis": "Kisah nyata para DJ Kuba bagai kunang-kunang, hidupkan musik elektronik malam hari di tengah realita",
@@ -200,7 +211,7 @@
 	{
     "tmdb_id": 816949,
     "title": "Daemon Mind ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/daemon-mind.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/daemon-mind.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/8JwqOCFqlH96C61",
     "sinopsis": "Ilmuwan saraf ciptakan alat pelepas iblis dalam dirinya demi balas dendam kejam pada musuh.",
@@ -211,7 +222,7 @@
 	{
     "tmdb_id": 1368166,
     "title": "The Housemaid ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/the-housemaid.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/the-housemaid.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/q6ZkdRvKatciHQ5",
     "sinopsis": "Kabur dari masa lalu, pelayan Millie terjebak skandal, rahasia, dan kuasa di rumah majikan kaya.",
@@ -222,7 +233,7 @@
 	{
     "tmdb_id": 1137179,
     "title": "Yadang: The Snitch ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/yadang-the-snitch.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/yadang-the-snitch.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/JQ3jxCgrKnlt9Fr",
     "sinopsis": "Informan narkoba terjebak konspirasi maut jetset, kini ia harus bertahan hidup dan menang.",
@@ -233,7 +244,7 @@
 	{
     "tmdb_id": 1317288,
     "title": "Marty Supreme ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/marty-supreme.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/marty-supreme.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/BuxBZtte9yJxoZI",
     "sinopsis": "Marty Mauser, pemuda dengan impian yang diremehkan, rela menderita demi raih keagungan.",
@@ -244,7 +255,7 @@
 	{
     "tmdb_id": 715931,
     "title": "Emancipation ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/emancipation.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/emancipation.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/85u8h43qtPNO2QY",
     "sinopsis": "Kisah nyata budak bernama Peter yang pertaruhkan nyawa demi kabur dan kembali pada keluarganya.",
@@ -255,7 +266,7 @@
 	{
     "tmdb_id": 76600,
     "title": "Avatar: The Way of Water ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/avatar-the-way-of-water.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/avatar-the-way-of-water.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/CLeCYk9EQtiLK9R",
     "sinopsis": "Satu dekade setelah film pertama, keluarga Sully berjuang demi keselamatan dari tragedi.",
@@ -266,7 +277,7 @@
 	{
     "tmdb_id": 1455079,
     "title": "You, Me & Tuscany ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/you-me-tuscany.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/you-me-tuscany.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/WybfceVPo8REgHd",
     "sinopsis": "Menyamar jadi tunangan pemilik vila Italia, wanita ini temukan cinta yang mengubah hidupnya.",
@@ -277,7 +288,7 @@
 	{
     "tmdb_id": 1631917,
     "title": "18th Rose ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/18th-rose.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/18th-rose.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/pdREm8FPpC7ZMDD",
     "sinopsis": "Remaja ceria pemimpi debut ideal bersekutu dengan pendatang baru, namun rasa cinta merusak rencana.",
@@ -288,7 +299,7 @@
 	{
     "tmdb_id": 855435,
     "title": "Faces Of Death ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/faces-of-death.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/faces-of-death.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/SMTbQy4Fq2gZOrW",
     "sinopsis": "Moderator konten web temukan video kekerasan nyata yang meniru adegan kematian dari sebuah film.",
@@ -299,7 +310,7 @@
 	{
     "tmdb_id": 1576369,
     "title": "Bharathanatyam 2 Mohiniyattam ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/bharathanatyam-2-mohiniyattam.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/bharathanatyam-2-mohiniyattam.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/MbXSfwiLyLhxVCK",
     "sinopsis": "Keluarga urus warisan mendiang di Sreekandapuram, tapi masa lalu memicu kriminalitas tak terduga.",
@@ -310,7 +321,7 @@
   {
     "tmdb_id": 1511057,
     "title": "Roommates ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/roommates.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/roommates.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/BtoNYWBWr1DjjJJ",
     "sinopsis": "Devon yang pemalu sekamar dengan Celeste yang keren, pertemanan mereka berujung perang pasif-agresif.",
@@ -321,7 +332,7 @@
   {
     "tmdb_id": 1102883,
     "title": "Mother Mary ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/mother-mary.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/mother-mary.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/01kFxxPBfwcFgqB",
     "sinopsis": "Luka lama terkoyak saat popstar Mother Mary reuni dengan desainer kostum lamanya jelang konser.",
@@ -332,7 +343,7 @@
   {
     "tmdb_id": 1623125,
     "title": "A Gorilla Story: Told by David Attenborough ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/gorilla-story.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/gorilla-story.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/05Vg23HihQYYOpu",
     "sinopsis": "David Attenborough ungkap kisah kawanan gorila dari jumpa pertama tahun 70-an hingga saat ini.",
@@ -343,7 +354,7 @@
   {
 	"tmdb_id": 1280300,
     "title": "The Whistler ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/wisther.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/wisther.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/mRrmRVu95owldpb",
     "sinopsis": "Nicole dan Sebastian kelola pertanian terpencil usai kehilangan putri mereka, tak tahu ada teror gaib.",
@@ -354,7 +365,7 @@
   {
 	"tmdb_id": 1243741,
     "title": "Ballistic ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ballistic-2025.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/ballistic-2025.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/Pv7b7cWEiqzbYZT",
     "sinopsis": "Ibu tentara tahu peluru pembunuh anaknya dibuat di pabriknya bekerja, ia pun menuntut balas.",
@@ -365,7 +376,7 @@
   {
 	"tmdb_id": 1678192,
     "title": "Blood Witch ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/blood-witch.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/blood-witch.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/XvrpsaFRJsdlCdp",
     "sinopsis": "Abad usai dibunuh, ibu-anak penyihir bangkit balas dendam. Dua jurnalis selidiki warga yang hilang. ",
@@ -376,7 +387,7 @@
   {
 	"tmdb_id": 1665860,
     "title": "Murder in the Dark ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/murder-in-the-dark.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/murder-in-the-dark.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/ce2nZ8MJdDNQltX",
     "sinopsis": "Pelayan buta saksi pembunuhan di resto gelap jadi target baru pembunuh yang ingin membungkamnya.",
@@ -387,7 +398,7 @@
   {
 	"tmdb_id": 1674644,
     "title": "Beyond the Game: Samurai 2026 WORLD BASEBALL CLASSIC",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/beyond-the-game.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/beyond-the-game.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/hMbIKe7C9WCX1Fo",
     "sinopsis": "Tekanan juara, kalah mengejutkan, ruang ganti jujur. Kamera merekam realita tim Samurai Japan.",
@@ -398,7 +409,7 @@
   {
 	"tmdb_id": 1594264,
     "title": "Space Ranger: New Worlds ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/space-ranger.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/space-ranger.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/p2XIhC7X5TA2rzC",
     "sinopsis": "Pasukan elit antariksa mencari jati diri saat galaksi damai, hingga ancaman baru mendadak muncul.",
@@ -409,7 +420,7 @@
   {
 	"tmdb_id": 1309396,
     "title": "The Doll ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/la-poupee.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/la-poupee.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/t5krx3SJCkDvjiw",
     "sinopsis": "Prancis Timur kini Rémi hidup dengan boneka Audrey. Saat Patricia datang, Audrey hidup kembali.",
@@ -420,7 +431,7 @@
   {
     "tmdb_id": 1648678,
     "title": "Orangutan ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/orangutan.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/orangutan.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/KLtyoSdK9GVNGrg",
     "sinopsis": "Dinarasikan oleh Josh Gad, ikuti Indah seekor orangutan muda yang meninggalkan keluarganya di hutan hujan untuk hidup sendiri.",
@@ -431,7 +442,7 @@
   {
 	"tmdb_id": 1649248,
     "title": "Finding Satoshi ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/finding-sathoshi-by-caturbangunsentosa.blogspot.com.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/finding-sathoshi-by-caturbangunsentosa.blogspot.com.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/y1jtYxIYH5mjarj",
     "sinopsis": "Investigasi 4 tahun mengungkap Satoshi Nakamoto, pencipta Bitcoin yang ternyata kolaborasi 2 orang.",
@@ -442,7 +453,7 @@
   {
 	"tmdb_id": 1201457,
     "title": "Pretty Ugly The Story Of The Lunachicks ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/band-punk.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/band-punk.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/BGuSOsB9jKn4MI0",
     "sinopsis": "Kisah band punk wanita Lunachicks melawan industri seksis hingga reuni emosional setelah 20 tahun.",
@@ -453,7 +464,7 @@
   {
 	"tmdb_id": 829487,
     "title": "Je m’appelle Agneta ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/jemapele-by-caturbangunsentosa.blogspot.com.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/jemapele-by-caturbangunsentosa.blogspot.com.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/NwCSBlzN4o6I1Yp",
     "sinopsis": "Agneta kabur ke Prancis jadi au pair, tapi anak asuhnya ternyata kakek tua yang mengubah hidupnya.",
@@ -464,7 +475,7 @@
   {
 	"tmdb_id": 1684737,
     "title": "Ice Pocalypse ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/ice-pocalipse.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/ice-pocalipse.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/TG3t8G6gQGJr5ej",
     "sinopsis": "Bulan baru yang terperangkap. Para ilmuwan dan militer harus menghancurkan bulan kedua tersebut sebelum terlambat.",
@@ -475,7 +486,7 @@
   {
 	"tmdb_id": 1400923,
     "title": "You Always ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/you-always.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/you-always.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/jVD5l0M01oHi2H7",
     "sinopsis": "Dunia Jen berubah total dengan kedatangan seorang penulis karismatik bernama Patrick.",
@@ -486,7 +497,7 @@
    {
 	"tmdb_id": 1669061,
     "title": "Pasakalye ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/pasakalye.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/pasakalye.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/VQRs4zzMXc1pZZW",
     "sinopsis": "Persaudaraan versus Kewajiban. Dua sahabat masa kecil akan mengalami petualangan terhebat saat mereka saling berhadapan.",
@@ -497,7 +508,7 @@
   {
 	"tmdb_id": 1330021,
     "title": "Remarkably Bright Creatures ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/remarkably-bright-creatures.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/remarkably-bright-creatures.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/OODEjol4AYyQIoR",
     "sinopsis": "Janda tua berduka temukan kembali kebahagiaan lewat persahabatan unik dengan seekor gurita cerdas.",
@@ -508,7 +519,7 @@
   {
 	"tmdb_id": 1680818,
     "title": "Who's Watching ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/who-s-watching.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/who-s-watching.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/tRKYI1YuNO8eEQE",
     "sinopsis": "Pria dengan disfungsi ereksi mengamuk dan membantai para PSK, lalu mengungkap rahasia gelapnya.",
@@ -519,7 +530,7 @@
   {
 	"tmdb_id": 1659169,
     "title": "Sleeping Dog ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/sleeping-dog.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/sleeping-dog.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/tXc2jlyr0B6zGwX",
     "sinopsis": "Mantan detektif amnesia selidiki ulang kasus pembunuhan brutal masa lalu demi ungkap kebenaran.",
@@ -530,7 +541,7 @@
   {
 	"tmdb_id": 1317448,
   "title": "No Place to Be Single ",
-  "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/no%20place%20to%20be%20single.webp",
+  "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/no%20place%20to%20be%20single.webp",
   "video": "",
   "iframe": "https://playcinematic.com/video/K7ESehtubq8qYvG",
   "sinopsis": "Di Toskana hiduplah ibu tunggal Elisa yang berubah saat teman kecilnya kembali dan membawa rasa lama.",
@@ -541,7 +552,7 @@
   {
 	"tmdb_id": 1507975,
     "title": "Another Man’s Wife ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/another-man-s-wife.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/another-man-s-wife.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/djz3W55thB3QmFo",
     "sinopsis": "Sebuah keluarga yang harmonis tampaknya mulai goyah. Seorang milyuner misterius muncul dan menghadirkan tawaran yang mengejutkan.",
@@ -552,7 +563,7 @@
   {
 	"tmdb_id": 1620034,
     "title": "Marty, Life Is Short ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/marty-life-is-short.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/marty-life-is-short.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/xi0PCS5ZdysUKyH",
     "sinopsis": "Perjalanan Martin Short dipenuhi tawa, kenangan, dan kisah hidup yang hangat serta menginspirasi.",
@@ -563,7 +574,7 @@
   {
 	"tmdb_id": 1122573,
     "title": "In the Grey ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-grey-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-grey-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/QrsvT56oU",
     "sinopsis": "Tim operasi rahasia elit harus keluar dari bayang-bayang untuk menghadapi despot kejam yang mencuri kekayaan sebesar miliaran dolar.",
@@ -574,7 +585,7 @@
   {
 	"tmdb_id": 1398050,
     "title": "Driver’s Ed ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-drivers-ed-2025.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-drivers-ed-2025.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/hM8WZfay6",
     "sinopsis": "Sekelompok remaja mencuri mobil kursus mengemudi, lalu petualangan liar, cinta, dan kejaran polisi mengubah hidup mereka.",
@@ -585,7 +596,7 @@
   {
 	"tmdb_id": 1662317,
     "title": "The Crash ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-crash-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-crash-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/x1FLUj9Qcp2Dpx0",
     "sinopsis": "Seorang remaja menabrakkan mobilnya ke sebuah bangunan, menewaskan pacarnya dan teman pacarnya. Yang tampak seperti kecelakaan tragis berubah menjadi kasus pembunuhan.",
@@ -596,7 +607,7 @@
   {
 	"tmdb_id": 1628367,
     "title": "Kartavya ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kartavya.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/kartavya.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/MtOFHOnkD6FecZz",
     "sinopsis": "Pemuda pemberani melawan korupsi dan pengkhianatan demi menegakkan kehormatan keluarga.",
@@ -607,7 +618,7 @@
   {
 	"tmdb_id": 1439930,
     "title": "The Punisher: One Last Kill ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/punisher-by-caturbangunsentosa.blogspot.com.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/CM8LChU557DpyJd",
     "sinopsis": "Frank Castle memburu para penjahat brutal demi balas dendam atas kematian keluarganya.",
@@ -618,7 +629,7 @@
   {
 	"tmdb_id": 1257868,
     "title": "Couples Weekend ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/couples%20weekend.png",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/couples%20weekend.png",
     "video": "",
     "iframe": "https://playcinematic.com/video/Ci8TpCF0AN0sijr",
     "sinopsis": "Liburan tahun baru 2 pasangan berubah kacau saat rahasia perselingkuhan & kebohongan mulai terungkap.",
@@ -629,7 +640,7 @@
   {
 	"tmdb_id": 1622764,
     "title": "Broad Trip ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film%20broad%20trip.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film%20broad%20trip.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/7ubq8zQM49eYYEI",
     "sinopsis": "Empat sahabat nekat road trip liar lintas kota, tapi rahasia dan kekacauan bikin liburan berubah kacau.",
@@ -640,7 +651,7 @@
   {
 	"tmdb_id": 1630423,
     "title": "My Dearest Assassin",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-my-dearest-assassin-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-my-dearest-assassin-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/aTbaAbxVvID9Pc7",
     "sinopsis": "Gadis berdarah langka diburu musuh, lalu dilatih keluarga pembunuh demi membalas dendam.",
@@ -651,7 +662,7 @@
   {
 	"tmdb_id": 1007757,
     "title": "Swapped ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-swapped-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-swapped-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/uYsnadxeigC6US2",
     "sinopsis": "Dua satwa bermusuhan bertukar tubuh dan harus kompak bekerja sama demi bertahan hidup.",
@@ -662,7 +673,7 @@
   {
 	"tmdb_id": 1304313,
     "title": "Lee Cronin's The Mummy ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/Lee%20Cronin's%20The%20Mummy%20.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Lee%20Cronin's%20The%20Mummy%20.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/vPhZhNVJvnw9XEf",
     "sinopsis": "Seorang anak perempuan yang hilang 8 tahun kembali membawa teror kutukan mumi kuno ke rumah keluarganya.",
@@ -673,7 +684,7 @@
   {
 	"tmdb_id": 1421552,
     "title": "Panda Plan 2: The Magical Tribe ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/panda-plan.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/panda-plan.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/cm1Zimajo",
     "sinopsis": "Jackie Chan dan panda Hu Hu terjebak di suku primitif misterius demi menyelamatkan mereka dari bencana kuno.",
@@ -684,7 +695,7 @@
   {
 	"tmdb_id": 1207162,
     "title": "Rise of the Conqueror ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/rise-of-the-conqueror.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/rise-of-the-conqueror.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/n8hdfyxb1",
     "sinopsis": "Timur Barlas bangkit dari pengasingan demi menyatukan kerajaan Asia Tengah yang pecah akibat runtuhnya Mongol.",
@@ -695,7 +706,7 @@
   {
 	"tmdb_id": 1016024,
     "title": "Kalevala: The Story Of Kullervo ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kalevala-the-story-of-kullervo.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/kalevala-the-story-of-kullervo.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/-avBqNqwq",
     "sinopsis": "Kullervo, yatim piatu korban pembantaian suku, jadi budak dan membalas dendam pada pembunuh keluarganya.",
@@ -706,7 +717,7 @@
   {
 	"tmdb_id": 1638188,
     "title": "I'm Undercover ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/imundercover.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/imundercover.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/ZBdSdEtp_",
     "sinopsis": "Detektif Huo Tao menyamar jadi pencopet geng kriminal demi biaya berobat putrinya dan bongkar rahasia bisnis. ",
@@ -717,7 +728,7 @@
   {
 	"tmdb_id": 1275574,
     "title": "O' Romeo ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-o-romeo-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-o-romeo-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/qJSzRl8GM",
     "sinopsis": "Gangster Mumbai jatuh cinta, tapi dendam dan darah menyeretnya ke perang brutal.",
@@ -728,7 +739,7 @@
   {
 	"tmdb_id": 1318447,
     "title": "Apex ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-apex-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-apex-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/nwS4wWxzB24U6Xy",
     "sinopsis": "Pendaki berduka diburu pembunuh sadis di hutan Australia, bertahan hidup jadi taruhan.",
@@ -739,7 +750,7 @@
   {
 	"tmdb_id": 1364137,
     "title": "Dirty Hands ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-dirty-hands-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-dirty-hands-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/U69BqPSnn0GZRBI",
     "sinopsis": "Transaksi narkoba gagal di Chicago, Denton bersaudara harus bertahan hidup dari kejaran mafia.",
@@ -750,7 +761,7 @@
   {
 	"tmdb_id": 1653286,
     "title": "Disolution ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-disolution-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-disolution-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/eIW2qw7wo",
     "sinopsis": "Istri pendendam pakai ilmu hitam memindahkan kanker kekasih ke suami brutalnya.",
@@ -761,7 +772,7 @@
   {
 	"tmdb_id": 1674130,
     "title": "A Single Christian ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/a-single-christian.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/a-single-christian.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/FIC2WgbES",
     "sinopsis": "Pria Kristen lajang mencari cinta sejati sambil menjaga iman dan prinsip hidupnya.",
@@ -772,7 +783,7 @@
   {
 	"tmdb_id": 1424567,
     "title": "Bhanupriya Bhooter Hotel ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/bhanupriya-bhooter-hotel.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/bhanupriya-bhooter-hotel.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/BAGI_hxkM",
     "sinopsis": "Hotel angker warisan keluarga berubah kacau saat hantu jahil mulai meneror tamu.",
@@ -783,7 +794,7 @@
   {
 	"tmdb_id": 1645241,
     "title": "To Philly With Love ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/to-philly-with-love.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/to-philly-with-love.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/ccXQIvoT_",
     "sinopsis": "Perjalanan ke Philadelphia membuka luka lama dan menghadirkan cinta yang tak terduga.",
@@ -794,7 +805,7 @@
   {
 	"tmdb_id": 1666893,
     "title": "Candy And The Pizza Girl ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/candy-and-the-pizza-ggirl.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/candy-and-the-pizza-ggirl.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/SteVGMEsM",
     "sinopsis": "Gadis pengantar pizza dan Candy terjebak petualangan liar penuh cinta dan kekacauan kota.",
@@ -805,7 +816,7 @@
   {
 	"tmdb_id": 1414413,
     "title": "Brothers Under Fire ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-brothers-under-fire-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-brothers-under-fire-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/mytYHNPFkOvDZTX",
     "sinopsis": "Dua saudara terpisah perang harus bersatu demi bertahan hidup dan menyelamatkan keluarga.",
@@ -816,7 +827,7 @@
   {
 	"tmdb_id": 587196,
     "title": "Kaa: The Forest ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kaa-the-forest.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/kaa-the-forest.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/FQsmS5zpg",
     "sinopsis": "Hutan terlarang menyimpan teror mematikan saat sekelompok pemuda nekat memasukinya.",
@@ -827,7 +838,7 @@
   {
 	"tmdb_id": 1442975,
     "title": "Bhartha Mahasayulaku Wignyapthi ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-bhartha-mahasayulaku-wignyapthi-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-bhartha-mahasayulaku-wignyapthi-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/xX8fNs-db",
     "sinopsis": "Kehidupan para suami berubah kacau setelah rahasia besar mulai terbongkar satu per satu.",
@@ -838,7 +849,7 @@
   {
 	"tmdb_id": 1226863,
     "title": "The Super Mario Galaxy Movie ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-super-mario-galaxy-movie-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-super-mario-galaxy-movie-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/bNRDabIGvk22A63",
     "sinopsis": "Mario menjelajah galaksi demi menghentikan ancaman kosmik yang membahayakan seluruh dunia.",
@@ -849,7 +860,7 @@
   {
 	"tmdb_id": 949536,
     "title": "Kill Code ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kill-code.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/kill-code.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/XvTGf69O45QGnA9",
     "sinopsis": "Program pembunuh rahasia lepas kendali, memaksa agen elit bertarung demi menghentikannya.",
@@ -860,7 +871,7 @@
   {
 	"tmdb_id": 1339713,
     "title": "Obsession ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/kill-code.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/kill-code.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/FnJjRyYTTi",
     "sinopsis": "seorang romantis yang putus asa mematahkan ranting One Wish Willow untuk memenangkan hati pujaan hatinya.",
@@ -871,7 +882,7 @@
   {
 	"tmdb_id": 1416391,
     "title": "Toaster ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/toaster.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/toaster.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/Ec50bvqD3dqcntH",
     "sinopsis": "Seorang pria pelit terobsesi merebut kembali toaster yang memicu rangkaian pembunuhan dan kekacauan.",
@@ -882,7 +893,7 @@
   {
 	"tmdb_id": 1084577,
     "title": "Balls Up ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/balls-up.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/balls-up.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/Ljz-aXv0q",
     "sinopsis": "Turnamen liar berubah kacau saat sekelompok pemain terjebak permainan penuh tipu daya dan konflik.",
@@ -893,7 +904,7 @@
   {
 	"tmdb_id": 1444249,
     "title": "The Highest Stakes ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/the-highest-stakes.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/the-highest-stakes.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/7pb4G4FRQy756fb",
     "sinopsis": "Dunia judi elit berbahaya, seorang pemain muda mempertaruhkan segalanya demi balas dendam.",
@@ -904,18 +915,18 @@
   {
 	"tmdb_id": 1292415,
     "title": "Beast ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/beast-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/beast-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/jBo1Uqq4AWzHklh",
     "sinopsis": "Pria yang terjebak di kekacauan kota saat ancaman brutal tak dikenal mulai memangsa manusia tanpa ampun.",
     "genre": ["Action", "Drama"],
-    "release_date": "10-04-2026",
+    "release_date": "2026-04-10",
     "country": "Amerika Serikat, Australia"
   },
   {
 	"tmdb_id": 1472951,
     "title": "Infiltrate ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/infiltrate-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/infiltrate-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/h1dmRO7FCUOLY0E",
     "sinopsis": "Agen rahasia menyusup ke sindikat global demi membongkar konspirasi besar yang mengancam dunia.",
@@ -926,7 +937,7 @@
   {
 	"tmdb_id": 1290417,
     "title": "Thrash ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/thrash.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/thrash.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/ZYWOdYZG1Y7ISoo",
     "sinopsis": "Topan dahsyat membawa hiu ke kota banjir, memaksa para korban bertarung demi selamat.",
@@ -937,7 +948,7 @@
   {
 	"tmdb_id": 1573375,
     "title": "Wasiat Warisan ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/wasiatwarisan.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/wasiatwarisan.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/q_0n7dISU",
     "sinopsis": "3 saudara berjuang menyelamatkan hotel warisan di Toba dari ancaman sita akibat utang orang tua.",
@@ -948,7 +959,7 @@
   {
 	"tmdb_id": 1189885,
     "title": "The Morrigan ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-morrigan-2025.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-morrigan-2025.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/nvkXId6NU",
     "sinopsis": "Arkeolog berjuang menyelamatkan putrinya dari rasukan Dewi Perang Pagan setelah makam kuno Irlandia terbuka.",
@@ -959,7 +970,7 @@
   {
 	"tmdb_id": 1641319,
     "title": "Sniper: No Nation ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-sniper-no-nation-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-sniper-no-nation-2026.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/pCoXwWUyHjZnWK1",
     "sinopsis": "Dituduh teroris, Brandon Beckett & ayahnya melawan tentara bayaran demi misi penyelamatan mustahil.",
@@ -970,7 +981,7 @@
   {
 	"tmdb_id": 1049471,
     "title": "Outcome ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/film-outcome-2026.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/film-outcome-2026.webp",
     "video": "",
     "iframe": "https://abyssplayer.com/XeXEioeYT",
     "sinopsis": "Diancam video pemerasan, aktor top Hollywood terpaksa keliling minta maaf demi cari pelakunya.",
@@ -981,7 +992,7 @@
   {
 	"tmdb_id": 1365448,
     "title": "Hell Hath No Fury ",
-    "image": "https://raw.githubusercontent.com/joehanz/csstukarfollow/refs/heads/main/banner/hell-hath-no-fury.webp",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/hell-hath-no-fury.webp",
     "video": "",
     "iframe": "https://playcinematic.com/video/kDmj8hoalzcOLPK",
     "sinopsis": "Psikiater berduka digoda wanita misterius saat pembunuhan berantai mengungkap hubungan alkitabiah kuno.",
