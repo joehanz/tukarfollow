@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 560057,
+    "title": "The Sea Beast",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/The%20Sea%20Beast.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/2IG9Z85pgRXIPzz",
+    "sinopsis": "Era monster laut, pemburu dipuji. Jacob Holland terkejut saat anak yatim Maisie menyelinap ke kapal. ",
+    "genre": ["Adventure", "Fantasy", "Family", "Animation"],
+    "release_date": "2022-06-24",
+    "country": "Inggris"
+  },
+	{
     "tmdb_id": 463364,
     "title": "The Isle",
     "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/The%20Isle%202019.webp",
