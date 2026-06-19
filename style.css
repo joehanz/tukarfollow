@@ -167,6 +167,95 @@ margin:auto;
 padding:20px;
 }
 
+
+/* ==========================
+   FEATURED HERO
+========================== */
+
+.featured-hero{
+max-width:1600px;
+height:72vh;
+margin:20px auto;
+border-radius:12px;
+overflow:hidden;
+position:relative;
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+}
+
+.featured-overlay{
+position:absolute;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
+padding:40px;
+background:
+linear-gradient(
+to top,
+rgba(0,0,0,.96),
+rgba(0,0,0,.35)
+);
+}
+
+.featured-badge{
+display:inline-block;
+width:max-content;
+padding:6px 12px;
+border-radius:6px;
+background:#00d26a;
+color:#000;
+font-weight:700;
+margin-bottom:15px;
+}
+
+.featured-overlay h1{
+font-size:42px;
+margin-bottom:15px;
+}
+
+.featured-overlay p{
+max-width:700px;
+line-height:1.7;
+margin-bottom:20px;
+color:#ddd;
+}
+
+.featured-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:220px;
+height:50px;
+background:#00d26a;
+color:#000;
+font-weight:700;
+border-radius:8px;
+text-decoration:none;
+}
+
+@media(max-width:768px){
+
+.featured-hero{
+height:55vh;
+margin:10px;
+}
+
+.featured-overlay{
+padding:20px;
+}
+
+.featured-overlay h1{
+font-size:28px;
+}
+
+.featured-overlay p{
+font-size:14px;
+}
+
+}
+
 /* ==========================================
    GRID
 ========================================== */
