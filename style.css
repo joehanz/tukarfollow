@@ -145,12 +145,13 @@ bottom:0;
 background:#0b0f14;
 overflow:auto;
 padding:20px;
-z-index:1000;
+z-index:998;
 }
 
 .watch-search-overlay .movie-grid{
 max-width:1600px;
 margin:auto;
+z-index:899;
 }
 
 body.overlay-open{
