@@ -92,6 +92,54 @@ return !!document.getElementById(
 );
 }
 
+async function loadFeaturedHero(){
+
+const hero =
+document.getElementById(
+"featuredHero"
+);
+
+if(!hero) return;
+
+try{
+
+const req =
+await fetch(MOVIES_JSON);
+
+const movies =
+await req.json();
+
+if(!movies.length) return;
+
+const movie =
+movies[0];
+
+hero.style.backgroundImage =
+`url(${movie.image})`;
+
+document.getElementById(
+"featuredTitle"
+).textContent =
+movie.title || "";
+
+document.getElementById(
+"featuredOverview"
+).textContent =
+movie.sinopsis || "";
+
+document.getElementById(
+"featuredButton"
+).href =
+`watch.html?id=${movie.tmdb_id}&type=movie`;
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+}
 /* ==========================================
    MOBILE MENU
 ========================================== */
@@ -1636,6 +1684,8 @@ initGlobalSearchRedirect();
 ========================== */
 
 if(isIndexPage()){
+
+await loadFeaturedHero();
 
 await loadGenres();
 
