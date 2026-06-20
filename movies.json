@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 292011,
+    "title": "Richard Jewell",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Richard%20Jewell.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/KceDJju9WsQdKdB",
+    "sinopsis": "Richard Jewell menjadi pahlawan yang dituduh teroris setelah menyelamatkan ribuan nyawa dari bom.",
+    "genre": ["Drama"],
+    "release_date": "2019-12-13",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 1317149,
     "title": "I Swear",
     "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/I%20Swear.webp",
