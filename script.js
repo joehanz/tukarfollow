@@ -652,7 +652,11 @@ searchMobile.value.trim();
 
 currentPage = 1;
 
+if(isWatchPage()){
+loadWatchSearch();
+}else{
 loadDiscover();
+}
 
 },500);
 
