@@ -34,64 +34,6 @@ params.get("type");
 /* ==========================================
    HELPERS
 ========================================== */
-
-function qs(el){
-return document.querySelector(el);
-}
-
-function safe(v){
-return v || "";
-}
-
-function isWatchPage(){
-return !!document.getElementById(
-"playerFrame"
-);
-}
-
-function showWatchOverlay(){
-const ov=
-document.getElementById(
-"watchSearchOverlay"
-);
-
-if(!ov) return;
-
-ov.classList.remove(
-"hidden"
-);
-
-document.body.classList.add(
-"overlay-open"
-);
-}
-
-function hideWatchOverlay(){
-
-const ov=
-document.getElementById(
-"watchSearchOverlay"
-);
-
-if(!ov) return;
-
-ov.classList.add(
-"hidden"
-);
-
-document.body.classList.remove(
-"overlay-open"
-);
-
-}
-
-
-function isIndexPage(){
-return !!document.getElementById(
-"movieGrid"
-);
-}
-
 async function loadFeaturedHero(){
 
 const hero =
@@ -111,8 +53,16 @@ await req.json();
 
 if(!movies.length) return;
 
+/* ==========================
+   RANDOM FEATURED MOVIE
+========================== */
+
 const movie =
-movies[0];
+movies[
+Math.floor(
+Math.random() * movies.length
+)
+];
 
 hero.style.backgroundImage =
 `url(${movie.image})`;
@@ -140,6 +90,7 @@ console.log(err);
 }
 
 }
+
 /* ==========================================
    MOBILE MENU
 ========================================== */
