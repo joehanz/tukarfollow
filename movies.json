@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 1317149,
+    "title": "I Swear",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/I%20Swear.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/HtbjZSTbdoe1UV1",
+    "sinopsis": "Didiagnosis Tourette usia 15, John Davidson berjuang lewati masa sulit demi temukan tujuan hidup.",
+    "genre": ["Drama", "History"],
+    "release_date": "2025-09-22",
+    "country": "Featured, Inggris"
+  },
+	{
     "tmdb_id": 560057,
     "title": "The Sea Beast",
     "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/The%20Sea%20Beast.webp",
