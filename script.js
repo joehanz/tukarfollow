@@ -981,7 +981,6 @@ String(tmdbId)
 /* ==========================
    FALLBACK TITLE MATCH
 ========================== */
-
 if(!manualMovie){
 
 try{
@@ -996,8 +995,36 @@ mediaType==="tv"
 const detailReq =
 await fetch(detailUrl);
 
-const detail =
+let detail =
 await detailReq.json();
+
+/* ==========================
+   FALLBACK OVERVIEW ENGLISH
+========================== */
+
+if(!detail.overview){
+
+const fallbackUrl =
+mediaType==="tv"
+?
+`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${TMDB_API}&language=en-US`
+:
+`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API}&language=en-US`;
+
+const fallbackReq =
+await fetch(fallbackUrl);
+
+const fallback =
+await fallbackReq.json();
+
+if(fallback.overview){
+
+detail.overview =
+fallback.overview;
+
+}
+
+}
 
 const tmdbTitle =
 (
