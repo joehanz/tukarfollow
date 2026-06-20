@@ -108,10 +108,12 @@ await fetch(MOVIES_JSON);
 const movies =
 await req.json();
 
-if(!movies.length) return;
-
 const movie =
-movies[0];
+movies[
+Math.floor(
+Math.random() * movies.length
+)
+];
 
 hero.style.backgroundImage =
 `url(${movie.image})`;
