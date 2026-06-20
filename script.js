@@ -36,8 +36,6 @@ params.get("type");
 ========================================== */
 async function loadFeaturedHero(){
 
-console.log("LOAD HERO");
-
 const hero =
 document.getElementById(
 "featuredHero"
@@ -53,24 +51,18 @@ await fetch(MOVIES_JSON);
 const movies =
 await req.json();
 
-console.log("MOVIES =", movies);
+if(!movies.length) return;
 
-if(!movies.length){
-console.log("MOVIES EMPTY");
-return;
-}
-
-const randomIndex =
-Math.floor(
-Math.random() * movies.length
-);
-
-console.log("RANDOM =", randomIndex);
+/* ==========================
+   RANDOM FEATURED MOVIE
+========================== */
 
 const movie =
-movies[randomIndex];
-
-console.log("MOVIE =", movie);
+movies[
+Math.floor(
+Math.random() * movies.length
+)
+];
 
 hero.style.backgroundImage =
 `url(${movie.image})`;
@@ -93,7 +85,7 @@ document.getElementById(
 }
 catch(err){
 
-console.error(err);
+console.log(err);
 
 }
 
