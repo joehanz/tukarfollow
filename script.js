@@ -1,5 +1,3 @@
-
-
 /* ==========================================
    CONFIG
 ========================================== */
@@ -175,10 +173,10 @@ btn.classList.toggle(
 "active"
 );
 
-btn.textContent =
+btn.innerHTML =
 menu.classList.contains("active")
-? "?"
-: "?";
+? '<span class="burger-icon">✕</span>'
+: '<span class="burger-icon">☰</span>';
 
 }
 );
