@@ -173,11 +173,11 @@ btn.classList.toggle(
 "active"
 );
 
-btn.innerHTML =
+btn.textContent =
 menu.classList.contains("active")
-? '<span class="burger-icon">✕</span>'
-: '<span class="burger-icon">☰</span>';
-
+? "✕"
+: "☰";
+   
 }
 );
 
