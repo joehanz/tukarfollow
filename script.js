@@ -1111,6 +1111,11 @@ document.getElementById(
 "playerFrame"
 );
 
+const videoPlayer =
+document.getElementById(
+"videoPlayer"
+);
+   
 const poster =
 document.getElementById(
 "moviePoster"
@@ -1140,8 +1145,153 @@ document.getElementById(
    PLAYER
 ========================== */
 
+iframe.classList.remove(
+"hidden"
+);
+
+videoPlayer.classList.add(
+"hidden"
+);
+
 iframe.src =
 movie.iframe || "";
+
+/* ==========================
+   SERVER BUTTONS
+========================== */
+
+const server1 =
+document.getElementById(
+"server1Btn"
+);
+
+const server2 =
+document.getElementById(
+"server2Btn"
+);
+
+const server3 =
+document.getElementById(
+"server3Btn"
+);
+
+const server4 =
+document.getElementById(
+"server4Btn"
+);
+
+function setActive(btn){
+
+[
+server1,
+server2,
+server3,
+server4
+].forEach(x=>{
+
+if(x){
+x.classList.remove(
+"active"
+);
+}
+
+});
+
+btn.classList.add(
+"active"
+);
+
+}
+
+if(server1){
+
+server1.onclick=()=>{
+
+setActive(server1);
+
+videoPlayer.pause();
+
+videoPlayer.classList.add(
+"hidden"
+);
+
+iframe.classList.remove(
+"hidden"
+);
+
+iframe.src =
+`https://vsembed.ru/embed/movie?tmdb=${movie.tmdb_id}`;
+
+};
+
+}
+
+if(server2){
+
+server2.onclick=()=>{
+
+setActive(server2);
+
+videoPlayer.pause();
+
+videoPlayer.classList.add(
+"hidden"
+);
+
+iframe.classList.remove(
+"hidden"
+);
+
+iframe.src =
+movie.iframe || "";
+
+};
+
+}
+
+if(server3){
+
+server3.onclick=()=>{
+
+setActive(server3);
+
+videoPlayer.pause();
+
+videoPlayer.classList.add(
+"hidden"
+);
+
+iframe.classList.remove(
+"hidden"
+);
+
+iframe.src =
+movie.iframe2 || "";
+
+};
+
+}
+
+if(server4){
+
+server4.onclick=()=>{
+
+setActive(server4);
+
+iframe.classList.add(
+"hidden"
+);
+
+videoPlayer.classList.remove(
+"hidden"
+);
+
+videoPlayer.src =
+movie.video || "";
+
+};
+
+}
 
 /* ==========================
    INFO
@@ -1179,44 +1329,7 @@ loadRelatedMovies();
 
 }
 
-/* ==========================================
-   RENDER TMDB MOVIE / TV
-========================================== */
-
-function renderTmdbMovie(
-data
-){
-
-const iframe =
-document.getElementById(
-"playerFrame"
-);
-
-const poster =
-document.getElementById(
-"moviePoster"
-);
-
-const title =
-document.getElementById(
-"movieTitle"
-);
-
-const meta =
-document.getElementById(
-"movieMeta"
-);
-
-const overview =
-document.getElementById(
-"movieOverview"
-);
-
-const genres =
-(data.genres || [])
-.map(x=>x.name)
-.join(", ");
-
+bbbb
    
 /* ==========================
    PLAYER
