@@ -1,16 +1,15 @@
 [
 	{
-  "tmdb_id": 1245532,
-  "title": "Someone Like Me",
-  "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Someone%20Like%20Me.webp",
-  "iframe": "https://playcinematic.com/video/oahLZzBBjAu5Od8",
-  "iframe2": "",
-  "video": "",
-  "sinopsis": "Wanita cerebral palsy temukan mandiri dan jati diri lewat lembaga seksualitas disabilitas.",
-  "genre": ["Drama", "Romance"],
-  "release_date": "2025-11-27",
-  "country": "Hongkong"
-},
+    "tmdb_id": 1245532,
+    "title": "Someone Like Me",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/Someone%20Like%20Me.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/oahLZzBBjAu5Od8",
+    "sinopsis": "Wanita cerebral palsy temukan mandiri dan jati diri lewat lembaga seksualitas disabilitas.",
+    "genre": ["Drama", "Romance"],
+    "release_date": "2025-11-27",
+    "country": "Hongkong"
+  },
 	{
     "tmdb_id": 292011,
     "title": "Richard Jewell",
