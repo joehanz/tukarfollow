@@ -684,4 +684,50 @@ font-size:18px;
 
 }
 
+/* ==========================================
+   SERVER SWITCHER
+========================================== */
+
+.server-switcher{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+padding:0 20px 20px;
+justify-content:center;
+}
+
+.server-btn{
+height:42px;
+padding:0 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:700;
+background:#182230;
+color:#fff;
+transition:.25s;
+}
+
+.server-btn:hover{
+transform:translateY(-2px);
+}
+
+.server-btn.active{
+background:#00c46a;
+color:#000;
+}
+
+@media(max-width:768px){
+
+.server-switcher{
+padding:0 15px 15px;
+}
+
+.server-btn{
+flex:1;
+min-width:120px;
+}
+
+}
+
 
