@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 1451344,
+    "title": "Husbands in Action",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/husband-in-action.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/dXJtMh3ks6R8ZVo",
+    "sinopsis": "Detektif dan suami baru mantan istrinya kompak kejar penculik. Bisakah duo unik ini kerja sama?",
+    "genre": ["Action", "Comedy"],
+    "release_date": "2026-06-18",
+    "country": "Korea Utara"
+  },
+	{
     "tmdb_id": 967941,
     "title": "Wicked For Good",
     "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/wicked-for-good-by-caturbangunsentosa.blogspot.com.webp",
