@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 1325614,
+    "title": "Badland Rising",
+    "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/badland-rising.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/QoVHgi0PbVdmZnM",
+    "sinopsis": "Pria biasa diserang dua penjahat brutal saat perjalanan pulang 19 jam. Bertahan hidup demi keluarga.",
+    "genre": ["Action", "Crime"],
+    "release_date": "2026-06-12",
+    "country": "Australia"
+  },
+	{
     "tmdb_id": 1451344,
     "title": "Husbands in Action",
     "image": "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/banner/husband-in-action.webp",
