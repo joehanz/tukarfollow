@@ -1,4 +1,4 @@
-const API_KEY = "0ca481842a3f253ed72008c1d9e9f2e6";
+const API_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
 const IMG_URL = "https://image.tmdb.org/t/p/w500";
 const grid = document.getElementById("movie-grid");
 
