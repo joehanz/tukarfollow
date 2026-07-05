@@ -1,0 +1,28 @@
+{
+"name":"Tukar Follow",
+"short_name":"TukarFollow",
+"description":"Streaming Movies Channel",
+
+"start_url":"./",
+
+"display":"standalone",
+
+"background_color":"#ffffff",
+
+"theme_color":"#000000",
+
+"orientation":"portrait",
+
+"icons":[
+{
+"src":"banner/logo%20tukar%20follow.webp",
+"sizes":"192x192",
+"type":"banner/webp"
+},
+{
+"src":"banner/logo%20tukar%20follow.webp",
+"sizes":"512x512",
+"type":"banner/webp"
+}
+]
+}

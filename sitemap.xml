@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://sitemaps.org">
+  
+  <!-- Halaman Utama / Beranda (Paling Penting) -->
+  <url>
+    <loc>https://tukarfollow.web.id</loc>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Halaman Kategori Film Indonesia -->
+  <url>
+    <loc>https://tukarfollow.web.ididmovies.html</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Halaman Kategori TV Lokal -->
+  <url>
+    <loc>https://tukarfollow.web.idtvlokal.html</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Halaman Pemutar Video Utama -->
+  <url>
+    <loc>https://tukarfollow.web.idwatch.html</loc>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Halaman Pemutar Video Manual -->
+  <url>
+    <loc>https://tukarfollow.web.idmanual-watch.html</loc>
+    <priority>0.70</priority>
+  </url>
+
+</urlset>
