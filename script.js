@@ -39,9 +39,10 @@ function showSignin() {
   document.getElementById("signin-overlay").classList.remove("hidden");
 }
 
+// Sign Up → kirim ke Google Apps Script
 document.getElementById("signup-submit").addEventListener("click", async () => {
-  const email = document.getElementById("signup-email").value;
-  const pass = document.getElementById("signup-pass").value;
+  const email = document.getElementById("signup-email").value.trim();
+  const pass = document.getElementById("signup-pass").value.trim();
 
   if (!email || !pass) {
     alert("Isi email/HP dan password dulu bro!");
@@ -49,7 +50,7 @@ document.getElementById("signup-submit").addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch("YOUR_WEBAPP_URL", {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxGl5etOVaUyB83HKANG8yckWC8nr19C2LC2cfKEFX8fWppHgugAcDjfbvW1AWjgAuO/exec", {
       method: "POST",
       body: JSON.stringify({ email, pass }),
       headers: { "Content-Type": "application/json" }
