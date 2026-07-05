@@ -15,9 +15,19 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const movieId = urlParams.get("id");
+    const API_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
 
-    document.getElementById("vidsrc-player").src = `https://vidsrc.ru/embed/movie/${movieId}`;
-    document.getElementById("cinematic-player").src = `https://playcinematic.com/embed/${movieId}`;
+    async function loadPlayers() {
+      const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&append_to_response=external_ids`);
+      const data = await res.json();
+      console.log("Movie detail:", data);
+
+      const imdbId = data.imdb_id; // contoh: tt1234567
+
+      document.getElementById("vidsrc-player").src = `https://vidsrc.ru/embed/${imdbId}`;
+      document.getElementById("cinematic-player").src = `https://playcinematic.com/embed/${imdbId}`;
+    }
+    loadPlayers();
   </script>
 </body>
 </html>
