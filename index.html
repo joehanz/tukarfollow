@@ -10,12 +10,32 @@
   <!-- Grid background -->
   <div id="movie-grid" class="fixed inset-0 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1 pointer-events-none z-0"></div>
 
-  <!-- Overlay tombol -->
+  <!-- Overlay tombol utama -->
   <div class="fixed inset-0 flex flex-col items-center justify-center bg-black/70 z-10">
     <h1 class="text-3xl font-bold mb-6">Welcome to TukarFollow</h1>
     <div class="flex gap-6">
-      <button onclick="location.href='visitor.html'" class="px-6 py-3 bg-green-400 text-black font-bold rounded-lg">Visitor</button>
-      <button onclick="location.href='admin.html'" class="px-6 py-3 bg-blue-400 text-black font-bold rounded-lg">Admin</button>
+      <button onclick="showSignup()" class="px-6 py-3 bg-green-400 text-black font-bold rounded-lg">Sign Up</button>
+      <button onclick="showSignin()" class="px-6 py-3 bg-blue-400 text-black font-bold rounded-lg">Sign In</button>
+    </div>
+  </div>
+
+  <!-- Overlay Sign Up -->
+  <div id="signup-overlay" class="fixed inset-0 flex items-center justify-center bg-black/70 z-20 hidden">
+    <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 animate-[fadeIn_0.4s_ease]">
+      <h2 class="text-xl font-bold mb-4 text-center">Sign Up</h2>
+      <input type="text" id="signup-email" placeholder="Email / No HP" class="w-full mb-3 px-3 py-2 rounded bg-gray-800 text-white outline-none">
+      <input type="password" id="signup-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 rounded bg-gray-800 text-white outline-none">
+      <button id="signup-submit" class="w-full py-2 bg-green-500 text-black font-bold rounded">Daftar</button>
+    </div>
+  </div>
+
+  <!-- Overlay Sign In -->
+  <div id="signin-overlay" class="fixed inset-0 flex items-center justify-center bg-black/70 z-20 hidden">
+    <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 animate-[fadeIn_0.4s_ease]">
+      <h2 class="text-xl font-bold mb-4 text-center">Sign In</h2>
+      <input type="text" id="signin-code" placeholder="Kode Unik" class="w-full mb-3 px-3 py-2 rounded bg-gray-800 text-white outline-none">
+      <input type="password" id="signin-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 rounded bg-gray-800 text-white outline-none">
+      <button id="signin-submit" class="w-full py-2 bg-blue-500 text-black font-bold rounded">Masuk</button>
     </div>
   </div>
 
@@ -38,6 +58,14 @@
       });
     }
     getMovies();
+
+    // Show overlays
+    function showSignup() {
+      document.getElementById("signup-overlay").classList.remove("hidden");
+    }
+    function showSignin() {
+      document.getElementById("signin-overlay").classList.remove("hidden");
+    }
   </script>
 </body>
 </html>
