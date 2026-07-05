@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Splash Grid TMDB</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-black overflow-hidden">
 
   <!-- Grid background -->
-  <div id="movie-grid" class="fixed inset-0 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1 pointer-events-none z-0"></div>
+  <div id="movie-grid" class="fixed inset-0 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1 pointer-events-none z-0 opacity-100 transition-opacity duration-[3000ms]"></div>
 
   <!-- Overlay tombol utama -->
-  <div class="fixed inset-0 flex flex-col items-center justify-center bg-black/70 z-10">
+  <div id="overlay-buttons" class="fixed inset-0 flex flex-col items-center justify-center bg-black/70 z-10 opacity-0 transition-opacity duration-[3000ms]">
     <h1 class="text-3xl font-bold mb-6">Welcome to TukarFollow</h1>
     <div class="flex gap-6">
       <button onclick="showSignup()" class="px-6 py-3 bg-green-400 text-black font-bold rounded-lg">Sign Up</button>
@@ -39,33 +40,6 @@
     </div>
   </div>
 
-  <script>
-    const API_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
-    const IMG_URL = "https://image.tmdb.org/t/p/w500";
-    const grid = document.getElementById("movie-grid");
-
-    async function getMovies() {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
-      const data = await res.json();
-
-      data.results.forEach(movie => {
-        if (movie.poster_path) {
-          const img = document.createElement("img");
-          img.src = IMG_URL + movie.poster_path;
-          img.className = "w-full h-full object-cover opacity-30";
-          grid.appendChild(img);
-        }
-      });
-    }
-    getMovies();
-
-    // Show overlays
-    function showSignup() {
-      document.getElementById("signup-overlay").classList.remove("hidden");
-    }
-    function showSignin() {
-      document.getElementById("signin-overlay").classList.remove("hidden");
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
