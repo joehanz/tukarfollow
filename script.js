@@ -38,3 +38,34 @@ function showSignup() {
 function showSignin() {
   document.getElementById("signin-overlay").classList.remove("hidden");
 }
+
+document.getElementById("signup-submit").addEventListener("click", async () => {
+  const email = document.getElementById("signup-email").value;
+  const pass = document.getElementById("signup-pass").value;
+
+  if (!email || !pass) {
+    alert("Isi email/HP dan password dulu bro!");
+    return;
+  }
+
+  try {
+    const res = await fetch("YOUR_WEBAPP_URL", {
+      method: "POST",
+      body: JSON.stringify({ email, pass }),
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await res.json();
+
+    // replace form dengan kode unik + password
+    document.getElementById("signup-overlay").innerHTML = `
+      <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 text-center">
+        <h2 class="text-xl font-bold mb-4">Akun Berhasil</h2>
+        <p class="mb-2">Kode Unik: <span class="font-mono text-green-400">${data.code}</span></p>
+        <p>Password: <span class="font-mono text-blue-400">${pass}</span></p>
+        <button onclick="showSignin()" class="mt-4 px-6 py-2 bg-blue-500 text-black font-bold rounded">Sign In</button>
+      </div>
+    `;
+  } catch (err) {
+    alert("Error daftar bro: " + err);
+  }
+});
