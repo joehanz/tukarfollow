@@ -1036,12 +1036,8 @@ detail.name ||
 ""
 ).trim().toLowerCase();
 
-manualMovie =
-jsonData.find(item=>
-(item.title || "")
-.trim()
-.toLowerCase()
-=== tmdbTitle
+manualMovie = jsonData.find(
+  item => Number(item.tmdb_id) === Number(tmdbId)
 );
 
 if(manualMovie){
