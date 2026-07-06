@@ -52,12 +52,12 @@ document.getElementById("signup-submit").addEventListener("click", async () => {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbxGl5etOVaUyB83HKANG8yckWC8nr19C2LC2cfKEFX8fWppHgugAcDjfbvW1AWjgAuO/exec", {
       method: "POST",
-      body: JSON.stringify({ email, pass }),
-      headers: { "Content-Type": "application/json" }
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, pass })
     });
     const data = await res.json();
 
-    // replace form dengan kode unik + password
     document.getElementById("signup-overlay").innerHTML = `
       <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 text-center">
         <h2 class="text-xl font-bold mb-4">Akun Berhasil</h2>
@@ -71,6 +71,7 @@ document.getElementById("signup-submit").addEventListener("click", async () => {
   }
 });
 
+// Sign In → cek ke Google Apps Script
 document.getElementById("signin-submit").addEventListener("click", async () => {
   const code = document.getElementById("signin-code").value.trim();
   const pass = document.getElementById("signin-pass").value.trim();
@@ -83,13 +84,13 @@ document.getElementById("signin-submit").addEventListener("click", async () => {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbxGl5etOVaUyB83HKANG8yckWC8nr19C2LC2cfKEFX8fWppHgugAcDjfbvW1AWjgAuO/exec", {
       method: "POST",
-      body: JSON.stringify({ code, pass, action: "signin" }),
-      headers: { "Content-Type": "application/json" }
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, pass, action: "signin" })
     });
     const data = await res.json();
 
     if (data.success) {
-      // redirect ke halaman film
       window.location.href = "film.html";
     } else {
       alert("Kode unik atau password salah bro!");
