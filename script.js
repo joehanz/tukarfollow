@@ -13,7 +13,8 @@ let moviesData = [];
 let activeMovieIndex = 0;
 let currentPage = 1;
 let currentActiveSection = null; 
-let myCustomMovies = []; // Menyimpan data dari movies.json kamu
+let myCustomMovies = []; 
+let isDesktop = false; // Menyimpan status deteksi layar
 
 // 1. Ambil data lokal movies.json
 async function loadLocalMovies() {
@@ -24,7 +25,36 @@ async function loadLocalMovies() {
             console.log("Data movies.json berhasil dimuat!", myCustomMovies);
         }
     } catch(e) {
-        console.warn("Gagal memuat movies.json atau file belum dibuat. Menggunakan data internal.", e);
+        console.warn("Gagal memuat movies.json atau file belum dibuat.", e);
+    }
+}
+
+// Deteksi Device di Awal
+function detectDevice() {
+    if (window.innerWidth > 768) {
+        isDesktop = true;
+        // Munculkan pop-up pemberitahuan desktop
+        const notifier = document.getElementById('desktopNotifier');
+        if (notifier) notifier.style.display = 'flex';
+    }
+}
+
+function closeNotifier() {
+    const notifier = document.getElementById('desktopNotifier');
+    if (notifier) {
+        notifier.style.transition = 'opacity 0.3s ease';
+        notifier.style.opacity = '0';
+        setTimeout(() => { notifier.style.display = 'none'; }, 300);
+    }
+}
+
+// Fungsi scroll panah
+function scrollFeed(direction) {
+    const cardHeight = window.innerHeight;
+    if (direction === 'down') {
+        feedContainer.scrollBy({ top: cardHeight, behavior: 'smooth' });
+    } else if (direction === 'up') {
+        feedContainer.scrollBy({ top: -cardHeight, behavior: 'smooth' });
     }
 }
 
@@ -40,15 +70,14 @@ async function fetchMovies(page = 1) {
 
         renderFeed(moviesData);
     } catch (error) {
-        // Fallback otomatis jika API masih dummy, kita pakai ID film yang kamu punya biar bisa di-test
         loadFallbackData();
     }
 }
 
 function loadFallbackData() {
     const fallback = [
-        { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia, jatuh cinta pada Sofia...', release_date: '2022-11-04', poster_path: '' },
-        { id: 157336, title: 'Interstellar', overview: 'Ketika Bumi semakin tidak layak dihuni...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg' }
+        { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia, jatuh cinta pada Sofia...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
+        { id: 157336, title: 'Interstellar', overview: 'Ketika Bumi semakin tidak layak dihuni...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', origin_country: ['US'] }
     ];
     moviesData = [...moviesData, ...fallback];
     renderFeed(moviesData);
@@ -58,26 +87,26 @@ function loadFallbackData() {
 function renderFeed(movies) {
     feedContainer.innerHTML = '';
     movies.forEach((movie, index) => {
-        // Cek apakah film ini ada di database kustom movies.json kamu
         const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
         
-        // Tentukan gambar poster: prioritaskan url dari data json kamu, kalau tidak ada baru pakai TMDB
         let posterFullUrl = '';
         if (customData && customData.image) {
             posterFullUrl = customData.image;
         } else if (movie.poster_path) {
             posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
         } else {
-            posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; // gambar backup jika kosong
+            posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; 
         }
 
         const card = document.createElement('div');
         card.className = 'movie-card';
         card.style.backgroundImage = `url('${posterFullUrl}')`;
         
-        // Ambil tahun rilis (dari json atau dari tmdb)
         let releaseDateStr = customData ? customData.release_date : movie.release_date;
         const year = releaseDateStr ? releaseDateStr.split('-')[0] : '-';
+
+        // Tentukan apakah panah navigasi harus tampil (hanya jika di desktop)
+        const arrowStyle = isDesktop ? 'display: flex;' : 'display: none;';
 
         card.innerHTML = `
             <div class="overlay"></div>
@@ -89,6 +118,17 @@ function renderFeed(movies) {
 
             <div class="main-content">
                 <div class="side-actions">
+                    <!-- BLOK PANAH SEKARANG DI ATAS MENU INFO FILMS -->
+                    <div class="arrow-actions-container" style="${arrowStyle}">
+                        <div class="inline-scroll-arrow" onclick="scrollFeed('up')">
+                            <i data-lucide="chevron-up" size="22"></i>
+                        </div>
+                        <div class="inline-scroll-arrow" onclick="scrollFeed('down')">
+                            <i data-lucide="chevron-down" size="22"></i>
+                        </div>
+                    </div>
+
+                    <!-- MENU INFO UTAMA -->
                     <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
                         <i data-lucide="info" size="28"></i>
                         <span>info</span>
@@ -99,7 +139,7 @@ function renderFeed(movies) {
                     </div>
                     <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
                         <i data-lucide="clapperboard" size="28"></i>
-                        <span>Film</span>
+                        <span>Genre</span>
                     </div>
                     <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
                         <i data-lucide="globe" size="28"></i>
@@ -125,13 +165,12 @@ function loadNextPage() {
     fetchMovies(currentPage);
 }
 
-// 4. Logika Cicilan Info Dinamis (Klik buka, klik lagi nutup)
+// 4. Logika Cicilan Info Dinamis (Genre & Negara Dinamis Sesuai TMDB / JSON)
 function toggleSection(event, index, section) {
     event.stopPropagation();
     const movie = moviesData[index];
     if (!movie) return;
 
-    // Cek data kustom
     const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
 
     if (infoPanel.classList.contains('show') && currentActiveSection === section) {
@@ -153,14 +192,25 @@ function toggleSection(event, index, section) {
             htmlContent = `<i data-lucide="calendar" size="22"></i><p>Tanggal Rilis: <strong>${rilis || '-'}</strong></p>`;
             break;
         case 'genre':
-            let genreStr = 'Movie (TMDB)';
+            // Berubah dari kata 'Kategori' menjadi 'Genre'
+            let genreStr = 'Drama, Movie';
             if (customData && customData.genre) {
                 genreStr = Array.isArray(customData.genre) ? customData.genre.join(', ') : customData.genre;
+            } else if (movie.genre_ids) {
+                genreStr = "Movie ID: " + movie.genre_ids.join(', '); // Cadangan jika TMDB mengembalikan array id genre
             }
-            htmlContent = `<i data-lucide="clapperboard" size="22"></i><p>Kategori: <strong>${genreStr}</strong></p>`;
+            htmlContent = `<i data-lucide="clapperboard" size="22"></i><p>Genre: <strong>${genreStr}</strong></p>`;
             break;
         case 'country':
-            const negara = customData ? customData.country : 'International';
+            // Mengambil negara kustom dari json, atau mendeteksi origin_country bawaan TMDB secara dinamis
+            let negara = '-';
+            if (customData && customData.country) {
+                negara = customData.country;
+            } else if (movie.origin_country && movie.origin_country.length > 0) {
+                negara = movie.origin_country.join(', '); // Menampilkan kode negara asli dari TMDB secara otomatis (ex: US, FI, KR)
+            } else {
+                negara = 'Global Release';
+            }
             htmlContent = `<i data-lucide="globe" size="22"></i><p>Negara Produksi: <strong>${negara}</strong></p>`;
             break;
     }
@@ -170,28 +220,20 @@ function toggleSection(event, index, section) {
     lucide.createIcons();
 }
 
-// 5. Pemutar Video Cerdas Sesuai Isi JSON Kamu
+// 5. Pemutar Video
 function playMovie(tmdbId) {
     const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-    playerArea.innerHTML = ''; // Bersihkan isi player sebelumnya
+    playerArea.innerHTML = ''; 
 
     if (customMovie) {
         if (customMovie.iframe && customMovie.iframe.trim() !== "") {
-            // JIKA ADA IFRAME (seperti playcinematic.com milikmu)
-            console.log("Memutar link iframe kustom:", customMovie.iframe);
             playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
         } else if (customMovie.video && customMovie.video.trim() !== "") {
-            // JIKA IFRAME KOSONG TAPI VIDEO MP4 ADA
-            console.log("Memutar video file kustom:", customMovie.video);
             playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
-            // JIKA DI JSON ADA DATA FILM NYA TAPI URL LINK PLAY KOSONG, KEMBALI KE VIDSRC
-            console.log("Data video kustom kosong, dialihkan ke vidsrc...");
             playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
         }
     } else {
-        // JIKA FILM TIDAK TERDAFTAR DI MOVIES.JSON KAMU
-        console.log("Film tidak terdaftar di movies.json. Memutar via vidsrc...");
         playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
     }
 
@@ -199,34 +241,25 @@ function playMovie(tmdbId) {
 }
 
 document.getElementById('closePlayerBtn').addEventListener('click', () => {
-    playerArea.innerHTML = ''; // Matikan paksa suara/video agar tidak jalan di background
+    playerArea.innerHTML = ''; 
     videoPlayerContainer.classList.remove('active');
 });
 
-// ====== PATCH UNTUK UPDATE JUDUL SAAT SCROLL FILM ======
+// 6. Pemantau Gerakan Scroll Aktif dengan Auto-Update Judul
 feedContainer.addEventListener('scroll', () => {
-    // Hitung index film berdasarkan posisi scroll layar saat ini
     const index = Math.round(feedContainer.scrollTop / window.innerHeight);
     
-    // Jika index berubah (pindah ke film baru)
     if (index !== activeMovieIndex) {
         activeMovieIndex = index;
         
-        // 1. Tutup info panel lama otomatis agar tidak mengganggu
         infoPanel.classList.remove('show');
         currentActiveSection = null;
         
-        // 2. Ambil data film yang aktif sekarang
         const currentMovie = moviesData[activeMovieIndex];
-        
         if (currentMovie) {
-            // Cek apakah film ini ada di movies.json kamu
             const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
-            
-            // Ambil semua elemen .top-title yang ada di DOM
             const topTitles = document.querySelectorAll('.top-title');
             
-            // Update teks judul besar di atas poster sesuai film yang aktif
             if (topTitles[activeMovieIndex]) {
                 topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
             }
@@ -246,6 +279,7 @@ document.getElementById('navHome').addEventListener('click', () => {
 
 // Booting Aplikasi
 async function init() {
+    detectDevice(); // Cek ukuran layar duluan sebelum merender halaman
     await loadLocalMovies();
     await fetchMovies(currentPage);
 }
