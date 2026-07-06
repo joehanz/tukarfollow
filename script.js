@@ -223,11 +223,21 @@ function toggleSection(event, index, section) {
             if (customData && customData.country) {
                 negara = customData.country;
             } else if (movie.origin_country && movie.origin_country.length > 0) {
-                negara = movie.origin_country.join(', '); // Menampilkan kode negara asli dari TMDB secara otomatis (ex: US, FI, KR)
+                // Mapping kode negara TMDB (US, FI, KR) ke nama lengkap biar lebih rapi
+                const countryMap = {
+                    'US': 'Amerika Serikat', 'FI': 'Finlandia', 'KR': 'Korea Selatan',
+                    'JP': 'Jepang', 'ID': 'Indonesia', 'GB': 'Inggris', 'FR': 'Prancis',
+                    'CN': 'Cina', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India'
+                };
+                
+                // Terjemahkan kodenya, kalau tidak ada di daftar pasang kode aslinya saja
+                const translatedCountries = movie.origin_country.map(code => countryMap[code.toUpperCase()] || code);
+                negara = translatedCountries.join(', ');
             } else {
-                negara = 'Global Release';
+                negara = 'Global';
             }
-            htmlContent = `<i data-lucide="globe" size="22"></i><p>Negara Produksi: <strong>${negara}</strong></p>`;
+            // Label teks diubah langsung jadi "Negara:"
+            htmlContent = `<i data-lucide="globe" size="22"></i><p>Negara: <strong>${negara}</strong></p>`;
             break;
     }
 
