@@ -1,42 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Splash Grid TMDB</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming Movie TikTok Style</title>
+  <link href="style.css" rel="stylesheet" />
 </head>
-<body class="bg-black overflow-hidden">
-
-  <!-- Grid background -->
-  <div id="movie-grid" class="fixed inset-0 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1 pointer-events-none z-0 opacity-100 transition-opacity duration-[3000ms]"></div>
-
-  <!-- Overlay tombol utama -->
-  <div id="overlay-buttons" class="fixed inset-0 flex flex-col items-center justify-center bg-black/70 z-10 opacity-0 transition-opacity duration-[3000ms]">
-    <h1 class="text-3xl font-bold mb-6">Welcome to TukarFollow</h1>
-    <div class="flex gap-6">
-      <button onclick="showSignup()" class="px-6 py-3 bg-green-400 text-black font-bold rounded-lg">Sign Up</button>
-      <button onclick="showSignin()" class="px-6 py-3 bg-blue-400 text-black font-bold rounded-lg">Sign In</button>
-    </div>
+<body class="bg-black text-white">
+  <div class="sidebar">
+    <ul>
+      <li>Home</li>
+      <li>Action</li>
+      <li>Drama</li>
+      <li>Anime</li>
+      <li>Favorites</li>
+    </ul>
   </div>
 
-  <!-- Overlay Sign Up -->
-  <div id="signup-overlay" class="fixed inset-0 flex items-center justify-center bg-black/70 z-20 hidden">
-    <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 animate-[fadeIn_0.4s_ease]">
-      <h2 class="text-xl font-bold mb-4 text-center">Sign Up</h2>
-      <input type="text" id="signup-email" placeholder="Email / No HP" class="w-full mb-3 px-3 py-2 rounded bg-gray-800 text-white outline-none">
-      <input type="password" id="signup-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 rounded bg-gray-800 text-white outline-none">
-      <button id="signup-submit" class="w-full py-2 bg-green-500 text-black font-bold rounded">Daftar</button>
-    </div>
-  </div>
-
-  <!-- Overlay Sign In -->
-  <div id="signin-overlay" class="fixed inset-0 flex items-center justify-center bg-black/70 z-20 hidden">
-    <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80 animate-[fadeIn_0.4s_ease]">
-      <h2 class="text-xl font-bold mb-4 text-center">Sign In</h2>
-      <input type="text" id="signin-code" placeholder="Kode Unik" class="w-full mb-3 px-3 py-2 rounded bg-gray-800 text-white outline-none">
-      <input type="password" id="signin-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 rounded bg-gray-800 text-white outline-none">
-      <button id="signin-submit" class="w-full py-2 bg-blue-500 text-black font-bold rounded">Masuk</button>
+  <div class="feed">
+    <div class="movie-card">
+      <video src="trailer1.mp4" autoplay loop muted></video>
+      <div class="overlay">
+        <h2>The Witcher</h2>
+        <p>Fantasy • 2 Seasons</p>
+        <button>Watch Now</button>
+      </div>
+      <div class="actions">
+        <span>❤️ 12.4K</span>
+        <span>💬 567</span>
+        <span>🔁 8.2K</span>
+      </div>
     </div>
   </div>
 
