@@ -1,115 +1,552 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-  <!-- BASIC META -->
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-  <title>TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia</title>
-  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia. Update feed harian ala TikTok mobile friendly." />
-  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, download film hd, bioskop online, tukarfollow movie, streaming film hp" />
-  <meta name="robots" content="index, follow" />
-  <meta name="language" content="id" />
-
-  <!-- CANONICAL -->
-  <link rel="canonical" href="https://tukarfollow.web.id/" />
-
-  <!-- ICONS -->
-  <!-- Silakan ganti ke path logo asli web kamu jika ada -->
-  <link rel="icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" />
-
-  <!-- OPEN GRAPH (Sangat penting saat link di-share ke WA/Sosmed agar muncul gambar poster) -->
-  <meta property="og:type" content="video.movie" />
-  <meta property="og:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
-  <meta property="og:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
-  <meta property="og:url" content="https://tukarfollow.web.id/" />
-  <meta property="og:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
-  <meta property="og:site_name" content="TUKARFOLLOW" />
-
-  <!-- TWITTER CARD -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
-  <meta name="twitter:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
-  <meta name="twitter:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
-
-  <!-- FONTS & ICON SCRIPT -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
-  <!-- Script Lucide Icon dari kode lama kita -->
+  <title>Watch Movie - TUKARFOLLOW</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- STRUCTURED DATA (Diubah ke MovieTheater / WebSite agar Google tahu ini web hiburan/film) -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "TUKARFOLLOW",
-      "url": "https://tukarfollow.web.id/",
-      "description": "Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia.",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://tukarfollow.web.id/?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+  <style>
+    /* ====================================
+       1. BASIC RESET & CORE STYLE
+       ==================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-  </script>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
 
-  <!-- PWA MANIFEST -->
-  <link rel="manifest" href="manifest.json" />
+    /* ====================================
+       2. WATCH LAYOUT (77vh PLAYER & KOMENTAR)
+       ==================================== */
+    .watch-layout {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 70px); /* Kurangi tinggi nav bawah (70px) */
+      width: 100%;
+    }
 
-  <!-- CALL EXTERNAL CSS -->
-  <link rel="stylesheet" href="style.css" />
-  
+    /* Player Area (77vh) */
+    .video-player-section {
+      width: 100%;
+      height: 77vh;
+      background: #000;
+      position: relative;
+    }
+    .video-player-section iframe, 
+    .video-player-section video {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Comments Section (Sisanya di bawah) */
+    .comments-section {
+      width: 100%;
+      flex: 1;
+      background: #0d0d0d;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    .comments-header {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #ffdd57;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .comments-list-container {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .comment-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+    .comment-user {
+      font-weight: 600;
+      color: #38b6ff;
+      margin-bottom: 2px;
+    }
+    .comment-text {
+      color: #e0e0e0;
+      line-height: 1.4;
+    }
+
+    /* ====================================
+       3. SEARCH REAL-TIME FULLSCREEN LAYER
+       ==================================== */
+    .search-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #000000;
+      z-index: 100;
+      padding: 15px;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+    }
+    .search-container.show {
+      transform: translateY(0);
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      padding: 0 15px;
+      height: 45px;
+    }
+    .search-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      padding-left: 10px;
+    }
+    .search-box input:focus {
+      outline: none;
+    }
+
+    /* Layer Hasil Pencarian Menutup Halaman (Di atas Nav Bawah) */
+    .search-results-layer {
+      position: fixed;
+      top: 75px; /* Tepat di bawah search box */
+      left: 0;
+      width: 100%;
+      height: calc(100vh - 145px); /* Menutup layar kecuali search-box & nav bawah */
+      background: #050505;
+      z-index: 99;
+      overflow-y: auto;
+      padding: 15px;
+      display: none;
+    }
+    .search-results-layer.active {
+      display: block;
+    }
+    .search-item-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+    }
+    .search-item-thumb {
+      width: 50px;
+      height: 70px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+      background-color: #222;
+    }
+    .search-item-info h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .search-item-info p {
+      font-size: 11px;
+      color: #888;
+    }
+
+    /* ====================================
+       4. SLIDE-UP INFO PANEL (UNTUK INPUT KOMEN)
+       ==================================== */
+    .info-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #121212;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      z-index: 105;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+    }
+    .info-panel.show {
+      transform: translateY(0);
+    }
+    .panel-content {
+      padding: 20px;
+    }
+    .form-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 13px;
+    }
+    .form-group textarea {
+      resize: none;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      outline: 1px solid #ffdd57;
+    }
+    .submit-btn {
+      background: #ffdd57;
+      color: #000;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    /* Backdrop gelap saat panel naik */
+    .panel-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      z-index: 104;
+      display: none;
+    }
+    .panel-backdrop.active {
+      display: block;
+    }
+
+    /* ====================================
+       5. BOTTOM NAVIGATION STYLE
+       ==================================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: #000000;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 110; /* Berada di atas lapisan pencarian */
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #888888;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .nav-item.active {
+      color: #ffffff;
+    }
+    .nav-item span {
+      margin-top: 4px;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Search Bar -->
-    <div class="search-container" id="searchContainer">
-        <div class="search-box">
-            <i data-lucide="search" size="18" color="#888"></i>
-            <input type="text" id="searchInput" placeholder="Cari film...">
+  <div class="search-container" id="searchContainer">
+    <div class="search-box">
+      <i data-lucide="search" size="18" color="#888"></i>
+      <input type="text" id="searchInput" placeholder="Cari film lain...">
+    </div>
+  </div>
+
+  <div class="search-results-layer" id="searchResultsLayer"></div>
+
+  <div class="watch-layout">
+    <div class="video-player-section" id="playerArea">
+      </div>
+
+    <div class="comments-section">
+      <div class="comments-header">
+        <i data-lucide="message-square" size="16"></i> Komentar Netizen
+      </div>
+      <div class="comments-list-container" id="commentList">
         </div>
     </div>
+  </div>
 
-    <!-- Video Player Screen -->
-    <div class="video-player-container" id="videoPlayerContainer">
-        <div class="close-player" id="closePlayerBtn">
-            <i data-lucide="x" size="24" color="#fff"></i>
-        </div>
-        <div id="playerArea" style="width:100%; height:77VH;"></div>
+  <div class="panel-backdrop" id="panelBackdrop" onclick="closeCommentForm()"></div>
+
+  <div class="info-panel" id="infoPanel">
+    <div class="panel-content">
+      <div class="form-title">Tulis Komentar Kamu</div>
+      <div class="form-group">
+        <input type="text" id="commentName" placeholder="Nama samaran kamu...">
+        <textarea id="commentText" placeholder="Tulis opini/komentar film di sini..." rows="3"></textarea>
+        <button class="submit-btn" onclick="submitComment()">Kirim Komentar</button>
+      </div>
     </div>
+  </div>
 
-   AREA KOMENTAR
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav" id="bottomNav">
-        <div class="nav-item" id="navSearch">
-            <i data-lucide="search" size="24"></i>
-            <span>Search</span>
-        </div>
-        <div class="nav-item">
-            <i data-lucide="plus-circle" size="28" color="#fff"></i>
-            <span>Add</span>
-        </div>
-        <div class="nav-item active" id="navHome">
-            <i data-lucide="home" size="24"></i>
-            <span>Home</span>
-        </div>
+  <div class="bottom-nav">
+    <div class="nav-item" id="navSearch">
+      <i data-lucide="search" size="24"></i>
+      <span>Search</span>
     </div>
-
-    <!-- CALL EXTERNAL JAVASCRIPT -->
-    <script src="script.js"></script>
-
-<!-- Masukkan ini di index.html (di dalam body paling bawah) -->
-<div class="desktop-notifier" id="desktopNotifier">
-    <div class="notifier-content">
-        <i data-lucide="smartphone" size="40"></i>
-        <h3>Tampilan Lebih Asyik di HP!</h3>
-        <p>Situs ini didesain khusus untuk kenyamanan layar mobile. Rekomendasi terbaik gunakan smartphone kamu ya, bro!</p>
-        <button onclick="closeNotifier()">Siap, Paham!</button>
+    <div class="nav-item" id="navAddComment" style="color: #fff;">
+      <i data-lucide="plus-circle" size="28"></i>
+      <span>Add</span>
     </div>
-</div>
-    
+    <div class="nav-item" id="navHome">
+      <i data-lucide="home" size="24"></i>
+      <span>Home</span>
+    </div>
+  </div>
+
+  <script>
+    // KONFIGURASI API UTAMA
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+    const URL_APPS_SCRIPT = 'SALIN_URL_WEB_APP_APPS_SCRIPT_KAMU_DISINI'; 
+
+    // DOM Elements
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchResultsLayer = document.getElementById('searchResultsLayer');
+    const playerArea = document.getElementById('playerArea');
+    const commentList = document.getElementById('commentList');
+    const infoPanel = document.getElementById('infoPanel');
+    const panelBackdrop = document.getElementById('panelBackdrop');
+
+    let currentMovieId = null;
+    let allMoviesCache = []; // Menyimpan database pencarian film
+    let myCustomMovies = [];
+
+    // 1. Ambil Parameter ID Film dari URL (?id=123)
+    function getMovieIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    // 2. Memuat Database Movies & Data Kustom Lokal untuk Fitur Cari & Player
+    async function loadInitialData() {
+      currentMovieId = parseInt(getMovieIdFromUrl());
+      if (!currentMovieId) {
+        playerArea.innerHTML = `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
+        return;
+      }
+
+      // Ambil custom movies.json jika ada
+      try {
+        const res = await fetch('movies.json');
+        if(res.ok) myCustomMovies = await res.json();
+      } catch(e) { console.warn("movies.json belum terbaca."); }
+
+      // Setup Player & Tarik Komentar
+      setupVideoPlayer(currentMovieId);
+      loadComments(currentMovieId);
+
+      // Tarik film populer TMDB untuk cache pencarian biar sensitif
+      try {
+        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
+        if(res.ok) {
+          const data = await res.json();
+          allMoviesCache = data.results;
+        }
+      } catch(e) { console.error("Gagal membuat cache pencarian."); }
+    }
+
+    // 3. Setup Pemutar Video (77vh)
+    function setupVideoPlayer(tmdbId) {
+      const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
+      playerArea.innerHTML = ''; 
+
+      if (customMovie) {
+        if (customMovie.iframe && customMovie.iframe.trim() !== "") {
+          playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else if (customMovie.video && customMovie.video.trim() !== "") {
+          playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
+        } else {
+          playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+        }
+      } else {
+        playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+      }
+    }
+
+    // 4. Ambil Komentar dari Google Spreadsheet via Apps Script
+    async function loadComments(tmdbId) {
+      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar netizen...</div>';
+      try {
+        const response = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
+        const resData = await response.json();
+        
+        if (resData.status === "success" && resData.data.length > 0) {
+          commentList.innerHTML = resData.data.map(c => `
+            <div class="comment-item">
+              <div class="comment-user">@${c.nama}</div>
+              <div class="comment-text">${c.komentar}</div>
+            </div>
+          `).join('');
+        } else {
+          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; font-style:italic; padding:15px 0; text-align:center;">Belum ada komentar. Yuk jadi yang pertama coret-coret!</div>';
+        }
+      } catch (e) {
+        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px 0;">Gagal memuat komentar. Pastikan URL Apps Script benar.</div>';
+      }
+    }
+
+    // 5. Kirim Komentar Baru ke Spreadsheet
+    async function submitComment() {
+      const nameInput = document.getElementById('commentName');
+      const textInput = document.getElementById('commentText');
+      const nama = nameInput.value.trim();
+      const komentar = textInput.value.trim();
+
+      if (!nama || !komentar) {
+        alert("Isi nama dan komentar dulu, brader!");
+        return;
+      }
+
+      // Animasi Loading
+      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim komentar baru...</div>';
+      closeCommentForm();
+
+      try {
+        await fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tmdbId: currentMovieId, nama: nama, komentar: komentar })
+        });
+        
+        // Bersihkan form & reload otomatis setelah jeda aman
+        textInput.value = '';
+        setTimeout(() => { loadComments(currentMovieId); }, 1200);
+      } catch(e) {
+        alert("Gagal mengirim data.");
+        loadComments(currentMovieId);
+      }
+    }
+
+    // 6. Kontrol Form Input Komen (Slide Up / Slide Down)
+    function openCommentForm() {
+      infoPanel.classList.add('show');
+      panelBackdrop.classList.add('active');
+    }
+    function closeCommentForm() {
+      infoPanel.classList.remove('show');
+      panelBackdrop.classList.remove('active');
+    }
+
+    // ============================================================================
+    // LOGIKA NAVIGASI & SEARCH LAYER
+    // ============================================================================
+
+    // Tombol Cari (Buka Tutup Layer)
+    document.getElementById('navSearch').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isShowing = searchContainer.classList.toggle('show');
+      if (!isShowing) {
+        searchInput.value = "";
+        searchResultsLayer.classList.remove('active');
+      } else {
+        setTimeout(() => searchInput.focus(), 100);
+      }
+    });
+
+    // Mesin Pencari Real-Time Super Sensitif Menutupi Layar (Kecuali Nav Bawah)
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase().trim();
+        
+        if (keyword === "") {
+          searchResultsLayer.classList.remove('active');
+          return;
+        }
+
+        searchResultsLayer.classList.add('active');
+        const cleanKeyword = keyword.replace(/\s+/g, '');
+
+        // Filter data gabungan dari cache & custom data
+        const filtered = allMoviesCache.filter(movie => {
+          const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
+          const rawTitle = customData ? customData.title : movie.title;
+          return rawTitle.toLowerCase().replace(/\s+/g, '').includes(cleanKeyword);
+        });
+
+        if(filtered.length > 0) {
+          searchResultsLayer.innerHTML = filtered.map(movie => {
+            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
+            const poster = (customData && customData.image) ? customData.image : `${IMAGE_URL}${movie.poster_path}`;
+            const title = customData ? customData.title : movie.title;
+            const date = customData ? customData.release_date : movie.release_date;
+            const year = date ? date.split('-')[0] : '-';
+
+            return `
+              <div class="search-item-row" onclick="navigateToMovie(${movie.id})">
+                <div class="search-item-thumb" style="background-image:url('${poster}')"></div>
+                <div class="search-item-info">
+                  <h4>${title}</h4>
+                  <p>Tahun: ${year}</p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          searchResultsLayer.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5; font-size:13px;">Film tidak ditemukan, coba kata kunci lain.</div>';
+        }
+      });
+    }
+
+    // Navigasi Pindah ke Film Lain saat Hasil Pencarian diklik
+    function navigateToMovie(id) {
+      window.location.href = `watch.html?id=${id}`;
+    }
+
+    // Tombol + (Memicu Form Komentar Naik)
+    document.getElementById('navAddComment').addEventListener('click', openCommentForm);
+
+    // Tombol Home (Kembali Ke Halaman Sebelumnya, Bukan Scroll Up)
+    document.getElementById('navHome').addEventListener('click', () => {
+      if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        window.history.back(); // Balik ke halaman feed posisi terakhir
+      } else {
+        window.location.href = 'index.html'; // Fallback jika ketik link langsung
+      }
+    });
+
+    // Inisialisasi Lucide Icons & Data Booting
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+      loadInitialData();
+    });
+  </script>
 </body>
 </html>
