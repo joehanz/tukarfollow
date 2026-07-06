@@ -1,33 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Watch Movie</title>
-  <style>
-    body { background:#000; margin:0; display:flex; flex-direction:column; gap:20px; }
-    iframe { width:100%; height:500px; border:none; }
-  </style>
+<html lang="id">
+    <head>
+  <!-- BASIC META -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia</title>
+  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia. Update feed harian ala TikTok mobile friendly." />
+  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, download film hd, bioskop online, tukarfollow movie, streaming film hp" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="id" />
+
+  <!-- CANONICAL -->
+  <link rel="canonical" href="https://tukarfollow.web.id/" />
+
+  <!-- ICONS -->
+  <!-- Silakan ganti ke path logo asli web kamu jika ada -->
+  <link rel="icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" />
+
+  <!-- OPEN GRAPH (Sangat penting saat link di-share ke WA/Sosmed agar muncul gambar poster) -->
+  <meta property="og:type" content="video.movie" />
+  <meta property="og:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
+  <meta property="og:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta property="og:url" content="https://tukarfollow.web.id/" />
+  <meta property="og:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
+  <meta property="og:site_name" content="TUKARFOLLOW" />
+
+  <!-- TWITTER CARD -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
+  <meta name="twitter:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta name="twitter:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
+
+  <!-- FONTS & ICON SCRIPT -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
+  <!-- Script Lucide Icon dari kode lama kita -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- STRUCTURED DATA (Diubah ke MovieTheater / WebSite agar Google tahu ini web hiburan/film) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TUKARFOLLOW",
+      "url": "https://tukarfollow.web.id/",
+      "description": "Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://tukarfollow.web.id/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <!-- PWA MANIFEST -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- CALL EXTERNAL CSS -->
+  <link rel="stylesheet" href="style.css" />
+  
 </head>
 <body>
-  <iframe id="vidsrc-player"></iframe>
-  <iframe id="cinematic-player"></iframe>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get("id");
-    const API_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
+    <!-- Search Bar -->
+    <div class="search-container" id="searchContainer">
+        <div class="search-box">
+            <i data-lucide="search" size="18" color="#888"></i>
+            <input type="text" id="searchInput" placeholder="Cari film...">
+        </div>
+    </div>
 
-    async function loadPlayers() {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&append_to_response=external_ids`);
-      const data = await res.json();
-      console.log("Movie detail:", data);
+    <!-- Video Player Screen -->
+    <div class="video-player-container" id="videoPlayerContainer">
+        <div class="close-player" id="closePlayerBtn">
+            <i data-lucide="x" size="24" color="#fff"></i>
+        </div>
+        <div id="playerArea" style="width:100%; height:77VH;"></div>
+    </div>
 
-      const imdbId = data.imdb_id; // contoh: tt1234567
+   AREA KOMENTAR
 
-      document.getElementById("vidsrc-player").src = `https://vidsrc.ru/embed/${imdbId}`;
-      document.getElementById("cinematic-player").src = `https://playcinematic.com/embed/${imdbId}`;
-    }
-    loadPlayers();
-  </script>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav" id="bottomNav">
+        <div class="nav-item" id="navSearch">
+            <i data-lucide="search" size="24"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item">
+            <i data-lucide="plus-circle" size="28" color="#fff"></i>
+            <span>Add</span>
+        </div>
+        <div class="nav-item active" id="navHome">
+            <i data-lucide="home" size="24"></i>
+            <span>Home</span>
+        </div>
+    </div>
+
+    <!-- CALL EXTERNAL JAVASCRIPT -->
+    <script src="script.js"></script>
+
+<!-- Masukkan ini di index.html (di dalam body paling bawah) -->
+<div class="desktop-notifier" id="desktopNotifier">
+    <div class="notifier-content">
+        <i data-lucide="smartphone" size="40"></i>
+        <h3>Tampilan Lebih Asyik di HP!</h3>
+        <p>Situs ini didesain khusus untuk kenyamanan layar mobile. Rekomendasi terbaik gunakan smartphone kamu ya, bro!</p>
+        <button onclick="closeNotifier()">Siap, Paham!</button>
+    </div>
+</div>
+    
 </body>
 </html>
