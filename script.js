@@ -1,149 +1,67 @@
-let movies = [];
-let currentIndex = 0;
-const pageSize = 10;
+        // Mengambil elemen-elemen DOM
+        const phoneContainer = document.getElementById('phoneContainer');
+        const mainContent = document.getElementById('mainContent');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const navSearch = document.getElementById('navSearch');
+        const searchInput = document.getElementById('searchInput');
+        
+        const infoActionBtn = document.getElementById('infoActionBtn');
+        const infoPanel = document.getElementById('infoPanel');
+        const closeInfoBtn = document.getElementById('closeInfoBtn');
+        
+        const playBtnContainer = document.getElementById('playBtnContainer');
 
-// Ambil data dari movies.json
-fetch("movies.json")
-  .then(res => res.json())
-  .then(data => {
-    movies = data;
-    renderMovies();
-  })
-  .catch(err => console.error("Error load JSON:", err));
+        // --- FITUR 1: LOGIK SEARCH BAR ---
+        navSearch.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah trigger klik ke background
+            searchOverlay.classList.toggle('active');
+            if(searchOverlay.classList.contains('active')) {
+                searchInput.focus(); // Otomatis fokus ke text input saat muncul
+                // Tutup panel info jika sedang terbuka
+                infoPanel.classList.remove('active');
+            }
+        });
 
-// Render film per halaman
-function renderMovies() {
-  const feed = document.getElementById("feed");
-  const template = document.getElementById("movieTemplate");
+        // --- FITUR 2: LOGIK INFO PANEL ---
+        // Klik tombol info di sidebar kanan untuk buka/tutup
+        infoActionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            infoPanel.classList.toggle('active');
+            // Tutup search jika sedang terbuka
+            searchOverlay.classList.remove('active');
+        });
 
-  const slice = movies.slice(currentIndex, currentIndex + pageSize);
-  slice.forEach(movie => {
-    const clone = template.content.cloneNode(true);
-
-    // Poster & caption
-    clone.querySelector(".poster").src = movie.image;
-    clone.querySelector(".movie-title").textContent = movie.title;
-    clone.querySelector(".movie-desc").textContent = movie.sinopsis;
-
-    // Play button
-    clone.querySelector(".play-btn").addEventListener("click", () => {
-      playMovie(movie.iframe);
-    });
-
-    // Icon kanan
-    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie));
-
-    feed.appendChild(clone);
-  });
-
-  currentIndex += pageSize;
-}
-
-// Load More
-document.getElementById("loadMore").addEventListener("click", () => {
-  renderMovies();
-});
-
-// Info panel toggle sesuai icon
-function showInfo(movie, type) {
-  const panel = document.getElementById("infoPanel");
-  const title = document.getElementById("infoTitle");
-  const sinopsis = document.getElementById("infoSinopsis");
-  const date = document.getElementById("infoDate");
-  const genre = document.getElementById("infoGenre");
-  const country = document.getElementById("infoCountry");
-
-  // reset isi
-  title.textContent = "";
-  sinopsis.textContent = "";
-  date.textContent = "";
-  genre.textContent = "";
-  country.textContent = "";
-
-  // isi sesuai type
-  if (type === "desc") {
-    title.textContent = movie.title;
-    sinopsis.textContent = movie.sinopsis;
-  }
-  if (type === "date") {
-    title.textContent = movie.title;
-    date.textContent = movie.release_date;
-  }
-  if (type === "genre") {
-    title.textContent = movie.title;
-    genre.textContent = movie.genre.join(", ");
-  }
-  if (type === "country") {
-    title.textContent = movie.title;
-    country.textContent = movie.country;
-  }
-
-  panel.classList.remove("hidden");
-}
-
-// Event listener icon kanan
-clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "desc"));
-clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
-clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
-clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+        // Klik tombol X di dalam panel info untuk menutup
+        closeInfoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            infoPanel.classList.remove('active');
+        });
 
 
-// Play movie overlay
-function playMovie(url) {
-  const overlay = document.getElementById("playerOverlay");
-  const player = document.getElementById("moviePlayer");
-  player.src = url;
-  overlay.classList.remove("hidden");
+        // --- FITUR 3: LOGIK PLAY MODE ---
+        // Masuk ke Mode Play saat tombol play besar diklik
+        playBtnContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            phoneContainer.classList.add('play-mode');
+            // Pastikan overlay lain tertutup saat nonton
+            searchOverlay.classList.remove('active');
+            infoPanel.classList.remove('active');
+        });
 
-  // Sembunyikan icon & nav
-  document.querySelectorAll(".actions, #bottomNav, .play-btn").forEach(el => el.style.display = "none");
-}
+        // Keluar dari Mode Play saat layar / poster disentuh/diklik
+        mainContent.addEventListener('click', () => {
+            if (phoneContainer.classList.contains('play-mode')) {
+                phoneContainer.classList.remove('play-mode');
+            } else {
+                // Menutup search bar atau info panel jika mengklik area kosong di poster
+                searchOverlay.classList.remove('active');
+                infoPanel.classList.remove('active');
+            }
+        });
 
-// Auto close player saat scroll
-document.getElementById("feed").addEventListener("scroll", () => {
-  const overlay = document.getElementById("playerOverlay");
-  if (!overlay.classList.contains("hidden")) {
-    overlay.classList.add("hidden");
-    document.getElementById("moviePlayer").src = "";
-    document.querySelectorAll(".actions, #bottomNav, .play-btn").forEach(el => el.style.display = "");
-  }
-});
-
-// Search toggle
-document.getElementById("searchBtn").addEventListener("click", () => {
-  document.getElementById("searchBar").classList.toggle("active");
-});
-
-// Search function
-document.getElementById("searchInput").addEventListener("input", e => {
-  const keyword = e.target.value.toLowerCase();
-  const feed = document.getElementById("feed");
-  feed.innerHTML = "";
-  currentIndex = 0;
-
-  movies.filter(m =>
-    m.title.toLowerCase().includes(keyword) ||
-    m.sinopsis.toLowerCase().includes(keyword) ||
-    m.genre.join(", ").toLowerCase().includes(keyword) ||
-    m.country.toLowerCase().includes(keyword)
-  ).forEach(movie => {
-    const clone = document.getElementById("movieTemplate").content.cloneNode(true);
-    clone.querySelector(".poster").src = movie.image;
-    clone.querySelector(".movie-title").textContent = movie.title;
-    clone.querySelector(".movie-desc").textContent = movie.sinopsis;
-    clone.querySelector(".play-btn").addEventListener("click", () => playMovie(movie.iframe));
-    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie));
-    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie));
-    feed.appendChild(clone);
-  });
-});
-
-// Home scroll
-document.getElementById("homeBtn").addEventListener("click", () => {
-  document.getElementById("feed").scrollTo({ top: 0, behavior: "smooth" });
-});
+        // Tambahan fungsionalitas scroll mendeteksi untuk keluar dari play mode
+        mainContent.addEventListener('wheel', () => {
+            if (phoneContainer.classList.contains('play-mode')) {
+                phoneContainer.classList.remove('play-mode');
+            }
+        });
