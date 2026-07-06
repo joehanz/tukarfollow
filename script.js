@@ -20,7 +20,7 @@ function renderMovies() {
   slice.forEach(movie => {
     const clone = template.content.cloneNode(true);
 
-    // Poster
+    // Poster & caption
     clone.querySelector(".poster").src = movie.image;
     clone.querySelector(".movie-title").textContent = movie.title;
     clone.querySelector(".movie-desc").textContent = movie.sinopsis;
@@ -31,10 +31,10 @@ function renderMovies() {
     });
 
     // Icon kanan
-    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "info"));
-    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
-    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
-    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie));
 
     feed.appendChild(clone);
   });
@@ -48,7 +48,7 @@ document.getElementById("loadMore").addEventListener("click", () => {
 });
 
 // Info panel toggle
-function showInfo(movie, type) {
+function showInfo(movie) {
   const panel = document.getElementById("infoPanel");
   document.getElementById("infoTitle").textContent = movie.title;
   document.getElementById("infoSinopsis").textContent = movie.sinopsis;
@@ -105,10 +105,10 @@ document.getElementById("searchInput").addEventListener("input", e => {
     clone.querySelector(".movie-title").textContent = movie.title;
     clone.querySelector(".movie-desc").textContent = movie.sinopsis;
     clone.querySelector(".play-btn").addEventListener("click", () => playMovie(movie.iframe));
-    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "info"));
-    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
-    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
-    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie));
+    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie));
     feed.appendChild(clone);
   });
 });
