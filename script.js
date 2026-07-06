@@ -303,51 +303,6 @@ document.getElementById('navHome').addEventListener('click', () => {
     feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// ========================================================
-// PATCH FITUR PENCARIAN REAL-TIME (KETIK LANGSUNG FILTER)
-// ========================================================
-const searchInput = document.getElementById('searchInput');
-
-searchInput.addEventListener('input', (e) => {
-    const keyword = e.target.value.toLowerCase().trim();
-    
-    // Jika kolom pencarian kosong, kembalikan tampilan ke semua film semula
-    if (keyword === "") {
-        renderFeed(moviesData);
-        return;
-    }
-
-    // Lakukan penyaringan film berdasarkan judul (cek di data TMDB dan movies.json)
-    const filteredMovies = moviesData.filter(movie => {
-        // Cek apakah ada data judul kustom di movies.json kamu
-        const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-        
-        // Ambil judul utama (prioritaskan judul kustom dari json kamu)
-        const titleToCheck = customData ? customData.title.toLowerCase() : movie.title.toLowerCase();
-        
-        // Cocokkan apakah judul mengandung kata yang diketik (misal: "sup")
-        return titleToCheck.includes(keyword);
-    });
-
-    // Render ulang feed hanya dengan film yang lolos filter pencarian
-    renderFeed(filteredMovies);
-});
-
-// Otomatis bersihkan pencarian kalau container search ditutup
-document.getElementById('navSearch').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isShowing = searchContainer.classList.toggle('show');
-    
-    // Jika search bar ditutup, reset kolom ketikan dan kembalikan semua film
-    if (!isShowing) {
-        searchInput.value = "";
-        renderFeed(moviesData);
-    } else {
-        // Jika dibuka, otomatis fokuskan kursor ke dalam kolom biar langsung bisa mengetik
-        setTimeout(() => searchInput.focus(), 100);
-    }
-});
-
 // Booting Aplikasi
 async function init() {
     detectDevice(); // Cek ukuran layar duluan sebelum merender halaman
