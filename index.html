@@ -450,28 +450,36 @@
         });
 
         // 6. Pemantau Gerakan Scroll Aktif (Termasuk Auto-Update Judul yang Rusak Sebelumnya)
-        feedContainer.addEventListener('scroll', () => {
-            const index = Math.round(feedContainer.scrollTop / window.innerHeight);
+        // ====== PATCH UNTUK UPDATE JUDUL SAAT SCROLL FILM ======
+feedContainer.addEventListener('scroll', () => {
+    // Hitung index film berdasarkan posisi scroll layar saat ini
+    const index = Math.round(feedContainer.scrollTop / window.innerHeight);
+    
+    // Jika index berubah (pindah ke film baru)
+    if (index !== activeMovieIndex) {
+        activeMovieIndex = index;
+        
+        // 1. Tutup info panel lama otomatis agar tidak mengganggu
+        infoPanel.classList.remove('show');
+        currentActiveSection = null;
+        
+        // 2. Ambil data film yang aktif sekarang
+        const currentMovie = moviesData[activeMovieIndex];
+        
+        if (currentMovie) {
+            // Cek apakah film ini ada di movies.json kamu
+            const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
             
-            if (index !== activeMovieIndex) {
-                activeMovieIndex = index;
-                
-                // Tutup panel info otomatis saat ganti film
-                infoPanel.classList.remove('show');
-                currentActiveSection = null;
-                
-                // Ambil data film saat ini untuk update teks judul atas secara real-time
-                const currentMovie = moviesData[activeMovieIndex];
-                if (currentMovie) {
-                    const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
-                    const topTitles = document.querySelectorAll('.top-title');
-                    
-                    if (topTitles[activeMovieIndex]) {
-                        topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
-                    }
-                }
+            // Ambil semua elemen .top-title yang ada di DOM
+            const topTitles = document.querySelectorAll('.top-title');
+            
+            // Update teks judul besar di atas poster sesuai film yang aktif
+            if (topTitles[activeMovieIndex]) {
+                topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
             }
-        });
+        }
+    }
+});
 
         // Search Bar Toggle
         document.getElementById('navSearch').addEventListener('click', (e) => {
