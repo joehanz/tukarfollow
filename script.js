@@ -203,13 +203,34 @@ document.getElementById('closePlayerBtn').addEventListener('click', () => {
     videoPlayerContainer.classList.remove('active');
 });
 
-// Auto-close info panel jika layar di-scroll
+// ====== PATCH UNTUK UPDATE JUDUL SAAT SCROLL FILM ======
 feedContainer.addEventListener('scroll', () => {
+    // Hitung index film berdasarkan posisi scroll layar saat ini
     const index = Math.round(feedContainer.scrollTop / window.innerHeight);
+    
+    // Jika index berubah (pindah ke film baru)
     if (index !== activeMovieIndex) {
         activeMovieIndex = index;
+        
+        // 1. Tutup info panel lama otomatis agar tidak mengganggu
         infoPanel.classList.remove('show');
         currentActiveSection = null;
+        
+        // 2. Ambil data film yang aktif sekarang
+        const currentMovie = moviesData[activeMovieIndex];
+        
+        if (currentMovie) {
+            // Cek apakah film ini ada di movies.json kamu
+            const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
+            
+            // Ambil semua elemen .top-title yang ada di DOM
+            const topTitles = document.querySelectorAll('.top-title');
+            
+            // Update teks judul besar di atas poster sesuai film yang aktif
+            if (topTitles[activeMovieIndex]) {
+                topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
+            }
+        }
     }
 });
 
