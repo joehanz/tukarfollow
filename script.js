@@ -70,3 +70,31 @@ document.getElementById("signup-submit").addEventListener("click", async () => {
     alert("Error daftar bro: " + err);
   }
 });
+
+document.getElementById("signin-submit").addEventListener("click", async () => {
+  const code = document.getElementById("signin-code").value.trim();
+  const pass = document.getElementById("signin-pass").value.trim();
+
+  if (!code || !pass) {
+    alert("Isi kode unik dan password dulu bro!");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxGl5etOVaUyB83HKANG8yckWC8nr19C2LC2cfKEFX8fWppHgugAcDjfbvW1AWjgAuO/exec", {
+      method: "POST",
+      body: JSON.stringify({ code, pass, action: "signin" }),
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      // redirect ke halaman film
+      window.location.href = "film.html";
+    } else {
+      alert("Kode unik atau password salah bro!");
+    }
+  } catch (err) {
+    alert("Error Sign In bro: " + err);
+  }
+});
