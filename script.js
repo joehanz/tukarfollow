@@ -13,7 +13,7 @@ let moviesData = [];
 let activeMovieIndex = 0;
 let currentPage = 1;
 let currentActiveSection = null; 
-let myCustomMovies = []; 
+let myCustomMovies = []; // Menyimpan data dari movies.json kamu
 
 // 1. Ambil data lokal movies.json
 async function loadLocalMovies() {
@@ -24,7 +24,7 @@ async function loadLocalMovies() {
             console.log("Data movies.json berhasil dimuat!", myCustomMovies);
         }
     } catch(e) {
-        console.warn("Gagal memuat movies.json atau file belum dibuat.", e);
+        console.warn("Gagal memuat movies.json atau file belum dibuat. Menggunakan data internal.", e);
     }
 }
 
@@ -40,6 +40,7 @@ async function fetchMovies(page = 1) {
 
         renderFeed(moviesData);
     } catch (error) {
+        // Fallback otomatis jika API masih dummy, kita pakai ID film yang kamu punya biar bisa di-test
         loadFallbackData();
     }
 }
@@ -57,21 +58,24 @@ function loadFallbackData() {
 function renderFeed(movies) {
     feedContainer.innerHTML = '';
     movies.forEach((movie, index) => {
+        // Cek apakah film ini ada di database kustom movies.json kamu
         const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
         
+        // Tentukan gambar poster: prioritaskan url dari data json kamu, kalau tidak ada baru pakai TMDB
         let posterFullUrl = '';
         if (customData && customData.image) {
             posterFullUrl = customData.image;
         } else if (movie.poster_path) {
             posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
         } else {
-            posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; 
+            posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; // gambar backup jika kosong
         }
 
         const card = document.createElement('div');
         card.className = 'movie-card';
         card.style.backgroundImage = `url('${posterFullUrl}')`;
         
+        // Ambil tahun rilis (dari json atau dari tmdb)
         let releaseDateStr = customData ? customData.release_date : movie.release_date;
         const year = releaseDateStr ? releaseDateStr.split('-')[0] : '-';
 
@@ -83,27 +87,27 @@ function renderFeed(movies) {
                 <div class="play-circle"><i data-lucide="play" fill="#fff" size="32" style="margin-left:5px;"></i></div>
             </div>
 
-                    <div class="main-content">
-                        <div class="side-actions">
-                            <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
-                                <i data-lucide="info" size="28"></i>
-                                <span>info</span>
-                            </div>
-                            <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
-                                <i data-lucide="calendar" size="28"></i>
-                                <span>${year}</span>
-                            </div>
-                            <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
-                                <i data-lucide="clapperboard" size="28"></i>
-                                <span>Film</span>
-                            </div>
-                            <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
-                                <i data-lucide="globe" size="28"></i>
-                                <span>Negara</span>
-                            </div>
-                        </div>
+            <div class="main-content">
+                <div class="side-actions">
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
+                        <i data-lucide="info" size="28"></i>
+                        <span>info</span>
                     </div>
-                `;
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
+                        <i data-lucide="calendar" size="28"></i>
+                        <span>${year}</span>
+                    </div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
+                        <i data-lucide="clapperboard" size="28"></i>
+                        <span>Film</span>
+                    </div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
+                        <i data-lucide="globe" size="28"></i>
+                        <span>Negara</span>
+                    </div>
+                </div>
+            </div>
+        `;
         feedContainer.appendChild(card);
     });
 
@@ -127,6 +131,7 @@ function toggleSection(event, index, section) {
     const movie = moviesData[index];
     if (!movie) return;
 
+    // Cek data kustom
     const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
 
     if (infoPanel.classList.contains('show') && currentActiveSection === section) {
@@ -168,17 +173,25 @@ function toggleSection(event, index, section) {
 // 5. Pemutar Video Cerdas Sesuai Isi JSON Kamu
 function playMovie(tmdbId) {
     const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-    playerArea.innerHTML = ''; 
+    playerArea.innerHTML = ''; // Bersihkan isi player sebelumnya
 
     if (customMovie) {
         if (customMovie.iframe && customMovie.iframe.trim() !== "") {
+            // JIKA ADA IFRAME (seperti playcinematic.com milikmu)
+            console.log("Memutar link iframe kustom:", customMovie.iframe);
             playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
         } else if (customMovie.video && customMovie.video.trim() !== "") {
+            // JIKA IFRAME KOSONG TAPI VIDEO MP4 ADA
+            console.log("Memutar video file kustom:", customMovie.video);
             playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
+            // JIKA DI JSON ADA DATA FILM NYA TAPI URL LINK PLAY KOSONG, KEMBALI KE VIDSRC
+            console.log("Data video kustom kosong, dialihkan ke vidsrc...");
             playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
         }
     } else {
+        // JIKA FILM TIDAK TERDAFTAR DI MOVIES.JSON KAMU
+        console.log("Film tidak terdaftar di movies.json. Memutar via vidsrc...");
         playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
     }
 
@@ -186,29 +199,17 @@ function playMovie(tmdbId) {
 }
 
 document.getElementById('closePlayerBtn').addEventListener('click', () => {
-    playerArea.innerHTML = ''; 
+    playerArea.innerHTML = ''; // Matikan paksa suara/video agar tidak jalan di background
     videoPlayerContainer.classList.remove('active');
 });
 
-// 6. Pemantau Gerakan Scroll Aktif dengan Auto-Update Judul
+// Auto-close info panel jika layar di-scroll
 feedContainer.addEventListener('scroll', () => {
     const index = Math.round(feedContainer.scrollTop / window.innerHeight);
-    
     if (index !== activeMovieIndex) {
         activeMovieIndex = index;
-        
         infoPanel.classList.remove('show');
         currentActiveSection = null;
-        
-        const currentMovie = moviesData[activeMovieIndex];
-        if (currentMovie) {
-            const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
-            const topTitles = document.querySelectorAll('.top-title');
-            
-            if (topTitles[activeMovieIndex]) {
-                topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
-            }
-        }
     }
 });
 
