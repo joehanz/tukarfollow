@@ -191,16 +191,32 @@ function toggleSection(event, index, section) {
             const rilis = customData ? customData.release_date : movie.release_date;
             htmlContent = `<i data-lucide="calendar" size="22"></i><p>Tanggal Rilis: <strong>${rilis || '-'}</strong></p>`;
             break;
+            
         case 'genre':
-            // Berubah dari kata 'Kategori' menjadi 'Genre'
-            let genreStr = 'Drama, Movie';
+            let genreStr = 'Movie';
+            
             if (customData && customData.genre) {
+                // Jika ada di movies.json, langsung pakai data teks kamu (Horror, Action, dll)
                 genreStr = Array.isArray(customData.genre) ? customData.genre.join(', ') : customData.genre;
-            } else if (movie.genre_ids) {
-                genreStr = "Movie ID: " + movie.genre_ids.join(', '); // Cadangan jika TMDB mengembalikan array id genre
+            } else if (movie.genre_ids && movie.genre_ids.length > 0) {
+                // Kamus / Mapping ID Genre resmi dari TMDB ke teks Bahasa Indonesia
+                const tmdbGenreMap = {
+                    28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
+                    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+                    14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+                    9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie',
+                    53: 'Thriller', 10752: 'War', 37: 'Western'
+                };
+                
+                // Terjemahkan array ID angka dari TMDB menjadi susunan nama genre
+                const translatedGenres = movie.genre_ids.map(id => tmdbGenreMap[id] || 'Movie');
+                // Gabungkan dengan koma, hilangkan jika ada yang duplikat atau bertulisan 'Movie' tidak dikenal
+                genreStr = [...new Set(translatedGenres)].join(', ');
             }
+            
             htmlContent = `<i data-lucide="clapperboard" size="22"></i><p>Genre: <strong>${genreStr}</strong></p>`;
             break;
+            
         case 'country':
             // Mengambil negara kustom dari json, atau mendeteksi origin_country bawaan TMDB secara dinamis
             let negara = '-';
