@@ -17,6 +17,7 @@ function renderMovies() {
     card.className = "movie-card";
     card.innerHTML = `
       <img src="${movie.image}" alt="${movie.title}">
+      <div class="play-btn" onclick="playMovie('${movie.iframe}')">▶️</div>
       <div class="actions">
         <span onclick="toggleInfo('📖 ${movie.sinopsis}')">📖</span>
         <span onclick="toggleInfo('📅 ${movie.release_date}')">📅</span>
@@ -33,7 +34,7 @@ document.getElementById("loadMore").addEventListener("click", () => {
   renderMovies();
 });
 
-// Toggle info panel
+// Info panel toggle
 function toggleInfo(text) {
   const panel = document.getElementById("infoPanel");
   if (panel.classList.contains("hidden") || panel.innerHTML !== text) {
@@ -43,6 +44,25 @@ function toggleInfo(text) {
     panel.classList.add("hidden");
   }
 }
+
+// Play movie
+function playMovie(url) {
+  const overlay = document.getElementById("playerOverlay");
+  overlay.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+  overlay.classList.remove("hidden");
+  // hide icons & nav
+  document.querySelectorAll(".actions, .bottom-nav, .play-btn").forEach(el => el.style.display = "none");
+}
+
+// Auto close player on scroll
+document.getElementById("feed").addEventListener("scroll", () => {
+  const overlay = document.getElementById("playerOverlay");
+  if (!overlay.classList.contains("hidden")) {
+    overlay.classList.add("hidden");
+    overlay.innerHTML = "";
+    document.querySelectorAll(".actions, .bottom-nav, .play-btn").forEach(el => el.style.display = "");
+  }
+});
 
 // Search toggle
 document.getElementById("searchBtn").addEventListener("click", () => {
@@ -64,6 +84,7 @@ document.getElementById("searchInput").addEventListener("input", e => {
     card.className = "movie-card";
     card.innerHTML = `
       <img src="${movie.image}" alt="${movie.title}">
+      <div class="play-btn" onclick="playMovie('${movie.iframe}')">▶️</div>
       <div class="actions">
         <span onclick="toggleInfo('📖 ${movie.sinopsis}')">📖</span>
         <span onclick="toggleInfo('📅 ${movie.release_date}')">📅</span>
