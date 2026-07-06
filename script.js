@@ -83,7 +83,7 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
-// 3. Render ke Feed Layar Penuh
+// 3. Render ke Feed Layar Penuh (VERSI TERBARU: LOAD MORE MELAYANG)
 function renderFeed(movies) {
     feedContainer.innerHTML = '';
     movies.forEach((movie, index) => {
@@ -151,18 +151,35 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Load More untuk Pagination
-    const loadMoreCard = document.createElement('div');
-    loadMoreCard.className = 'load-more-card';
-    loadMoreCard.innerHTML = `<button class="load-more-btn" onclick="loadNextPage()">Load More (Page ${currentPage + 1})</button>`;
-    feedContainer.appendChild(loadMoreCard);
+    // === PERBAIKAN: TOMBOL LOAD MORE MELAYANG DI ATAS POSTER TERAKHIR ===
+    // Tombol hanya muncul jika user tidak sedang mengetik di kolom pencarian
+    if (!searchInput.value.trim()) {
+        const loadMoreBtn = document.createElement('button');
+        loadMoreBtn.id = 'floatingLoadMore';
+        loadMoreBtn.className = 'floating-load-more-btn';
+        loadMoreBtn.innerHTML = `Muat Lebih Banyak (Halaman ${currentPage + 1})`;
+        loadMoreBtn.onclick = () => loadNextPage();
+        
+        // Ditempel langsung di dalam feedContainer (gantung di depan poster terakhir sebelum nav bawah)
+        feedContainer.appendChild(loadMoreBtn);
+    }
 
     lucide.createIcons();
 }
 
-function loadNextPage() {
+// FUNGSI LOAD NEXT PAGE + MANIPULASI URL REAL-TIME TANPA REFRESH
+async function loadNextPage() {
     currentPage++;
-    fetchMovies(currentPage);
+    
+    // Ambil ID dari film paling terakhir yang dimuat untuk ditaruh di parameter URL ?id=
+    const lastMovieId = moviesData.length > 0 ? moviesData[moviesData.length - 1].id : '1245';
+
+    // Manipulasi URL address bar browser secara halus
+    const newUrl = `${window.location.origin}/page-${currentPage}?id=${lastMovieId}`;
+    window.history.pushState({ page: currentPage }, '', newUrl);
+
+    // Jalankan penarikan data halaman baru
+    await fetchMovies(currentPage);
 }
 
 // 4. Logika Cicilan Info Dinamis (Genre & Negara Dinamis Sesuai TMDB / JSON)
