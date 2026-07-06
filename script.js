@@ -293,16 +293,47 @@ feedContainer.addEventListener('scroll', () => {
     }
 });
 
-// Search Bar Toggle
-document.getElementById('navSearch').addEventListener('click', (e) => {
-    e.stopPropagation();
-    searchContainer.classList.toggle('show');
-});
+// ========================================================
+// PATCH FITUR PENCARIAN REAL-TIME (SUDAH DIOPTIMALKAN)
+// ========================================================
+const searchInput = document.getElementById('searchInput');
 
-document.getElementById('navHome').addEventListener('click', () => {
-    feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
-});
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase().trim();
+        
+        // Jika kolom pencarian kosong, kembalikan ke data utama
+        if (keyword === "") {
+            renderFeed(moviesData);
+            return;
+        }
 
+        // Filter data film gabungan TMDB & JSON kustom
+        const filteredMovies = moviesData.filter(movie => {
+            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
+            const titleToCheck = customData ? customData.title.toLowerCase() : movie.title.toLowerCase();
+            return titleToCheck.includes(keyword);
+        });
+
+        renderFeed(filteredMovies);
+    });
+}
+
+// Handler Tombol Navigasi Search (Hapus yang lama, pakai yang ini saja)
+const navSearchBtn = document.getElementById('navSearch');
+if (navSearchBtn) {
+    navSearchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isShowing = searchContainer.classList.toggle('show');
+        
+        if (!isShowing) {
+            if (searchInput) searchInput.value = "";
+            renderFeed(moviesData);
+        } else {
+            if (searchInput) setTimeout(() => searchInput.focus(), 100);
+        }
+    });
+}
 // Booting Aplikasi
 async function init() {
     detectDevice(); // Cek ukuran layar duluan sebelum merender halaman
