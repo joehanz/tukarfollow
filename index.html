@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMDB Vertical Feed Movie</title>
-    <!-- Lucide Icons untuk icon yang bersih -->
+    <title>TMDB Vertical Feed Movie - Pro Version</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         * {
@@ -24,31 +23,21 @@
             height: 100vh;
         }
 
-        /* Container Utama dengan Scroll Snapping ala TikTok */
         .feed-container {
             width: 100%;
             height: 100%;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
-            position: relative;
         }
 
-        /* Sembunyikan scrollbar di semua browser */
-        .feed-container::-webkit-scrollbar {
-            display: none;
-        }
-        .feed-container {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
+        .feed-container::-webkit-scrollbar { display: none; }
 
-        /* Item Film (Satu Layar HP Penuh) */
         .movie-card {
             width: 100vw;
             height: 100vh;
             scroll-snap-align: start;
-            scroll-snap-stop: always; /* Mengunci per slide saat scroll pelan */
+            scroll-snap-stop: always;
             position: relative;
             background-size: cover;
             background-position: center;
@@ -58,104 +47,75 @@
             justify-content: flex-end;
         }
 
-        /* Overlay Gelap agar teks dan icon kontras terlihat jelas */
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.7) 100%);
-            z-index: 1;
-        }
-
-        /* Judul Besar Transparan di Atas Poster (Model Interstellar) */
-        .top-title {
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            text-align: center;
-            width: 90%;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        /* Play Button Besar di Tengah Poster (Model YouTube/TikTok) */
-        .play-btn-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3;
-            cursor: pointer;
-            transition: opacity 0.3s, transform 0.2s;
-        }
-
-        .play-btn-container:active {
-            transform: translate(-50%, -50%) scale(0.9);
-        }
-
-        .play-circle {
-            width: 85px;
-            height: 85px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2.5px solid #fff;
-            border-radius: 50%;
+        /* Pagination Load More Card */
+        .load-more-card {
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            background: #111;
         }
 
-        /* Konten Utama di Bagian Bawah */
+        .load-more-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+            transition: transform 0.2s;
+        }
+
+        .load-more-btn:active { transform: scale(0.95); }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.5) 100%);
+            z-index: 1;
+        }
+
+        .top-title {
+            position: absolute;
+            top: 12%; left: 50%; transform: translateX(-50%);
+            z-index: 2; font-size: 1.8rem; font-weight: 300; letter-spacing: 6px;
+            text-transform: uppercase; text-align: center; width: 90%;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+        }
+
+        .play-btn-container {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 3; cursor: pointer;
+        }
+
+        .play-circle {
+            width: 85px; height: 85px; background: rgba(255, 255, 255, 0.15);
+            border: 2.5px solid #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        /* UI Samping Kanan Saja (Kiri Bersih Total) */
         .main-content {
             position: relative;
             z-index: 2;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            justify-content: flex-end; /* Dorong ke kanan */
             padding: 20px;
-            margin-bottom: 80px; /* Ruang aman di atas Nav bawah FIXED */
-            transition: opacity 0.3s, transform 0.3s;
+            margin-bottom: 80px;
         }
 
-        /* Sisi Kiri: Judul & Deskripsi Singkat */
-        .movie-details {
-            flex: 1;
-            padding-right: 25px;
-        }
-
-        .movie-details h2 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            font-weight: 700;
-            text-shadow: 0 2px 6px rgba(0,0,0,1);
-        }
-
-        .movie-details p {
-            font-size: 0.9rem;
-            color: #e0e0e0;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-shadow: 0 2px 6px rgba(0,0,0,1);
-        }
-
-        /* Sisi Kanan: Sidebar Icon Vertikal Akses Info Film (TikTok Style) */
         .side-actions {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .action-item {
@@ -163,179 +123,92 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            width: 55px;
-            text-align: center;
-        }
-
-        .action-item span {
-            font-size: 0.75rem;
-            margin-top: 4px;
-            color: #eee;
-            text-transform: capitalize;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        /* Navigasi Bawah - FIXED MUTLAK */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
-            height: 75px;
-            background: rgba(0, 0, 0, 0.95);
-            border-top: 1px solid #1a1a1a;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100; /* Selalu di paling depan */
-            padding-bottom: 12px;
-            transition: transform 0.3s ease, opacity 0.3s;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #777;
-            cursor: pointer;
-            font-size: 0.75rem;
             width: 60px;
         }
 
-        .nav-item.active {
-            color: #fff;
+        .action-item span {
+            font-size: 0.75rem; margin-top: 4px; color: #eee;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-align: center;
         }
 
-        .nav-item span {
-            margin-top: 4px;
-        }
-
-        /* Search Bar (Smooth Turun dari Atas) */
-        .search-container {
+        /* Video Player Layer Penuh */
+        .video-player-container {
             position: fixed;
-            top: -90px;
-            left: 0;
-            width: 100vw;
-            height: 75px;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            z-index: 110;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            transition: top 0.4s cubic-bezier(0.1, 1, 0.1, 1);
-            border-bottom: 1px solid #222;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 200;
+            display: none;
         }
 
-        .search-container.show {
-            top: 0;
+        .video-player-container.active { display: block; }
+
+        .video-player-container iframe, .video-player-container video {
+            width: 100%; height: 100%; border: none;
         }
+
+        .close-player {
+            position: absolute;
+            top: 30px; right: 20px; z-index: 210;
+            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Fixed Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100vw; height: 75px;
+            background: rgba(0, 0, 0, 0.95); border-top: 1px solid #1a1a1a;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100; padding-bottom: 12px; transition: transform 0.3s;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #777; cursor: pointer; font-size: 0.75rem; width: 60px;
+        }
+
+        .nav-item.active { color: #fff; }
+        .nav-item span { margin-top: 4px; }
+
+        /* Search Bar Dropdown */
+        .search-container {
+            position: fixed; top: -90px; left: 0; width: 100vw; height: 75px;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); z-index: 110;
+            display: flex; align-items: center; padding: 0 20px;
+            transition: top 0.4s cubic-bezier(0.1, 1, 0.1, 1); border-bottom: 1px solid #222;
+        }
+
+        .search-container.show { top: 0; }
 
         .search-box {
-            width: 100%;
-            height: 44px;
-            background: #1c1c1e;
-            border: 1px solid #2c2c2e;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            padding: 0 14px;
+            width: 100%; height: 44px; background: #1c1c1e;
+            border: 1px solid #2c2c2e; border-radius: 10px;
+            display: flex; align-items: center; padding: 0 14px;
         }
 
         .search-box input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #fff;
-            padding-left: 10px;
-            font-size: 1rem;
-            outline: none;
+            width: 100%; background: transparent; border: none; color: #fff;
+            padding-left: 10px; font-size: 1rem; outline: none;
         }
 
-        /* Info Panel Pop-up (Muncul tepat di atas Nav Bawah Fixed) */
+        /* Info Panel Cicilan */
         .info-panel {
-            position: fixed;
-            bottom: -380px;
-            left: 0;
-            width: 100vw;
-            background: #121212;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            z-index: 90;
-            padding: 24px;
-            transition: bottom 0.3s cubic-bezier(0.1, 1, 0.1, 1);
-            box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
-            border-top: 1px solid #222;
+            position: fixed; bottom: -250px; left: 0; width: 100vw;
+            background: #121212; border-top-left-radius: 20px; border-top-right-radius: 20px;
+            z-index: 90; padding: 24px; transition: bottom 0.3s cubic-bezier(0.1, 1, 0.1, 1);
+            border-top: 1px solid #222; box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
         }
 
-        .info-panel.show {
-            bottom: 75px; /* Nempel presisi di atas bottom nav */
+        .info-panel.show { bottom: 75px; }
+
+        .panel-content {
+            display: flex; gap: 14px; align-items: flex-start; font-size: 0.95rem; color: #ccc; line-height: 1.4;
         }
 
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .panel-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .panel-close {
-            cursor: pointer;
-            color: #888;
-        }
-
-        .panel-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            margin-bottom: 14px;
-            font-size: 0.95rem;
-            color: #ccc;
-            line-height: 1.4;
-        }
-
-        /* STATE: Play Mode (Menyembunyikan Semua UI seperti Gambar 3) */
-        .play-mode .top-title,
-        .play-mode .main-content,
-        .play-mode .search-container,
-        .play-mode .info-panel {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
-        }
-        
-        .play-mode .bottom-nav {
-            transform: translateY(75px); /* Menjatuhkan navbar ke bawah layar */
-            opacity: 0;
-        }
-
-        /* Hint Teks Keluar Play Mode */
-        .play-exit-hint {
-            position: absolute;
-            bottom: 40px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.5);
-            z-index: 5;
-            display: none;
-            pointer-events: none;
-        }
-
-        .play-mode .play-exit-hint {
-            display: block;
-        }
+        .panel-content i { color: #fff; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
-    <!-- Top Search Bar Bar -->
+    <!-- Search Bar -->
     <div class="search-container" id="searchContainer">
         <div class="search-box">
             <i data-lucide="search" size="18" color="#888"></i>
@@ -343,38 +216,25 @@
         </div>
     </div>
 
-    <!-- Feed Layar Penuh Scrollable -->
-    <div class="feed-container" id="feedContainer">
-        <!-- Film TMDB/Fallback dimasukkan lewat JS di sini -->
+    <!-- Video Player Screen -->
+    <div class="video-player-container" id="videoPlayerContainer">
+        <div class="close-player" id="closePlayerBtn">
+            <i data-lucide="x" size="24" color="#fff"></i>
+        </div>
+        <div id="playerArea" style="width:100%; height:100%;"></div>
     </div>
 
-    <!-- Info Panel Pop-up -->
+    <!-- Feed Container Utama -->
+    <div class="feed-container" id="feedContainer"></div>
+
+    <!-- Info Panel Cicilan Dinamis -->
     <div class="info-panel" id="infoPanel">
-        <div class="panel-header">
-            <h3 id="panelTitle">-</h3>
-            <div class="panel-close" id="panelCloseBtn">
-                <i data-lucide="x" size="24"></i>
-            </div>
-        </div>
-        <div class="panel-row">
-            <i data-lucide="info" size="20" style="flex-shrink:0; color:#aaa;"></i>
-            <p id="panelOverview">-</p>
-        </div>
-        <div class="panel-row">
-            <i data-lucide="calendar" size="20" style="color:#aaa;"></i>
-            <span id="panelDate">-</span>
-        </div>
-        <div class="panel-row">
-            <i data-lucide="clapperboard" size="20" style="color:#aaa;"></i>
-            <span id="panelGenre">-</span>
-        </div>
-        <div class="panel-row">
-            <i data-lucide="globe" size="20" style="color:#aaa;"></i>
-            <span id="panelCountry">-</span>
+        <div class="panel-content" id="panelContentArea">
+            <!-- Isi Konten di-inject dinamis berdasarkan tombol yang diklik -->
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar FIXED -->
+    <!-- Bottom Navigation -->
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" id="navSearch">
             <i data-lucide="search" size="24"></i>
@@ -391,116 +251,92 @@
     </div>
 
     <script>
-        // Setingan TMDB API
-        const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+        const API_KEY = '123xxxx789'; 
         const BASE_URL = 'https://api.themoviedb.org/3';
-        const IMAGE_URL = 'https://image.tmdb.org/t/p/w780'; // Menggunakan resolusi w780 agar pas di layar HP & load cepat
+        const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
         const feedContainer = document.getElementById('feedContainer');
         const searchContainer = document.getElementById('searchContainer');
         const infoPanel = document.getElementById('infoPanel');
-        const bottomNav = document.getElementById('bottomNav');
-        
+        const panelContentArea = document.getElementById('panelContentArea');
+        const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+        const playerArea = document.getElementById('playerArea');
+
         let moviesData = [];
         let activeMovieIndex = 0;
+        let currentPage = 1;
+        let currentActiveSection = null; // Menyimpan status kategori info aktif (info/release/film/country)
+        let myCustomMovies = []; // Menyimpan data dari movies.json
 
-        // Ambil data film real
-        async function fetchMovies() {
+        // Ambil data lokal movies.json terlebih dahulu
+        async function loadLocalMovies() {
             try {
-                // Mencoba hit API TMDB asli
-                const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
-                if (!response.ok) throw new Error("API Key kemungkinan dummy");
-                
-                const data = await response.json();
-                moviesData = data.results;
-                renderFeed(moviesData);
-            } catch (error) {
-                console.warn("Menggunakan data simulasi karena API Key masih bernilai dummy:", error.message);
-                // JIKA API KEY masih dummy 123xxxx789, fungsi ini otomatis jalan menampilkan poster asli TMDB asli via internet
-                loadSimulatedTMDBData();
+                const res = await fetch('movies.json');
+                if(res.ok) myCustomMovies = await res.json();
+            } catch(e) {
+                console.log("Belum ada movies.json / gagal load lokal.");
             }
         }
 
-        // Simulasi Data TMDB asli jika API KEY belum diganti (Memastikan Poster & Gambar muncul sekarang juga!)
-        function loadSimulatedTMDBData() {
-            moviesData = [
-                {
-                    title: 'Interstellar',
-                    overview: 'Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa memulai misi melintasi lubang cacing untuk mencari planet baru.',
-                    release_date: '2014-11-05',
-                    poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', // ID Poster asli TMDB
-                    genre: 'Sci-Fi, Adventure, Drama',
-                    country: 'USA, UK'
-                },
-                {
-                    title: 'The Dark Knight',
-                    overview: 'Batman menghadapi tantangan psikologis dan fisik terbesar dari musuh bebuyutannya, sesosok anarkis misterius bernama The Joker.',
-                    release_date: '2008-07-16',
-                    poster_path: '/qJ2tWw7mUN67wz79E84gbiwJAO1.jpg', // ID Poster asli TMDB
-                    genre: 'Action, Crime, Drama',
-                    country: 'USA'
-                },
-                {
-                    title: 'Avatar: The Way of Water',
-                    overview: 'Jake Sully tinggal bersama keluarga barunya yang terbentuk di planet Pandora. Begitu ancaman akrab kembali untuk menyelesaikan apa yang dimulai sebelumnya.',
-                    release_date: '2022-12-14',
-                    poster_path: '/t6TL73Tz6VGBTMhBtY86Wft0vUo.jpg',
-                    genre: 'Sci-Fi, Action, Adventure',
-                    country: 'USA'
-                }
+        // Ambil Data TMDB berdasarkan halaman aktif
+        async function fetchMovies(page = 1) {
+            try {
+                const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                
+                if(page === 1) moviesData = data.results;
+                else moviesData = [...moviesData, ...data.results];
+
+                renderFeed(moviesData);
+            } catch (error) {
+                // Fallback otomatis jika API masih dummy
+                loadFallbackData();
+            }
+        }
+
+        function loadFallbackData() {
+            const fallback = [
+                { id: 157336, title: 'Interstellar', overview: 'Ketika Bumi semakin tidak layak dihuni...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', country: 'USA, UK', genre: 'Sci-Fi, Adventure' },
+                { id: 155, title: 'The Dark Knight', overview: 'Batman menghadapi tantangan psikologis terbesar...', release_date: '2008-07-16', poster_path: '/qJ2tWw7mUN67wz79E84gbiwJAO1.jpg', country: 'USA', genre: 'Action, Crime' }
             ];
+            moviesData = [...moviesData, ...fallback];
             renderFeed(moviesData);
         }
 
-        // Render struktur HTML per film kedalam Feed
+        // Render data ke dalam feed
         function renderFeed(movies) {
             feedContainer.innerHTML = '';
             movies.forEach((movie, index) => {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
+                card.style.backgroundImage = `url('${IMAGE_URL}${movie.poster_path}')`;
                 
-                // Menentukan link poster gambar dari server TMDB
-                const posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
-                card.style.backgroundImage = `url('${posterFullUrl}')`;
-                card.setAttribute('data-index', index);
-
-                const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : '-';
+                const year = movie.release_date ? movie.release_date.split('-')[0] : '-';
 
                 card.innerHTML = `
                     <div class="overlay"></div>
                     <div class="top-title">${movie.title}</div>
                     
-                    <!-- Icon Play Tengah Layar -->
-                    <div class="play-btn-container" onclick="togglePlayMode(event)">
-                        <div class="play-circle">
-                            <i data-lucide="play" fill="#fff" size="32" style="margin-left: 5px;"></i>
-                        </div>
+                    <div class="play-btn-container" onclick="playMovie(${movie.id})">
+                        <div class="play-circle"><i data-lucide="play" fill="#fff" size="32" style="margin-left:5px;"></i></div>
                     </div>
 
-                    <div class="play-exit-hint">Sentuh layar / scroll untuk keluar dari mode play</div>
-
                     <div class="main-content">
-                        <!-- Info Sisi Kiri -->
-                        <div class="movie-details">
-                            <h2>${movie.title}</h2>
-                            <p>${movie.overview || 'No description available.'}</p>
-                        </div>
-                        
-                        <!-- Sidebar Icon Sisi Kanan (TikTok Style) -->
                         <div class="side-actions">
-                            <div class="action-item" onclick="openInfoPanel(${index})">
+                            <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
                                 <i data-lucide="info" size="28"></i>
                                 <span>info</span>
                             </div>
-                            <div class="action-item" onclick="openInfoPanel(${index})">
+                            <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
                                 <i data-lucide="calendar" size="28"></i>
-                                <span>${releaseYear}</span>
+                                <span>${year}</span>
                             </div>
-                            <div class="action-item" onclick="openInfoPanel(${index})">
+                            <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
                                 <i data-lucide="clapperboard" size="28"></i>
                                 <span>Film</span>
                             </div>
-                            <div class="action-item" onclick="openInfoPanel(${index})">
+                            <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
                                 <i data-lucide="globe" size="28"></i>
                                 <span>Negara</span>
                             </div>
@@ -509,83 +345,109 @@
                 `;
                 feedContainer.appendChild(card);
             });
-            // gambar ulang semua icon lucide
+
+            // Tambahkan Slot "Load More" di akhir halaman scroll
+            const loadMoreCard = document.createElement('div');
+            loadMoreCard.className = 'load-more-card';
+            loadMoreCard.innerHTML = `<button class="load-more-btn" onclick="loadNextPage()">Load More (Page ${currentPage + 1})</button>`;
+            feedContainer.appendChild(loadMoreCard);
+
             lucide.createIcons();
         }
 
-        // Memantau gerakan scroll untuk melacak film yang sedang aktif
+        function loadNextPage() {
+            currentPage++;
+            fetchMovies(currentPage);
+        }
+
+        // Logika Cicilan Info (Klik buka, klik lagi nutup)
+        function toggleSection(event, index, section) {
+            event.stopPropagation();
+            const movie = moviesData[index];
+            if (!movie) return;
+
+            // Jika mengklik icon yang sama kedua kalinya, tutup panel info
+            if (infoPanel.classList.contains('show') && currentActiveSection === section) {
+                infoPanel.classList.remove('show');
+                currentActiveSection = null;
+                return;
+            }
+
+            currentActiveSection = section;
+            let htmlContent = '';
+
+            // Tampilkan isi data secara dicicil sesuai kebutuhan tombol
+            switch(section) {
+                case 'info':
+                    htmlContent = `<i data-lucide="info" size="22"></i><p>${movie.overview || 'Tidak ada deskripsi.'}</p>`;
+                    break;
+                case 'release':
+                    htmlContent = `<i data-lucide="calendar" size="22"></i><p>Tanggal Rilis: <strong>${movie.release_date || '-'}</strong></p>`;
+                    break;
+                case 'genre':
+                    htmlContent = `<i data-lucide="clapperboard" size="22"></i><p>Kategori: <strong>${movie.genre || 'Movie (TMDB)'}</strong></p>`;
+                    break;
+                case 'country':
+                    htmlContent = `<i data-lucide="globe" size="22"></i><p>Negara Produksi: <strong>${movie.country || 'International'}</strong></p>`;
+                    break;
+            }
+
+            panelContentArea.innerHTML = htmlContent;
+            infoPanel.classList.add('show');
+            lucide.createIcons();
+        }
+
+        // Fitur Pemutar Video Pintar (Cek movies.json dulu baru Fallback)
+        function playMovie(tmdbId) {
+            // Cari data di JSON lokal kita
+            const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
+            playerArea.innerHTML = ''; // Reset player
+
+            if (customMovie) {
+                // Putar video manual dari JSON kamu (.mp4/hls/dll)
+                console.log("Memutar video lokal hasil postingan kamu...");
+                playerArea.innerHTML = `<video src="${customMovie.video_url}" controls autoplay playsinline></video>`;
+            } else {
+                // Fallback otomatis menggunakan vidsrcme API menggunakan id tmdb
+                console.log("Video lokal tidak ada, otomatis memutar vidsrc...");
+                playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+            }
+
+            videoPlayerContainer.classList.add('active');
+        }
+
+        document.getElementById('closePlayerBtn').addEventListener('click', () => {
+            playerArea.innerHTML = ''; // Stop video
+            videoPlayerContainer.classList.remove('active');
+        });
+
+        // Pantau Scroll untuk auto-close panel
         feedContainer.addEventListener('scroll', () => {
             const index = Math.round(feedContainer.scrollTop / window.innerHeight);
             if (index !== activeMovieIndex) {
                 activeMovieIndex = index;
-                // Jika user ganti film/scroll, tutup info panel lama otomatis agar rapi
                 infoPanel.classList.remove('show');
+                currentActiveSection = null;
             }
         });
 
-        // Fitur Mengaktifkan Mode Play (Klik icon play tengah/layar)
-        function togglePlayMode(event) {
-            event.stopPropagation();
-            document.body.classList.toggle('play-mode');
-        }
-
-        // Menyentuh layar manapun saat play mode untuk keluar kembali ke UI normal
-        document.body.addEventListener('click', (e) => {
-            if (document.body.classList.contains('play-mode')) {
-                document.body.classList.remove('play-mode');
-            }
-        });
-
-        // Membuka / Menutup Panel Info di atas Nav Bawah
-        function openInfoPanel(index) {
-            const movie = moviesData[index];
-            if (!movie) return;
-
-            // Logika Toggle: Jika info film yang sama diklik lagi, tutup panelnya
-            if (infoPanel.classList.contains('show') && document.getElementById('panelTitle').innerText === movie.title) {
-                infoPanel.classList.remove('show');
-                return;
-            }
-
-            document.getElementById('panelTitle').innerText = movie.title;
-            document.getElementById('panelOverview').innerText = movie.overview || 'Tidak ada deskripsi.';
-            document.getElementById('panelDate').innerText = movie.release_date || '-';
-            document.getElementById('panelGenre').innerText = movie.genre || "Action, Sci-Fi (TMDB)";
-            document.getElementById('panelCountry').innerText = movie.country || "International";
-
-            infoPanel.classList.add('show');
-        }
-
-        document.getElementById('panelCloseBtn').addEventListener('click', () => {
-            infoPanel.classList.remove('show');
-        });
-
-        // Kontrol Search Bar Dropdown (Smooth turun dari atas)
+        // Search Bar Toggle
         document.getElementById('navSearch').addEventListener('click', (e) => {
             e.stopPropagation();
             searchContainer.classList.toggle('show');
-            if (searchContainer.classList.contains('show')) {
-                document.getElementById('searchInput').focus();
-            }
         });
 
-        // Klik area luar manapun untuk menutup kolom pencarian atas
-        document.addEventListener('click', (e) => {
-            if (!searchContainer.contains(e.target) && e.target.id !== 'navSearch') {
-                searchContainer.classList.remove('show');
-            }
-        });
-
-        // Icon Home diklik otomatis smooth scroll balik paling atas
         document.getElementById('navHome').addEventListener('click', () => {
-            feedContainer.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Mulai aplikasi
-        fetchMovies();
+        // Inisialisasi awal aplikasi
+        async function init() {
+            await loadLocalMovies();
+            await fetchMovies(currentPage);
+        }
+        
+        init();
     </script>
 </body>
 </html>
