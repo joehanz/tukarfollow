@@ -83,7 +83,7 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
-bisa tolong disisipkan disini. siap copas // 3. Render ke Feed Layar Penuh
+// 3. Render ke Feed Layar Penuh
 function renderFeed(movies) {
     feedContainer.innerHTML = '';
     movies.forEach((movie, index) => {
