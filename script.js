@@ -265,30 +265,17 @@ function toggleSection(event, index, section) {
     }
 } // <-- DISINI: Kurung kurawal penutup toggleSection yang tadinya hilang sudah dipasang!
 
-// 5. Pemutar Video
+// 5. Pemutar Video (FIX: Dialihkan ke Halaman watch.html)
 function playMovie(tmdbId) {
-    if (!playerArea || !videoPlayerContainer) return;
-    const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-    playerArea.innerHTML = ''; 
-
-    if (customMovie) {
-        if (customMovie.iframe && customMovie.iframe.trim() !== "") {
-            playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-        } else if (customMovie.video && customMovie.video.trim() !== "") {
-            playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
-        } else {
-            playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
-        }
-    } else {
-        playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
-    }
-
-    videoPlayerContainer.classList.add('active');
+    // Langsung pindah ke halaman watch.html dengan membawa parameter ID film
+    window.location.href = `watch.html?id=${tmdbId}`;
 }
 
+// Logika closePlayerBtn lama dinonaktifkan/dihapus karena player sudah pindah halaman
 const closePlayerBtn = document.getElementById('closePlayerBtn');
 if (closePlayerBtn) {
     closePlayerBtn.addEventListener('click', () => {
+        // Tetap dikosongkan agar tidak memicu eror jika elemen HTML-nya masih ada
         if (playerArea) playerArea.innerHTML = ''; 
         if (videoPlayerContainer) videoPlayerContainer.classList.remove('active');
     });
