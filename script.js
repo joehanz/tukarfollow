@@ -153,16 +153,35 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Load More untuk Pagination
-    const loadMoreCard = document.createElement('div');
-    loadMoreCard.className = 'load-more-card';
-    loadMoreCard.innerHTML = `<button class="load-more-btn" onclick="loadNextPage()">Load More (Page ${currentPage + 1})</button>`;
-    feedContainer.appendChild(loadMoreCard);
+    // ============================================================================
+    // FIX: MEMASUKKAN TOMBOL LOAD MORE LANGSUNG KE KARTU FILM TERAKHIR (ANTI BLANK)
+    // ============================================================================
+    const allCards = feedContainer.querySelectorAll('.movie-card');
+    if (allCards.length > 0) {
+        const lastCard = allCards[allCards.length - 1];
+        
+        // Buat element tombol inline baru
+        const loadMoreContainer = document.createElement('div');
+        loadMoreContainer.className = 'inline-load-more';
+        loadMoreContainer.innerHTML = `
+            <button class="load-more-btn-inline" onclick="loadNextPage()">
+                <i data-lucide="plus" size="16"></i> Load More (Page ${currentPage + 1})
+            </button>
+        `;
+        
+        // Cari container .main-content di dalam kartu terakhir biar posisinya pas di atas menu
+        const mainContent = lastCard.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.appendChild(loadMoreContainer);
+        } else {
+            lastCard.appendChild(loadMoreContainer);
+        }
+    }
 
     if (window.lucide) {
         lucide.createIcons();
     }
-} 
+} // <--- Penutup fungsi renderFeed
 
 function loadNextPage() {
     currentPage++;
