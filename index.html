@@ -3,122 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Streaming Interface</title>
-    <!-- Menggunakan Font Awesome untuk icon-icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css" />
-    
+    <title>Movie Vertical Feed</title>
+    <!-- Lucide Icons untuk icon yang bersih dan mirip gambar -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container Utama dengan Scroll Snapping ala TikTok */
+        .feed-container {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Sembunyikan scrollbar */
+        .feed-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Item Film (Satu Layar Penuh) */
+        .movie-card {
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always; /* Biar nangkep pas di-scroll pelan */
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        /* Overlay Gelap Agar Teks Terbaca */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+        }
+
+        /* Judul Besar di Atas Poster (Model Interstellar di Gambar) */
+        .top-title {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            text-align: center;
+            width: 90%;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            transition: opacity 0.3s;
+        }
+
+        /* Play Button Besar di Tengah */
+        .play-btn-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+
+        .play-btn-container:active {
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+
+        .play-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Konten Utama di Bawah */
+        .main-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 20px;
+            margin-bottom: 70px; /* Jarak untuk Nav bawah */
+            transition: opacity 0.3s;
+        }
+
+        /* Sisi Kiri: Info Film Singkat */
+        .movie-details {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .movie-details h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .movie-details p {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Sisi Kanan: Sidebar Icon Vertikal (Ala TikTok) */
+        .side-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            width: 55px;
+        }
+
+        .action-item span {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            color: #ddd;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10;
+            padding-bottom: 15px; /* iOS notch safe area */
+            transition: transform 0.3s;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-item span {
+            margin-top: 4px;
+        }
+
+        /* Search Bar (Smooth Dropdown dari atas) */
+        .search-container {
+            position: fixed;
+            top: -80px;
+            left: 0;
+            width: 100vw;
+            height: 70px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            transition: top 0.4s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+
+        .search-container.show {
+            top: 0;
+        }
+
+        .search-box {
+            width: 100%;
+            height: 42px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding-left: 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* Info Panel (Muncul dari bawah di atas Nav) */
+        .info-panel {
+            position: fixed;
+            bottom: -350px;
+            left: 0;
+            width: 100vw;
+            background: #111;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            z-index: 15;
+            padding: 20px;
+            transition: bottom 0.3s ease;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .info-panel.show {
+            bottom: 70px; /* Pas di atas nav bawah */
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .panel-close {
+            cursor: pointer;
+        }
+
+        .panel-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Play Mode State (Sembunyikan UI) */
+        .play-mode .top-title,
+        .play-mode .main-content,
+        .play-mode .bottom-nav,
+        .play-mode .search-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .play-mode .bottom-nav {
+            transform: translateY(70px);
+        }
+
+        /* Petunjuk Keluar Mode Play */
+        .play-exit-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            z-index: 5;
+            display: none;
+            text-align: center;
+            width: 100%;
+        }
+
+        .play-mode .play-exit-hint {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="phone-container" id="phoneContainer">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span>09.41</span>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <i class="fas fa-battery-full"></i>
-            </div>
+    <!-- Search Bar -->
+    <div class="search-container" id="searchContainer">
+        <div class="search-box">
+            <i data-lucide="search" size="18" color="#888"></i>
+            <input type="text" id="searchInput" placeholder="Cari film...">
         </div>
-
-        <!-- FITUR 1: Search Overlay -->
-        <div class="search-overlay" id="searchOverlay">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari film...">
-            </div>
-        </div>
-
-        <!-- Konten Utama Poster -->
-        <div class="main-content" id="mainContent">
-            <!-- Judul Tengah Atas -->
-            <div class="movie-title-center">Interstellar</div>
-
-            <!-- FITUR 3: Tombol Play Utama -->
-            <div class="play-btn-container" id="playBtnContainer">
-                <div class="play-btn">
-                    <i class="fas fa-play"></i>
-                </div>
-            </div>
-
-            <!-- Detail Kiri Bawah -->
-            <div class="movie-details">
-                <h2>Interstellar</h2>
-                <p>Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa memulai misi melintasi lubang cacing...</p>
-            </div>
-
-            <!-- Sidebar Kanan (TikTok Style) -->
-            <div class="action-sidebar">
-                <div class="action-item" id="infoActionBtn">
-                    <i class="fas fa-info-circle"></i>
-                    <span>info</span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>2014</span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-film"></i>
-                    <span>Sci-Fi</span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-globe"></i>
-                    <span>USA</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- FITUR 2: Info Panel Slide Up -->
-        <div class="info-panel" id="infoPanel">
-            <div class="info-header">
-                <h3>Interstellar</h3>
-                <i class="fas fa-times close-info" id="closeInfoBtn"></i>
-            </div>
-            <div class="info-list">
-                <div class="info-row">
-                    <i class="fas fa-info-circle"></i>
-                    <p>Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa...</p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-calendar-alt"></i>
-                    <p>7 November 2014</p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-film"></i>
-                    <p>Sci-Fi, Adventure, Drama</p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-globe"></i>
-                    <p>USA, UK</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Petunjuk saat masuk Mode Play -->
-        <div class="exit-instruction">
-            Sentuh layar untuk keluar dari mode play
-        </div>
-
-        <!-- Bottom Navigation Bar -->
-        <div class="bottom-nav">
-            <div class="nav-item" id="navSearch">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-plus-circle"></i>
-                <span>Add</span>
-            </div>
-            <div class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-        </div>
-
-        <!-- Home Indicator iOS -->
-        <div class="home-indicator"></div>
     </div>
-<script src="script.js"></script>
+
+    <!-- Feed Container Utama -->
+    <div class="feed-container" id="feedContainer">
+        <!-- Data Film dari API akan di-render di sini secara dinamis -->
+    </div>
+
+    <!-- Info Panel Pop-up -->
+    <div class="info-panel" id="infoPanel">
+        <div class="panel-header">
+            <h3 id="panelTitle">Judul Film</h3>
+            <div class="panel-close" id="panelCloseBtn">
+                <i data-lucide="x" size="22"></i>
+            </div>
+        </div>
+        <div class="panel-row">
+            <i data-lucide="info" size="18" style="flex-shrink:0;"></i>
+            <p id="panelOverview">Deskripsi...</p>
+        </div>
+        <div class="panel-row">
+            <i data-lucide="calendar" size="18"></i>
+            <span id="panelDate">2024</span>
+        </div>
+        <div class="panel-row">
+            <i data-lucide="clapperboard" size="18"></i>
+            <span id="panelGenre">Genre</span>
+        </div>
+        <div class="panel-row">
+            <i data-lucide="globe" size="18"></i>
+            <span id="panelCountry">Negara</span>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav" id="bottomNav">
+        <div class="nav-item" id="navSearch">
+            <i data-lucide="search" size="24"></i>
+            <span>Search</span>
+        </div>
+        <div class="nav-item">
+            <i data-lucide="plus-circle" size="28" color="#fff"></i>
+            <span>Add</span>
+        </div>
+        <div class="nav-item active" id="navHome">
+            <i data-lucide="home" size="24"></i>
+            <span>Home</span>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi TMDB API
+        const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; // Ganti dengan API Key kamu yang asli
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_URL = 'https://image.tmdb.org/t/p/original';
+
+        const feedContainer = document.getElementById('feedContainer');
+        const searchContainer = document.getElementById('searchContainer');
+        const infoPanel = document.getElementById('infoPanel');
+        const bottomNav = document.getElementById('bottomNav');
+        
+        let moviesData = [];
+        let activeMovieIndex = 0;
+
+        // 1. Ambil Data dari TMDB (Film Populer sebagai data awal)
+        async function fetchMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
+                const data = await response.json();
+                moviesData = data.results;
+                renderFeed(moviesData);
+            } catch (error) {
+                console.error("Gagal mengambil data TMDB:", error);
+                // Fallback dummy jika API key belum diganti/salah
+                renderDummyData();
+            }
+        }
+
+        // 2. Render ke HTML
+        function renderFeed(movies) {
+            feedContainer.innerHTML = '';
+            movies.forEach((movie, index) => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.style.backgroundImage = `url('${IMAGE_URL}${movie.poster_path}')`;
+                card.setAttribute('data-index', index);
+
+                // Mengambil tahun rilis saja
+                const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : '-';
+
+                card.innerHTML = `
+                    <div class="overlay"></div>
+                    <div class="top-title">${movie.title}</div>
+                    
+                    <div class="play-btn-container" onclick="togglePlayMode(event)">
+                        <div class="play-circle">
+                            <i data-lucide="play" fill="#fff" size="32" style="margin-left: 4px;"></i>
+                        </div>
+                    </div>
+
+                    <div class="play-exit-hint">Sentuh layar / scroll untuk keluar dari mode play</div>
+
+                    <div class="main-content">
+                        <div class="movie-details">
+                            <h2>${movie.title}</h2>
+                            <p>${movie.overview || 'Tidak ada deskripsi tersedia.'}</p>
+                        </div>
+                        <div class="side-actions">
+                            <div class="action-item" onclick="openInfoPanel(${index})">
+                                <i data-lucide="info" size="28"></i>
+                                <span>info</span>
+                            </div>
+                            <div class="action-item" onclick="openInfoPanel(${index})">
+                                <i data-lucide="calendar" size="28"></i>
+                                <span>${releaseYear}</span>
+                            </div>
+                            <div class="action-item" onclick="openInfoPanel(${index})">
+                                <i data-lucide="clapperboard" size="28"></i>
+                                <span>Film</span>
+                            </div>
+                            <div class="action-item" onclick="openInfoPanel(${index})">
+                                <i data-lucide="globe" size="28"></i>
+                                <span>Info</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                feedContainer.appendChild(card);
+            });
+            // Re-inisialisasi Lucide icons setelah render dinamis
+            lucide.createIcons();
+        }
+
+        // Fallback jika API key belum valid
+        function renderDummyData() {
+            moviesData = [
+                { title: 'INTERSTELLAR', overview: 'Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa memulai misi...', release_date: '2014-11-07', poster_path: '' },
+                { title: 'THE DARK KNIGHT', overview: 'Batman menghadapi musuh terbesarnya, The Joker, yang ingin menghancurkan Gotham...', release_date: '2008-07-18', poster_path: '' }
+            ];
+            // Pakai gambar placeholder internal karena poster_path kosong
+            renderFeed(moviesData);
+            document.querySelectorAll('.movie-card').forEach((card, idx) => {
+                card.style.backgroundColor = idx === 0 ? '#141d26' : '#0f171e';
+            });
+        }
+
+        // 3. Deteksi Scroll Aktif untuk tracking index film saat ini
+        feedContainer.addEventListener('scroll', () => {
+            const index = Math.round(feedContainer.scrollTop / window.innerHeight);
+            if (index !== activeMovieIndex) {
+                activeMovieIndex = index;
+                // Jika ganti film, tutup panel-panel yang sedang terbuka otomatis biar rapi
+                infoPanel.classList.remove('show');
+            }
+        });
+
+        // 4. Fitur Mode Play (Sembunyikan semua UI saat play ditekan)
+        function togglePlayMode(event) {
+            event.stopPropagation();
+            document.body.classList.toggle('play-mode');
+        }
+
+        // Keluar dari mode play saat area layar mana saja di-klik kembali
+        document.body.addEventListener('click', (e) => {
+            if (document.body.classList.contains('play-mode')) {
+                document.body.classList.remove('play-mode');
+            }
+        });
+
+        // 5. Info Panel Logic (Klik tombol samping / klik icon negara dll)
+        function openInfoPanel(index) {
+            const movie = moviesData[index];
+            if (!movie) return;
+
+            // Jika panel dengan film yang sama sudah terbuka, maka kita tutup (Toggle)
+            if (infoPanel.classList.contains('show') && document.getElementById('panelTitle').innerText === movie.title) {
+                infoPanel.classList.remove('show');
+                return;
+            }
+
+            document.getElementById('panelTitle').innerText = movie.title;
+            document.getElementById('panelOverview').innerText = movie.overview || 'Tidak ada deskripsi.';
+            document.getElementById('panelDate').innerText = movie.release_date || '-';
+            document.getElementById('panelGenre').innerText = "Sci-Fi, Adventure (Demo)"; // Untuk genre real butuh nested API call TMDB
+            document.getElementById('panelCountry').innerText = "USA, UK (Demo)";
+
+            infoPanel.classList.add('show');
+        }
+
+        document.getElementById('panelCloseBtn').addEventListener('click', () => {
+            infoPanel.classList.remove('show');
+        });
+
+        // 6. Search Bar Dropdown Logic
+        document.getElementById('navSearch').addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchContainer.classList.toggle('show');
+            if (searchContainer.classList.contains('show')) {
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // Klik di luar search bar untuk menutupnya
+        document.addEventListener('click', (e) => {
+            if (!searchContainer.contains(e.target) && e.target.id !== 'navSearch') {
+                searchContainer.classList.remove('show');
+            }
+        });
+
+        // 7. Home Button Auto Scroll ke Atas
+        document.getElementById('navHome').addEventListener('click', () => {
+            feedContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Jalankan fungsi saat aplikasi dimuat
+        fetchMovies();
+        lucide.createIcons();
+    </script>
 </body>
 </html>
