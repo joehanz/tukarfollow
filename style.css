@@ -268,101 +268,46 @@
     background: #fff; color: #000; transform: scale(1.1);
 }
 
-/* ====================================
-   1. STYLE UNTUK DESKTOP (DEFAULT)
-   ==================================== */
-
-/* Tombol Load More Melayang di Desktop */
+/* Container Utama untuk tombol Load More di dalam film terakhir */
 .inline-load-more {
     position: absolute;
-    bottom: 40px; /* Di desktop agak ke bawah sedikit biar gak numpuk */
+    bottom: 90px; /* Pas di atas navigasi menu bawah HP / Desktop */
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 99; /* Angka tinggi biar pasti di depan elemen lain */
+    width: auto;
+    text-align: center;
+    pointer-events: auto; /* Memastikan tombol bisa diklik */
 }
 
+/* Style Tombol Premium Semi-Transparan (Glassmorphism) */
 .load-more-btn-inline {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     color: #ffffff;
-    padding: 12px 24px;
+    padding: 12px 26px;
     border-radius: 30px;
     font-weight: 600;
     font-size: 14px;
+    letter-spacing: 0.5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.2s ease;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap; /* Biar teks gak patah jadi 2 baris di HP */
 }
 
+/* Efek pas disentuh / di-hover */
 .load-more-btn-inline:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     transform: scale(1.05);
 }
 
-
-/* ====================================
-   2. STYLE KHUSUS MOBILE (MAKSIMAL 768px)
-   ==================================== */
-@media screen and (max-width: 768px) {
-    
-    /* Paksa container menu utama (.main-content) menampung semuanya di bawah */
-    .main-content {
-        position: absolute;
-        bottom: 90px; /* Pas di atas nav menu paling bawah hp */
-        left: 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0 20px;
-        box-sizing: border-box;
-    }
-
-    /* Ubah menu kanan jadi baris mendatar di tengah bawah */
-    .side-actions {
-        position: static !important; /* Lepas dari kanan layar */
-        display: flex !important;
-        flex-direction: row !important; /* Berjejer ke samping */
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 20px; /* Jarak antar ikon menu */
-        width: 100%;
-        margin-bottom: 15px; /* Jarak ke tombol Load More di bawahnya */
-    }
-
-    /* Rapikan teks di bawah ikon menu mobile */
-    .action-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0 !important;
-    }
-    
-    .action-item span {
-        font-size: 11px;
-        margin-top: 4px;
-    }
-
-    /* Penyesuaian tombol Load More khusus di Mobile */
-    .inline-load-more {
-        position: relative !important; /* Ikut mengalir di bawah menu ikon */
-        bottom: 0 !important;
-        left: 0 !important;
-        transform: none !important;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .load-more-btn-inline {
-        width: 80%; /* Biar di HP tombolnya agak lebar, gampang dipencet jempol */
-        justify-content: center;
-        padding: 10px 16px;
-        font-size: 13px;
-    }
+.load-more-btn-inline:active {
+    transform: scale(0.95);
 }
