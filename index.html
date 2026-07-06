@@ -1,77 +1,521 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, maximum-scale=1.0">
-  <title>TikTok Movie Feed</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Streaming Interface</title>
+    <!-- Menggunakan Font Awesome untuk icon-icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+        body {
+            background-color: #0b0d10;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-  <link rel="stylesheet" href="style.css">
+        /* Container Mockup Smartphone */
+        .phone-container {
+            width: 100%;
+            max-width: 412px;
+            height: 892px;
+            background-color: #000;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border: 8px solid #1c1c1e;
+        }
+
+        /* Status Bar (Simulasi iOS) */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 10;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .status-icons i {
+            margin-left: 4px;
+            font-size: 12px;
+        }
+
+        /* Home Indicator (Garis bawah iOS) */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 5px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+
+        /* Konten Utama (Poster Film) */
+        .main-content {
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.2), rgba(0,0,0,0.85)), 
+                              url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px 20px 100px 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Judul Besar di Tengah Atas */
+        .movie-title-center {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 28px;
+            letter-spacing: 6px;
+            font-weight: 300;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+        }
+
+        /* Play Button Besar di Tengah (Gaya YouTube) */
+        .play-btn-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+        .play-btn-container:active {
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+        .play-btn i {
+            font-size: 32px;
+            color: #fff;
+            margin-left: 6px; /* balancing visual center */
+        }
+
+        /* Detail Film di Kiri Bawah */
+        .movie-details {
+            max-width: 75%;
+            z-index: 2;
+            transition: opacity 0.3s;
+        }
+        .movie-details h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .movie-details p {
+            font-size: 13px;
+            color: #d1d1d6;
+            line-height: 1.4;
+        }
+
+        /* Sidebar Icon Aksi di Kanan (Gaya TikTok) */
+        .action-sidebar {
+            position: absolute;
+            right: 16px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            z-index: 2;
+            transition: opacity 0.3s;
+        }
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .action-item i {
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            margin-bottom: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .action-item span {
+            font-size: 11px;
+            color: #aeaeae;
+        }
+
+        /* Navigasi Bawah (Bottom Nav) */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 84px;
+            background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.8));
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 5;
+            transition: transform 0.3s ease;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #8e8e93;
+            cursor: pointer;
+            font-size: 11px;
+            gap: 4px;
+        }
+        .nav-item.active {
+            color: #fff;
+        }
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        /* FITUR 1: Search Bar (Sembunyi -> Turun dari Atas) */
+        .search-overlay {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            height: 110px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.8));
+            z-index: 6;
+            padding: 50px 20px 10px 20px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+            backdrop-filter: blur(10px);
+        }
+        .search-overlay.active {
+            transform: translateY(100px);
+        }
+        .search-box {
+            width: 100%;
+            background: #1c1c1e;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-box i {
+            color: #8e8e93;
+            margin-right: 8px;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+
+        /* FITUR 2: Info Panel (Muncul di atas Nav Bawah) */
+        .info-panel {
+            position: absolute;
+            bottom: -350px;
+            left: 0;
+            width: 100%;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            z-index: 4;
+            transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .info-panel.active {
+            transform: translateY(-434px); /* Berhenti pas di atas Nav Bawah */
+        }
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .info-header h3 {
+            font-size: 20px;
+        }
+        .close-info {
+            cursor: pointer;
+            font-size: 20px;
+            color: #8e8e93;
+        }
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            color: #d1d1d6;
+            line-height: 1.4;
+        }
+        .info-row i {
+            width: 20px;
+            color: #8e8e93;
+            margin-top: 2px;
+        }
+
+        /* FITUR 3: Play Mode (Semua disembunyikan) */
+        .phone-container.play-mode .movie-title-center,
+        .phone-container.play-mode .movie-details,
+        .phone-container.play-mode .action-sidebar,
+        .phone-container.play-mode .bottom-nav,
+        .phone-container.play-mode .play-btn-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .phone-container.play-mode .bottom-nav {
+            transform: translateY(100px);
+        }
+
+        /* Overlay Petunjuk Keluar Play Mode */
+        .exit-instruction {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 3;
+        }
+        .phone-container.play-mode .exit-instruction {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- SEARCH BAR -->
-  <div id="searchBar" class="search-bar">
-    <div class="search-box">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Cari semua data movie...">
+    <div class="phone-container" id="phoneContainer">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>09.41</span>
+            <div class="status-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- FITUR 1: Search Overlay -->
+        <div class="search-overlay" id="searchOverlay">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari film...">
+            </div>
+        </div>
+
+        <!-- Konten Utama Poster -->
+        <div class="main-content" id="mainContent">
+            <!-- Judul Tengah Atas -->
+            <div class="movie-title-center">Interstellar</div>
+
+            <!-- FITUR 3: Tombol Play Utama -->
+            <div class="play-btn-container" id="playBtnContainer">
+                <div class="play-btn">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+
+            <!-- Detail Kiri Bawah -->
+            <div class="movie-details">
+                <h2>Interstellar</h2>
+                <p>Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa memulai misi melintasi lubang cacing...</p>
+            </div>
+
+            <!-- Sidebar Kanan (TikTok Style) -->
+            <div class="action-sidebar">
+                <div class="action-item" id="infoActionBtn">
+                    <i class="fas fa-info-circle"></i>
+                    <span>info</span>
+                </div>
+                <div class="action-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>2014</span>
+                </div>
+                <div class="action-item">
+                    <i class="fas fa-film"></i>
+                    <span>Sci-Fi</span>
+                </div>
+                <div class="action-item">
+                    <i class="fas fa-globe"></i>
+                    <span>USA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FITUR 2: Info Panel Slide Up -->
+        <div class="info-panel" id="infoPanel">
+            <div class="info-header">
+                <h3>Interstellar</h3>
+                <i class="fas fa-times close-info" id="closeInfoBtn"></i>
+            </div>
+            <div class="info-list">
+                <div class="info-row">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Ketika Bumi semakin tidak layak dihuni, sekelompok penjelajah ruang angkasa...</p>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-calendar-alt"></i>
+                    <p>7 November 2014</p>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-film"></i>
+                    <p>Sci-Fi, Adventure, Drama</p>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-globe"></i>
+                    <p>USA, UK</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Petunjuk saat masuk Mode Play -->
+        <div class="exit-instruction">
+            Sentuh layar untuk keluar dari mode play
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <div class="nav-item" id="navSearch">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add</span>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+        </div>
+
+        <!-- Home Indicator iOS -->
+        <div class="home-indicator"></div>
     </div>
-  </div>
 
-  <!-- FEED -->
-  <main id="feed" class="feed"></main>
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Mengambil elemen-elemen DOM
+        const phoneContainer = document.getElementById('phoneContainer');
+        const mainContent = document.getElementById('mainContent');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const navSearch = document.getElementById('navSearch');
+        const searchInput = document.getElementById('searchInput');
+        
+        const infoActionBtn = document.getElementById('infoActionBtn');
+        const infoPanel = document.getElementById('infoPanel');
+        const closeInfoBtn = document.getElementById('closeInfoBtn');
+        
+        const playBtnContainer = document.getElementById('playBtnContainer');
 
-  <!-- INFO PANEL -->
-  <div id="infoPanel" class="info-panel hidden">
-    <div class="info-content">
-      <div class="info-close"><i id="closeInfo" class="fa-solid fa-xmark"></i></div>
-      <h2 id="infoTitle"></h2>
-      <div class="info-item"><i class="fa-regular fa-circle-info"></i><span id="infoSinopsis"></span></div>
-      <div class="info-item"><i class="fa-regular fa-calendar"></i><span id="infoDate"></span></div>
-      <div class="info-item"><i class="fa-solid fa-film"></i><span id="infoGenre"></span></div>
-      <div class="info-item"><i class="fa-solid fa-earth-asia"></i><span id="infoCountry"></span></div>
-    </div>
-  </div>
+        // --- FITUR 1: LOGIK SEARCH BAR ---
+        navSearch.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah trigger klik ke background
+            searchOverlay.classList.toggle('active');
+            if(searchOverlay.classList.contains('active')) {
+                searchInput.focus(); // Otomatis fokus ke text input saat muncul
+                // Tutup panel info jika sedang terbuka
+                infoPanel.classList.remove('active');
+            }
+        });
 
-  <!-- PLAYER OVERLAY -->
-  <div id="playerOverlay" class="player-overlay hidden">
-    <div class="player-container">
-      <iframe id="moviePlayer" src="" allowfullscreen frameborder="0"></iframe>
-    </div>
-  </div>
+        // --- FITUR 2: LOGIK INFO PANEL ---
+        // Klik tombol info di sidebar kanan untuk buka/tutup
+        infoActionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            infoPanel.classList.toggle('active');
+            // Tutup search jika sedang terbuka
+            searchOverlay.classList.remove('active');
+        });
 
-  <!-- BOTTOM NAV -->
-  <nav id="bottomNav" class="bottom-nav">
-    <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
-    <button id="addBtn"><i class="fa-solid fa-circle-plus"></i></button>
-    <button id="homeBtn"><i class="fa-regular fa-house"></i></button>
-  </nav>
+        // Klik tombol X di dalam panel info untuk menutup
+        closeInfoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            infoPanel.classList.remove('active');
+        });
 
-  <!-- TEMPLATE MOVIE -->
-  <template id="movieTemplate">
-    <section class="movie-card">
-      <img class="poster" src="" alt="Movie">
-      <div class="play-btn"><div class="play-circle"><i class="fa-solid fa-play"></i></div></div>
-      <div class="poster-gradient"></div>
-      <div class="movie-caption">
-        <h2 class="movie-title"></h2>
-        <p class="movie-desc"></p>
-      </div>
-      <div class="actions">
-        <button class="action infoBtn"><i class="fa-regular fa-circle-info"></i></button>
-        <button class="action dateBtn"><i class="fa-regular fa-calendar"></i></button>
-        <button class="action genreBtn"><i class="fa-solid fa-film"></i></button>
-        <button class="action countryBtn"><i class="fa-solid fa-earth-asia"></i></button>
-      </div>
-    </section>
-  </template>
 
-  <!-- LOAD MORE -->
-  <div id="loadMore" class="load-more">Load More</div>
+        // --- FITUR 3: LOGIK PLAY MODE ---
+        // Masuk ke Mode Play saat tombol play besar diklik
+        playBtnContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            phoneContainer.classList.add('play-mode');
+            // Pastikan overlay lain tertutup saat nonton
+            searchOverlay.classList.remove('active');
+            infoPanel.classList.remove('active');
+        });
 
-  <script src="script.js"></script>
+        // Keluar dari Mode Play saat layar / poster disentuh/diklik
+        mainContent.addEventListener('click', () => {
+            if (phoneContainer.classList.contains('play-mode')) {
+                phoneContainer.classList.remove('play-mode');
+            } else {
+                // Menutup search bar atau info panel jika mengklik area kosong di poster
+                searchOverlay.classList.remove('active');
+                infoPanel.classList.remove('active');
+            }
+        });
+
+        // Tambahan fungsionalitas scroll mendeteksi untuk keluar dari play mode
+        mainContent.addEventListener('wheel', () => {
+            if (phoneContainer.classList.contains('play-mode')) {
+                phoneContainer.classList.remove('play-mode');
+            }
+        });
+    </script>
 </body>
 </html>
