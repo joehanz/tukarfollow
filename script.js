@@ -7,6 +7,7 @@ const infoActionBtn = document.getElementById('infoActionBtn');
 const infoPanel = document.getElementById('infoPanel');
 const closeInfoBtn = document.getElementById('closeInfoBtn');
 const playBtnContainer = document.getElementById('playBtnContainer');
+const movieList = document.getElementById('movieList');
 
 let currentMovie = null;
 
@@ -14,14 +15,9 @@ let currentMovie = null;
 fetch("https://api.themoviedb.org/3/movie/popular?api_key=c000d7b8b0f5ee16b98b6103009745d8&language=id-ID&page=1")
   .then(res => res.json())
   .then(data => {
-    // Film pertama jadi default
     setMovie(data.results[0]);
-
-    // Render semua film ke grid yang sudah ada
-    const movieList = document.getElementById("movieList");
     data.results.forEach(movie => {
       const card = document.createElement("div");
-      card.className = "movie-card";
       card.innerHTML = `
         <img src="https://image.tmdb.org/t/p/w342${movie.poster_path}" alt="${movie.title}">
         <p>${movie.title}</p>
@@ -103,14 +99,4 @@ mainContent.addEventListener('click', () => {
     const iframe = mainContent.querySelector("iframe");
     if (iframe) iframe.remove();
   } else {
-    searchOverlay.classList.remove('active');
-    infoPanel.classList.remove('active');
-  }
-});
-mainContent.addEventListener('wheel', () => {
-  if (phoneContainer.classList.contains('play-mode')) {
-    phoneContainer.classList.remove('play-mode');
-    const iframe = mainContent.querySelector("iframe");
-    if (iframe) iframe.remove();
-  }
-});
+    search
