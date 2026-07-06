@@ -83,103 +83,117 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
-// 3. Render ke Feed Layar Penuh (VERSI TERBARU: LOAD MORE MELAYANG)
+// 3. Render ke Feed Layar Penuh (REVISI AKURAT & ANTI-HILANG)
 function renderFeed(movies) {
     feedContainer.innerHTML = '';
-    movies.forEach((movie, index) => {
-        const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-        
-        let posterFullUrl = '';
-        if (customData && customData.image) {
-            posterFullUrl = customData.image;
-        } else if (movie.poster_path) {
-            posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
-        } else {
-            posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; 
-        }
-
-        const card = document.createElement('div');
-        card.className = 'movie-card';
-        card.style.backgroundImage = `url('${posterFullUrl}')`;
-        
-        let releaseDateStr = customData ? customData.release_date : movie.release_date;
-        const year = releaseDateStr ? releaseDateStr.split('-')[0] : '-';
-
-        // Tentukan apakah panah navigasi harus tampil (hanya jika di desktop)
-        const arrowStyle = isDesktop ? 'display: flex;' : 'display: none;';
-
-        card.innerHTML = `
-            <div class="overlay"></div>
-            <div class="top-title">${customData ? customData.title : movie.title}</div>
+    
+    // Pastikan data movies ada dan berupa array sebelum di-looping
+    if (movies && movies.length > 0) {
+        movies.forEach((movie, index) => {
+            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
             
-            <div class="play-btn-container" onclick="playMovie(${movie.id})">
-                <div class="play-circle"><i data-lucide="play" fill="#fff" size="32" style="margin-left:5px;"></i></div>
-            </div>
+            let posterFullUrl = '';
+            if (customData && customData.image) {
+                posterFullUrl = customData.image;
+            } else if (movie.poster_path) {
+                posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
+            } else {
+                posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; 
+            }
 
-            <div class="main-content">
-                <div class="side-actions">
-                    <!-- BLOK PANAH SEKARANG DI ATAS MENU INFO FILMS -->
-                    <div class="arrow-actions-container" style="${arrowStyle}">
-                        <div class="inline-scroll-arrow" onclick="scrollFeed('up')">
-                            <i data-lucide="chevron-up" size="22"></i>
-                        </div>
-                        <div class="inline-scroll-arrow" onclick="scrollFeed('down')">
-                            <i data-lucide="chevron-down" size="22"></i>
-                        </div>
-                    </div>
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.style.backgroundImage = `url('${posterFullUrl}')`;
+            
+            let releaseDateStr = customData ? customData.release_date : movie.release_date;
+            const year = releaseDateStr ? releaseDateStr.split('-')[0] : '-';
+            const arrowStyle = isDesktop ? 'display: flex;' : 'display: none;';
 
-                    <!-- MENU INFO UTAMA -->
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
-                        <i data-lucide="info" size="28"></i>
-                        <span>info</span>
-                    </div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
-                        <i data-lucide="calendar" size="28"></i>
-                        <span>${year}</span>
-                    </div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
-                        <i data-lucide="clapperboard" size="28"></i>
-                        <span>Genre</span>
-                    </div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
-                        <i data-lucide="globe" size="28"></i>
-                        <span>Negara</span>
+            card.innerHTML = `
+                <div class="overlay"></div>
+                <div class="top-title">${customData ? customData.title : movie.title}</div>
+                
+                <div class="play-btn-container" onclick="playMovie(${movie.id})">
+                    <div class="play-circle"><i data-lucide="play" fill="#fff" size="32" style="margin-left:5px;"></i></div>
+                </div>
+
+                <div class="main-content">
+                    <div class="side-actions">
+                        <div class="arrow-actions-container" style="${arrowStyle}">
+                            <div class="inline-scroll-arrow" onclick="scrollFeed('up')">
+                                <i data-lucide="chevron-up" size="22"></i>
+                            </div>
+                            <div class="inline-scroll-arrow" onclick="scrollFeed('down')">
+                                <i data-lucide="chevron-down" size="22"></i>
+                            </div>
+                        </div>
+
+                        <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
+                            <i data-lucide="info" size="28"></i>
+                            <span>info</span>
+                        </div>
+                        <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
+                            <i data-lucide="calendar" size="28"></i>
+                            <span>${year}</span>
+                        </div>
+                        <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
+                            <i data-lucide="clapperboard" size="28"></i>
+                            <span>Genre</span>
+                        </div>
+                        <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
+                            <i data-lucide="globe" size="28"></i>
+                            <span>Negara</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        feedContainer.appendChild(card);
-    });
+            `;
+            feedContainer.appendChild(card);
+        });
+    }
 
-    // === PERBAIKAN: TOMBOL LOAD MORE MELAYANG DI ATAS POSTER TERAKHIR ===
-    // Tombol hanya muncul jika user tidak sedang mengetik di kolom pencarian
-    if (!searchInput.value.trim()) {
+    // === FIX TOMBOL: DIJAMIN MUNCUL & MELAYANG DI ATAS POSTER ===
+    const checkSearch = document.getElementById('searchInput');
+    const isSearching = checkSearch && checkSearch.value.trim() !== "";
+
+    // Selama tidak sedang mencari film, tombol WAJIB dimunculkan
+    if (!isSearching) {
         const loadMoreBtn = document.createElement('button');
         loadMoreBtn.id = 'floatingLoadMore';
         loadMoreBtn.className = 'floating-load-more-btn';
         loadMoreBtn.innerHTML = `Muat Lebih Banyak (Halaman ${currentPage + 1})`;
-        loadMoreBtn.onclick = () => loadNextPage();
         
-        // Ditempel langsung di dalam feedContainer (gantung di depan poster terakhir sebelum nav bawah)
+        // Panggil langsung fungsi load dengan aman
+        loadMoreBtn.onclick = function() {
+            loadNextPage(movies); 
+        };
+        
         feedContainer.appendChild(loadMoreBtn);
     }
 
     lucide.createIcons();
 }
 
-// FUNGSI LOAD NEXT PAGE + MANIPULASI URL REAL-TIME TANPA REFRESH
-async function loadNextPage() {
+// FIX TOTAL: MANIPULASI URL PADA SEGALA JENIS DOMAIN & HOSTING
+async function loadNextPage(currentMoviesArray) {
     currentPage++;
     
-    // Ambil ID dari film paling terakhir yang dimuat untuk ditaruh di parameter URL ?id=
-    const lastMovieId = moviesData.length > 0 ? moviesData[moviesData.length - 1].id : '1245';
+    // Ambil ID dari film terakhir yang benar-benar ada di layar saat ini
+    let lastId = '1235';
+    if (currentMoviesArray && currentMoviesArray.length > 0) {
+        lastId = currentMoviesArray[currentMoviesArray.length - 1].id;
+    }
 
-    // Manipulasi URL address bar browser secara halus
-    const newUrl = `${window.location.origin}/page-${currentPage}?id=${lastMovieId}`;
+    // Gunakan cara paling aman untuk menyisipkan parameter URL tanpa merusak origin localhost/github pages
+    const currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
+    const newUrl = `${currentCleanUrl}?page=${currentPage}&id=${lastId}`;
+    
+    // Ubah URL di address bar secara real-time
     window.history.pushState({ page: currentPage }, '', newUrl);
 
-    // Jalankan penarikan data halaman baru
-    await fetchMovies(currentPage);
+    // Tarik data halaman baru dari TMDB/JSON
+    if (typeof fetchMovies === 'function') {
+        await fetchMovies(currentPage);
+    }
 }
 
 // 4. Logika Cicilan Info Dinamis (Genre & Negara Dinamis Sesuai TMDB / JSON)
