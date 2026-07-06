@@ -1,10 +1,69 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMDB Vertical Feed Movie - Pro Version</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <head>
+  <!-- BASIC META -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia</title>
+  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia. Update feed harian ala TikTok mobile friendly." />
+  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, download film hd, bioskop online, tukarfollow movie, streaming film hp" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="id" />
+
+  <!-- CANONICAL -->
+  <link rel="canonical" href="https://tukarfollow.web.id/" />
+
+  <!-- ICONS -->
+  <!-- Silakan ganti ke path logo asli web kamu jika ada -->
+  <link rel="icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" />
+
+  <!-- OPEN GRAPH (Sangat penting saat link di-share ke WA/Sosmed agar muncul gambar poster) -->
+  <meta property="og:type" content="video.movie" />
+  <meta property="og:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
+  <meta property="og:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta property="og:url" content="https://tukarfollow.web.id/" />
+  <meta property="og:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
+  <meta property="og:site_name" content="TUKARFOLLOW" />
+
+  <!-- TWITTER CARD -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
+  <meta name="twitter:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta name="twitter:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
+
+  <!-- FONTS & ICON SCRIPT -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
+  <!-- Script Lucide Icon dari kode lama kita -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- STRUCTURED DATA (Diubah ke MovieTheater / WebSite agar Google tahu ini web hiburan/film) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TUKARFOLLOW",
+      "url": "https://tukarfollow.web.id/",
+      "description": "Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://tukarfollow.web.id/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <!-- ADSENSE -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6458870303612779" crossorigin="anonymous"></script>
+
+  <!-- PWA MANIFEST -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- CALL EXTERNAL CSS -->
+  <link rel="stylesheet" href="style.css" />
+  
 </head>
 <body>
 
@@ -249,5 +308,8 @@
         
         init();
     </script>
+
+    <!-- CALL EXTERNAL JAVASCRIPT -->
+    <script src="script.js"></script>
 </body>
 </html>
