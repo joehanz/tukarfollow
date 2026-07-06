@@ -157,15 +157,16 @@ function renderFeed(movies) {
     loadMoreCard.innerHTML = `<button class="load-more-btn" onclick="loadNextPage()">Load More (Page ${currentPage + 1})</button>`;
     feedContainer.appendChild(loadMoreCard);
 
-    if (window.lucide) {
-    lucide.createIcons();
-}
+if (window.lucide) {
+        lucide.createIcons();
+    }
+} // <-- Kurung kurawal penutup untuk fungsi renderFeed agar tidak eror
 
 function loadNextPage() {
-    currentPage++;
-    fetchMovies(currentPage);
+    currentPage++;
+    fetchMovies(currentPage);
 }
-
+    
 // 4. Logika Cicilan Info Dinamis (Genre & Negara Dinamis Sesuai TMDB / JSON)
 function toggleSection(event, index, section) {
     event.stopPropagation();
