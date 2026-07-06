@@ -13,23 +13,50 @@ const playBtnContainer = document.getElementById('playBtnContainer');
 
 let currentMovie = null;
 
-// --- FETCH DATA TMDB ---
+// Fetch film populer
 fetch("https://api.themoviedb.org/3/movie/popular?api_key=c000d7b8b0f5ee16b98b6103009745d8&language=id-ID&page=1")
   .then(res => res.json())
   .then(data => {
-    currentMovie = data.results[0]; // ambil film pertama populer
+    // Film pertama jadi background utama
+    currentMovie = data.results[0];
+    const bgUrl = `https://image.tmdb.org/t/p/w780${currentMovie.backdrop_path}`;
+    mainContent.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('${bgUrl}')`;
 
-    // Render ke UI
+    // Isi judul & detail
     document.querySelector(".movie-title-center").textContent = currentMovie.title;
     document.querySelector(".movie-details h2").textContent = currentMovie.title;
     document.querySelector(".movie-details p").textContent = currentMovie.overview;
-    document.querySelector(".action-sidebar .action-item:nth-child(2) span").textContent = currentMovie.release_date.split("-")[0];
-    document.querySelector(".action-sidebar .action-item:nth-child(3) span").textContent = currentMovie.genre_ids.join(", ");
-    document.querySelector(".action-sidebar .action-item:nth-child(4) span").textContent = "TMDB";
-    document.querySelector(".info-header h3").textContent = currentMovie.title;
-    document.querySelector(".info-list .info-row:nth-child(2) p").textContent = currentMovie.release_date;
-    document.querySelector(".info-list .info-row:nth-child(1) p").textContent = currentMovie.overview;
+
+    // Render semua film ke list
+    const movieList = document.createElement("div");
+    movieList.id = "movieList";
+    movieList.style.display = "grid";
+    movieList.style.gridTemplateColumns = "repeat(2, 1fr)";
+    movieList.style.gap = "10px";
+    movieList.style.marginTop = "20px";
+
+    data.results.forEach(movie => {
+      const card = document.createElement("div");
+      card.style.cursor = "pointer";
+      card.innerHTML = `
+        <img src="https://image.tmdb.org/t/p/w342${movie.poster_path}" alt="${movie.title}" style="width:100%; border-radius:8px;">
+        <p style="font-size:12px; color:#fff; margin-top:4px;">${movie.title}</p>
+      `;
+      card.addEventListener("click", () => {
+        // ganti background & detail saat klik poster
+        currentMovie = movie;
+        const bg = `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`;
+        mainContent.style.backgroundImage = `linear-gradient(...), url('${bg}')`;
+        document.querySelector(".movie-title-center").textContent = movie.title;
+        document.querySelector(".movie-details h2").textContent = movie.title;
+        document.querySelector(".movie-details p").textContent = movie.overview;
+      });
+      movieList.appendChild(card);
+    });
+
+    mainContent.appendChild(movieList);
   });
+
 
 // --- FITUR 1: SEARCH BAR ---
 navSearch.addEventListener('click', (e) => {
