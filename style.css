@@ -44,7 +44,7 @@ body {
   border-radius: 10px;
 }
 
-.movie-card video {
+.movie-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -54,6 +54,16 @@ body {
   position: absolute;
   bottom: 20px;
   left: 20px;
+}
+
+.overlay h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.overlay p {
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 .actions {
