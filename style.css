@@ -33,7 +33,20 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  font-size: 1.5rem;
+  font-size: 2rem;
+}
+
+.info-panel {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.8);
+  padding: 10px;
+}
+
+.info-panel.hidden {
+  display: none;
 }
 
 .search-bar {
@@ -61,8 +74,8 @@ html, body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #111;
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
+  background: transparent;
 }
