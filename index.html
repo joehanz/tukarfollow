@@ -13,7 +13,7 @@
 </head>
 <body>
 
-  <!-- SEARCH BAR (hidden default) -->
+  <!-- SEARCH BAR -->
   <div id="searchBar" class="search-bar">
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
@@ -22,16 +22,12 @@
   </div>
 
   <!-- FEED -->
-  <main id="feed" class="feed">
-    <!-- Card dibuat otomatis dari script.js -->
-  </main>
+  <main id="feed" class="feed"></main>
 
   <!-- INFO PANEL -->
   <div id="infoPanel" class="info-panel hidden">
     <div class="info-content">
-      <div class="info-close">
-        <i id="closeInfo" class="fa-solid fa-xmark"></i>
-      </div>
+      <div class="info-close"><i id="closeInfo" class="fa-solid fa-xmark"></i></div>
       <h2 id="infoTitle"></h2>
       <div class="info-item"><i class="fa-regular fa-circle-info"></i><span id="infoSinopsis"></span></div>
       <div class="info-item"><i class="fa-regular fa-calendar"></i><span id="infoDate"></span></div>
@@ -58,18 +54,12 @@
   <template id="movieTemplate">
     <section class="movie-card">
       <img class="poster" src="" alt="Movie">
-      <!-- PLAY BUTTON -->
-      <div class="play-btn">
-        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
-      </div>
-      <!-- SHADOW GRADIENT -->
+      <div class="play-btn"><div class="play-circle"><i class="fa-solid fa-play"></i></div></div>
       <div class="poster-gradient"></div>
-      <!-- TITLE -->
       <div class="movie-caption">
         <h2 class="movie-title"></h2>
         <p class="movie-desc"></p>
       </div>
-      <!-- RIGHT ICONS -->
       <div class="actions">
         <button class="action infoBtn"><i class="fa-regular fa-circle-info"></i></button>
         <button class="action dateBtn"><i class="fa-regular fa-calendar"></i></button>
@@ -78,6 +68,9 @@
       </div>
     </section>
   </template>
+
+  <!-- LOAD MORE -->
+  <div id="loadMore" class="load-more">Load More</div>
 
   <script src="script.js"></script>
 </body>
