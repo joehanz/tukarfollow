@@ -1,124 +1,72 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Streaming Interface</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Streaming Interface</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-    <div class="phone-container" id="phoneContainer">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span>09.41</span>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <i class="fas fa-battery-full"></i>
-            </div>
-        </div>
-
-        <!-- Search Overlay -->
-        <div class="search-overlay" id="searchOverlay">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari film...">
-            </div>
-        </div>
-
-        <!-- Konten Utama Poster -->
-        <div class="main-content" id="mainContent">
-            <!-- Judul Tengah Atas -->
-            <div class="movie-title-center"></div>
-
-            <!-- Tombol Play Utama -->
-            <div class="play-btn-container" id="playBtnContainer">
-                <div class="play-btn">
-                    <i class="fas fa-play"></i>
-                </div>
-            </div>
-
-            <!-- Detail Kiri Bawah -->
-            <div class="movie-details">
-                <h2></h2>
-                <p></p>
-            </div>
-
-            <!-- Sidebar Kanan -->
-            <div class="action-sidebar">
-                <div class="action-item" id="infoActionBtn">
-                    <i class="fas fa-info-circle"></i>
-                    <span>info</span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span></span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-film"></i>
-                    <span></span>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-globe"></i>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Info Panel -->
-        <div class="info-panel" id="infoPanel">
-            <div class="info-header">
-                <h3></h3>
-                <i class="fas fa-times close-info" id="closeInfoBtn"></i>
-            </div>
-            <div class="info-list">
-                <div class="info-row">
-                    <i class="fas fa-info-circle"></i>
-                    <p></p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-calendar-alt"></i>
-                    <p></p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-film"></i>
-                    <p></p>
-                </div>
-                <div class="info-row">
-                    <i class="fas fa-globe"></i>
-                    <p></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Petunjuk Play Mode -->
-        <div class="exit-instruction">
-            Sentuh layar untuk keluar dari mode play
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="nav-item" id="navSearch">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-plus-circle"></i>
-                <span>Add</span>
-            </div>
-            <div class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-        </div>
-
-        <!-- Home Indicator -->
-        <div class="home-indicator"></div>
+  <div class="phone-container" id="phoneContainer">
+    <div class="status-bar">
+      <span>09.41</span>
+      <div class="status-icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
     </div>
 
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Cari film...">
+      </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+      <div class="movie-title-center"></div>
+      <div class="play-btn-container" id="playBtnContainer">
+        <div class="play-btn"><i class="fas fa-play"></i></div>
+      </div>
+      <div class="movie-details">
+        <h2></h2>
+        <p></p>
+      </div>
+      <div class="action-sidebar">
+        <div class="action-item" id="infoActionBtn"><i class="fas fa-info-circle"></i><span>info</span></div>
+        <div class="action-item"><i class="fas fa-calendar-alt"></i><span></span></div>
+        <div class="action-item"><i class="fas fa-film"></i><span></span></div>
+        <div class="action-item"><i class="fas fa-globe"></i><span></span></div>
+      </div>
+      <!-- Grid list film -->
+      <div id="movieList"></div>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+      <div class="info-header">
+        <h3></h3>
+        <i class="fas fa-times close-info" id="closeInfoBtn"></i>
+      </div>
+      <div class="info-list">
+        <div class="info-row"><i class="fas fa-info-circle"></i><p></p></div>
+        <div class="info-row"><i class="fas fa-calendar-alt"></i><p></p></div>
+        <div class="info-row"><i class="fas fa-film"></i><p></p></div>
+        <div class="info-row"><i class="fas fa-globe"></i><p></p></div>
+      </div>
+    </div>
+
+    <div class="exit-instruction">Sentuh layar untuk keluar dari mode play</div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" id="navSearch"><i class="fas fa-search"></i><span>Search</span></div>
+      <div class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></div>
+      <div class="nav-item active"><i class="fas fa-home"></i><span>Home</span></div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
 <script src="script.js"></script>
 </body>
 </html>
