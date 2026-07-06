@@ -47,7 +47,6 @@ document.getElementById("loadMore").addEventListener("click", () => {
   renderMovies();
 });
 
-// Info panel toggle
 // Info panel toggle sesuai icon
 function showInfo(movie, type) {
   const panel = document.getElementById("infoPanel");
