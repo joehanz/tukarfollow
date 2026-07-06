@@ -257,10 +257,10 @@ function playMovie(tmdbId) {
         } else if (customMovie.video && customMovie.video.trim() !== "") {
             playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
-            playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+            playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
         }
     } else {
-        playerArea.innerHTML = `<iframe src="https://vidsrc.me/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+        playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
     }
 
     videoPlayerContainer.classList.add('active');
