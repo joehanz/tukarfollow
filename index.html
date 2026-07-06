@@ -1,36 +1,159 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TikTok Movie Feed</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>TikTok Movie Feed</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <!-- Search bar -->
-  <div id="searchBar" class="search-bar hidden">
-    <input type="text" id="searchInput" placeholder="Cari film...">
-  </div>
 
-  <!-- Info panel -->
-  <div id="infoPanel" class="info-panel hidden"></div>
+    <!-- SEARCH -->
+    <div id="searchBar" class="search-bar">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Cari semua data movie...">
+        </div>
+    </div>
 
-  <!-- Feed -->
-  <div id="feed" class="feed"></div>
+    <!-- FEED -->
+    <main id="feed" class="feed">
+        <!-- Card dibuat otomatis dari script.js -->
+    </main>
 
-  <!-- Load More -->
-  <div id="loadMore" class="load-more">Load More</div>
+    <!-- INFO PANEL -->
+    <div id="infoPanel" class="info-panel">
 
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <button id="searchBtn">🔍</button>
-    <button id="addBtn">➕</button>
-    <button id="homeBtn">🏠</button>
-  </div>
+        <div class="info-content">
 
-  <!-- Player overlay -->
-  <div id="playerOverlay" class="player-overlay hidden"></div>
+            <div class="info-close">
+                <i id="closeInfo" class="fa-solid fa-xmark"></i>
+            </div>
 
-  <script src="script.js"></script>
+            <h2 id="infoTitle"></h2>
+
+            <div class="info-item">
+                <i class="fa-regular fa-circle-info"></i>
+                <span id="infoSinopsis"></span>
+            </div>
+
+            <div class="info-item">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="infoDate"></span>
+            </div>
+
+            <div class="info-item">
+                <i class="fa-solid fa-film"></i>
+                <span id="infoGenre"></span>
+            </div>
+
+            <div class="info-item">
+                <i class="fa-solid fa-earth-asia"></i>
+                <span id="infoCountry"></span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PLAYER -->
+    <div id="playerOverlay" class="player-overlay">
+
+        <div class="player-container">
+            <iframe
+                id="moviePlayer"
+                src=""
+                allowfullscreen
+                frameborder="0">
+            </iframe>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottomNav" class="bottom-nav">
+
+        <button id="searchBtn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </button>
+
+        <button id="addBtn">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span>Add</span>
+        </button>
+
+        <button id="homeBtn">
+            <i class="fa-regular fa-house"></i>
+            <span>Home</span>
+        </button>
+
+    </nav>
+
+    <!-- TEMPLATE MOVIE -->
+    <template id="movieTemplate">
+
+        <section class="movie-card">
+
+            <img
+                class="poster"
+                src=""
+                alt="Movie">
+
+            <!-- PLAY -->
+            <div class="play-btn">
+                <div class="play-circle">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+
+            <!-- SHADOW -->
+            <div class="poster-gradient"></div>
+
+            <!-- TITLE -->
+            <div class="movie-caption">
+
+                <h2 class="movie-title"></h2>
+
+                <p class="movie-desc"></p>
+
+            </div>
+
+            <!-- RIGHT ICON -->
+            <div class="actions">
+
+                <button class="action infoBtn">
+                    <i class="fa-regular fa-circle-info"></i>
+                </button>
+
+                <button class="action dateBtn">
+                    <i class="fa-regular fa-calendar"></i>
+                </button>
+
+                <button class="action genreBtn">
+                    <i class="fa-solid fa-film"></i>
+                </button>
+
+                <button class="action countryBtn">
+                    <i class="fa-solid fa-earth-asia"></i>
+                </button>
+
+            </div>
+
+        </section>
+
+    </template>
+
+    <script src="script.js"></script>
+
 </body>
 </html>
