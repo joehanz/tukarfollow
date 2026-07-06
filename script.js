@@ -48,18 +48,49 @@ document.getElementById("loadMore").addEventListener("click", () => {
 });
 
 // Info panel toggle
-function showInfo(movie) {
+// Info panel toggle sesuai icon
+function showInfo(movie, type) {
   const panel = document.getElementById("infoPanel");
-  document.getElementById("infoTitle").textContent = movie.title;
-  document.getElementById("infoSinopsis").textContent = movie.sinopsis;
-  document.getElementById("infoDate").textContent = movie.release_date;
-  document.getElementById("infoGenre").textContent = movie.genre.join(", ");
-  document.getElementById("infoCountry").textContent = movie.country;
+  const title = document.getElementById("infoTitle");
+  const sinopsis = document.getElementById("infoSinopsis");
+  const date = document.getElementById("infoDate");
+  const genre = document.getElementById("infoGenre");
+  const country = document.getElementById("infoCountry");
+
+  // reset isi
+  title.textContent = "";
+  sinopsis.textContent = "";
+  date.textContent = "";
+  genre.textContent = "";
+  country.textContent = "";
+
+  // isi sesuai type
+  if (type === "desc") {
+    title.textContent = movie.title;
+    sinopsis.textContent = movie.sinopsis;
+  }
+  if (type === "date") {
+    title.textContent = movie.title;
+    date.textContent = movie.release_date;
+  }
+  if (type === "genre") {
+    title.textContent = movie.title;
+    genre.textContent = movie.genre.join(", ");
+  }
+  if (type === "country") {
+    title.textContent = movie.title;
+    country.textContent = movie.country;
+  }
+
   panel.classList.remove("hidden");
 }
-document.getElementById("closeInfo").addEventListener("click", () => {
-  document.getElementById("infoPanel").classList.add("hidden");
-});
+
+// Event listener icon kanan
+clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "desc"));
+clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
+clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
+clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+
 
 // Play movie overlay
 function playMovie(url) {
