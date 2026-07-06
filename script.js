@@ -4,43 +4,17 @@ fetch("movies.json")
     const feed = document.getElementById("feed");
     data.forEach(movie => {
       const card = document.createElement("div");
-      card.className = "movie-card";
+      card.className = "relative w-screen h-screen snap-start";
       card.innerHTML = `
-        <img src="${movie.image}" alt="${movie.title}">
-        <div class="overlay">
-          <h2>${movie.title}</h2>
-          <p>${movie.genre.join(", ")} • ${movie.country}</p>
-          <button onclick="openVideo('${movie.iframe}')">Watch Now</button>
+        <img src="${movie.image}" alt="${movie.title}" 
+             class="w-screen h-screen object-cover">
+        <div class="absolute top-6 left-6">
+          <h2 class="text-2xl font-bold">${movie.title}</h2>
+          <p class="text-sm text-gray-300">${movie.genre.join(", ")} • ${movie.country}</p>
+          <button onclick="openVideo('${movie.iframe}')"
+                  class="mt-2 px-4 py-2 bg-red-600 rounded">Watch Now</button>
         </div>
-        <div class="actions">
-          <span>❤️</span>
-          <span>💬</span>
-          <span>🔁</span>
-        </div>
-      `;
-      feed.appendChild(card);
-    });
-  });
-
-function openVideo(url) {
-  window.open(url, "_blank");
-}
-fetch("movies.json")
-  .then(res => res.json())
-  .then(data => {
-    console.log("Data JSON:", data); // cek di console browser
-    const feed = document.getElementById("feed");
-    data.forEach(movie => {
-      const card = document.createElement("div");
-      card.className = "movie-card";
-      card.innerHTML = `
-        <img src="${movie.image}" alt="${movie.title}">
-        <div class="overlay">
-          <h2>${movie.title}</h2>
-          <p>${movie.genre.join(", ")} • ${movie.country}</p>
-          <button onclick="openVideo('${movie.iframe}')">Watch Now</button>
-        </div>
-        <div class="actions">
+        <div class="absolute right-6 bottom-24 flex flex-col space-y-4 text-2xl">
           <span>❤️</span>
           <span>💬</span>
           <span>🔁</span>
@@ -50,3 +24,7 @@ fetch("movies.json")
     });
   })
   .catch(err => console.error("Error:", err));
+
+function openVideo(url) {
+  window.open(url, "_blank");
+}
