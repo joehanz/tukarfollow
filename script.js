@@ -2,71 +2,89 @@ let movies = [];
 let currentIndex = 0;
 const pageSize = 10;
 
+// Ambil data dari movies.json
 fetch("movies.json")
   .then(res => res.json())
   .then(data => {
     movies = data;
     renderMovies();
-  });
+  })
+  .catch(err => console.error("Error load JSON:", err));
 
+// Render film per halaman
 function renderMovies() {
   const feed = document.getElementById("feed");
+  const template = document.getElementById("movieTemplate");
+
   const slice = movies.slice(currentIndex, currentIndex + pageSize);
   slice.forEach(movie => {
-    const card = document.createElement("div");
-    card.className = "movie-card";
-    card.innerHTML = `
-      <img src="${movie.image}" alt="${movie.title}">
-      <div class="play-btn" onclick="playMovie('${movie.iframe}')">▶️</div>
-      <div class="actions">
-        <span onclick="toggleInfo('📖 ${movie.sinopsis}')">📖</span>
-        <span onclick="toggleInfo('📅 ${movie.release_date}')">📅</span>
-        <span onclick="toggleInfo('🎭 ${movie.genre.join(", ")}')">🎭</span>
-        <span onclick="toggleInfo('🌍 ${movie.country}')">🌍</span>
-      </div>
-    `;
-    feed.appendChild(card);
+    const clone = template.content.cloneNode(true);
+
+    // Poster
+    clone.querySelector(".poster").src = movie.image;
+    clone.querySelector(".movie-title").textContent = movie.title;
+    clone.querySelector(".movie-desc").textContent = movie.sinopsis;
+
+    // Play button
+    clone.querySelector(".play-btn").addEventListener("click", () => {
+      playMovie(movie.iframe);
+    });
+
+    // Icon kanan
+    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "info"));
+    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
+    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
+    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+
+    feed.appendChild(clone);
   });
+
   currentIndex += pageSize;
 }
 
+// Load More
 document.getElementById("loadMore").addEventListener("click", () => {
   renderMovies();
 });
 
 // Info panel toggle
-function toggleInfo(text) {
+function showInfo(movie, type) {
   const panel = document.getElementById("infoPanel");
-  if (panel.classList.contains("hidden") || panel.innerHTML !== text) {
-    panel.innerHTML = text;
-    panel.classList.remove("hidden");
-  } else {
-    panel.classList.add("hidden");
-  }
+  document.getElementById("infoTitle").textContent = movie.title;
+  document.getElementById("infoSinopsis").textContent = movie.sinopsis;
+  document.getElementById("infoDate").textContent = movie.release_date;
+  document.getElementById("infoGenre").textContent = movie.genre.join(", ");
+  document.getElementById("infoCountry").textContent = movie.country;
+  panel.classList.remove("hidden");
 }
+document.getElementById("closeInfo").addEventListener("click", () => {
+  document.getElementById("infoPanel").classList.add("hidden");
+});
 
-// Play movie
+// Play movie overlay
 function playMovie(url) {
   const overlay = document.getElementById("playerOverlay");
-  overlay.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+  const player = document.getElementById("moviePlayer");
+  player.src = url;
   overlay.classList.remove("hidden");
-  // hide icons & nav
-  document.querySelectorAll(".actions, .bottom-nav, .play-btn").forEach(el => el.style.display = "none");
+
+  // Sembunyikan icon & nav
+  document.querySelectorAll(".actions, #bottomNav, .play-btn").forEach(el => el.style.display = "none");
 }
 
-// Auto close player on scroll
+// Auto close player saat scroll
 document.getElementById("feed").addEventListener("scroll", () => {
   const overlay = document.getElementById("playerOverlay");
   if (!overlay.classList.contains("hidden")) {
     overlay.classList.add("hidden");
-    overlay.innerHTML = "";
-    document.querySelectorAll(".actions, .bottom-nav, .play-btn").forEach(el => el.style.display = "");
+    document.getElementById("moviePlayer").src = "";
+    document.querySelectorAll(".actions, #bottomNav, .play-btn").forEach(el => el.style.display = "");
   }
 });
 
 // Search toggle
 document.getElementById("searchBtn").addEventListener("click", () => {
-  document.getElementById("searchBar").classList.toggle("hidden");
+  document.getElementById("searchBar").classList.toggle("active");
 });
 
 // Search function
@@ -74,25 +92,24 @@ document.getElementById("searchInput").addEventListener("input", e => {
   const keyword = e.target.value.toLowerCase();
   const feed = document.getElementById("feed");
   feed.innerHTML = "";
-  movies.filter(m => 
+  currentIndex = 0;
+
+  movies.filter(m =>
     m.title.toLowerCase().includes(keyword) ||
     m.sinopsis.toLowerCase().includes(keyword) ||
     m.genre.join(", ").toLowerCase().includes(keyword) ||
     m.country.toLowerCase().includes(keyword)
   ).forEach(movie => {
-    const card = document.createElement("div");
-    card.className = "movie-card";
-    card.innerHTML = `
-      <img src="${movie.image}" alt="${movie.title}">
-      <div class="play-btn" onclick="playMovie('${movie.iframe}')">▶️</div>
-      <div class="actions">
-        <span onclick="toggleInfo('📖 ${movie.sinopsis}')">📖</span>
-        <span onclick="toggleInfo('📅 ${movie.release_date}')">📅</span>
-        <span onclick="toggleInfo('🎭 ${movie.genre.join(", ")}')">🎭</span>
-        <span onclick="toggleInfo('🌍 ${movie.country}')">🌍</span>
-      </div>
-    `;
-    feed.appendChild(card);
+    const clone = document.getElementById("movieTemplate").content.cloneNode(true);
+    clone.querySelector(".poster").src = movie.image;
+    clone.querySelector(".movie-title").textContent = movie.title;
+    clone.querySelector(".movie-desc").textContent = movie.sinopsis;
+    clone.querySelector(".play-btn").addEventListener("click", () => playMovie(movie.iframe));
+    clone.querySelector(".infoBtn").addEventListener("click", () => showInfo(movie, "info"));
+    clone.querySelector(".dateBtn").addEventListener("click", () => showInfo(movie, "date"));
+    clone.querySelector(".genreBtn").addEventListener("click", () => showInfo(movie, "genre"));
+    clone.querySelector(".countryBtn").addEventListener("click", () => showInfo(movie, "country"));
+    feed.appendChild(clone);
   });
 });
 
