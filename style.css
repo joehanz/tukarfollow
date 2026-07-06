@@ -268,13 +268,23 @@
     background: #fff; color: #000; transform: scale(1.1);
 }
 
-/* DESIGN FLOATING LOAD MORE DI DEPAN POSTER */
-.floating-load-more-btn {
-    display: block;
-    width: 85%;
-    max-width: 340px;
-    margin: 20px auto 90px auto; /* Margin bawah 90px mengunci tombol gantung di atas nav menu */
-    padding: 12px 24px;
+/* SULAP TOMBOL ASLI JADI MELAYANG DI DEPAN POSTER TANPA GANGGU JS */
+.load-more-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* Mengangkat pembungkus tombol agar naik dan bertumpuk di depan poster film terakhir */
+    margin-top: -120px; 
+    margin-bottom: 100px; /* Jarak aman agar tidak tertutup menu navigasi bawah */
+    position: relative;
+    z-index: 99; /* Memaksa tombol berada di lapisan paling depan */
+    pointer-events: none; /* Biar area transparannya tidak menghalangi klik poster */
+}
+
+.load-more-btn {
+    pointer-events: auto; /* Mengaktifkan kembali tombol agar bisa diklik */
+    padding: 12px 28px;
     background: linear-gradient(135deg, #ff0055, #990033);
     color: #ffffff;
     border: none;
@@ -283,13 +293,9 @@
     font-size: 14px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-align: center;
-    position: relative;
-    z-index: 10; /* Menaruh posisi tombol di depan poster film */
+    transition: transform 0.2s ease;
 }
 
-.floating-load-more-btn:active {
+.load-more-btn:active {
     transform: scale(0.95);
-    box-shadow: 0 2px 8px rgba(255, 0, 85, 0.2);
 }
