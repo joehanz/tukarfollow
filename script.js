@@ -293,49 +293,40 @@ feedContainer.addEventListener('scroll', () => {
     }
 });
 
-// ========================================================
-// REVISI FITUR PENCARIAN REAL-TIME & FIX TOMBOL HOME
-// ========================================================
+// ============================================================================
+// FIX TOTAL: FITUR PENCARIAN REAL-TIME (SENSI) & NAVIGASI TOMBOL HOME/SEARCH
+// ============================================================================
 const searchInput = document.getElementById('searchInput');
 
+// 1. Logika Mesin Pencari (Input)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-        // Bersihkan spasi di awal/akhir dan ubah ke huruf kecil
         const keyword = e.target.value.toLowerCase().trim();
         
-        // JIKA KOLOM KOSONG: Kembalikan ke semua film asli & paksa scroll ke paling atas
+        // JIKA KOLOM KOSONG: Kembalikan semua film asli & reset scroll ke atas
         if (keyword === "") {
             renderFeed(moviesData);
-            feedContainer.scrollTop = 0; // Reset posisi scroll ke atas
+            feedContainer.scrollTop = 0;
             return;
         }
 
-        // PROSES FILTER YANG LEBIH SENSI:
-        // Kita hilangkan semua spasi saat mencocokkan kata agar ketikan "supermario" tetap bisa memunculkan "Super Mario"
+        // Hilangkan spasi ketikan agar pencarian super sensitif (ex: "supermario" tetap ketemu)
         const cleanKeyword = keyword.replace(/\s+/g, '');
 
         const filteredMovies = moviesData.filter(movie => {
             const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-            
-            // Ambil judul (utamakan data lokal json)
             const rawTitle = customData ? customData.title : movie.title;
-            
-            // Bikin judul bersih tanpa spasi dan huruf kecil semua
             const cleanTitle = rawTitle.toLowerCase().replace(/\s+/g, '');
             
-            // Cek kecocokan sensitif huruf
             return cleanTitle.includes(cleanKeyword);
         });
 
-        // Render ulang film yang berhasil difilter
         renderFeed(filteredMovies);
-        
-        // Setiap kali hasil pencarian berubah, paksa scroll container ke atas agar film pertama langsung kelihatan
-        feedContainer.scrollTop = 0;
+        feedContainer.scrollTop = 0; // Maksa hasil pencarian balik ke film pertama (paling atas)
     });
 }
 
-// FIX HANDLER TOMBOL NAVIGASI SEARCH
+// 2. Logika Tombol Menu Search (Buka/Tutup Kolom)
 const navSearchBtn = document.getElementById('navSearch');
 if (navSearchBtn) {
     navSearchBtn.addEventListener('click', (e) => {
@@ -345,83 +336,24 @@ if (navSearchBtn) {
         if (!isShowing) {
             if (searchInput) searchInput.value = "";
             renderFeed(moviesData);
-            feedContainer.scrollTop = 0; // Pastikan balik ke atas saat search ditutup
+            feedContainer.scrollTop = 0; 
         } else {
             if (searchInput) setTimeout(() => searchInput.focus(), 100);
         }
     });
 }
 
-// ============================================================================
-// COPASTE KODE INI UNTUK MENGGANTIKAN KODE PENCARIAN & TOMBOL HOME YANG LAMA
-// ============================================================================
-const searchInput = document.getElementById('searchInput');
-
-if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        // Bersihkan spasi di awal/akhir dan ubah ke huruf kecil
-        const keyword = e.target.value.toLowerCase().trim();
-        
-        // JIKA KOLOM KOSONG: Kembalikan ke semua film asli & paksa scroll ke paling atas
-        if (keyword === "") {
-            renderFeed(moviesData);
-            feedContainer.scrollTop = 0; // Reset posisi scroll ke atas
-            return;
-        }
-
-        // PROSES FILTER YANG LEBIH SENSI:
-        // Kita hilangkan semua spasi saat mencocokkan kata agar ketikan "supermario" tetap bisa memunculkan "Super Mario"
-        const cleanKeyword = keyword.replace(/\s+/g, '');
-
-        const filteredMovies = moviesData.filter(movie => {
-            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-            
-            // Ambil judul (utamakan data lokal json)
-            const rawTitle = customData ? customData.title : movie.title;
-            
-            // Bikin judul bersih tanpa spasi dan huruf kecil semua
-            const cleanTitle = rawTitle.toLowerCase().replace(/\s+/g, '');
-            
-            // Cek kecocokan sensitif huruf
-            return cleanTitle.includes(cleanKeyword);
-        });
-
-        // Render ulang film yang berhasil difilter
-        renderFeed(filteredMovies);
-        
-        // Setiap kali hasil pencarian berubah, paksa scroll container ke atas agar film pertama langsung kelihatan
-        feedContainer.scrollTop = 0;
-    });
-}
-
-// HANDLER TOMBOL NAVIGASI SEARCH
-const navSearchBtn = document.getElementById('navSearch');
-if (navSearchBtn) {
-    navSearchBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isShowing = searchContainer.classList.toggle('show');
-        
-        if (!isShowing) {
-            if (searchInput) searchInput.value = "";
-            renderFeed(moviesData);
-            feedContainer.scrollTop = 0; // Pastikan balik ke atas saat search ditutup
-        } else {
-            if (searchInput) setTimeout(() => searchInput.focus(), 100);
-        }
-    });
-}
-
-// HANDLER TOMBOL HOME (FIX AUTOSCROLL KE ATAS TANPA MACET)
+// 3. Logika Tombol Menu Home (Auto-Scroll Lancar ke Paling Atas)
 const navHomeBtn = document.getElementById('navHome');
 if (navHomeBtn) {
     navHomeBtn.addEventListener('click', () => {
-        // Jika sedang dalam mode pencarian, bersihkan dulu kolom pencariannya
+        // Kalau user lagi nyari film, bersihkan dulu kolom pencariannya otomatis
         if (searchInput && searchInput.value.trim() !== "") {
             searchInput.value = "";
             renderFeed(moviesData);
         }
         
-        // Kombinasi paksa scroll menggunakan 3 metode browser sekaligus agar tidak macet
+        // Paksa scroll container kembali ke koordinat 0 (paling atas)
         feedContainer.style.scrollBehavior = 'smooth';
         feedContainer.scrollTop = 0; 
         feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
