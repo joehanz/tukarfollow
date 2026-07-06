@@ -8,13 +8,16 @@ fetch("movies.json")
       card.innerHTML = `
         <img src="${movie.image}" alt="${movie.title}" 
              class="w-screen h-screen object-cover">
-        <div class="absolute top-6 left-6">
+        
+        <!-- Overlay info -->
+        <div class="absolute bottom-20 left-6">
           <h2 class="text-2xl font-bold">${movie.title}</h2>
           <p class="text-sm text-gray-300">${movie.genre.join(", ")} • ${movie.country}</p>
-          <button onclick="openVideo('${movie.iframe}')"
-                  class="mt-2 px-4 py-2 bg-red-600 rounded">Watch Now</button>
         </div>
-        <div class="absolute right-6 bottom-24 flex flex-col space-y-4 text-2xl">
+
+        <!-- Floating actions kanan -->
+        <div class="absolute right-6 bottom-24 flex flex-col space-y-6 text-3xl">
+          <button onclick="openVideo('${movie.iframe}')">▶️</button>
           <span>❤️</span>
           <span>💬</span>
           <span>🔁</span>
