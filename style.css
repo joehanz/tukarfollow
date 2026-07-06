@@ -196,3 +196,74 @@
         }
 
         .panel-content i { color: #fff; flex-shrink: 0; }
+
+/* --- FITUR DESKTOP DETECTOR & NAVIGASI PANAH DI ATAS INFO --- */
+
+/* Notifikasi Layar Penuh Desktop */
+.desktop-notifier {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none; 
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+}
+
+/* Box Notifikasi dengan Efek Turun & Mental (Bounce) */
+.notifier-content {
+    background: #1c1c1e;
+    border: 1px solid #2c2c2e;
+    padding: 30px;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: bounceDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.notifier-content i { color: #34c759; margin-bottom: 15px; }
+.notifier-content h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
+.notifier-content p { font-size: 0.9rem; color: #aaa; line-height: 1.5; margin-bottom: 20px; }
+
+.notifier-content button {
+    background: #fff; color: #000; border: none; padding: 12px 30px;
+    font-size: 0.95rem; font-weight: bold; border-radius: 25px; cursor: pointer;
+    transition: transform 0.2s; width: 100%;
+}
+.notifier-content button:active { transform: scale(0.95); }
+
+@keyframes bounceDown {
+    0% { transform: translateY(-150%); opacity: 0; }
+    60% { transform: translateY(10%); opacity: 1; }
+    80% { transform: translateY(-5%); }
+    100% { transform: translateY(0); }
+}
+
+/* Container Panah Internal yang Berada di Atas Menu Info */
+.arrow-actions-container {
+    display: none; /* Dikontrol via JS: hanya muncul di mode desktop */
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px; /* Memberi jarak ke menu info di bawahnya */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.inline-scroll-arrow {
+    width: 45px; height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inline-scroll-arrow:hover {
+    background: #fff; color: #000; transform: scale(1.1);
+}
