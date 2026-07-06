@@ -294,32 +294,48 @@ feedContainer.addEventListener('scroll', () => {
 });
 
 // ========================================================
-// PATCH FITUR PENCARIAN REAL-TIME (SUDAH DIOPTIMALKAN)
+// REVISI FITUR PENCARIAN REAL-TIME & FIX TOMBOL HOME
 // ========================================================
 const searchInput = document.getElementById('searchInput');
 
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
+        // Bersihkan spasi di awal/akhir dan ubah ke huruf kecil
         const keyword = e.target.value.toLowerCase().trim();
         
-        // Jika kolom pencarian kosong, kembalikan ke data utama
+        // JIKA KOLOM KOSONG: Kembalikan ke semua film asli & paksa scroll ke paling atas
         if (keyword === "") {
             renderFeed(moviesData);
+            feedContainer.scrollTop = 0; // Reset posisi scroll ke atas
             return;
         }
 
-        // Filter data film gabungan TMDB & JSON kustom
+        // PROSES FILTER YANG LEBIH SENSI:
+        // Kita hilangkan semua spasi saat mencocokkan kata agar ketikan "supermario" tetap bisa memunculkan "Super Mario"
+        const cleanKeyword = keyword.replace(/\s+/g, '');
+
         const filteredMovies = moviesData.filter(movie => {
             const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-            const titleToCheck = customData ? customData.title.toLowerCase() : movie.title.toLowerCase();
-            return titleToCheck.includes(keyword);
+            
+            // Ambil judul (utamakan data lokal json)
+            const rawTitle = customData ? customData.title : movie.title;
+            
+            // Bikin judul bersih tanpa spasi dan huruf kecil semua
+            const cleanTitle = rawTitle.toLowerCase().replace(/\s+/g, '');
+            
+            // Cek kecocokan sensitif huruf
+            return cleanTitle.includes(cleanKeyword);
         });
 
+        // Render ulang film yang berhasil difilter
         renderFeed(filteredMovies);
+        
+        // Setiap kali hasil pencarian berubah, paksa scroll container ke atas agar film pertama langsung kelihatan
+        feedContainer.scrollTop = 0;
     });
 }
 
-// Handler Tombol Navigasi Search (Hapus yang lama, pakai yang ini saja)
+// FIX HANDLER TOMBOL NAVIGASI SEARCH
 const navSearchBtn = document.getElementById('navSearch');
 if (navSearchBtn) {
     navSearchBtn.addEventListener('click', (e) => {
@@ -329,11 +345,89 @@ if (navSearchBtn) {
         if (!isShowing) {
             if (searchInput) searchInput.value = "";
             renderFeed(moviesData);
+            feedContainer.scrollTop = 0; // Pastikan balik ke atas saat search ditutup
         } else {
             if (searchInput) setTimeout(() => searchInput.focus(), 100);
         }
     });
 }
+
+// ============================================================================
+// COPASTE KODE INI UNTUK MENGGANTIKAN KODE PENCARIAN & TOMBOL HOME YANG LAMA
+// ============================================================================
+const searchInput = document.getElementById('searchInput');
+
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        // Bersihkan spasi di awal/akhir dan ubah ke huruf kecil
+        const keyword = e.target.value.toLowerCase().trim();
+        
+        // JIKA KOLOM KOSONG: Kembalikan ke semua film asli & paksa scroll ke paling atas
+        if (keyword === "") {
+            renderFeed(moviesData);
+            feedContainer.scrollTop = 0; // Reset posisi scroll ke atas
+            return;
+        }
+
+        // PROSES FILTER YANG LEBIH SENSI:
+        // Kita hilangkan semua spasi saat mencocokkan kata agar ketikan "supermario" tetap bisa memunculkan "Super Mario"
+        const cleanKeyword = keyword.replace(/\s+/g, '');
+
+        const filteredMovies = moviesData.filter(movie => {
+            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
+            
+            // Ambil judul (utamakan data lokal json)
+            const rawTitle = customData ? customData.title : movie.title;
+            
+            // Bikin judul bersih tanpa spasi dan huruf kecil semua
+            const cleanTitle = rawTitle.toLowerCase().replace(/\s+/g, '');
+            
+            // Cek kecocokan sensitif huruf
+            return cleanTitle.includes(cleanKeyword);
+        });
+
+        // Render ulang film yang berhasil difilter
+        renderFeed(filteredMovies);
+        
+        // Setiap kali hasil pencarian berubah, paksa scroll container ke atas agar film pertama langsung kelihatan
+        feedContainer.scrollTop = 0;
+    });
+}
+
+// HANDLER TOMBOL NAVIGASI SEARCH
+const navSearchBtn = document.getElementById('navSearch');
+if (navSearchBtn) {
+    navSearchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isShowing = searchContainer.classList.toggle('show');
+        
+        if (!isShowing) {
+            if (searchInput) searchInput.value = "";
+            renderFeed(moviesData);
+            feedContainer.scrollTop = 0; // Pastikan balik ke atas saat search ditutup
+        } else {
+            if (searchInput) setTimeout(() => searchInput.focus(), 100);
+        }
+    });
+}
+
+// HANDLER TOMBOL HOME (FIX AUTOSCROLL KE ATAS TANPA MACET)
+const navHomeBtn = document.getElementById('navHome');
+if (navHomeBtn) {
+    navHomeBtn.addEventListener('click', () => {
+        // Jika sedang dalam mode pencarian, bersihkan dulu kolom pencariannya
+        if (searchInput && searchInput.value.trim() !== "") {
+            searchInput.value = "";
+            renderFeed(moviesData);
+        }
+        
+        // Kombinasi paksa scroll menggunakan 3 metode browser sekaligus agar tidak macet
+        feedContainer.style.scrollBehavior = 'smooth';
+        feedContainer.scrollTop = 0; 
+        feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
 // Booting Aplikasi
 async function init() {
     detectDevice(); // Cek ukuran layar duluan sebelum merender halaman
