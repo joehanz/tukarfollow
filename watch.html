@@ -280,22 +280,23 @@
        ==================================== */
     .subtitle-box {
       position: absolute;
-      bottom: 15px; /* Jarak melayang di atas batas bawah player */
+      bottom: 20px; /* Jarak melayang di atas batas bawah player */
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: #ffdd57; /* Warna kuning teks biar kontras */
-      padding: 6px 14px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #ffffff; 
+      padding: 8px 16px;
       border-radius: 6px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
       text-align: center;
       max-width: 85%;
       z-index: 10;
-      display: none; /* Tersembunyi sebelum diaktifkan */
+      display: none; 
       pointer-events: none; /* Biar tidak mengganggu klik pada player */
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      line-height: 1.4;
     }
     .btn-translate-wrapper {
       position: absolute;
@@ -335,13 +336,10 @@
 
   <div class="watch-layout">
     <div class="video-player-section" style="position: relative;">
-      <!-- Tempat Iframe vsembed di-render oleh JS -->
       <div id="playerArea" style="width:100%; height:100%;"></div>
       
-      <!-- Kotak Teks Terjemahan Melayang -->
       <div id="customSubtitle" class="subtitle-box">Menerjemahkan suara film...</div>
       
-      <!-- Tombol Aktifkan di Bawah Player -->
       <div class="btn-translate-wrapper">
         <button id="btnTranslate" class="btn-translate">
           <i data-lucide="languages" size="14"></i> Terjemahkan AI
@@ -430,22 +428,18 @@
       setupVideoPlayer(currentMovieId);
       loadComments(currentMovieId);
 
-      // ============================================================================
-      // PASANG DETEKSI ENTER DI SINI (ANTI TOMBOL TAMBAHAN)
-      // ============================================================================
-      // Karena elemen textarea berada di dalam panel yang dinamis / statis, kita panggil saat init
+      // PASANG DETEKSI ENTER DI SINI
       setTimeout(() => {
         const commentTextArea = document.getElementById('commentText');
         if (commentTextArea) {
           commentTextArea.addEventListener('keydown', function(event) {
-            // Jika menekan Enter TANPA Shift (Shift+Enter buat baris baru)
             if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault(); // Mencegah enter bikin baris baru di kolom teks
-              submitComment(); // Langsung eksekusi kirim komentar
+              event.preventDefault(); 
+              submitComment(); 
             }
           });
         }
-      }, 500); // Diberi jeda dikit biar DOM ke-render sempurna dulu
+      }, 500);
 
       // Tarik film populer TMDB untuk cache pencarian biar sensitif
       try {
@@ -509,7 +503,6 @@
         return;
       }
 
-      // Animasi Loading
       commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim komentar baru...</div>';
       closeCommentForm();
 
@@ -520,8 +513,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tmdbId: currentMovieId, nama: nama, komentar: komentar })
         });
-        
-        // Bersihkan form & reload otomatis setelah jeda aman
         textInput.value = '';
         setTimeout(() => { loadComments(currentMovieId); }, 1200);
       } catch(e) {
@@ -530,7 +521,7 @@
       }
     }
 
-    // 6. Kontrol Form Input Komen (Slide Up / Slide Down)
+    // 6. Kontrol Form Input Komen
     function openCommentForm() {
       infoPanel.classList.add('show');
       panelBackdrop.classList.add('active');
@@ -543,8 +534,6 @@
     // ============================================================================
     // LOGIKA NAVIGASI & SEARCH LAYER
     // ============================================================================
-
-    // Tombol Cari (Buka Tutup Layer)
     document.getElementById('navSearch').addEventListener('click', (e) => {
       e.stopPropagation();
       const isShowing = searchContainer.classList.toggle('show');
@@ -556,11 +545,9 @@
       }
     });
 
-    // Mesin Pencari Real-Time Super Sensitif Menutupi Layar (Kecuali Nav Bawah)
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         const keyword = e.target.value.toLowerCase().trim();
-        
         if (keyword === "") {
           searchResultsLayer.classList.remove('active');
           return;
@@ -569,7 +556,6 @@
         searchResultsLayer.classList.add('active');
         const cleanKeyword = keyword.replace(/\s+/g, '');
 
-        // Filter data gabungan dari cache & custom data
         const filtered = allMoviesCache.filter(movie => {
           const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
           const rawTitle = customData ? customData.title : movie.title;
@@ -600,24 +586,20 @@
       });
     }
 
-    // Navigasi Pindah ke Film Lain saat Hasil Pencarian diklik
     function navigateToMovie(id) {
       window.location.href = `watch.html?id=${id}`;
     }
 
-    // Tombol + (Memicu Form Komentar Naik)
     document.getElementById('navAddComment').addEventListener('click', openCommentForm);
 
-    // Tombol Home (Kembali Ke Halaman Sebelumnya, Bukan Scroll Up)
     document.getElementById('navHome').addEventListener('click', () => {
       if (document.referrer && document.referrer.includes(window.location.hostname)) {
-        window.history.back(); // Balik ke halaman feed posisi terakhir
+        window.history.back();
       } else {
-        window.location.href = 'index.html'; // Fallback jika ketik link langsung
+        window.location.href = 'index.html';
       }
     });
 
-    // Inisialisasi Lucide Icons & Data Booting
     window.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
       loadInitialData();
@@ -626,80 +608,120 @@
 
   <script>
     // ============================================================================
-    // LOGIKA CAPTION TRANSLATOR (MENGGUNAKAN WEB SPEECH API / SIMULASI KHUSUS IFRAME)
+    // REVISI LIVE TRANSLATOR V5 (FIXED MUX MIC LOCK, CORS & BYPASS INTERIM TEXT)
     // ============================================================================
     document.addEventListener('DOMContentLoaded', () => {
       const btnTranslate = document.getElementById('btnTranslate');
       const subtitleBox = document.getElementById('customSubtitle');
       let isTranslating = false;
       let recognition = null;
+      let localStream = null;
 
       if (btnTranslate) {
-        btnTranslate.addEventListener('click', () => {
+        btnTranslate.addEventListener('click', async () => {
           if (!isTranslating) {
-            // Aktifkan Fitur Terjemahan
-            isTranslating = true;
-            btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
-            btnTranslate.style.background = '#ff6b6b';
-            subtitleBox.style.display = 'block';
-            subtitleBox.innerText = "Mendengarkan audio sekitar / video...";
+            try {
+              // Izin mikrofon perangkat dikunci paksa agar tidak bentrok dengan iframe
+              localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              
+              isTranslating = true;
+              btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
+              btnTranslate.style.background = '#ff6b6b';
+              subtitleBox.style.display = 'block';
+              subtitleBox.innerText = "🎙️ Mendengarkan suara film...";
 
-            // Inisialisasi Web Speech API bawaan browser umum
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
-              recognition = new SpeechRecognition();
-              recognition.continuous = true;
-              recognition.interimResults = true;
-              recognition.lang = 'en-US'; // Set asal suara video (biasanya Inggris)
+              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+              if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true; // Aktifkan Running Text berjalan cepat
+                recognition.lang = 'en-US'; 
 
-              recognition.onresult = async (event) => {
-                let textHasilDengar = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                  if (event.results[i].isFinal) {
-                    textHasilDengar = event.results[i][0].transcript;
-                    
-                    // PROSES TERJEMAHAN BAHASA
-                    // Di sini Anda bisa menembak API translasi pilihan Anda (Misal Gemini / Google Translate)
-                    subtitleBox.innerText = "...";
-                    const hasilTerjemahan = await panggilApiTranslasi(textHasilDengar);
+                recognition.onresult = async (event) => {
+                  let interimTranscript = '';
+                  let finalTranscript = '';
+
+                  for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcriptPart = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                      finalTranscript += transcriptPart;
+                    } else {
+                      interimTranscript += transcriptPart;
+                    }
+                  }
+
+                  // Teks berjalan Bahasa Inggris (Running Text Putih)
+                  if (interimTranscript.trim() !== '') {
+                    subtitleBox.style.color = '#ffffff'; 
+                    subtitleBox.innerText = "🗣️ " + interimTranscript;
+                  }
+
+                  // DETEKSI AUTO-CORRECT & BYPASS: Langsung terjemahkan begitu ada kata tertangkap
+                  let teksTarget = finalTranscript || interimTranscript;
+                  if (teksTarget.trim() !== '' && teksTarget.split(' ').length > 2) { 
+                    // Kirim ke MyMemory API (Aman dari Blokir Keamanan CORS Browser)
+                    const hasilTerjemahan = await panggilApiTranslasiAman(teksTarget);
+                    subtitleBox.style.color = '#ffdd57'; // Berubah Kuning jika berhasil terjemah
                     subtitleBox.innerText = hasilTerjemahan;
                   }
-                }
-              };
+                };
 
-              recognition.onerror = (err) => {
-                console.warn("Speech recognition error:", err);
-              };
+                recognition.onerror = (err) => {
+                  console.warn("Speech API Error:", err.error);
+                  if (isTranslating) restartRecognition();
+                };
 
-              recognition.start();
-            } else {
-              subtitleBox.innerText = "Browser Anda tidak mendukung Web Speech API.";
+                recognition.onend = () => {
+                  if (isTranslating) restartRecognition();
+                };
+
+                recognition.start();
+              } else {
+                subtitleBox.innerText = "Browser tidak mendukung Speech API.";
+              }
+
+            } catch (micError) {
+              alert("Gagal mengakses mikrofon. Harap berikan izin mic pada browser Anda!");
             }
 
           } else {
-            // Matikan Fitur Terjemahan
+            // Matikan total fitur & padamkan lampu indikator mikrofon browser
             isTranslating = false;
             btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
             btnTranslate.style.background = '#38b6ff';
             subtitleBox.style.display = 'none';
+            
             if (recognition) {
               recognition.stop();
+              recognition = null;
+            }
+            if (localStream) {
+              localStream.getTracks().forEach(track => track.stop());
             }
           }
           if (window.lucide) lucide.createIcons();
         });
       }
+
+      function restartRecognition() {
+        try {
+          if (recognition) {
+            recognition.stop();
+            setTimeout(() => { if (isTranslating && recognition) recognition.start(); }, 300);
+          }
+        } catch(e){}
+      }
     });
 
-    // Fungsi simulasi hit API translasi (Ganti isi fungsi ini dengan endpoint backend Anda nantinya)
-    async function panggilApiTranslasi(text) {
-      // Contoh jika Anda ingin menggunakan sistem gratis cepat pakai MyMemory API:
+    // Jalur hit API translasi yang aman tanpa terhalang CORS browser
+    async function panggilApiTranslasiAman(text) {
       try {
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
+        if (!res.ok) return text;
         const data = await res.json();
         return data.responseData.translatedText || text;
       } catch (e) {
-        return "[Gagal Menerjemahkan]: " + text;
+        return text;
       }
     }
   </script>
