@@ -399,56 +399,24 @@
       } catch(e) { console.error("Gagal membuat cache pencarian."); }
     }
 
-   <!-- Area player -->
-<div id="playerArea"></div>
+// 3. Setup Pemutar Video (77vh)
+    function setupVideoPlayer(tmdbId) {
+      const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
+      playerArea.innerHTML = ''; 
 
-<!-- Area subtitle -->
-<div id="subtitleArea" style="width:80%;margin:20px auto;background:#111;color:#fff;padding:10px;border-radius:6px;font-family:sans-serif;">
-  Subtitle akan muncul di sini...
-</div>
-
-<script>
-  // 3. Setup Pemutar Video (77vh)
-  function setupVideoPlayer(tmdbId) {
-    const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-    const playerArea = document.getElementById("playerArea");
-    const subtitleArea = document.getElementById("subtitleArea");
-    playerArea.innerHTML = ''; 
-    subtitleArea.innerHTML = 'Loading subtitle…';
-
-    if (customMovie) {
-      if (customMovie.iframe && customMovie.iframe.trim() !== "") {
-        playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-      } else if (customMovie.video && customMovie.video.trim() !== "") {
-        playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
+      if (customMovie) {
+        if (customMovie.iframe && customMovie.iframe.trim() !== "") {
+          playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else if (customMovie.video && customMovie.video.trim() !== "") {
+          playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
+        } else {
+          playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+        }
       } else {
         playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
       }
-    } else {
-      playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
     }
-
-    // Load file subtitle sesuai tmdbId
-    fetch(`subtitles/${tmdbId}.vtt`)
-      .then(res => res.text())
-      .then(data => {
-        const lines = data.split("\n");
-        let html = "";
-        lines.forEach(line => {
-          if (line && !line.includes("-->") && line !== "WEBVTT") {
-            html += `<div>${line}</div>`;
-          }
-        });
-        subtitleArea.innerHTML = html || "Subtitle tidak tersedia.";
-      })
-      .catch(() => {
-        subtitleArea.innerHTML = "Subtitle tidak ditemukan.";
-      });
-  }
-</script>
-
-
-
+    
     // 4. Ambil Komentar dari Google Spreadsheet via Apps Script
     async function loadComments(tmdbId) {
       commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar netizen...</div>';
