@@ -2,86 +2,157 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Tampilkan Subtitle dari GitHub</title>
+  <title>Subtitle Berjalan Otomatis</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 750px; margin: 30px auto; padding: 0 20px; }
-    button { padding: 10px 18px; font-size: 16px; cursor: pointer; background: #2ea44f; color: white; border: none; border-radius: 6px; }
-    button:hover { background: #2c974b; }
-    #konten-subtitle {
-      margin-top: 25px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      max-height: 550px;
-      overflow-y: auto;
-      border: 1px solid #e1e4e8;
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 800px; 
+      margin: 40px auto; 
+      padding: 0 20px; 
+      text-align: center;
     }
-    .item { margin: 12px 0; padding: 10px; border-bottom: 1px solid #ddd; }
-    .waktu { font-weight: bold; color: #0366d6; margin-bottom: 4px; }
-    .teks { color: #24292e; line-height: 1.5; }
+    .waktu {
+      font-size: 28px;
+      font-weight: bold;
+      color: #222;
+      margin: 20px 0;
+    }
+    .kotak-teks {
+      font-size: 22px;
+      line-height: 1.7;
+      min-height: 100px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin: 25px 0;
+      color: #000;
+      border: 1px solid #e0e0e0;
+    }
+    button {
+      padding: 12px 22px;
+      font-size: 17px;
+      margin: 0 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+    .mulai { background: #28a745; }
+    .jeda { background: #ffc107; color: #222; }
+    .ulang { background: #17a2b8; }
   </style>
 </head>
 <body>
 
-  <h3>Subtitle dari GitHub</h3>
-  <button onclick="muatDariGitHub()">Tampilkan Subtitle</button>
-  <div id="konten-subtitle"></div>
+  <h2>Subtitle Berjalan Otomatis</h2>
+
+  <div class="waktu" id="tampilWaktu">00:00:00</div>
+
+  <div class="kotak-teks" id="tampilSubtitle">
+    Tekan tombol Mulai untuk memulai...
+  </div>
+
+  <button class="mulai" onclick="mulai()">Mulai</button>
+  <button class="jeda" onclick="jeda()">Jeda</button>
+  <button class="ulang" onclick="ulang()">Ulang</button>
 
 <script>
-// GANTI BAGIAN INI dengan tautan RAW file .vtt kamu di GitHub
-const URL_FILE_VTT = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt";
+// Link langsung ke file subtitle kamu
+const URL_VTT = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt";
 
-async function muatDariGitHub() {
-  const tampilan = document.getElementById("konten-subtitle");
-  tampilan.innerHTML = "<p>Memuat data dari GitHub...</p>";
+let daftarSub = [];
+let waktuMulai = 0;
+let timer = null;
+let sedangJalan = false;
 
+// Ubah format waktu (00:00:30.547) jadi detik
+function keDetik(strWaktu) {
+  const bagian = strWaktu.split(':');
+  const jam = Number(bagian[0]);
+  const menit = Number(bagian[1]);
+  const detik = Number(bagian[2]);
+  return jam * 3600 + menit * 60 + detik;
+}
+
+// Ubah detik jadi format jam:menit:detik
+function keJam(detik) {
+  const j = Math.floor(detik / 3600).toString().padStart(2, '0');
+  const m = Math.floor((detik % 3600) / 60).toString().padStart(2, '0');
+  const d = Math.floor(detik % 60).toString().padStart(2, '0');
+  return `${j}:${m}:${d}`;
+}
+
+// Baca dan olah file VTT
+async function muatSubtitle() {
   try {
-    const res = await fetch(https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt);
-    if (!res.ok) throw new Error("File tidak ditemukan atau tidak bisa diakses");
+    const res = await fetch(URL_VTT);
+    if (!res.ok) throw new Error("File tidak bisa diakses");
 
-    const teksVTT = await res.text();
-    const daftarSub = prosesVTT(teksVTT);
+    const teks = await res.text();
+    const baris = teks.split('\n').map(b => b.trim());
+    let i = 0;
+    daftarSub = [];
 
-    tampilan.innerHTML = "";
-    daftarSub.forEach(baris => {
-      tampilan.innerHTML += `
-        <div class="item">
-          <div class="waktu">${baris.waktu}</div>
-          <div class="teks">${baris.teks}</div>
-        </div>
-      `;
-    });
+    if (baris[0].toUpperCase() === "WEBVTT") i++;
 
-  } catch (err) {
-    tampilan.innerHTML = `<p style="color:red;">Gagal memuat: ${err.message}</p>`;
-  }
-}
-
-// Fungsi mengurai format VTT
-function prosesVTT(teks) {
-  const hasil = [];
-  const baris = teks.split("\n").map(b => b.trim());
-  let i = 0;
-
-  // Lewati baris awal "WEBVTT"
-  while (i < baris.length && baris[i] !== "" && baris[i].toUpperCase() !== "WEBVTT") i++;
-  i++;
-
-  while (i < baris.length) {
-    if (baris[i].includes("-->")) {
-      const waktu = baris[i];
-      i++;
-      let teksSub = "";
-      while (i < baris.length && baris[i] !== "") {
-        teksSub += baris[i] + " ";
+    while (i < baris.length) {
+      if (baris[i].includes("-->")) {
+        const [awalStr, akhirStr] = baris[i].split('-->').map(s => s.trim());
         i++;
+        let teksSub = "";
+        while (i < baris.length && baris[i] !== "") {
+          teksSub += baris[i] + " ";
+          i++;
+        }
+        daftarSub.push({
+          awal: keDetik(awalStr),
+          akhir: keDetik(akhirStr),
+          teks: teksSub.trim()
+        });
       }
-      hasil.push({ waktu, teks: teksSub.trim() });
+      i++;
     }
-    i++;
+  } catch (err) {
+    document.getElementById("tampilSubtitle").innerHTML = "Gagal memuat: " + err.message;
   }
-  return hasil;
 }
+
+// Cari teks yang harus tampil pada waktu sekarang
+function cekSubtitle(waktuSekarang) {
+  const elemen = document.getElementById("tampilSubtitle");
+  const cocok = daftarSub.find(s => waktuSekarang >= s.awal && waktuSekarang <= s.akhir);
+  elemen.innerHTML = cocok ? cocok.teks : "";
+}
+
+// Tombol mulai
+function mulai() {
+  if (!daftarSub.length) { muatSubtitle().then(mulai); return; }
+  if (sedangJalan) return;
+  sedangJalan = true;
+  const waktuAwal = Date.now() - waktuMulai * 1000;
+  timer = setInterval(() => {
+    waktuMulai = (Date.now() - waktuAwal) / 1000;
+    document.getElementById("tampilWaktu").textContent = keJam(waktuMulai);
+    cekSubtitle(waktuMulai);
+  }, 100);
+}
+
+// Tombol jeda
+function jeda() {
+  sedangJalan = false;
+  clearInterval(timer);
+}
+
+// Tombol ulang dari awal
+function ulang() {
+  jeda();
+  waktuMulai = 0;
+  document.getElementById("tampilWaktu").textContent = "00:00:00";
+  document.getElementById("tampilSubtitle").innerHTML = "";
+}
+
+// Muat otomatis saat halaman dibuka
+muatSubtitle();
 </script>
 
 </body>
