@@ -355,7 +355,6 @@
           <button class="ctrl-btn" id="btnMain">▶️</button>
           <button class="ctrl-btn" id="btnMaju">⏩</button>
           <div class="time-digital" id="jamTayang">00:00:00</div>
-          <!-- ✅ TOMBOL LAYAR PENUH BARU -->
           <button class="ctrl-btn" id="btnFullscreen">⛶</button>
         </div>
       </div>
@@ -432,6 +431,7 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
+    let sinkronInterval = null; // ✅ Khusus untuk deteksi waktu video
 
     // ====================================
     // FUNGSI SUBTITLE
@@ -478,6 +478,37 @@
       perbaruiTampilan();
     }
 
+    // ✅ FUNGSI UTAMA: SINKRONISASI OTOMATIS DENGAN VIDEO
+    function mulaiSinkronisasi() {
+      if (sinkronInterval) clearInterval(sinkronInterval);
+      sinkronInterval = setInterval(() => {
+        try {
+          // Minta waktu saat ini dari video di dalam iframe
+          filmIframe.contentWindow.postMessage({ cmd: "getCurrentTime" }, "*");
+        } catch (e) {
+          // Jika tidak bisa akses, tetap pakai waktu internal
+        }
+      }, 800); // Cek setiap 0,8 detik agar responsif
+    }
+
+    // ✅ Terima pesan waktu dari video
+    window.addEventListener("message", (event) => {
+      if (event.data && typeof event.data.currentTime === "number") {
+        const waktuBaru = Math.round(event.data.currentTime);
+        // Update hanya jika berbeda lebih dari 1 detik (hindari berkedip)
+        if (Math.abs(waktuBaru - waktuSekarang) > 1) {
+          waktuSekarang = waktuBaru;
+          perbaruiTampilan();
+        }
+        // Sesuaikan status main/jeda
+        if (event.data.paused && sedangMain) {
+          hentikanSub();
+        } else if (!event.data.paused && !sedangMain) {
+          mulaiSub();
+        }
+      }
+    });
+
     // Baca file .vtt
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
@@ -511,6 +542,7 @@
           }
           i++;
         }
+        mulaiSinkronisasi(); // Jalankan sinkron setelah sub siap
       } catch {
         subText.textContent = "Subtitle tidak tersedia";
       }
@@ -520,15 +552,22 @@
     btnMain.addEventListener('click', () => {
       if (sedangMain) {
         hentikanSub();
-        try { filmIframe.contentWindow.postMessage('pause', '*'); } catch (e) {}
+        try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
       } else {
         mulaiSub();
-        try { filmIframe.contentWindow.postMessage('play', '*'); } catch (e) {}
+        try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
       }
     });
 
-    btnMundur.addEventListener('click', () => geserWaktu(-10));
-    btnMaju.addEventListener('click', () => geserWaktu(+10));
+    btnMundur.addEventListener('click', () => {
+      geserWaktu(-10);
+      try { filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*"); } catch (e) {}
+    });
+
+    btnMaju.addEventListener('click', () => {
+      geserWaktu(+10);
+      try { filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*"); } catch (e) {}
+    });
 
     // ✅ FUNGSI LAYAR PENUH
     btnFullscreen.addEventListener('click', () => {
@@ -536,7 +575,6 @@
           !document.webkitFullscreenElement && 
           !document.mozFullScreenElement && 
           !document.msFullscreenElement) {
-        // Masuk layar penuh
         if (videoWrapper.requestFullscreen) {
           videoWrapper.requestFullscreen();
         } else if (videoWrapper.webkitRequestFullscreen) {
@@ -546,9 +584,7 @@
         } else if (videoWrapper.msRequestFullscreen) {
           videoWrapper.msRequestFullscreen();
         }
-        btnFullscreen.textContent = "⛶";
       } else {
-        // Keluar layar penuh
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -558,7 +594,6 @@
         } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
         }
-        btnFullscreen.textContent = "⛶";
       }
     });
 
