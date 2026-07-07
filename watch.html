@@ -11,7 +11,7 @@
 
   <style>
     /* ====================================
-       1. DASAR
+       DASAR
        ==================================== */
     * {
       margin: 0;
@@ -29,7 +29,7 @@
     }
 
     /* ====================================
-       2. AREA VIDEO & POSISI SUBTITLE
+       KONTAINER UTAMA VIDEO + SUBTITLE
        ==================================== */
     .watch-layout {
       display: flex;
@@ -38,28 +38,29 @@
       width: 100%;
     }
 
-    .video-player-section {
+    /* ✅ Ini yang dijadikan target fullscreen */
+    .video-container {
       width: 100%;
       height: 77vh;
       background: #000;
-      position: relative; /* ✅ Jadi acuan posisi subtitle */
+      position: relative;
       overflow: hidden;
     }
 
-    .video-player-section iframe, 
-    .video-player-section video {
+    .video-container iframe {
       width: 100%;
       height: 100%;
       border: none;
+      display: block;
     }
 
-    /* ✅ SUBTITLE & KONTROL: DI DALAM AREA VIDEO, PALING DEPAN */
-    .subtitle-wrapper {
+    /* ✅ SUBTITLE & KONTROL: Di dalam kontainer yang sama */
+    .subtitle-overlay {
       position: absolute;
       bottom: 5%;
       left: 0;
       width: 100%;
-      z-index: 9999; /* ✅ Selalu di depan */
+      z-index: 9999;
       pointer-events: none;
       display: flex;
       flex-direction: column;
@@ -67,7 +68,6 @@
       gap: 12px;
     }
 
-    /* Teks subtitle: latar hanya mengikuti tulisan */
     .subtitle-text {
       display: inline-block;
       background: rgba(0, 0, 0, 0.75);
@@ -81,9 +81,9 @@
       max-width: 90%;
       text-align: center;
       word-wrap: break-word;
+      pointer-events: auto;
     }
 
-    /* Panel kontrol gaya digital */
     .subtitle-controls {
       display: flex;
       align-items: center;
@@ -123,8 +123,17 @@
       text-align: center;
     }
 
+    /* ✅ Tetap terlihat saat fullscreen */
+    .video-container:fullscreen .subtitle-overlay,
+    .video-container:-webkit-full-screen .subtitle-overlay,
+    .video-container:-moz-full-screen .subtitle-overlay,
+    .video-container:-ms-fullscreen .subtitle-overlay {
+      position: absolute;
+      z-index: 99999;
+    }
+
     /* ====================================
-       3. BAGIAN LAINNYA
+       BAGIAN LAINNYA
        ==================================== */
     .comments-section {
       width: 100%;
@@ -336,28 +345,32 @@
     .nav-item span {
       margin-top: 4px;
     }
-
-    /* ✅ Tetap terlihat saat layar penuh */
-    .video-player-section:fullscreen .subtitle-wrapper,
-    .video-player-section:-webkit-full-screen .subtitle-wrapper,
-    .video-player-section:-moz-full-screen .subtitle-wrapper {
-      position: absolute;
-      z-index: 99999;
-    }
   </style>
 </head>
 <body>
 
-  <!-- ✅ SUBTITLE & KONTROL: DI DALAM AREA VIDEO -->
-  <div class="video-player-section" id="playerArea">
-    <div class="subtitle-wrapper" id="subWrapper">
-      <div class="subtitle-text" id="subText"></div>
-      <div class="subtitle-controls">
-        <button class="ctrl-btn" id="btnRewind">⏪</button>
-        <button class="ctrl-btn" id="btnPlayPause">▶️</button>
-        <button class="ctrl-btn" id="btnForward">⏩</button>
-        <div class="time-digital" id="timeDisplay">00:00:00</div>
+  <div class="watch-layout">
+    <!-- ✅ Kontainer utama: tempat video + subtitle -->
+    <div class="video-container" id="videoContainer">
+      <iframe id="videoIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      
+      <!-- ✅ Subtitle & kontrol tetap di dalam kontainer -->
+      <div class="subtitle-overlay" id="subtitleOverlay">
+        <div class="subtitle-text" id="subText"></div>
+        <div class="subtitle-controls">
+          <button class="ctrl-btn" id="btnRewind">⏪</button>
+          <button class="ctrl-btn" id="btnPlayPause">▶️</button>
+          <button class="ctrl-btn" id="btnForward">⏩</button>
+          <div class="time-digital" id="timeDisplay">00:00:00</div>
+        </div>
       </div>
+    </div>
+
+    <div class="comments-section">
+      <div class="comments-header">
+        <i data-lucide="message-square" size="16"></i> Komentar Netizen
+      </div>
+      <div class="comments-list-container" id="commentList"></div>
     </div>
   </div>
 
@@ -369,15 +382,6 @@
   </div>
 
   <div class="search-results-layer" id="searchResultsLayer"></div>
-
-  <div class="watch-layout">
-    <div class="comments-section">
-      <div class="comments-header">
-        <i data-lucide="message-square" size="16"></i> Komentar Netizen
-      </div>
-      <div class="comments-list-container" id="commentList"></div>
-    </div>
-  </div>
 
   <div class="panel-backdrop" id="panelBackdrop" onclick="closeCommentForm()"></div>
 
@@ -418,7 +422,8 @@
     const SUBTITLE_BASE_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
 
     // Elemen DOM
-    const playerArea = document.getElementById('playerArea');
+    const videoContainer = document.getElementById('videoContainer');
+    const videoIframe = document.getElementById('videoIframe');
     const subText = document.getElementById('subText');
     const timeDisplay = document.getElementById('timeDisplay');
     const btnPlayPause = document.getElementById('btnPlayPause');
@@ -429,14 +434,14 @@
     let allMoviesCache = [];
     let myCustomMovies = [];
 
-    // ✅ DATA SUBTITLE
+    // Data Subtitle
     let subtitles = [];
     let currentTime = 0;
     let timer = null;
     let isPlaying = false;
 
     // ====================================
-    // FUNGSI BANTU SUBTITLE
+    // FUNGSI SUBTITLE
     // ====================================
     function formatTime(sec) {
       const h = Math.floor(sec / 3600).toString().padStart(2, '0');
@@ -447,7 +452,7 @@
 
     function timeToSeconds(timeStr) {
       timeStr = timeStr.trim();
-      const parts = timeStr.split(':');
+      const parts = timeStr.replace(',', '.').split(':');
       if (parts.length === 2) {
         const [m, s] = parts;
         return Number(m) * 60 + Number(s);
@@ -485,7 +490,7 @@
       updateDisplay();
     }
 
-    // ✅ Baca file .vtt otomatis dari folder GitHub
+    // Baca file .vtt otomatis
     async function loadSubtitles(movieId) {
       const subUrl = `${SUBTITLE_BASE_URL}${movieId}.vtt`;
       subtitles = [];
@@ -499,7 +504,7 @@
         const lines = text.split('\n').map(l => l.trim());
         let i = 0;
 
-        if (lines[0].toUpperCase() === "WEBVTT") i++;
+        if (lines[0].toUpperCase().includes("WEBVTT")) i++;
 
         while (i < lines.length) {
           if (lines[i].includes('-->')) {
@@ -525,12 +530,12 @@
       }
     }
 
-    // ====================================
-    // KONTROL TOMBOL
-    // ====================================
-    btnPlayPause.addEventListener('click', () => isPlaying ? pauseTimer() : startTimer());
-    btnRewind.addEventListener('click', () => adjustTime(-10));
-    btnForward.addEventListener('click', () => adjustTime(+10));
+    // Pasang kontrol
+    function setupControls() {
+      btnPlayPause.onclick = () => isPlaying ? pauseTimer() : startTimer();
+      btnRewind.onclick = () => adjustTime(-10);
+      btnForward.onclick = () => adjustTime(+10);
+    }
 
     // ====================================
     // FUNGSI UTAMA
@@ -543,7 +548,7 @@
     async function loadInitialData() {
       currentMovieId = parseInt(getMovieIdFromUrl());
       if (!currentMovieId) {
-        playerArea.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
+        videoContainer.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
         return;
       }
 
@@ -554,7 +559,8 @@
 
       setupVideoPlayer(currentMovieId);
       loadComments(currentMovieId);
-      await loadSubtitles(currentMovieId); // ✅ Muat sub otomatis sesuai ID film
+      await loadSubtitles(currentMovieId);
+      setupControls();
 
       setTimeout(() => {
         const commentTextArea = document.getElementById('commentText');
@@ -586,32 +592,7 @@
         src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
       }
 
-      // Sisipkan iframe di belakang subtitle
-      playerArea.innerHTML = `
-        <iframe src="${src}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-        <div class="subtitle-wrapper" id="subWrapper">
-          <div class="subtitle-text" id="subText"></div>
-          <div class="subtitle-controls">
-            <button class="ctrl-btn" id="btnRewind">⏪</button>
-            <button class="ctrl-btn" id="btnPlayPause">▶️</button>
-            <button class="ctrl-btn" id="btnForward">⏩</button>
-            <div class="time-digital" id="timeDisplay">00:00:00</div>
-          </div>
-        </div>
-      `;
-
-      // Pasang ulang event listener setelah render ulang
-      setTimeout(() => {
-        const newSubText = document.getElementById('subText');
-        const newTimeDisplay = document.getElementById('timeDisplay');
-        const newPlay = document.getElementById('btnPlayPause');
-        const newRewind = document.getElementById('btnRewind');
-        const newForward = document.getElementById('btnForward');
-
-        newPlay.addEventListener('click', () => isPlaying ? pauseTimer() : startTimer());
-        newRewind.addEventListener('click', () => adjustTime(-10));
-        newForward.addEventListener('click', () => adjustTime(+10));
-      }, 300);
+      videoIframe.src = src;
     }
 
     async function loadComments(tmdbId) {
