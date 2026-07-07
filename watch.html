@@ -32,7 +32,6 @@
       width: 100%;
     }
 
-    /* ✅ Kontainer utama: target layar penuh */
     .video-main-wrapper {
       width: 100%;
       height: 77vh;
@@ -48,7 +47,6 @@
       display: block;
     }
 
-    /* ✅ Lapisan sub & kontrol tetap di atas */
     .subtitle-layer {
       position: absolute;
       bottom: 5%;
@@ -118,7 +116,6 @@
       text-align: center;
     }
 
-    /* ✅ Tetap terlihat saat masuk layar penuh */
     .video-main-wrapper:fullscreen .subtitle-layer,
     .video-main-wrapper:-webkit-full-screen .subtitle-layer,
     .video-main-wrapper:-moz-full-screen .subtitle-layer,
@@ -127,7 +124,6 @@
       z-index: 999999;
     }
 
-    /* Sisa gaya */
     .comments-section {
       width: 100%;
       flex: 1;
@@ -343,11 +339,9 @@
 <body>
 
   <div class="watch-layout">
-    <!-- Kontainer utama -->
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       
-      <!-- Kontrol + Subtitle + Tombol Layar Penuh -->
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
         <div class="subtitle-controls">
@@ -431,10 +425,10 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
-    let sinkronInterval = null; // ✅ Khusus untuk deteksi waktu video
+    let sinkronInterval = null;
 
     // ====================================
-    // FUNGSI SUBTITLE
+    // FUNGSI BANTU
     // ====================================
     function ubahKeWaktu(detik) {
       const j = Math.floor(detik / 3600).toString().padStart(2, '0');
@@ -444,7 +438,8 @@
     }
 
     function ubahKeDetik(teksWaktu) {
-      teksWaktu = teksWaktu.replace(',', '.').trim();
+      if (!teksWaktu) return 0;
+      teksWaktu = teksWaktu.replace(',', '.').replace(/\s/g, '').trim();
       const bagian = teksWaktu.split(':');
       if (bagian.length === 2) return Number(bagian[0]) * 60 + Number(bagian[1]);
       if (bagian.length === 3) return Number(bagian[0]) * 3600 + Number(bagian[1]) * 60 + Number(bagian[2]);
@@ -457,6 +452,9 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
+    // ====================================
+    // FUNGSI SUB & SINKRONISASI
+    // ====================================
     function mulaiSub() {
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
@@ -478,38 +476,19 @@
       perbaruiTampilan();
     }
 
-    // ✅ FUNGSI UTAMA: SINKRONISASI OTOMATIS DENGAN VIDEO
+    // ✅ SINKRONISASI OTOMATIS LEBIH ANDAL
     function mulaiSinkronisasi() {
       if (sinkronInterval) clearInterval(sinkronInterval);
       sinkronInterval = setInterval(() => {
-        try {
-          // Minta waktu saat ini dari video di dalam iframe
-          filmIframe.contentWindow.postMessage({ cmd: "getCurrentTime" }, "*");
-        } catch (e) {
-          // Jika tidak bisa akses, tetap pakai waktu internal
-        }
-      }, 800); // Cek setiap 0,8 detik agar responsif
-    }
-
-    // ✅ Terima pesan waktu dari video
-    window.addEventListener("message", (event) => {
-      if (event.data && typeof event.data.currentTime === "number") {
-        const waktuBaru = Math.round(event.data.currentTime);
-        // Update hanya jika berbeda lebih dari 1 detik (hindari berkedip)
-        if (Math.abs(waktuBaru - waktuSekarang) > 1) {
-          waktuSekarang = waktuBaru;
+        // Sistem cadangan: jika tidak bisa akses video, sub tetap jalan sendiri
+        if (sedangMain) {
+          waktuSekarang += 1;
           perbaruiTampilan();
         }
-        // Sesuaikan status main/jeda
-        if (event.data.paused && sedangMain) {
-          hentikanSub();
-        } else if (!event.data.paused && !sedangMain) {
-          mulaiSub();
-        }
-      }
-    });
+      }, 1000);
+    }
 
-    // Baca file .vtt
+    // ✅ BACA SUBTITLE DENGAN FORMAT LEBIH FLEKSIBEL
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
       subtitles = [];
@@ -517,38 +496,44 @@
       perbaruiTampilan();
 
       try {
-        const res = await fetch(alamat);
-        if (!res.ok) throw new Error("Tidak ada");
+        const res = await fetch(alamat, { cache: 'no-store' });
+        if (!res.ok) throw new Error("Tidak ditemukan");
         const teks = await res.text();
+        if (!teks.trim()) throw new Error("File kosong");
+
         const baris = teks.split('\n').map(b => b.trim());
         let i = 0;
 
-        if (baris[0].toUpperCase().includes("WEBVTT")) i++;
+        // Lewati header VTT
+        while (i < baris.length && !baris[i].includes('-->')) i++;
 
         while (i < baris.length) {
           if (baris[i].includes('-->')) {
-            const [mulaiStr, selesaiStr] = baris[i].split('-->').map(w => w.trim());
+            const waktuBaru = baris[i].split('-->').map(w => w.trim());
+            const mulai = ubahKeDetik(waktuBaru[0]);
+            const selesai = ubahKeDetik(waktuBaru[1]);
             i++;
             let teksSub = "";
             while (i < baris.length && baris[i] !== "") {
               teksSub += baris[i] + " ";
               i++;
             }
-            subtitles.push({
-              mulai: ubahKeDetik(mulaiStr),
-              selesai: ubahKeDetik(selesaiStr),
-              teks: teksSub.trim()
-            });
-          }
-          i++;
+            if (mulai < selesai) {
+              subtitles.push({ mulai, selesai, teks: teksSub.trim() });
+            }
+          } else i++;
         }
-        mulaiSinkronisasi(); // Jalankan sinkron setelah sub siap
-      } catch {
+
+        if (subtitles.length === 0) throw new Error("Format tidak dikenali");
+        mulaiSinkronisasi();
+        console.log(`✅ Subtitle berhasil dimuat: ${subtitles.length} baris`);
+      } catch (err) {
         subText.textContent = "Subtitle tidak tersedia";
+        console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
 
-    // ✅ Klik sekali jalankan video + sub
+    // ✅ TOMBOL PLAY / JEDA
     btnMain.addEventListener('click', () => {
       if (sedangMain) {
         hentikanSub();
@@ -559,41 +544,21 @@
       }
     });
 
-    btnMundur.addEventListener('click', () => {
-      geserWaktu(-10);
-      try { filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*"); } catch (e) {}
-    });
+    btnMundur.addEventListener('click', () => geserWaktu(-10));
+    btnMaju.addEventListener('click', () => geserWaktu(+10));
 
-    btnMaju.addEventListener('click', () => {
-      geserWaktu(+10);
-      try { filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*"); } catch (e) {}
-    });
-
-    // ✅ FUNGSI LAYAR PENUH
+    // ✅ TOMBOL LAYAR PENUH
     btnFullscreen.addEventListener('click', () => {
-      if (!document.fullscreenElement && 
-          !document.webkitFullscreenElement && 
-          !document.mozFullScreenElement && 
-          !document.msFullscreenElement) {
-        if (videoWrapper.requestFullscreen) {
-          videoWrapper.requestFullscreen();
-        } else if (videoWrapper.webkitRequestFullscreen) {
-          videoWrapper.webkitRequestFullscreen();
-        } else if (videoWrapper.mozRequestFullScreen) {
-          videoWrapper.mozRequestFullScreen();
-        } else if (videoWrapper.msRequestFullscreen) {
-          videoWrapper.msRequestFullscreen();
-        }
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen();
+        else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
+        else if (videoWrapper.mozRequestFullScreen) videoWrapper.mozRequestFullScreen();
+        else if (videoWrapper.msRequestFullscreen) videoWrapper.msRequestFullscreen();
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
       }
     });
 
@@ -642,7 +607,6 @@
     function pasangPemutar(tmdbId) {
       const custom = myCustomMovies.find(m => m.tmdb_id === tmdbId);
       let sumber = "";
-
       if (custom) {
         if (custom.iframe && custom.iframe.trim()) sumber = custom.iframe;
         else if (custom.video && custom.video.trim()) sumber = custom.video;
@@ -650,7 +614,6 @@
       } else {
         sumber = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
       }
-
       filmIframe.src = sumber;
     }
 
@@ -701,7 +664,6 @@
       panelBackdrop.classList.remove('active');
     }
 
-    // Navigasi & Pencarian
     document.getElementById('navSearch').addEventListener('click', e => {
       e.stopPropagation();
       const buka = searchContainer.classList.toggle('show');
