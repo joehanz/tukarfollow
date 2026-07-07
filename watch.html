@@ -655,17 +655,34 @@ document.addEventListener('DOMContentLoaded', () => {
             recognition.lang = 'en-US'; 
 
             recognition.onresult = async (event) => {
-              let interimTranscript = '';
-              let finalTranscript = '';
+  let interimTranscript = '';
+  let finalTranscript = '';
 
-              for (let i = event.resultIndex; i < event.results.length; ++i) {
-                const transcriptPart = event.results[i][0].transcript;
-                if (event.results[i].isFinal) {
-                  finalTranscript += transcriptPart;
-                } else {
-                  interimTranscript += transcriptPart;
-                }
-              }
+  for (let i = event.resultIndex; i < event.results.length; ++i) {
+    const transcriptPart = event.results[i][0].transcript;
+    if (event.results[i].isFinal) {
+      finalTranscript += transcriptPart;
+    } else {
+      interimTranscript += transcriptPart;
+    }
+  }
+
+  // JIKA TERJADI BUG GANTUNG: 
+  // Jika teks berjalan sudah terlalu panjang (lebih dari 5 kata) tapi belum dianggap final oleh browser,
+  // kita paksa tembak langsung ke API terjemahan agar teks Indonesia-nya segera keluar!
+  let teksYangDiproses = finalTranscript || interimTranscript;
+
+  if (teksYangDiproses.trim() !== '') {
+    subtitleBox.style.color = '#ffffff'; 
+    subtitleBox.innerText = "🗣️ " + interimTranscript; // Tetap tampilkan teks berjalan di awal
+    
+    // Kirim langsung ke penerjemah tanpa menunggu kalimat selesai
+    const hasilTerjemahan = await panggilApiTranslasiAman(teksYangDiproses);
+    
+    subtitleBox.style.color = '#ffdd57'; 
+    subtitleBox.innerText = hasilTerjemahan;
+  }
+};
 
               // 1. RUNNING TEXT (Aktor sedang bicara): Langsung tampilkan teks Inggris berjalan (Warna Putih)
               if (interimTranscript.trim() !== '') {
