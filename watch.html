@@ -624,148 +624,104 @@
   </script>
 
   <script>
-// ============================================================================
-// L LIVE CAPTION TRANSLATOR V2 (MATCH SINKRONISASI WAKTU VIA FILE SUBTITLE)
+    // ============================================================================
+// LIVE CAPTION TRANSLATOR V3 (RUNNING TEXT & AUTO-CORRECT MODE)
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
   const btnTranslate = document.getElementById('btnTranslate');
   const subtitleBox = document.getElementById('customSubtitle');
   let isTranslating = false;
-  let subtitleInterval = null;
-  let subtitleTracks = []; // Menyimpan data subtitle terjemahan
-  let startTime = 0;
+  let recognition = null;
 
   if (btnTranslate) {
-    btnTranslate.addEventListener('click', async () => {
+    btnTranslate.addEventListener('click', () => {
       if (!isTranslating) {
-        // 1. Ubah UI Button ke mode Loading
         isTranslating = true;
-        btnTranslate.innerHTML = `<i data-lucide="loader" class="animate-spin" size="14"></i> Memuat Subtitle...`;
-        btnTranslate.style.background = '#ffdd57';
-        btnTranslate.style.color = '#000';
-        
-        // 2. Ambil subtitle berdasarkan currentMovieId (ID TMDB yang sedang aktif)
-        subtitleTracks = await fetchAndTranslateSubtitle(currentMovieId);
-
-        if (subtitleTracks.length === 0) {
-          alert("Subtitle asli untuk ID film ini tidak ditemukan / gagal diterjemahkan.");
-          resetTranslateButton();
-          return;
-        }
-
-        // 3. Jalankan Subtitle Sinkron
         btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
         btnTranslate.style.background = '#ff6b6b';
-        btnTranslate.style.color = '#fff';
-        subtitleBox.style.display = 'block';
-        subtitleBox.innerText = "Terjemahan AI Aktif (Menunggu video diputar...)";
+        subtitleBox.style.style.display = 'block';
+        subtitleBox.innerText = "Mulai mendeteksi suara film...";
 
-        // Mulai stopwatch internal (Simulasi sinkronisasi waktu mulai klik)
-        startTime = Date.now();
-        
-        subtitleInterval = setInterval(() => {
-          // Hitung sudah berapa detik berjalan sejak tombol diaktifkan
-          const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;
-          
-          // Cari teks subtitle yang cocok dengan detik berjalan saat ini
-          const currentLine = subtitleTracks.find(line => 
-            elapsedTimeInSeconds >= line.start && elapsedTimeInSeconds <= line.end
-          );
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          // PENTING: Interim results AKTIF membuat teks berjalan terus (Running Text)
+          recognition.interimResults = true; 
+          recognition.lang = 'en-US'; 
 
-          if (currentLine) {
-            subtitleBox.innerText = currentLine.text;
-            subtitleBox.style.display = 'block';
-          } else {
-            // Jika di detik ini tidak ada orang bicara, sembunyikan kotak teks sementara
-            subtitleBox.innerText = "";
-          }
-        }, 200); // Check setiap 200 milidetik agar sangat responsif dan tidak delay
+          recognition.onresult = async (event) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              const transcriptPart = event.results[i][0].transcript;
+              if (event.results[i].isFinal) {
+                finalTranscript += transcriptPart;
+              } else {
+                interimTranscript += transcriptPart;
+              }
+            }
+
+            // 1. JIKA MASIH BERBICARA: Tampilkan Running Text Bahasa Inggris (Instan tanpa telat)
+            if (interimTranscript.trim() !== '') {
+              subtitleBox.style.color = '#ffffff'; // Teks putih saat sedang berjalan
+              subtitleBox.innerText = "🗣️ " + interimTranscript;
+            }
+
+            // 2. JIKA SELESAI BERBICARA (Done): Lakukan Auto-Correct & Terjemahkan langsung!
+            if (finalTranscript.trim() !== '') {
+              subtitleBox.style.color = '#ffdd57'; // Ubah jadi kuning pertanda terjemahan final
+              subtitleBox.innerText = "🔄 Mengoreksi terjemahan...";
+              
+              // Hit API Translasi untuk mengoreksi kalimat utuh
+              const hasilTerjemahan = await panggilApiTranslasi(finalTranscript);
+              subtitleBox.innerText = hasilTerjemahan;
+            }
+          };
+
+          recognition.onerror = (err) => {
+            console.warn("Speech recognition error:", err);
+            // Auto-restart jika mic terputus di tengah film
+            if (err.error === 'no-speech' && isTranslating) {
+              try { recognition.stop(); recognition.start(); } catch(e){}
+            }
+          };
+
+          recognition.onend = () => {
+            // Jaga agar mic tetap mendengarkan sepanjang film diputar
+            if (isTranslating) recognition.start();
+          };
+
+          recognition.start();
+        } else {
+          subtitleBox.innerText = "Browser Anda tidak mendukung Web Speech API.";
+        }
 
       } else {
         // Matikan Fitur Terjemahan
-        resetTranslateButton();
+        isTranslating = false;
+        btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
+        btnTranslate.style.background = '#38b6ff';
+        subtitleBox.style.display = 'none';
+        if (recognition) {
+          recognition.stop();
+          recognition = null;
+        }
       }
       if (window.lucide) lucide.createIcons();
     });
   }
-
-  function resetTranslateButton() {
-    isTranslating = false;
-    clearInterval(subtitleInterval);
-    btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
-    btnTranslate.style.background = '#38b6ff';
-    btnTranslate.style.color = '#fff';
-    subtitleBox.style.display = 'none';
-  }
 });
 
-// Fungsi untuk mengambil file subtitle & menerjemahkannya secara otomatis
-async function fetchAndTranslateSubtitle(tmdbId) {
+// API Penerjemah Cepat
+async function panggilApiTranslasi(text) {
   try {
-    // Menggunakan API Subtitle publik gratis yang mendukung pencarian via ID TMDB
-    // Jika Anda punya database subtitle sendiri, arahkan URL ini ke server Anda
-    const subResponse = await fetch(`https://subtitles.vse.me/api/v1/search?tmdb_id=${tmdbId}&lang=en`);
-    if (!subResponse.ok) return [];
-    
-    const subData = await subResponse.json();
-    // Ambil file .SRT atau .VTT pertama yang ditemukan
-    const subtitleUrl = subData.tracks?.[0]?.src; 
-    if (!subtitleUrl) return [];
-
-    // Download isi file subtitle teks mentah tersebut
-    const fileRes = await fetch(subtitleUrl);
-    const textRaw = await fileRes.text();
-
-    // Parse format SRT/VTT menjadi Array JavaScript objek agar bisa dihitung detiknya
-    const parsedLines = parseSubtitleText(textRaw);
-
-    // Proses terjemahkan teksnya ke Bahasa Indonesia menggunakan API Translasi
-    // Agar hemat dan cepat, kita potong baris teks saja tanpa merusak timestamp
-    for (let i = 0; i < Math.min(parsedLines.length, 150); i++) { // Limit 150 baris awal untuk uji coba kecepatan
-      parsedLines[i].text = await dapatkanTranslasiCepat(parsedLines[i].text);
-    }
-
-    return parsedLines;
-  } catch (error) {
-    console.error("Gagal memproses subtitle otomatis:", error);
-    return [];
-  }
-}
-
-// Helper untuk mengubah text SRT/VTT menjadi struktur waktu detik (Seconds)
-function parseSubtitleText(vttText) {
-  const lines = vttText.split('\n');
-  let result = [];
-  let currentLine = null;
-
-  const timeRegex = /(\d+):(\d+):(\d+)[.,](\d+)\s*-->\s*(\d+):(\d+):(\d+)[.,](\d+)/;
-
-  lines.forEach(line => {
-    const match = timeRegex.exec(line);
-    if (match) {
-      if (currentLine) result.push(currentLine);
-      
-      const startSec = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]) + parseInt(match[4])/1000;
-      const endSec = parseInt(match[5]) * 3600 + parseInt(match[6]) * 60 + parseInt(match[7]) + parseInt(match[8])/1000;
-      
-      currentLine = { start: startSec, end: endSec, text: '' };
-    } else if (currentLine && line.trim() !== '' && !line.match(/^\d+$/)) {
-      currentLine.text += (currentLine.text ? ' ' : '') + line.trim();
-    }
-  });
-  if (currentLine) result.push(currentLine);
-  return result;
-}
-
-// API Penerjemah Teks Ke Bahasa Indonesia secara Real-Time tanpa tertinggal
-async function dapatkanTranslasiCepat(englishText) {
-  if (!englishText) return "";
-  try {
-    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishText)}&langpair=en|id`);
-    const data = await response.json();
-    return data.responseData.translatedText || englishText;
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
+    const data = await res.json();
+    return data.responseData.translatedText || text;
   } catch (e) {
-    return englishText;
+    return text;
   }
 }
   </script>
