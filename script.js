@@ -13,27 +13,12 @@ let moviesData = [];
 let activeMovieIndex = 0;
 let currentPage = 1;
 let currentActiveSection = null; 
-let myCustomMovies = []; 
 let isDesktop = false; // Menyimpan status deteksi layar
-
-// 1. Ambil data lokal movies.json
-async function loadLocalMovies() {
-    try {
-        const res = await fetch('movies.json');
-        if(res.ok) {
-            myCustomMovies = await res.json();
-            console.log("Data movies.json berhasil dimuat!", myCustomMovies);
-        }
-    } catch(e) {
-        console.warn("Gagal memuat movies.json atau file belum dibuat.", e);
-    }
-}
 
 // Deteksi Device di Awal
 function detectDevice() {
     if (window.innerWidth > 768) {
         isDesktop = true;
-        // Munculkan pop-up pemberitahuan desktop
         const notifier = document.getElementById('desktopNotifier');
         if (notifier) notifier.style.display = 'flex';
     }
@@ -59,10 +44,10 @@ function scrollFeed(direction) {
     }
 }
 
-// 2. Ambil Data dari TMDB
+// Ambil Data dari TMDB
 async function fetchMovies(page = 1) {
     try {
-        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`);
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
         if (!response.ok) throw new Error();
         const data = await response.json();
         
@@ -84,17 +69,13 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
-// 3. Render ke Feed Layar Penuh
+// Render ke Feed Layar Penuh
 function renderFeed(movies) {
     if (!feedContainer) return;
     feedContainer.innerHTML = '';
     movies.forEach((movie, index) => {
-        const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-        
         let posterFullUrl = '';
-        if (customData && customData.image) {
-            posterFullUrl = customData.image;
-        } else if (movie.poster_path) {
+        if (movie.poster_path) {
             posterFullUrl = `${IMAGE_URL}${movie.poster_path}`;
         } else {
             posterFullUrl = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'; 
@@ -104,15 +85,12 @@ function renderFeed(movies) {
         card.className = 'movie-card';
         card.style.backgroundImage = `url('${posterFullUrl}')`;
         
-        let releaseDateStr = customData ? customData.release_date : movie.release_date;
-        const year = releaseDateStr ? releaseDateStr.split('-')[0] : '-';
-
-        // Tentukan apakah panah navigasi harus tampil (hanya jika di desktop)
+        const year = movie.release_date ? movie.release_date.split('-')[0] : '-';
         const arrowStyle = isDesktop ? 'display: flex;' : 'display: none;';
 
         card.innerHTML = `
             <div class="overlay"></div>
-            <div class="top-title">${customData ? customData.title : movie.title}</div>
+            <div class="top-title">${movie.title}</div>
             
             <div class="play-btn-container" onclick="playMovie(${movie.id})">
                 <div class="play-circle"><i data-lucide="play" fill="#fff" size="32" style="margin-left:5px;"></i></div>
@@ -120,7 +98,6 @@ function renderFeed(movies) {
 
             <div class="main-content">
                 <div class="side-actions">
-                    <!-- BLOK PANAH SEKARANG DI ATAS MENU INFO FILMS -->
                     <div class="arrow-actions-container" style="${arrowStyle}">
                         <div class="inline-scroll-arrow" onclick="scrollFeed('up')">
                             <i data-lucide="chevron-up" size="22"></i>
@@ -130,7 +107,6 @@ function renderFeed(movies) {
                         </div>
                     </div>
 
-                    <!-- MENU INFO UTAMA -->
                     <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
                         <i data-lucide="info" size="28"></i>
                         <span>info</span>
@@ -153,14 +129,9 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // ============================================================================
-    // FIX: MEMASUKKAN TOMBOL LOAD MORE LANGSUNG KE KARTU FILM TERAKHIR (ANTI BLANK)
-    // ============================================================================
     const allCards = feedContainer.querySelectorAll('.movie-card');
     if (allCards.length > 0) {
         const lastCard = allCards[allCards.length - 1];
-        
-        // Buat element tombol inline baru
         const loadMoreContainer = document.createElement('div');
         loadMoreContainer.className = 'inline-load-more';
         loadMoreContainer.innerHTML = `
@@ -168,8 +139,6 @@ function renderFeed(movies) {
                 <i data-lucide="plus" size="16"></i> Load More (Page ${currentPage + 1})
             </button>
         `;
-        
-        // Cari container .main-content di dalam kartu terakhir biar posisinya pas di atas menu
         const mainContent = lastCard.querySelector('.main-content');
         if (mainContent) {
             mainContent.appendChild(loadMoreContainer);
@@ -181,22 +150,20 @@ function renderFeed(movies) {
     if (window.lucide) {
         lucide.createIcons();
     }
-} // <--- Penutup fungsi renderFeed
+}
 
 function loadNextPage() {
     currentPage++;
     fetchMovies(currentPage);
 }
     
-// 4. Logika Cicilan Info Dinamis (Genre & Negara Dinamis Sesuai TMDB / JSON)
+// Logika Info Dinamis
 function toggleSection(event, index, section) {
     event.stopPropagation();
     if (!infoPanel || !panelContentArea) return;
 
     const movie = moviesData[index];
     if (!movie) return;
-
-    const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
 
     if (infoPanel.classList.contains('show') && currentActiveSection === section) {
         infoPanel.classList.remove('show');
@@ -207,52 +174,40 @@ function toggleSection(event, index, section) {
     currentActiveSection = section;
     let htmlContent = '';
 
+    const tmdbGenreMap = {
+        28: 'Aksi', 12: 'Petualangan', 16: 'Animasi', 35: 'Komedi',
+        80: 'Kejahatan', 99: 'Dokumenter', 18: 'Drama', 10751: 'Keluarga',
+        14: 'Fantasi', 36: 'Sejarah', 27: 'Horor', 10402: 'Musik',
+        9648: 'Misteri', 10749: 'Romantis', 878: 'Fiksi Ilmiah', 10770: 'Film TV',
+        53: 'Thriller', 10752: 'Perang', 37: 'Barat'
+    };
+
+    const countryMap = {
+        'US': 'Amerika Serikat', 'FI': 'Finlandia', 'KR': 'Korea Selatan',
+        'JP': 'Jepang', 'ID': 'Indonesia', 'GB': 'Inggris', 'FR': 'Prancis',
+        'CN': 'Cina', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India'
+    };
+
     switch(section) {
         case 'info':
-            const sinopsis = customData ? customData.sinopsis : movie.overview;
-            htmlContent = `<i data-lucide="info" size="22"></i><p>${sinopsis || 'Tidak ada deskripsi.'}</p>`;
+            htmlContent = `<i data-lucide="info" size="22"></i><p>${movie.overview || 'Tidak ada deskripsi.'}</p>`;
             break;
         case 'release':
-            const rilis = customData ? customData.release_date : movie.release_date;
-            htmlContent = `<i data-lucide="calendar" size="22"></i><p>Tanggal Rilis: <strong>${rilis || '-'}</strong></p>`;
+            htmlContent = `<i data-lucide="calendar" size="22"></i><p>Tanggal Rilis: <strong>${movie.release_date || '-'}</strong></p>`;
             break;
-            
         case 'genre':
-            let genreStr = 'Movie';
-            
-            if (customData && customData.genre) {
-                genreStr = Array.isArray(customData.genre) ? customData.genre.join(', ') : customData.genre;
-            } else if (movie.genre_ids && movie.genre_ids.length > 0) {
-                const tmdbGenreMap = {
-                    28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
-                    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
-                    14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
-                    9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie',
-                    53: 'Thriller', 10752: 'War', 37: 'Western'
-                };
-                
-                const translatedGenres = movie.genre_ids.map(id => tmdbGenreMap[id] || 'Movie');
+            let genreStr = 'Film Umum';
+            if (movie.genre_ids && movie.genre_ids.length > 0) {
+                const translatedGenres = movie.genre_ids.map(id => tmdbGenreMap[id] || 'Film Umum');
                 genreStr = [...new Set(translatedGenres)].join(', ');
             }
-            
             htmlContent = `<i data-lucide="clapperboard" size="22"></i><p>Genre: <strong>${genreStr}</strong></p>`;
             break;
-            
         case 'country':
-            let negara = '-';
-            if (customData && customData.country) {
-                negara = customData.country;
-            } else if (movie.origin_country && movie.origin_country.length > 0) {
-                const countryMap = {
-                    'US': 'Amerika Serikat', 'FI': 'Finlandia', 'KR': 'Korea Selatan',
-                    'JP': 'Jepang', 'ID': 'Indonesia', 'GB': 'Inggris', 'FR': 'Prancis',
-                    'CN': 'Cina', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India'
-                };
-                
+            let negara = 'Global';
+            if (movie.origin_country && movie.origin_country.length > 0) {
                 const translatedCountries = movie.origin_country.map(code => countryMap[code.toUpperCase()] || code);
                 negara = translatedCountries.join(', ');
-            } else {
-                negara = 'Global';
             }
             htmlContent = `<i data-lucide="globe" size="22"></i><p>Negara: <strong>${negara}</strong></p>`;
             break;
@@ -263,87 +218,68 @@ function toggleSection(event, index, section) {
     if (window.lucide) {
         lucide.createIcons();
     }
-} // <-- DISINI: Kurung kurawal penutup toggleSection yang tadinya hilang sudah dipasang!
+}
 
-// 5. Pemutar Video (FIX: Dialihkan ke Halaman watch.html)
+// Pemutar Video: Langsung ke watch.html
 function playMovie(tmdbId) {
-    // Langsung pindah ke halaman watch.html dengan membawa parameter ID film
     window.location.href = `watch.html?id=${tmdbId}`;
 }
 
-// Logika closePlayerBtn lama dinonaktifkan/dihapus karena player sudah pindah halaman
 const closePlayerBtn = document.getElementById('closePlayerBtn');
 if (closePlayerBtn) {
     closePlayerBtn.addEventListener('click', () => {
-        // Tetap dikosongkan agar tidak memicu eror jika elemen HTML-nya masih ada
         if (playerArea) playerArea.innerHTML = ''; 
         if (videoPlayerContainer) videoPlayerContainer.classList.remove('active');
     });
 }
 
-// 6. Pemantau Gerakan Scroll Aktif dengan Auto-Update Judul
+// Pemantau Scroll
 if (feedContainer) {
     feedContainer.addEventListener('scroll', () => {
         const index = Math.round(feedContainer.scrollTop / window.innerHeight);
         
         if (index !== activeMovieIndex) {
             activeMovieIndex = index;
-            
             if (infoPanel) infoPanel.classList.remove('show');
             currentActiveSection = null;
-            
             const currentMovie = moviesData[activeMovieIndex];
             if (currentMovie) {
-                const customData = myCustomMovies.find(m => m.tmdb_id === currentMovie.id);
                 const topTitles = document.querySelectorAll('.top-title');
-                
                 if (topTitles[activeMovieIndex]) {
-                    topTitles[activeMovieIndex].innerText = customData ? customData.title : currentMovie.title;
+                    topTitles[activeMovieIndex].innerText = currentMovie.title;
                 }
             }
         }
     });
 }
 
-// ============================================================================
-// FITUR PENCARIAN REAL-TIME & NAVIGASI TOMBOL HOME/SEARCH
-// ============================================================================
+// Fitur Pencarian
 const searchInput = document.getElementById('searchInput');
-
-// 1. Logika Mesin Pencari (Input)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         const keyword = e.target.value.toLowerCase().trim();
-        
         if (keyword === "") {
             renderFeed(moviesData);
             if (feedContainer) feedContainer.scrollTop = 0;
             return;
         }
-
         const cleanKeyword = keyword.replace(/\s+/g, '');
-
         const filteredMovies = moviesData.filter(movie => {
-            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-            const rawTitle = customData ? customData.title : movie.title;
-            const cleanTitle = rawTitle.toLowerCase().replace(/\s+/g, '');
-            
+            const cleanTitle = movie.title.toLowerCase().replace(/\s+/g, '');
             return cleanTitle.includes(cleanKeyword);
         });
-
         renderFeed(filteredMovies);
         if (feedContainer) feedContainer.scrollTop = 0; 
     });
 }
 
-// 2. Logika Tombol Menu Search (Buka/Tutup Kolom)
+// Tombol Menu
 const navSearchBtn = document.getElementById('navSearch');
 if (navSearchBtn) {
     navSearchBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (!searchContainer) return;
         const isShowing = searchContainer.classList.toggle('show');
-        
         if (!isShowing) {
             if (searchInput) searchInput.value = "";
             renderFeed(moviesData);
@@ -354,7 +290,6 @@ if (navSearchBtn) {
     });
 }
 
-// 3. Logika Tombol Menu Home (Auto-Scroll Lancar ke Paling Atas)
 const navHomeBtn = document.getElementById('navHome');
 if (navHomeBtn) {
     navHomeBtn.addEventListener('click', () => {
@@ -362,7 +297,6 @@ if (navHomeBtn) {
             searchInput.value = "";
             renderFeed(moviesData);
         }
-        
         if (feedContainer) {
             feedContainer.style.scrollBehavior = 'smooth';
             feedContainer.scrollTop = 0; 
@@ -374,7 +308,6 @@ if (navHomeBtn) {
 // Booting Aplikasi
 async function init() {
     detectDevice(); 
-    await loadLocalMovies();
     await fetchMovies(currentPage);
 }
 
