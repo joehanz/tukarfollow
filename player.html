@@ -14,7 +14,7 @@
 <body>
   <!-- Video dari vsembed -->
   <div class="player-container">
-    <iframe src="https://vsembed.ru/embed/movie?tmdb=726272" allowfullscreen></iframe>
+    <iframe src="https://vsembed.ru/embed/movie?tmdb=1314481" style="width: 100%; height: 100%;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>
   </div>
 
   <!-- Subtitle ditampilkan sebagai teks -->
@@ -22,7 +22,7 @@
 
   <script>
     // Ambil file VTT
-    fetch("subtitles/726272.vtt")
+    fetch("subtitles/1314481.vtt")
       .then(res => res.text())
       .then(data => {
         const lines = data.split("\n");
