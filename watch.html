@@ -427,7 +427,6 @@
 
     let currentMovieId = null;
     let allMoviesCache = [];
-    let myCustomMovies = [];
 
     let subtitles = [];
     let waktuSekarang = 0;
@@ -468,12 +467,10 @@
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
       btnMain.textContent = "⏸️";
-      // Jalankan penghitung waktu subtitle
       pemutar = setInterval(() => {
         waktuSekarang += 1;
         perbaruiTampilan();
       }, 1000);
-      // Coba mainkan video (jika gagal, sub tetap jalan)
       try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
     }
 
@@ -481,14 +478,12 @@
       sedangMain = false;
       btnMain.textContent = "▶️";
       clearInterval(pemutar);
-      // Coba jeda video
       try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
     }
 
     function geserWaktu(ubah) {
       waktuSekarang = Math.max(0, waktuSekarang + ubah);
       perbaruiTampilan();
-      // Jika sedang jalan, lanjutkan hitung ulang
       if (sedangMain) {
         clearInterval(pemutar);
         pemutar = setInterval(() => {
@@ -516,7 +511,6 @@
         const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
         let i = 0;
 
-        // Lewati header VTT
         if (baris[0].toUpperCase().includes("WEBVTT")) i++;
 
         while (i < baris.length) {
@@ -578,17 +572,17 @@
       return param.get('id');
     }
 
+    function pasangPemutar(tmdbId) {
+      // Langsung pakai vsembed.ru saja
+      filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+    }
+
     async function muatDataAwal() {
       currentMovieId = parseInt(ambilIdDariUrl());
       if (!currentMovieId) {
         videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
         return;
       }
-
-      try {
-        const res = await fetch('movies.json');
-        if (res.ok) myCustomMovies = await res.json();
-      } catch (e) { console.warn("movies.json tidak ditemukan"); }
 
       pasangPemutar(currentMovieId);
       muatKomentar(currentMovieId);
@@ -610,19 +604,6 @@
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
         if (res.ok) allMoviesCache = (await res.json()).results;
       } catch (e) { console.error("Gagal ambil daftar film"); }
-    }
-
-    function pasangPemutar(tmdbId) {
-      const custom = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-      let sumber = "";
-      if (custom) {
-        if (custom.iframe && custom.iframe.trim()) sumber = custom.iframe;
-        else if (custom.video && custom.video.trim()) sumber = custom.video;
-        else sumber = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
-      } else {
-        sumber = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
-      }
-      filmIframe.src = sumber;
     }
 
     async function muatKomentar(tmdbId) {
