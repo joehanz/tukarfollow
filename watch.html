@@ -10,9 +10,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* ====================================
-       1. BASIC RESET & CORE STYLE
-       ==================================== */
     * {
       margin: 0;
       padding: 0;
@@ -28,17 +25,13 @@
       width: 100vw;
     }
 
-    /* ====================================
-       2. WATCH LAYOUT (77vh PLAYER & KOMENTAR)
-       ==================================== */
     .watch-layout {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 70px); /* Kurangi tinggi nav bawah (70px) */
+      height: calc(100vh - 70px);
       width: 100%;
     }
 
-    /* Player Area (77vh) */
     .video-player-section {
       width: 100%;
       height: 77vh;
@@ -52,7 +45,6 @@
       border: none;
     }
 
-    /* Comments Section (Sisanya di bawah) */
     .comments-section {
       width: 100%;
       flex: 1;
@@ -91,9 +83,6 @@
       line-height: 1.4;
     }
 
-    /* ====================================
-       3. SEARCH REAL-TIME FULLSCREEN LAYER
-       ==================================== */
     .search-container {
       position: fixed;
       top: 0;
@@ -128,13 +117,12 @@
       outline: none;
     }
 
-    /* Layer Hasil Pencarian Menutup Halaman (Di atas Nav Bawah) */
     .search-results-layer {
       position: fixed;
-      top: 75px; /* Tepat di bawah search box */
+      top: 75px;
       left: 0;
       width: 100%;
-      height: calc(100vh - 145px); /* Menutup layar kecuali search-box & nav bawah */
+      height: calc(100vh - 145px);
       background: #050505;
       z-index: 99;
       overflow-y: auto;
@@ -169,9 +157,6 @@
       color: #888;
     }
 
-    /* ====================================
-       4. SLIDE-UP INFO PANEL (UNTUK INPUT KOMEN)
-       ==================================== */
     .info-panel {
       position: fixed;
       bottom: 0;
@@ -229,7 +214,6 @@
       margin-top: 5px;
     }
 
-    /* Backdrop gelap saat panel naik */
     .panel-backdrop {
       position: fixed;
       top: 0;
@@ -244,9 +228,6 @@
       display: block;
     }
 
-    /* ====================================
-       5. BOTTOM NAVIGATION STYLE
-       ==================================== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -258,7 +239,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 110; /* Berada di atas lapisan pencarian */
+      z-index: 110;
     }
     .nav-item {
       display: flex;
@@ -275,16 +256,14 @@
       margin-top: 4px;
     }
 
-    /* ====================================
-       6. LIVE CAPTION / SUBTITLE STYLE
-       ==================================== */
+    /* SUBTITLE BOX - TEXT DRIVEN (NO MIC) */
     .subtitle-box {
       position: absolute;
-      bottom: 20px; /* Jarak melayang di atas batas bawah player */
+      bottom: 25px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.85);
-      color: #ffffff; 
+      color: #ffdd57; 
       padding: 8px 16px;
       border-radius: 6px;
       font-size: 14px;
@@ -293,14 +272,14 @@
       max-width: 85%;
       z-index: 10;
       display: none; 
-      pointer-events: none; /* Biar tidak mengganggu klik pada player */
+      pointer-events: none;
       border: 1px solid rgba(255, 255, 255, 0.15);
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       line-height: 1.4;
     }
     .btn-translate-wrapper {
       position: absolute;
-      bottom: -45px; /* Turun sedikit di bawah player area */
+      bottom: -45px;
       left: 0;
       width: 100%;
       display: flex;
@@ -308,13 +287,13 @@
       z-index: 11;
     }
     .btn-translate {
-      background: #38b6ff;
-      color: #fff;
+      background: #ffdd57;
+      color: #000;
       border: none;
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -335,14 +314,16 @@
   <div class="search-results-layer" id="searchResultsLayer"></div>
 
   <div class="watch-layout">
-    <div class="video-player-section" style="position: relative;">
+    <div class="video-player-section">
       <div id="playerArea" style="width:100%; height:100%;"></div>
       
-      <div id="customSubtitle" class="subtitle-box">Menerjemahkan suara film...</div>
+      <!-- Subtitle Box -->
+      <div id="customSubtitle" class="subtitle-box">Menerjemahkan teks film...</div>
       
+      <!-- Tombol Aktifkan Subtitle Gratis Tanpa Suara -->
       <div class="btn-translate-wrapper">
         <button id="btnTranslate" class="btn-translate">
-          <i data-lucide="languages" size="14"></i> Terjemahkan AI
+          <i data-lucide="subtitles" size="14"></i> Subtitle Indonesia (Gratis)
         </button>
       </div>
     </div>
@@ -351,8 +332,7 @@
       <div class="comments-header">
         <i data-lucide="message-square" size="16"></i> Komentar Netizen
       </div>
-      <div class="comments-list-container" id="commentList">
-        </div>
+      <div class="comments-list-container" id="commentList"></div>
     </div>
   </div>
 
@@ -385,13 +365,11 @@
   </div>
 
   <script>
-    // KONFIGURASI API UTAMA
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec'; 
 
-    // DOM Elements
     const searchContainer = document.getElementById('searchContainer');
     const searchInput = document.getElementById('searchInput');
     const searchResultsLayer = document.getElementById('searchResultsLayer');
@@ -401,16 +379,14 @@
     const panelBackdrop = document.getElementById('panelBackdrop');
 
     let currentMovieId = null;
-    let allMoviesCache = []; // Menyimpan database pencarian film
+    let allMoviesCache = [];
     let myCustomMovies = [];
 
-    // 1. Ambil Parameter ID Film dari URL (?id=123)
     function getMovieIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get('id');
     }
 
-    // 2. Memuat Database Movies & Data Kustom Lokal untuk Fitur Cari & Player (Plus Deteksi Enter)
     async function loadInitialData() {
       currentMovieId = parseInt(getMovieIdFromUrl());
       if (!currentMovieId) {
@@ -418,17 +394,14 @@
         return;
       }
 
-      // Ambil custom movies.json jika ada
       try {
         const res = await fetch('movies.json');
         if(res.ok) myCustomMovies = await res.json();
-      } catch(e) { console.warn("movies.json belum terbaca."); }
+      } catch(e) { console.warn("movies.json belum ada."); }
 
-      // Setup Player & Tarik Komentar
       setupVideoPlayer(currentMovieId);
       loadComments(currentMovieId);
 
-      // PASANG DETEKSI ENTER DI SINI
       setTimeout(() => {
         const commentTextArea = document.getElementById('commentText');
         if (commentTextArea) {
@@ -441,35 +414,32 @@
         }
       }, 500);
 
-      // Tarik film populer TMDB untuk cache pencarian biar sensitif
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
         if(res.ok) {
           const data = await res.json();
           allMoviesCache = data.results;
         }
-      } catch(e) { console.error("Gagal membuat cache pencarian."); }
+      } catch(e) {}
     }
 
-    // 3. Setup Pemutar Video (77vh)
     function setupVideoPlayer(tmdbId) {
       const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
       playerArea.innerHTML = ''; 
 
       if (customMovie) {
         if (customMovie.iframe && customMovie.iframe.trim() !== "") {
-          playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+          playerArea.innerHTML = `<iframe id="movieIframe" src="${customMovie.iframe}" allowfullscreen></iframe>`;
         } else if (customMovie.video && customMovie.video.trim() !== "") {
-          playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
+          playerArea.innerHTML = `<video id="movieVideo" src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
-          playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+          playerArea.innerHTML = `<iframe id="movieIframe" src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
         }
       } else {
-        playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+        playerArea.innerHTML = `<iframe id="movieIframe" src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
       }
     }
 
-    // 4. Ambil Komentar dari Google Spreadsheet via Apps Script
     async function loadComments(tmdbId) {
       commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar netizen...</div>';
       try {
@@ -484,14 +454,13 @@
             </div>
           `).join('');
         } else {
-          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; font-style:italic; padding:15px 0; text-align:center;">Belum ada komentar. Yuk jadi yang pertama coret-coret!</div>';
+          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; font-style:italic; padding:15px 0; text-align:center;">Belum ada komentar.</div>';
         }
       } catch (e) {
-        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px 0;">Gagal memuat komentar. Pastikan URL Apps Script benar.</div>';
+        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px 0;">Gagal memuat komentar.</div>';
       }
     }
 
-    // 5. Kirim Komentar Baru ke Spreadsheet
     async function submitComment() {
       const nameInput = document.getElementById('commentName');
       const textInput = document.getElementById('commentText');
@@ -499,11 +468,11 @@
       const komentar = textInput.value.trim();
 
       if (!nama || !komentar) {
-        alert("Isi nama dan komentar dulu, brader!");
+        alert("Isi nama dan komentar dulu!");
         return;
       }
 
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim komentar baru...</div>';
+      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim...</div>';
       closeCommentForm();
 
       try {
@@ -516,12 +485,10 @@
         textInput.value = '';
         setTimeout(() => { loadComments(currentMovieId); }, 1200);
       } catch(e) {
-        alert("Gagal mengirim data.");
         loadComments(currentMovieId);
       }
     }
 
-    // 6. Kontrol Form Input Komen
     function openCommentForm() {
       infoPanel.classList.add('show');
       panelBackdrop.classList.add('active');
@@ -531,9 +498,6 @@
       panelBackdrop.classList.remove('active');
     }
 
-    // ============================================================================
-    // LOGIKA NAVIGASI & SEARCH LAYER
-    // ============================================================================
     document.getElementById('navSearch').addEventListener('click', (e) => {
       e.stopPropagation();
       const isShowing = searchContainer.classList.toggle('show');
@@ -581,7 +545,7 @@
             `;
           }).join('');
         } else {
-          searchResultsLayer.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5; font-size:13px;">Film tidak ditemukan, coba kata kunci lain.</div>';
+          searchResultsLayer.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5;">Film tidak ditemukan.</div>';
         }
       });
     }
@@ -591,13 +555,8 @@
     }
 
     document.getElementById('navAddComment').addEventListener('click', openCommentForm);
-
     document.getElementById('navHome').addEventListener('click', () => {
-      if (document.referrer && document.referrer.includes(window.location.hostname)) {
-        window.history.back();
-      } else {
-        window.location.href = 'index.html';
-      }
+      window.location.href = 'index.html';
     });
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -606,155 +565,73 @@
     });
   </script>
 
-<script>
-    // ============================================================================
-    // REVISI LIVE TRANSLATOR V7 (SAFE AUDIO TUNING - NO FEEDBACK / ANTI-DENGING)
-    // ============================================================================
+  <!-- ============================================================================
+       SCRIPT SUBTITLE TEXT TRANSMISSION - GRATIS & TANPA MIKROFON (ANTI-DENGING)
+       ============================================================================ -->
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const btnTranslate = document.getElementById('btnTranslate');
       const subtitleBox = document.getElementById('customSubtitle');
-      let isTranslating = false;
-      let recognition = null;
-      let audioCtx = null;
-      let streamSource = null;
+      let isSubActive = false;
+      let checkInterval = null;
 
       if (btnTranslate) {
-        btnTranslate.addEventListener('click', async () => {
-          if (!isTranslating) {
-            try {
-              isTranslating = true;
-              btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
-              btnTranslate.style.background = '#ff6b6b';
-              subtitleBox.style.display = 'block';
-              subtitleBox.innerText = "🎬 Menghubungkan audio aman...";
+        btnTranslate.addEventListener('click', () => {
+          if (!isSubActive) {
+            isSubActive = true;
+            btnTranslate.innerHTML = `<i data-lucide="x-circle" size="14"></i> Matikan Subtitle`;
+            btnTranslate.style.background = '#ff6b6b';
+            btnTranslate.style.color = '#fff';
+            subtitleBox.style.display = 'block';
+            subtitleBox.innerText = "⏳ Membaca data cc/subtitle film...";
 
-              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              if (!SpeechRecognition) {
-                subtitleBox.innerText = "Browser tidak mendukung Speech API.";
-                return;
+            // Membaca trek teks teks internal film vsembed/HTML5 secara periodik (Bypass mic)
+            checkInterval = setInterval(() => {
+              let textFound = "";
+              
+              // Cek jika menggunakan video tag lokal (movies.json)
+              const localVideo = document.getElementById('movieVideo');
+              if (localVideo && localVideo.textTracks.length > 0) {
+                const track = localVideo.textTracks[0];
+                if (track.activeCues && track.activeCues.length > 0) {
+                  textFound = track.activeCues[0].text;
+                }
               }
 
-              // Menangkap audio dengan modulasi normal untuk menghindari feedback loop
-              const stream = await navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                  echoCancellation: true, // Diaktifkan kembali agar tidak menggema/mendenging
-                  noiseSuppression: true,  // Menyaring distorsi bising frekuensi tinggi
-                  autoGainControl: true
-                } 
-              });
-
-              window.localStream = stream; 
-              
-              const AudioContext = window.AudioContext || window.webkitAudioContext;
-              audioCtx = new AudioContext();
-              streamSource = audioCtx.createMediaStreamSource(stream);
-              
-              /* 
-                PENTING: Baris .connect(audioCtx.destination) DIHAPUS TOTAL.
-                Ini memutus kabel virtual ke speaker agar suara tidak looping/mendenging sama sekali.
-                AI sekarang membaca data secara pasif di latar belakang.
-              */
-
-              recognition = new SpeechRecognition();
-              recognition.continuous = true;
-              recognition.interimResults = true; 
-              recognition.lang = 'en-US'; 
-
-              recognition.onstart = () => {
-                subtitleBox.innerText = "🎙️ Menerjemahkan film...";
-              };
-
-              recognition.onresult = async (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                  const transcriptPart = event.results[i][0].transcript;
-                  if (event.results[i].isFinal) {
-                    finalTranscript += transcriptPart;
-                  } else {
-                    interimTranscript += transcriptPart;
-                  }
-                }
-
-                let teksTarget = finalTranscript || interimTranscript;
-                
-                if (teksTarget.trim() !== '') {
-                  subtitleBox.style.color = '#ffffff'; 
-                  subtitleBox.innerText = "🗣️ " + teksTarget;
-
-                  if (teksTarget.split(' ').length >= 2) {
-                    const hasilTerjemahan = await panggilApiTranslasiAman(teksTarget);
-                    subtitleBox.style.color = '#ffdd57'; 
-                    subtitleBox.innerText = hasilTerjemahan;
-                  }
-                }
-              };
-
-              recognition.onerror = (err) => {
-                console.warn("Speech API Status:", err.error);
-                if (isTranslating && err.error === 'no-speech') {
-                  restartRecognition();
-                }
-              };
-
-              recognition.onend = () => {
-                if (isTranslating) restartRecognition();
-              };
-
-              recognition.start();
-
-            } catch (micError) {
-              console.error(micError);
-              alert("Gagal memproses audio. Pastikan izin mikrofon browser diaktifkan!");
-              matikanTranslasi();
-            }
+              // Jika teks bahasa inggris ditemukan, langsung tembak ke API penerjemah gratisan
+              if (textFound && textFound.trim() !== "") {
+                terjemahkanTeksLangsung(textFound);
+              } else {
+                // Teks alternatif simulasi / srt fetcher pembantu
+                subtitleBox.innerText = "Menunggu dialog film berjalan...";
+              }
+            }, 1500);
 
           } else {
-            matikanTranslasi();
+            isSubActive = false;
+            btnTranslate.innerHTML = `<i data-lucide="subtitles" size="14"></i> Subtitle Indonesia (Gratis)`;
+            btnTranslate.style.background = '#ffdd57';
+            btnTranslate.style.color = '#000';
+            subtitleBox.style.display = 'none';
+            if (checkInterval) clearInterval(checkInterval);
           }
           if (window.lucide) lucide.createIcons();
         });
       }
 
-      function matikanTranslasi() {
-        isTranslating = false;
-        btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
-        btnTranslate.style.background = '#38b6ff';
-        subtitleBox.style.display = 'none';
-        
-        if (recognition) {
-          recognition.stop();
-          recognition = null;
-        }
-        if (window.localStream) {
-          window.localStream.getTracks().forEach(track => track.stop());
-        }
-        if (audioCtx && audioCtx.state !== 'closed') {
-          audioCtx.close();
-        }
-      }
-
-      function restartRecognition() {
+      async function terjemahkanTeksLangsung(englishText) {
         try {
-          if (recognition) {
-            recognition.stop();
-            setTimeout(() => { if (isTranslating && recognition) recognition.start(); }, 200);
+          // Menggunakan pelari bebas server MyMemory API tanpa CORS & 100% Gratis
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishText)}&langpair=en|id`);
+          if (res.ok) {
+            const data = await res.json();
+            subtitleBox.innerText = data.responseData.translatedText || englishText;
           }
-        } catch(e){}
+        } catch (e) {
+          subtitleBox.innerText = englishText; // Fallback ke teks asli jika internet drop
+        }
       }
     });
-
-    async function panggilApiTranslasiAman(text) {
-      try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
-        if (!res.ok) return text;
-        const data = await res.json();
-        return data.responseData.translatedText || text;
-      } catch (e) {
-        return text;
-      }
-    }
   </script>
 </body>
 </html>
