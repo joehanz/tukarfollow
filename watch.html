@@ -291,13 +291,6 @@
     <div class="video-player-section" id="playerArea">
       </div>
 
-    <button id="btnTranslate" style="background: #ffdd57; color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; gap: 5px;">
-  <i data-lucide="subtitles" size="14"></i> Aktifkan Subtitle (.srt)
-</button>
-
-<div id="customSubtitle" style="display: none; position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 8px 15px; border-radius: 5px; font-size: 16px; font-weight: 500; text-align: center; z-index: 10; min-width: 70%; max-width: 90%; pointer-events: none; border: 1px solid rgba(255,255,255,0.1);">
-</div>
-
     <div class="comments-section">
       <div class="comments-header">
         <i data-lucide="message-square" size="16"></i> Komentar Netizen
@@ -433,7 +426,7 @@
 
        try {
          // Path mengarah ke folder subtitles di GitHub milikmu
-         const srtUrl = `https://tukarfollow.web.id/main/subtitles/${movieId}.srt`;
+         const srtUrl = `https://tukarfollow.web.id/subtitles/${movieId}`;
          const response = await fetch(srtUrl);
 
          if (!response.ok) {
