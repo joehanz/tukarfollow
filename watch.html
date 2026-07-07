@@ -401,101 +401,60 @@
     }
 
     // ============================================================================
- // FUNGSI UTAMA UNTUK MENGAMBIL & PARSING SUBTITLE DARI REPO GITHUB
- // ============================================================================
- async function inisialisasiSubtitleOtomatis(movieId) {
-   const btnTranslate = document.getElementById('btnTranslate');
-   const subtitleBox = document.getElementById('customSubtitle');
+    // SISTEM SUBTITLE AUTOMATIC: DETEKSI KLIK PLAYER (ANTI SINKRONISASI ERROR)
+    // ============================================================================
+    async function jalankanSubtitleOtomatis(movieId) {
+      const subtitleBox = document.getElementById('customSubtitle');
+      const playerArea = document.getElementById('playerArea');
+      if (!subtitleBox || !playerArea) return;
 
-   if (!btnTranslate || !subtitleBox) return;
+      let parsedCues = [];
+      let subInterval = null;
 
-   let isSubActive = false;
-   let subInterval = null;
-   let startTime = 0;
-   let parsedCues = [];
+      try {
+        // Tarik file .srt dari GitHub
+        const srtUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/main/subtitles/${movieId}.srt`;
+        const response = await fetch(srtUrl);
+        
+        if (!response.ok) return; // Jika file .srt tidak ada di GitHub, stop.
 
-   btnTranslate.innerHTML = `<i data-lucide="subtitles" size="14"></i> Aktifkan Subtitle (.srt)`;
+        const srtText = await response.text();
+        parsedCues = parseSRT(srtText);
+        
+        // Buat area player bisa mendeteksi sentuhan/klik pertama penonton saat play video
+        playerArea.style.cursor = 'pointer';
+        
+        // Pemicu: Begitu user klik area video untuk PLAY, subtitle baru mulai menghitung waktu
+        playerArea.addEventListener('click', function pemicuWaktu() {
+          // Matikan interval lama jika ada biar tidak tumpang tindih
+          if (subInterval) clearInterval(subInterval);
+          
+          subtitleBox.style.display = 'block';
+          subtitleBox.innerText = "...";
+          
+          const startTime = Date.now();
 
-   btnTranslate.addEventListener('click', async () => {
-     if (!isSubActive) {
-       isSubActive = true;
-       btnTranslate.innerHTML = `<i data-lucide="x-circle" size="14"></i> Matikan Subtitle`;
-       btnTranslate.style.background = '#ff6b6b';
-       btnTranslate.style.color = '#fff';
-       subtitleBox.style.display = 'block';
-       subtitleBox.innerText = "⏳ Memuat subtitle dari GitHub...";
+          // Jalankan pencocokan teks srt detik demi detik
+          subInterval = setInterval(() => {
+            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            const currentCue = parsedCues.find(cue => elapsedSeconds >= cue.start && elapsedSeconds <= cue.end);
+            
+            if (currentCue) {
+              subtitleBox.innerText = currentCue.text;
+            } else {
+              subtitleBox.innerText = ""; 
+            }
+          }, 300);
 
-       try {
-         // Path mengarah ke folder subtitles di GitHub milikmu
-         const srtUrl = `https://tukarfollow.web.id/subtitles/${movieId}`;
-         const response = await fetch(srtUrl);
+          // Hapus deteksi klik ini setelah jalan agar tidak reset waktu kalau diklik lagi
+          playerArea.removeEventListener('click', pemicuWaktu);
+        }, { once: true });
 
-         if (!response.ok) {
-           subtitleBox.innerText = "❌ File subtitle (.srt) belum diupload ke folder GitHub.";
-           return;
-         }
-
-         const srtText = await response.text();
-         parsedCues = parseSRT(srtText);
-
-         subtitleBox.innerText = "⏳ Sinkronisasi dengan player...";
-         startTime = Date.now();
-
-         subInterval = setInterval(() => {
-           const elapsedSeconds = (Date.now() - startTime) / 1000;
-           const currentCue = parsedCues.find(cue => elapsedSeconds >= cue.start && elapsedSeconds <= cue.end);
-
-           if (currentCue) {
-             subtitleBox.innerText = currentCue.text;
-           } else {
-             subtitleBox.innerText = ""; 
-           }
-         }, 300);
-
-       } catch (e) {
-         subtitleBox.innerText = "❌ Gagal memproses file .srt.";
-         console.error(e);
-       }
-
-     } else {
-       isSubActive = false;
-       btnTranslate.innerHTML = `<i data-lucide="subtitles" size="14"></i> Aktifkan Subtitle (.srt)`;
-       btnTranslate.style.background = '#ffdd57';
-       btnTranslate.style.color = '#000';
-       subtitleBox.style.display = 'none';
-       if (subInterval) clearInterval(subInterval);
-     }
-     if (window.lucide) lucide.createIcons();
-   });
- }
-
- // Fungsi pembedah struktur teks file .srt
- function parseSRT(srtText) {
-   const blocks = srtText.replace(/\r\n/g, '\n').split('\n\n');
-   const cues = [];
-
-   blocks.forEach(block => {
-     const lines = block.split('\n');
-     if (lines.length >= 3) {
-       const timeLine = lines[1];
-       if (timeLine && timeLine.includes('-->')) {
-         const times = timeLine.split('-->');
-         const startSec = timeToSeconds(times[0].trim());
-         const endSec = timeToSeconds(times[1].trim());
-         const text = lines.slice(2).join('\n');
-
-         cues.push({ start: startSec, end: endSec, text: text });
-       }
-     }
-   });
-   return cues;
- }
-
- function timeToSeconds(timeStr) {
-   const parts = timeStr.replace(',', '.').split(':');
-   return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseFloat(parts[2]);
- }
-
+      } catch (e) {
+        console.log("Subtitle tidak tersedia.");
+      }
+    }
+    
     // 3. Setup Pemutar Video (77vh)
     function setupVideoPlayer(tmdbId) {
       const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
