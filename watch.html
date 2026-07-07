@@ -446,18 +446,20 @@
     }
 
 // ============================================================================
-    // 🖥️ 3. SETUP VIDEO PLAYER (VIDSRC STABLE + AUTO-SUBTITLE)
+    // 🖥️ 3. SETUP VIDEO PLAYER (MULTI-SERVER ANTI-ZONK)
     // ============================================================================
+    let currentServerIndex = 0; // Index untuk melacak server aktif
+
     function setupVideoPlayer(tmdbId) {
       const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
       
-      // Reset isi player area dan kembalikan struktur box penampung
+      // Reset area player & siapkan tombol sinkron subtitle cadangan kita
       playerArea.innerHTML = `
         <button id="syncSubBtn" class="sync-sub-btn"><i data-lucide="refresh-cw" size="12"></i> Paskan Subtitle</button>
         <div id="customSubtitle" class="custom-subtitle-box"></div>
       `; 
 
-      // Bikin link otomatis ke file .vtt di repo GitHub Refs terbaru milikmu
+      // Link subtitle dari GitHub kamu
       const githubSubUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${tmdbId}.vtt`;
       const encodedSubUrl = encodeURIComponent(githubSubUrl);
 
@@ -466,48 +468,76 @@
       if (customMovie) {
         if (customMovie.iframe && customMovie.iframe.trim() !== "") {
           mediaHtml = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+          playerArea.insertAdjacentHTML('afterbegin', mediaHtml);
+          return;
         } else if (customMovie.video && customMovie.video.trim() !== "") {
           mediaHtml = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
-        } else {
-          // SERVER UTAMA: Menggunakan Vidsrc.to (Jauh lebih stabil & anti-refused)
-          mediaHtml = `
-            <div style="width:100%; height:100%; position:relative;">
-              <iframe id="mainPlayer" src="https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
-              <button onclick="switchServer(${tmdbId})" style="position:absolute; bottom:15px; left:15px; background:rgba(0,0,0,0.75); color:#ffdd57; border:1px solid #ffdd57; padding:5px 12px; font-size:11px; font-weight:600; border-radius:6px; cursor:pointer; z-index:102; box-shadow:0 2px 8px rgba(0,0,0,0.5);">
-                🔄 Ganti Server (Jika Error)
-              </button>
-            </div>
-          `;
+          playerArea.insertAdjacentHTML('afterbegin', mediaHtml);
+          return;
         }
-      } else {
-        // Default langsung pakai server Vidsrc.to yang aman dari error koneksi
-        mediaHtml = `
-          <div style="width:100%; height:100%; position:relative;">
-            <iframe id="mainPlayer" src="https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
-            <button onclick="switchServer(${tmdbId})" style="position:absolute; bottom:15px; left:15px; background:rgba(0,0,0,0.75); color:#ffdd57; border:1px solid #ffdd57; padding:5px 12px; font-size:11px; font-weight:600; border-radius:6px; cursor:pointer; z-index:102; box-shadow:0 2px 8px rgba(0,0,0,0.5);">
-              🔄 Ganti Server (Jika Error)
-            </button>
-          </div>
-        `;
       }
+
+      // Daftar Server Alternatif yang Masih Segar dan Aktif
+      const serverList = [
+        `https://vidsrc.xyz/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`, // Server 1 (xyz - sering lancar)
+        `https://vidsrc.me/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`,  // Server 2 (me - sesepuh stabil)
+        `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`,                    // Server 3 (ru - alternatif Rusia, anti-blokir)
+        `https://vidsrc.net/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`  // Server 4 (net - cadangan terakhir)
+      ];
+
+      currentServerIndex = 0; // Mulai dari server pertama
+
+      mediaHtml = `
+        <div style="width:100%; height:100%; position:relative;">
+          <iframe id="mainPlayer" src="${serverList[currentServerIndex]}" allowfullscreen style="width:100%; height:100%;"></iframe>
+          <button onclick="gantiServerMuter(${tmdbId})" style="position:absolute; bottom:15px; left:15px; background:rgba(255, 65, 54, 0.9); color:#fff; border:1px solid #ff4136; padding:6px 14px; font-size:12px; font-weight:bold; border-radius:6px; cursor:pointer; z-index:102; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition: 0.2s;">
+            🚨 Server Error? Klik Ganti Server (Server 1)
+          </button>
+        </div>
+      `;
       
       playerArea.insertAdjacentHTML('afterbegin', mediaHtml);
     }
 
-    // Fungsi saklar rahasia untuk lompat server cadangan jika Vidsrc utama lagi ngadat
-    function switchServer(tmdbId) {
+    // ============================================================================
+    // 🔄 FUNGSI ROTASI SERVER otomatis (MUTER TERUS SAMPAI BISA)
+    // ============================================================================
+    function gantiServerMuter(tmdbId) {
       const player = document.getElementById('mainPlayer');
+      const targetButton = event.target; // Ambil element tombol yang diklik
+      
+      const githubSubUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${tmdbId}.vtt`;
+      const encodedSubUrl = encodeURIComponent(githubSubUrl);
+
+      // List server yang sama dengan di atas
+      const serverList = [
+        `https://vidsrc.xyz/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`,
+        `https://vidsrc.me/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`,
+        `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`,
+        `https://vidsrc.net/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}`
+      ];
+
+      // Naikkan indeks, kalau mentok balik ke 0
+      currentServerIndex = (currentServerIndex + 1) % serverList.length;
+      
+      // Ganti src iframe
       if (player) {
-        if (player.src.includes('vidsrc.to')) {
-          // Jika server utama error, lempar ke vsembed yang anti-blokir
-          player.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
-          alert("Beralih ke Server Cadangan (vsembed)...");
-        } else {
-          const githubSubUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${tmdbId}.vtt`;
-          const encodedSubUrl = encodeURIComponent(githubSubUrl);
-          player.src = `https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}`;
-          alert("Beralih kembali ke Server Utama (Vidsrc)...");
+        player.src = serverList[currentServerIndex];
+        
+        // Ubah teks tombol biar user tahu mereka lagi di server berapa
+        if (targetButton) {
+          targetButton.innerText = `🚨 Server Error? Klik Ganti Server (Server ${currentServerIndex + 1})`;
+          // Kasih variasi warna biar kelihatan interaktif
+          if(currentServerIndex === 2) {
+            targetButton.style.background = "rgba(46, 204, 64, 0.9)"; // Hijau untuk server Rusia
+            targetButton.style.borderColor = "#2ecc40";
+          } else {
+            targetButton.style.background = "rgba(255, 65, 54, 0.9)";
+            targetButton.style.borderColor = "#ff4136";
+          }
         }
+        
+        alert(`Mencoba memuat via Server ${currentServerIndex + 1}. Silakan tunggu beberapa detik...`);
       }
     }
 
