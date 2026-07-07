@@ -328,8 +328,8 @@
     </div>
   </div>
 
-<script>
-// KONFIGURASI API UTAMA
+  <script>
+    // KONFIGURASI API UTAMA
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
@@ -345,7 +345,7 @@
     const panelBackdrop = document.getElementById('panelBackdrop');
 
     let currentMovieId = null;
-    let allMoviesCache = []; 
+    let allMoviesCache = []; // Menyimpan database pencarian film
     let myCustomMovies = [];
 
     // 1. Ambil Parameter ID Film dari URL (?id=123)
@@ -354,7 +354,7 @@
       return params.get('id');
     }
 
-    // 2. Memuat Database Movies & Data Kustom Lokal (Plus Deteksi Enter & Subtitle)
+    // 2. Memuat Database Movies & Data Kustom Lokal untuk Fitur Cari & Player (Plus Deteksi Enter)
     async function loadInitialData() {
       currentMovieId = parseInt(getMovieIdFromUrl());
       if (!currentMovieId) {
@@ -362,6 +362,7 @@
         return;
       }
 
+      // Ambil custom movies.json jika ada
       try {
         const res = await fetch('movies.json');
         if(res.ok) myCustomMovies = await res.json();
@@ -371,22 +372,24 @@
       setupVideoPlayer(currentMovieId);
       loadComments(currentMovieId);
 
-      // JALANKAN PROSES DOWNLOAD SUBTITLE .VTT DARI REPO GITHUB
-      muatSubtitleVttOtomatis(currentMovieId);
-
-      // PASANG DETEKSI ENTER DI SINI
+      // ============================================================================
+      // PASANG DETEKSI ENTER DI SINI (ANTI TOMBOL TAMBAHAN)
+      // ============================================================================
+      // Karena elemen textarea berada di dalam panel yang dinamis / statis, kita panggil saat init
       setTimeout(() => {
         const commentTextArea = document.getElementById('commentText');
         if (commentTextArea) {
           commentTextArea.addEventListener('keydown', function(event) {
+            // Jika menekan Enter TANPA Shift (Shift+Enter buat baris baru)
             if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault(); 
-              submitComment(); 
+              event.preventDefault(); // Mencegah enter bikin baris baru di kolom teks
+              submitComment(); // Langsung eksekusi kirim komentar
             }
           });
         }
-      }, 500);
+      }, 500); // Diberi jeda dikit biar DOM ke-render sempurna dulu
 
+      // Tarik film populer TMDB untuk cache pencarian biar sensitif
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
         if(res.ok) {
@@ -396,134 +399,22 @@
       } catch(e) { console.error("Gagal membuat cache pencarian."); }
     }
 
-    // ============================================================================
-    // 🚀 ENGINE PARSER WEB VTT (.VTT) AUTOMATIC SYSTEM
-    // ============================================================================
-    async function muatSubtitleVttOtomatis(movieId) {
-      const subtitleBox = document.getElementById('customSubtitle');
-      const syncBtn = document.getElementById('syncSubBtn');
-      if (!subtitleBox || !syncBtn) return;
-
-      let parsedCues = [];
-      let subInterval = null;
-
-      try {
-        // Tembak URL VTT menggunakan struktur link refs github terbaru milikmu
-        const vttUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${movieId}.vtt`;
-        const response = await fetch(vttUrl);
-        
-        if (!response.ok) return; // Jika file .vtt absen, sistem skip diam-diam
-
-        const vttText = await response.text();
-        parsedCues = parseVTT(vttText);
-
-        // Jika berhasil di-parse, munculkan tombol sinkronisasi melayang
-        syncBtn.style.display = 'flex';
-        if (window.lucide) lucide.createIcons();
-
-        // Logika ketika user mengetuk tombol sinkronisasi setelah memutar video
-        syncBtn.addEventListener('click', () => {
-          if (subInterval) clearInterval(subInterval);
-          
-          subtitleBox.style.display = 'block';
-          subtitleBox.innerText = "Subtitle disinkronkan...";
-          
-          const startTime = Date.now();
-
-          subInterval = setInterval(() => {
-            const elapsedSeconds = (Date.now() - startTime) / 1000;
-            const currentCue = parsedCues.find(cue => elapsedSeconds >= cue.start && elapsedSeconds <= cue.end);
-            
-            if (currentCue) {
-              subtitleBox.innerHTML = currentCue.text;
-            } else {
-              subtitleBox.innerHTML = ""; 
-            }
-          }, 250);
-
-          // Ubah indikasi tombol setelah aktif
-          syncBtn.innerHTML = `<i data-lucide="check-circle" size="12"></i> Sinkron Berjalan`;
-          syncBtn.style.background = 'rgba(56, 182, 255, 0.9)';
-          syncBtn.style.color = '#fff';
-          if (window.lucide) lucide.createIcons();
-        });
-
-      } catch (e) {
-        console.log("Gagal memproses subtitle VTT.");
-      }
-    }
-
-    // Fungsi pemilah teks WebVTT asli (.vtt)
-    function parseVTT(vttText) {
-      const cleanText = vttText.replace(/\r\n/g, '\n');
-      const blocks = cleanText.split('\n\n');
-      const cues = [];
-
-      blocks.forEach(block => {
-        const lines = block.trim().split('\n');
-        if (lines.length >= 2) {
-          let timeLine = lines[0];
-          let textLines = lines.slice(1);
-
-          // Lewati baris indeks angka jika file vtt memakai penomoran baris
-          if (!timeLine.includes('-->') && lines[1] && lines[1].includes('-->')) {
-            timeLine = lines[1];
-            textLines = lines.slice(2);
-          }
-
-          if (timeLine && timeLine.includes('-->')) {
-            const times = timeLine.split('-->');
-            const startSec = timeToSecondsVTT(times[0].trim());
-            const endSec = timeToSecondsVTT(times[1].trim());
-            const text = textLines.join('<br>');
-            
-            if (!isNaN(startSec) && !isNaN(endSec)) {
-              cues.push({ start: startSec, end: endSec, text: text });
-            }
-          }
-        }
-      });
-      return cues;
-    }
-
-    function timeToSecondsVTT(timeStr) {
-      // Pecah format jam:menit:detik.milidetik atau menit:detik.milidetik
-      const parts = timeStr.split(':');
-      let seconds = 0;
-      if (parts.length === 3) {
-        seconds += parseInt(parts[0], 10) * 3600;
-        seconds += parseInt(parts[1], 10) * 60;
-        seconds += parseFloat(parts[2]);
-      } else if (parts.length === 2) {
-        seconds += parseInt(parts[0], 10) * 60;
-        seconds += parseFloat(parts[1]);
-      }
-      return seconds;
-    }
-
     // 3. Setup Pemutar Video (77vh)
     function setupVideoPlayer(tmdbId) {
       const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
-      
-      // Ambil elemen lama iframe jika ada agar tombol sinkron tidak hilang ter-overwrite penuh
-      playerArea.innerHTML = `
-        <button id="syncSubBtn" class="sync-sub-btn"><i data-lucide="refresh-cw" size="12"></i> Paskan Subtitle</button>
-        <div id="customSubtitle" class="custom-subtitle-box"></div>
-      `; 
+      playerArea.innerHTML = ''; 
 
-      let mediaHtml = '';
       if (customMovie) {
         if (customMovie.iframe && customMovie.iframe.trim() !== "") {
-          mediaHtml = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+          playerArea.innerHTML = `<iframe src="${customMovie.iframe}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
         } else if (customMovie.video && customMovie.video.trim() !== "") {
-          mediaHtml = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
+          playerArea.innerHTML = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
-          mediaHtml = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+          playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
         }
       } else {
-        mediaHtml = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
+        playerArea.innerHTML = `<iframe src="https://vsembed.ru/embed/movie?tmdb=${tmdbId}" allowfullscreen></iframe>`;
       }
-      playerArea.insertAdjacentHTML('afterbegin', mediaHtml);
     }
 
     // 4. Ambil Komentar dari Google Spreadsheet via Apps Script
@@ -560,6 +451,7 @@
         return;
       }
 
+      // Animasi Loading
       commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim komentar baru...</div>';
       closeCommentForm();
 
@@ -571,6 +463,7 @@
           body: JSON.stringify({ tmdbId: currentMovieId, nama: nama, komentar: komentar })
         });
         
+        // Bersihkan form & reload otomatis setelah jeda aman
         textInput.value = '';
         setTimeout(() => { loadComments(currentMovieId); }, 1200);
       } catch(e) {
@@ -589,6 +482,10 @@
       panelBackdrop.classList.remove('active');
     }
 
+    // ============================================================================
+    // LOGIKA NAVIGASI & SEARCH LAYER
+    // ============================================================================
+
     // Tombol Cari (Buka Tutup Layer)
     document.getElementById('navSearch').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -601,10 +498,11 @@
       }
     });
 
-    // Mesin Pencari Real-Time Super Sensitif Menutupi Layar
+    // Mesin Pencari Real-Time Super Sensitif Menutupi Layar (Kecuali Nav Bawah)
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         const keyword = e.target.value.toLowerCase().trim();
+        
         if (keyword === "") {
           searchResultsLayer.classList.remove('active');
           return;
@@ -613,6 +511,7 @@
         searchResultsLayer.classList.add('active');
         const cleanKeyword = keyword.replace(/\s+/g, '');
 
+        // Filter data gabungan dari cache & custom data
         const filtered = allMoviesCache.filter(movie => {
           const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
           const rawTitle = customData ? customData.title : movie.title;
@@ -643,17 +542,20 @@
       });
     }
 
+    // Navigasi Pindah ke Film Lain saat Hasil Pencarian diklik
     function navigateToMovie(id) {
       window.location.href = `watch.html?id=${id}`;
     }
 
+    // Tombol + (Memicu Form Komentar Naik)
     document.getElementById('navAddComment').addEventListener('click', openCommentForm);
 
+    // Tombol Home (Kembali Ke Halaman Sebelumnya, Bukan Scroll Up)
     document.getElementById('navHome').addEventListener('click', () => {
       if (document.referrer && document.referrer.includes(window.location.hostname)) {
-        window.history.back(); 
+        window.history.back(); // Balik ke halaman feed posisi terakhir
       } else {
-        window.location.href = 'index.html'; 
+        window.location.href = 'index.html'; // Fallback jika ketik link langsung
       }
     });
 
@@ -662,6 +564,6 @@
       if (window.lucide) lucide.createIcons();
       loadInitialData();
     });
-</script>
+  </script>
 </body>
 </html>
