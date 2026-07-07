@@ -378,75 +378,8 @@
   </div>
 
   <script>
-    // KONFIGURASI API UTAMA
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
-    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec'; 
-
-    // DOM Elements
-    const searchContainer = document.getElementById('searchContainer');
-    const searchInput = document.getElementById('searchInput');
-    const searchResultsLayer = document.getElementById('searchResultsLayer');
-    const playerArea = document.getElementById('playerArea');
-    const commentList = document.getElementById('commentList');
-    const infoPanel = document.getElementById('infoPanel');
-    const panelBackdrop = document.getElementById('panelBackdrop');
-
-    let currentMovieId = null;
-    let allMoviesCache = []; 
-    let myCustomMovies = [];
-
-    // 1. Ambil Parameter ID Film dari URL (?id=123)
-    function getMovieIdFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('id');
-    }
-
-    // 2. Memuat Database Movies & Data Kustom Lokal
-    async function loadInitialData() {
-      currentMovieId = parseInt(getMovieIdFromUrl());
-      if (!currentMovieId) {
-        playerArea.innerHTML = `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
-        return;
-      }
-
-      try {
-        const res = await fetch('movies.json');
-        if(res.ok) myCustomMovies = await res.json();
-      } catch(e) { console.warn("movies.json belum terbaca."); }
-
-      // Setup Player Utama (Vidsrc Auto-Injek) & Tarik Komentar
-      setupVideoPlayer(currentMovieId);
-      loadComments(currentMovieId);
-
-      // SCRIPT CADANGAN: Tetap muat engine parser lokal buat jaga-jaga kalau tombol sinkron diklik
-      muatSubtitleVttOtomatis(currentMovieId);
-
-      // PASANG DETEKSI ENTER KOMENTAR
-      setTimeout(() => {
-        const commentTextArea = document.getElementById('commentText');
-        if (commentTextArea) {
-          commentTextArea.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault(); 
-              submitComment(); 
-            }
-          });
-        }
-      }, 500);
-
-      try {
-        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
-        if(res.ok) {
-          const data = await res.json();
-          allMoviesCache = data.results;
-        }
-      } catch(e) { console.error("Gagal membuat cache pencarian."); }
-    }
-
-    // ============================================================================
-    // 🖥️ 3. SETUP VIDEO PLAYER (VIDSRC AUTO-INJEKTOR SUBTITLE VIA URL)
+// ============================================================================
+    // 🖥️ 3. SETUP VIDEO PLAYER (VIDSRC STABLE + AUTO-SUBTITLE)
     // ============================================================================
     function setupVideoPlayer(tmdbId) {
       const customMovie = myCustomMovies.find(m => m.tmdb_id === tmdbId);
@@ -459,8 +392,6 @@
 
       // Bikin link otomatis ke file .vtt di repo GitHub Refs terbaru milikmu
       const githubSubUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${tmdbId}.vtt`;
-      
-      // Encoding URL Subtitle agar tidak error/patah saat dibaca oleh sistem iframe player
       const encodedSubUrl = encodeURIComponent(githubSubUrl);
 
       let mediaHtml = '';
@@ -471,10 +402,10 @@
         } else if (customMovie.video && customMovie.video.trim() !== "") {
           mediaHtml = `<video src="${customMovie.video}" controls autoplay playsinline></video>`;
         } else {
-          // SERVER UTAMA: Auto-Injek Subtitle menggunakan API parameter Vidsrc.cc
+          // SERVER UTAMA: Menggunakan Vidsrc.to (Jauh lebih stabil & anti-refused)
           mediaHtml = `
             <div style="width:100%; height:100%; position:relative;">
-              <iframe id="mainPlayer" src="https://vidsrc.cc/v2/embed/movie/${tmdbId}?subtitle=${encodedSubUrl}&sub.id=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
+              <iframe id="mainPlayer" src="https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
               <button onclick="switchServer(${tmdbId})" style="position:absolute; bottom:15px; left:15px; background:rgba(0,0,0,0.75); color:#ffdd57; border:1px solid #ffdd57; padding:5px 12px; font-size:11px; font-weight:600; border-radius:6px; cursor:pointer; z-index:102; box-shadow:0 2px 8px rgba(0,0,0,0.5);">
                 🔄 Ganti Server (Jika Error)
               </button>
@@ -482,10 +413,10 @@
           `;
         }
       } else {
-        // Default langsung pakai server auto-injek jika ID film polos dari TMDB
+        // Default langsung pakai server Vidsrc.to yang aman dari error koneksi
         mediaHtml = `
           <div style="width:100%; height:100%; position:relative;">
-            <iframe id="mainPlayer" src="https://vidsrc.cc/v2/embed/movie/${tmdbId}?subtitle=${encodedSubUrl}&sub.id=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
+            <iframe id="mainPlayer" src="https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}" allowfullscreen style="width:100%; height:100%;"></iframe>
             <button onclick="switchServer(${tmdbId})" style="position:absolute; bottom:15px; left:15px; background:rgba(0,0,0,0.75); color:#ffdd57; border:1px solid #ffdd57; padding:5px 12px; font-size:11px; font-weight:600; border-radius:6px; cursor:pointer; z-index:102; box-shadow:0 2px 8px rgba(0,0,0,0.5);">
               🔄 Ganti Server (Jika Error)
             </button>
@@ -496,243 +427,22 @@
       playerArea.insertAdjacentHTML('afterbegin', mediaHtml);
     }
 
-    // Fungsi saklar rahasia untuk lompat server cadangan jika Vidsrc mati/error
+    // Fungsi saklar rahasia untuk lompat server cadangan jika Vidsrc utama lagi ngadat
     function switchServer(tmdbId) {
       const player = document.getElementById('mainPlayer');
       if (player) {
-        if (player.src.includes('vidsrc')) {
+        if (player.src.includes('vidsrc.to')) {
+          // Jika server utama error, lempar ke vsembed yang anti-blokir
           player.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
           alert("Beralih ke Server Cadangan (vsembed)...");
         } else {
           const githubSubUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${tmdbId}.vtt`;
           const encodedSubUrl = encodeURIComponent(githubSubUrl);
-          player.src = `https://vidsrc.cc/v2/embed/movie/${tmdbId}?subtitle=${encodedSubUrl}&sub.id=${encodedSubUrl}`;
-          alert("Beralih kembali ke Server Utama (Vidsrc Auto-Injek)...");
+          player.src = `https://vidsrc.to/embed/movie/${tmdbId}?sub.id=${encodedSubUrl}&sub.info=${encodedSubUrl}`;
+          alert("Beralih kembali ke Server Utama (Vidsrc)...");
         }
       }
     }
-
-    // ============================================================================
-    // 🚀 ENGINE PARSER SCRIPT CADANGAN (UNTUK LAYER TOMBOL MANUAL)
-    // ============================================================================
-    async function muatSubtitleVttOtomatis(movieId) {
-      const subtitleBox = document.getElementById('customSubtitle');
-      const syncBtn = document.getElementById('syncSubBtn');
-      if (!subtitleBox || !syncBtn) return;
-
-      let parsedCues = [];
-      let subInterval = null;
-
-      try {
-        const vttUrl = `https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/${movieId}.vtt`;
-        const response = await fetch(vttUrl);
-        if (!response.ok) return; 
-
-        const vttText = await response.text();
-        parsedCues = parseVTT(vttText);
-
-        syncBtn.style.display = 'flex';
-        if (window.lucide) lucide.createIcons();
-
-        syncBtn.addEventListener('click', () => {
-          if (subInterval) clearInterval(subInterval);
-          subtitleBox.style.display = 'block';
-          subtitleBox.innerText = "Subtitle disinkronkan...";
-          const startTime = Date.now();
-
-          subInterval = setInterval(() => {
-            const elapsedSeconds = (Date.now() - startTime) / 1000;
-            const currentCue = parsedCues.find(cue => elapsedSeconds >= cue.start && elapsedSeconds <= cue.end);
-            if (currentCue) {
-              subtitleBox.innerHTML = currentCue.text;
-            } else {
-              subtitleBox.innerHTML = ""; 
-            }
-          }, 250);
-
-          syncBtn.innerHTML = `<i data-lucide="check-circle" size="12"></i> Sinkron Berjalan`;
-          syncBtn.style.background = 'rgba(56, 182, 255, 0.9)';
-          syncBtn.style.color = '#fff';
-          if (window.lucide) lucide.createIcons();
-        });
-      } catch (e) { console.log("Engine cadangan siap siaga."); }
-    }
-
-    function parseVTT(vttText) {
-      const cleanText = vttText.replace(/\r\n/g, '\n');
-      const blocks = cleanText.split('\n\n');
-      const cues = [];
-      blocks.forEach(block => {
-        const lines = block.trim().split('\n');
-        if (lines.length >= 2) {
-          let timeLine = lines[0];
-          let textLines = lines.slice(1);
-          if (!timeLine.includes('-->') && lines[1] && lines[1].includes('-->')) {
-            timeLine = lines[1];
-            textLines = lines.slice(2);
-          }
-          if (timeLine && timeLine.includes('-->')) {
-            const times = timeLine.split('-->');
-            const startSec = timeToSecondsVTT(times[0].trim());
-            const endSec = timeToSecondsVTT(times[1].trim());
-            const text = textLines.join('<br>');
-            if (!isNaN(startSec) && !isNaN(endSec)) {
-              cues.push({ start: startSec, end: endSec, text: text });
-            }
-          }
-        }
-      });
-      return cues;
-    }
-
-    function timeToSecondsVTT(timeStr) {
-      const parts = timeStr.split(':');
-      let seconds = 0;
-      if (parts.length === 3) {
-        seconds += parseInt(parts[0], 10) * 3600;
-        seconds += parseInt(parts[1], 10) * 60;
-        seconds += parseFloat(parts[2]);
-      } else if (parts.length === 2) {
-        seconds += parseInt(parts[0], 10) * 60;
-        seconds += parseFloat(parts[1]);
-      }
-      return seconds;
-    }
-
-    // 4. Ambil Komentar dari Google Spreadsheet via Apps Script
-    async function loadComments(tmdbId) {
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar netizen...</div>';
-      try {
-        const response = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
-        const resData = await response.json();
-        if (resData.status === "success" && resData.data.length > 0) {
-          commentList.innerHTML = resData.data.map(c => `
-            <div class="comment-item">
-              <div class="comment-user">@${c.nama}</div>
-              <div class="comment-text">${c.komentar}</div>
-            </div>
-          `).join('');
-        } else {
-          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; font-style:italic; padding:15px 0; text-align:center;">Belum ada komentar. Yuk jadi yang pertama coret-coret!</div>';
-        }
-      } catch (e) {
-        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px 0;">Gagal memuat komentar. Pastikan URL Apps Script benar.</div>';
-      }
-    }
-
-    // 5. Kirim Komentar Baru ke Spreadsheet
-    async function submitComment() {
-      const nameInput = document.getElementById('commentName');
-      const textInput = document.getElementById('commentText');
-      const nama = nameInput.value.trim();
-      const komentar = textInput.value.trim();
-
-      if (!nama || !komentar) {
-        alert("Isi nama dan komentar dulu, brader!");
-        return;
-      }
-
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Mengirim komentar baru...</div>';
-      closeCommentForm();
-
-      try {
-        await fetch(URL_APPS_SCRIPT, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tmdbId: currentMovieId, nama: nama, komentar: komentar })
-        });
-        textInput.value = '';
-        setTimeout(() => { loadComments(currentMovieId); }, 1200);
-      } catch(e) {
-        alert("Gagal mengirim data.");
-        loadComments(currentMovieId);
-      }
-    }
-
-    // 6. Kontrol Form Input Komen (Slide Up / Slide Down)
-    function openCommentForm() {
-      infoPanel.classList.add('show');
-      panelBackdrop.classList.add('active');
-    }
-    function closeCommentForm() {
-      infoPanel.classList.remove('show');
-      panelBackdrop.classList.remove('active');
-    }
-
-    // Tombol Cari (Buka Tutup Layer)
-    document.getElementById('navSearch').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isShowing = searchContainer.classList.toggle('show');
-      if (!isShowing) {
-        searchInput.value = "";
-        searchResultsLayer.classList.remove('active');
-      } else {
-        setTimeout(() => searchInput.focus(), 100);
-      }
-    });
-
-    // Mesin Pencari Real-Time Super Sensitif
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const keyword = e.target.value.toLowerCase().trim();
-        if (keyword === "") {
-          searchResultsLayer.classList.remove('active');
-          return;
-        }
-
-        searchResultsLayer.classList.add('active');
-        const cleanKeyword = keyword.replace(/\s+/g, '');
-
-        const filtered = allMoviesCache.filter(movie => {
-          const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-          const rawTitle = customData ? customData.title : movie.title;
-          return rawTitle.toLowerCase().replace(/\s+/g, '').includes(cleanKeyword);
-        });
-
-        if(filtered.length > 0) {
-          searchResultsLayer.innerHTML = filtered.map(movie => {
-            const customData = myCustomMovies.find(m => m.tmdb_id === movie.id);
-            const poster = (customData && customData.image) ? customData.image : `${IMAGE_URL}${movie.poster_path}`;
-            const title = customData ? customData.title : movie.title;
-            const date = customData ? customData.release_date : movie.release_date;
-            const year = date ? date.split('-')[0] : '-';
-
-            return `
-              <div class="search-item-row" onclick="navigateToMovie(${movie.id})">
-                <div class="search-item-thumb" style="background-image:url('${poster}')"></div>
-                <div class="search-item-info">
-                  <h4>${title}</h4>
-                  <p>Tahun: ${year}</p>
-                </div>
-              </div>
-            `;
-          }).join('');
-        } else {
-          searchResultsLayer.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5; font-size:13px;">Film tidak ditemukan, coba kata kunci lain.</div>';
-        }
-      });
-    }
-
-    function navigateToMovie(id) {
-      window.location.href = `watch.html?id=${id}`;
-    }
-
-    document.getElementById('navAddComment').addEventListener('click', openCommentForm);
-
-    document.getElementById('navHome').addEventListener('click', () => {
-      if (document.referrer && document.referrer.includes(window.location.hostname)) {
-        window.history.back(); 
-      } else {
-        window.location.href = 'index.html'; 
-      }
-    });
-
-    // Inisialisasi Lucide Icons & Data Booting
-    window.addEventListener('DOMContentLoaded', () => {
-      if (window.lucide) lucide.createIcons();
-      loadInitialData();
-    });
   </script>
 </body>
 </html>
