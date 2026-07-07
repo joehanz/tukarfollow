@@ -2,36 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Player dengan Vsembed + Subtitle</title>
+  <title>Player dengan Subtitle</title>
   <style>
-    body { margin:0; background:#000; color:#fff; font-family:sans-serif; }
-    .player-container { position:relative; width:80%; margin:auto; aspect-ratio:16/9; }
+    body { background:#000; color:#fff; font-family:sans-serif; margin:0; }
+    .player-container { width:80%; margin:20px auto; aspect-ratio:16/9; }
     iframe { width:100%; height:100%; border:none; }
-    .transcript { margin:20px auto; width:80%; background:#111; padding:10px; border-radius:6px; }
+    .subtitles { width:80%; margin:20px auto; background:#111; padding:10px; border-radius:6px; }
     .cue { margin:5px 0; }
   </style>
 </head>
 <body>
+  <!-- Video dari vsembed -->
   <div class="player-container">
-    <iframe src="https://vsembed.ru/embed/movie?tmdb=1273221"
-            allowfullscreen></iframe>
+    <iframe src="https://vsembed.ru/embed/movie?tmdb=726272" allowfullscreen></iframe>
   </div>
-  <div class="transcript" id="transcript">Loading subtitle…</div>
+
+  <!-- Subtitle ditampilkan sebagai teks -->
+  <div class="subtitles" id="subtitles">Loading subtitle…</div>
 
   <script>
-    fetch("subtitles/1273221.vtt")
+    // Ambil file VTT
+    fetch("subtitles/726272.vtt")
       .then(res => res.text())
       .then(data => {
         const lines = data.split("\n");
         let html = "";
         lines.forEach(line => {
+          // tampilkan hanya teks subtitle, bukan timestamp
           if (line && !line.includes("-->") && line !== "WEBVTT") {
             html += `<div class="cue">${line}</div>`;
           }
         });
-        document.getElementById("transcript").innerHTML = html;
+        document.getElementById("subtitles").innerHTML = html;
       });
   </script>
 </body>
 </html>
-
