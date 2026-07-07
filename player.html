@@ -2,102 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Player dengan Subtitle</title>
+  <title>Player dengan Vsembed + Subtitle</title>
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .player-container {
-      position: relative;
-      width: 80%;
-      max-width: 960px;
-      aspect-ratio: 16/9;
-      background: #000;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    .subtitle-overlay {
-      position: absolute;
-      bottom: 10%;
-      width: 100%;
-      text-align: center;
-      color: #fff;
-      font-size: 20px;
-      text-shadow: 2px 2px 4px #000;
-      padding: 0 10px;
-      pointer-events: none; /* agar tidak mengganggu klik ke iframe */
-    }
+    body { margin:0; background:#000; color:#fff; font-family:sans-serif; }
+    .player-container { position:relative; width:80%; margin:auto; aspect-ratio:16/9; }
+    iframe { width:100%; height:100%; border:none; }
+    .transcript { margin:20px auto; width:80%; background:#111; padding:10px; border-radius:6px; }
+    .cue { margin:5px 0; }
   </style>
 </head>
 <body>
   <div class="player-container">
-    <!-- Iframe dari vsembed -->
-    <iframe src="https://vsembed.ru/embed/movie?tmdb=1273221&sub=subtitles/1273221.vtt"
-        style="width:100%;height:100%;" frameborder="0" allowfullscreen></iframe>
-
-    <!-- Overlay subtitle -->
-    <div id="subtitle" class="subtitle-overlay"></div>
+    <iframe src="https://vsembed.ru/embed/movie?tmdb=1273221"
+            allowfullscreen></iframe>
   </div>
+  <div class="transcript" id="transcript">Loading subtitle…</div>
 
   <script>
-    // Fungsi parsing VTT sederhana
-    function parseVTT(data) {
-      const cues = [];
-      const lines = data.split('\n');
-      let i = 0;
-      while (i < lines.length) {
-        const line = lines[i].trim();
-        if (line.includes('-->')) {
-          const times = line.split('-->');
-          const start = toSeconds(times[0].trim());
-          const end = toSeconds(times[1].trim());
-          i++;
-          let text = '';
-          while (i < lines.length && lines[i].trim() !== '') {
-            text += lines[i] + '\n';
-            i++;
-          }
-          cues.push({ start, end, text });
-        }
-        i++;
-      }
-      return cues;
-    }
-
-    function toSeconds(time) {
-      const parts = time.split(':');
-      const secParts = parts[2].split('.');
-      const h = parseInt(parts[0]);
-      const m = parseInt(parts[1]);
-      const s = parseInt(secParts[0]);
-      const ms = secParts[1] ? parseInt(secParts[1]) : 0;
-      return h * 3600 + m * 60 + s + ms / 1000;
-    }
-
-    // Load file VTT
-    fetch('subtitles/1273221.vtt')
+    fetch("subtitles/1273221.vtt")
       .then(res => res.text())
       .then(data => {
-        const cues = parseVTT(data);
-        const subtitleDiv = document.getElementById('subtitle');
-
-        // Simulasi waktu (karena iframe tidak expose currentTime)
-        // -> kita pakai timer manual, misalnya sinkron dengan durasi video asli
-        let currentTime = 0;
-        setInterval(() => {
-          currentTime += 0.5; // tambah 0.5 detik tiap interval
-          const cue = cues.find(c => currentTime >= c.start && currentTime <= c.end);
-          subtitleDiv.innerText = cue ? cue.text.trim() : '';
-        }, 500);
+        const lines = data.split("\n");
+        let html = "";
+        lines.forEach(line => {
+          if (line && !line.includes("-->") && line !== "WEBVTT") {
+            html += `<div class="cue">${line}</div>`;
+          }
+        });
+        document.getElementById("transcript").innerHTML = html;
       });
   </script>
 </body>
 </html>
+
