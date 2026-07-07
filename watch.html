@@ -354,7 +354,7 @@
       return params.get('id');
     }
 
-    // 2. Memuat Database Movies & Data Kustom Lokal untuk Fitur Cari & Player
+    // 2. Memuat Database Movies & Data Kustom Lokal untuk Fitur Cari & Player (Plus Deteksi Enter)
     async function loadInitialData() {
       currentMovieId = parseInt(getMovieIdFromUrl());
       if (!currentMovieId) {
@@ -371,6 +371,23 @@
       // Setup Player & Tarik Komentar
       setupVideoPlayer(currentMovieId);
       loadComments(currentMovieId);
+
+      // ============================================================================
+      // PASANG DETEKSI ENTER DI SINI (ANTI TOMBOL TAMBAHAN)
+      // ============================================================================
+      // Karena elemen textarea berada di dalam panel yang dinamis / statis, kita panggil saat init
+      setTimeout(() => {
+        const commentTextArea = document.getElementById('commentText');
+        if (commentTextArea) {
+          commentTextArea.addEventListener('keydown', function(event) {
+            // Jika menekan Enter TANPA Shift (Shift+Enter buat baris baru)
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault(); // Mencegah enter bikin baris baru di kolom teks
+              submitComment(); // Langsung eksekusi kirim komentar
+            }
+          });
+        }
+      }, 500); // Diberi jeda dikit biar DOM ke-render sempurna dulu
 
       // Tarik film populer TMDB untuk cache pencarian biar sensitif
       try {
