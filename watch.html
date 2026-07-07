@@ -608,112 +608,143 @@
 
   <script>
     // ============================================================================
-    // REVISI LIVE TRANSLATOR V5 (FIXED MUX MIC LOCK, CORS & BYPASS INTERIM TEXT)
+    // REVISI LIVE TRANSLATOR V6 (FIXED CAPTURE SYSTEM AUDIO FOR IFRAME & VIDEOS)
     // ============================================================================
     document.addEventListener('DOMContentLoaded', () => {
       const btnTranslate = document.getElementById('btnTranslate');
       const subtitleBox = document.getElementById('customSubtitle');
       let isTranslating = false;
       let recognition = null;
-      let localStream = null;
+      let audioCtx = null;
+      let streamSource = null;
 
       if (btnTranslate) {
         btnTranslate.addEventListener('click', async () => {
           if (!isTranslating) {
             try {
-              // Izin mikrofon perangkat dikunci paksa agar tidak bentrok dengan iframe
-              localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-              
               isTranslating = true;
               btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
               btnTranslate.style.background = '#ff6b6b';
               subtitleBox.style.display = 'block';
-              subtitleBox.innerText = "🎙️ Mendengarkan suara film...";
+              subtitleBox.innerText = "🎙️ Menghubungkan ke audio film...";
 
+              // Mengaktifkan Web Audio API untuk menjebatani penangkapan suara internal
               const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true; // Aktifkan Running Text berjalan cepat
-                recognition.lang = 'en-US'; 
-
-                recognition.onresult = async (event) => {
-                  let interimTranscript = '';
-                  let finalTranscript = '';
-
-                  for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    const transcriptPart = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                      finalTranscript += transcriptPart;
-                    } else {
-                      interimTranscript += transcriptPart;
-                    }
-                  }
-
-                  // Teks berjalan Bahasa Inggris (Running Text Putih)
-                  if (interimTranscript.trim() !== '') {
-                    subtitleBox.style.color = '#ffffff'; 
-                    subtitleBox.innerText = "🗣️ " + interimTranscript;
-                  }
-
-                  // DETEKSI AUTO-CORRECT & BYPASS: Langsung terjemahkan begitu ada kata tertangkap
-                  let teksTarget = finalTranscript || interimTranscript;
-                  if (teksTarget.trim() !== '' && teksTarget.split(' ').length > 2) { 
-                    // Kirim ke MyMemory API (Aman dari Blokir Keamanan CORS Browser)
-                    const hasilTerjemahan = await panggilApiTranslasiAman(teksTarget);
-                    subtitleBox.style.color = '#ffdd57'; // Berubah Kuning jika berhasil terjemah
-                    subtitleBox.innerText = hasilTerjemahan;
-                  }
-                };
-
-                recognition.onerror = (err) => {
-                  console.warn("Speech API Error:", err.error);
-                  if (isTranslating) restartRecognition();
-                };
-
-                recognition.onend = () => {
-                  if (isTranslating) restartRecognition();
-                };
-
-                recognition.start();
-              } else {
+              if (!SpeechRecognition) {
                 subtitleBox.innerText = "Browser tidak mendukung Speech API.";
+                return;
               }
 
+              // Membuka sistem perekaman dengan sensitivitas tinggi (Bypass Echo Cancellation)
+              const stream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                  echoCancellation: false,
+                  noiseSuppression: false,
+                  autoGainControl: true
+                } 
+              });
+
+              window.localStream = stream; 
+              
+              // bypass pengkondisian audio internal
+              const AudioContext = window.AudioContext || window.webkitAudioContext;
+              audioCtx = new AudioContext();
+              streamSource = audioCtx.createMediaStreamSource(stream);
+              streamSource.connect(audioCtx.destination);
+
+              recognition = new SpeechRecognition();
+              recognition.continuous = true;
+              recognition.interimResults = true; 
+              recognition.lang = 'en-US'; 
+
+              recognition.onstart = () => {
+                subtitleBox.innerText = "🎬 Mendengar & Menerjemahkan...";
+              };
+
+              recognition.onresult = async (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                  const transcriptPart = event.results[i][0].transcript;
+                  if (event.results[i].isFinal) {
+                    finalTranscript += transcriptPart;
+                  } else {
+                    interimTranscript += transcriptPart;
+                  }
+                }
+
+                // Ambil teks yang paling cepat tertangkap
+                let teksTarget = finalTranscript || interimTranscript;
+                
+                if (teksTarget.trim() !== '') {
+                  subtitleBox.style.color = '#ffffff'; 
+                  subtitleBox.innerText = "🗣️ " + teksTarget;
+
+                  // Jika sudah membentuk frasa atau jeda kata, langsung ubah ke Indonesia
+                  if (teksTarget.split(' ').length >= 2) {
+                    const hasilTerjemahan = await panggilApiTranslasiAman(teksTarget);
+                    subtitleBox.style.color = '#ffdd57'; 
+                    subtitleBox.innerText = hasilTerjemahan;
+                  }
+                }
+              };
+
+              recognition.onerror = (err) => {
+                console.warn("Speech API Status:", err.error);
+                // Jika macet karena silence/no-speech, paksa bangunkan ulang otomatis
+                if (isTranslating && err.error === 'no-speech') {
+                  restartRecognition();
+                }
+              };
+
+              recognition.onend = () => {
+                if (isTranslating) restartRecognition();
+              };
+
+              recognition.start();
+
             } catch (micError) {
-              alert("Gagal mengakses mikrofon. Harap berikan izin mic pada browser Anda!");
+              console.error(micError);
+              alert("Gagal memproses audio. Pastikan izin mikrofon browser diaktifkan!");
+              matikanTranslasi();
             }
 
           } else {
-            // Matikan total fitur & padamkan lampu indikator mikrofon browser
-            isTranslating = false;
-            btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
-            btnTranslate.style.background = '#38b6ff';
-            subtitleBox.style.display = 'none';
-            
-            if (recognition) {
-              recognition.stop();
-              recognition = null;
-            }
-            if (localStream) {
-              localStream.getTracks().forEach(track => track.stop());
-            }
+            matikanTranslasi();
           }
           if (window.lucide) lucide.createIcons();
         });
+      }
+
+      function matikanTranslasi() {
+        isTranslating = false;
+        btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
+        btnTranslate.style.background = '#38b6ff';
+        subtitleBox.style.display = 'none';
+        
+        if (recognition) {
+          recognition.stop();
+          recognition = null;
+        }
+        if (window.localStream) {
+          window.localStream.getTracks().forEach(track => track.stop());
+        }
+        if (audioCtx && audioCtx.state !== 'closed') {
+          audioCtx.close();
+        }
       }
 
       function restartRecognition() {
         try {
           if (recognition) {
             recognition.stop();
-            setTimeout(() => { if (isTranslating && recognition) recognition.start(); }, 300);
+            setTimeout(() => { if (isTranslating && recognition) recognition.start(); }, 200);
           }
         } catch(e){}
       }
     });
 
-    // Jalur hit API translasi yang aman tanpa terhalang CORS browser
     async function panggilApiTranslasiAman(text) {
       try {
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
