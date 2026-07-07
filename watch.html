@@ -625,144 +625,82 @@
 
   <script>
 // ============================================================================
-// LIVE CAPTION TRANSLATOR V5 (FINAL - FIX BLOCKED CORS & RUNNING TEXT)
-// ============================================================================
-document.addEventListener('DOMContentLoaded', () => {
-  const btnTranslate = document.getElementById('btnTranslate');
-  const subtitleBox = document.getElementById('customSubtitle');
-  let isTranslating = false;
-  let recognition = null;
-  let localStream = null;
+    // LOGIKA CAPTION TRANSLATOR (MENGGUNAKAN WEB SPEECH API / SIMULASI KHUSUS IFRAME)
+    // ============================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnTranslate = document.getElementById('btnTranslate');
+      const subtitleBox = document.getElementById('customSubtitle');
+      let isTranslating = false;
+      let recognition = null;
 
-  if (btnTranslate) {
-    btnTranslate.addEventListener('click', async () => {
-      if (!isTranslating) {
-        try {
-          // Kunci izin mikrofon di awal agar sistem browser stabil
-          localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          
-          isTranslating = true;
-          btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
-          btnTranslate.style.background = '#ff6b6b';
-          subtitleBox.style.display = 'block';
-          subtitleBox.innerText = "🎙️ Mikrofon aktif, mendengarkan film...";
+      if (btnTranslate) {
+        btnTranslate.addEventListener('click', () => {
+          if (!isTranslating) {
+            // Aktifkan Fitur Terjemahan
+            isTranslating = true;
+            btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
+            btnTranslate.style.background = '#ff6b6b';
+            subtitleBox.style.display = 'block';
+            subtitleBox.innerText = "Mendengarkan audio sekitar / video...";
 
-          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-          if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true; // RUNNING TEXT AKTIF
-            recognition.lang = 'en-US'; 
+            // Inisialisasi Web Speech API bawaan browser umum
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+              recognition = new SpeechRecognition();
+              recognition.continuous = true;
+              recognition.interimResults = true;
+              recognition.lang = 'en-US'; // Set asal suara video (biasanya Inggris)
 
-            recognition.onresult = async (event) => {
-  let interimTranscript = '';
-  let finalTranscript = '';
+              recognition.onresult = async (event) => {
+                let textHasilDengar = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                  if (event.results[i].isFinal) {
+                    textHasilDengar = event.results[i][0].transcript;
+                    
+                    // PROSES TERJEMAHAN BAHASA
+                    // Di sini Anda bisa menembak API translasi pilihan Anda (Misal Gemini / Google Translate)
+                    subtitleBox.innerText = "...";
+                    const hasilTerjemahan = await panggilApiTranslasi(textHasilDengar);
+                    subtitleBox.innerText = hasilTerjemahan;
+                  }
+                }
+              };
 
-  for (let i = event.resultIndex; i < event.results.length; ++i) {
-    const transcriptPart = event.results[i][0].transcript;
-    if (event.results[i].isFinal) {
-      finalTranscript += transcriptPart;
-    } else {
-      interimTranscript += transcriptPart;
-    }
-  }
+              recognition.onerror = (err) => {
+                console.warn("Speech recognition error:", err);
+              };
 
-  // JIKA TERJADI BUG GANTUNG: 
-  // Jika teks berjalan sudah terlalu panjang (lebih dari 5 kata) tapi belum dianggap final oleh browser,
-  // kita paksa tembak langsung ke API terjemahan agar teks Indonesia-nya segera keluar!
-  let teksYangDiproses = finalTranscript || interimTranscript;
+              recognition.start();
+            } else {
+              subtitleBox.innerText = "Browser Anda tidak mendukung Web Speech API.";
+            }
 
-  if (teksYangDiproses.trim() !== '') {
-    subtitleBox.style.color = '#ffffff'; 
-    subtitleBox.innerText = "🗣️ " + interimTranscript; // Tetap tampilkan teks berjalan di awal
-    
-    // Kirim langsung ke penerjemah tanpa menunggu kalimat selesai
-    const hasilTerjemahan = await panggilApiTranslasiAman(teksYangDiproses);
-    
-    subtitleBox.style.color = '#ffdd57'; 
-    subtitleBox.innerText = hasilTerjemahan;
-  }
-};
-
-              // 1. RUNNING TEXT (Aktor sedang bicara): Langsung tampilkan teks Inggris berjalan (Warna Putih)
-              if (interimTranscript.trim() !== '') {
-                subtitleBox.style.color = '#ffffff'; 
-                subtitleBox.innerText = "🗣️ " + interimTranscript;
-              }
-
-              // 2. AUTO-CORRECT & TRANSLATE (Aktor jeda bicara): Ambil kalimat utuh, terjemahkan ke Indonesia (Warna Kuning)
-              if (finalTranscript.trim() !== '') {
-                subtitleBox.style.color = '#ffdd57'; 
-                subtitleBox.innerText = "🔄 Mengoreksi terjemahan...";
-                
-                // Panggil fungsi translasi aman CORS
-                const hasilTerjemahan = await panggilApiTranslasiAman(finalTranscript);
-                subtitleBox.innerText = hasilTerjemahan;
-              }
-            };
-
-            recognition.onerror = (err) => {
-              console.warn("Speech recognition error:", err.error);
-              if ((err.error === 'no-speech' || err.error === 'network') && isTranslating) {
-                restartRecognition();
-              }
-            };
-
-            recognition.onend = () => {
-              if (isTranslating) restartRecognition();
-            };
-
-            recognition.start();
           } else {
-            subtitleBox.innerText = "Browser tidak mendukung Speech API.";
+            // Matikan Fitur Terjemahan
+            isTranslating = false;
+            btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
+            btnTranslate.style.background = '#38b6ff';
+            subtitleBox.style.display = 'none';
+            if (recognition) {
+              recognition.stop();
+            }
           }
-
-        } catch (micError) {
-          alert("Gagal mengakses mikrofon. Harap izinkan akses mikrofon di browser Anda!");
-          console.error(micError);
-        }
-
-      } else {
-        // Matikan total fitur & matikan lampu indikator mic browser
-        isTranslating = false;
-        btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
-        btnTranslate.style.background = '#38b6ff';
-        subtitleBox.style.display = 'none';
-        
-        if (recognition) {
-          recognition.stop();
-          recognition = null;
-        }
-        if (localStream) {
-          localStream.getTracks().forEach(track => track.stop());
-        }
+          if (window.lucide) lucide.createIcons();
+        });
       }
-      if (window.lucide) lucide.createIcons();
     });
-  }
 
-  function restartRecognition() {
-    try {
-      if (recognition) {
-        recognition.stop();
-        setTimeout(() => { if (isTranslating && recognition) recognition.start(); }, 400);
+    // Fungsi simulasi hit API translasi (Ganti isi fungsi ini dengan endpoint backend Anda nantinya)
+    async function panggilApiTranslasi(text) {
+      // Contoh jika Anda ingin menggunakan sistem gratis cepat pakai MyMemory API:
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
+        const data = await res.json();
+        return data.responseData.translatedText || text;
+      } catch (e) {
+        return "[Gagal Menerjemahkan]: " + text;
       }
-    } catch(e){}
-  }
-});
-
-// API Penerjemah Bebas CORS (Aman digunakan langsung dari JavaScript Browser)
-async function panggilApiTranslasiAman(text) {
-  try {
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
-    if (!res.ok) return text;
-    const data = await res.json();
-    return data.responseData.translatedText || text;
-  } catch (e) {
-    console.error("Gagal menerjemahkan teks:", e);
-    return text; // Fallback jika internet sedang lambat, tampilkan teks aslinya agar tidak kosong
-  }
-}
+    }
   </script>
 </body>
 </html>
