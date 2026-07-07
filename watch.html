@@ -624,83 +624,150 @@
   </script>
 
   <script>
-    // ============================================================================
-    // LOGIKA CAPTION TRANSLATOR (MENGGUNAKAN WEB SPEECH API / SIMULASI KHUSUS IFRAME)
-    // ============================================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      const btnTranslate = document.getElementById('btnTranslate');
-      const subtitleBox = document.getElementById('customSubtitle');
-      let isTranslating = false;
-      let recognition = null;
+// ============================================================================
+// L LIVE CAPTION TRANSLATOR V2 (MATCH SINKRONISASI WAKTU VIA FILE SUBTITLE)
+// ============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const btnTranslate = document.getElementById('btnTranslate');
+  const subtitleBox = document.getElementById('customSubtitle');
+  let isTranslating = false;
+  let subtitleInterval = null;
+  let subtitleTracks = []; // Menyimpan data subtitle terjemahan
+  let startTime = 0;
 
-      if (btnTranslate) {
-        btnTranslate.addEventListener('click', () => {
-          if (!isTranslating) {
-            // Aktifkan Fitur Terjemahan
-            isTranslating = true;
-            btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
-            btnTranslate.style.background = '#ff6b6b';
+  if (btnTranslate) {
+    btnTranslate.addEventListener('click', async () => {
+      if (!isTranslating) {
+        // 1. Ubah UI Button ke mode Loading
+        isTranslating = true;
+        btnTranslate.innerHTML = `<i data-lucide="loader" class="animate-spin" size="14"></i> Memuat Subtitle...`;
+        btnTranslate.style.background = '#ffdd57';
+        btnTranslate.style.color = '#000';
+        
+        // 2. Ambil subtitle berdasarkan currentMovieId (ID TMDB yang sedang aktif)
+        subtitleTracks = await fetchAndTranslateSubtitle(currentMovieId);
+
+        if (subtitleTracks.length === 0) {
+          alert("Subtitle asli untuk ID film ini tidak ditemukan / gagal diterjemahkan.");
+          resetTranslateButton();
+          return;
+        }
+
+        // 3. Jalankan Subtitle Sinkron
+        btnTranslate.innerHTML = `<i data-lucide="stop-circle" size="14"></i> Matikan Translasi`;
+        btnTranslate.style.background = '#ff6b6b';
+        btnTranslate.style.color = '#fff';
+        subtitleBox.style.display = 'block';
+        subtitleBox.innerText = "Terjemahan AI Aktif (Menunggu video diputar...)";
+
+        // Mulai stopwatch internal (Simulasi sinkronisasi waktu mulai klik)
+        startTime = Date.now();
+        
+        subtitleInterval = setInterval(() => {
+          // Hitung sudah berapa detik berjalan sejak tombol diaktifkan
+          const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;
+          
+          // Cari teks subtitle yang cocok dengan detik berjalan saat ini
+          const currentLine = subtitleTracks.find(line => 
+            elapsedTimeInSeconds >= line.start && elapsedTimeInSeconds <= line.end
+          );
+
+          if (currentLine) {
+            subtitleBox.innerText = currentLine.text;
             subtitleBox.style.display = 'block';
-            subtitleBox.innerText = "Mendengarkan audio sekitar / video...";
-
-            // Inisialisasi Web Speech API bawaan browser umum
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
-              recognition = new SpeechRecognition();
-              recognition.continuous = true;
-              recognition.interimResults = true;
-              recognition.lang = 'en-US'; // Set asal suara video (biasanya Inggris)
-
-              recognition.onresult = async (event) => {
-                let textHasilDengar = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                  if (event.results[i].isFinal) {
-                    textHasilDengar = event.results[i][0].transcript;
-                    
-                    // PROSES TERJEMAHAN BAHASA
-                    // Di sini Anda bisa menembak API translasi pilihan Anda (Misal Gemini / Google Translate)
-                    subtitleBox.innerText = "...";
-                    const hasilTerjemahan = await panggilApiTranslasi(textHasilDengar);
-                    subtitleBox.innerText = hasilTerjemahan;
-                  }
-                }
-              };
-
-              recognition.onerror = (err) => {
-                console.warn("Speech recognition error:", err);
-              };
-
-              recognition.start();
-            } else {
-              subtitleBox.innerText = "Browser Anda tidak mendukung Web Speech API.";
-            }
-
           } else {
-            // Matikan Fitur Terjemahan
-            isTranslating = false;
-            btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
-            btnTranslate.style.background = '#38b6ff';
-            subtitleBox.style.display = 'none';
-            if (recognition) {
-              recognition.stop();
-            }
+            // Jika di detik ini tidak ada orang bicara, sembunyikan kotak teks sementara
+            subtitleBox.innerText = "";
           }
-          if (window.lucide) lucide.createIcons();
-        });
-      }
-    });
+        }, 200); // Check setiap 200 milidetik agar sangat responsif dan tidak delay
 
-    // Fungsi simulasi hit API translasi (Ganti isi fungsi ini dengan endpoint backend Anda nantinya)
-    async function panggilApiTranslasi(text) {
-      // Contoh jika Anda ingin menggunakan sistem gratis cepat pakai MyMemory API:
-      try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`);
-        const data = await res.json();
-        return data.responseData.translatedText || text;
-      } catch (e) {
-        return "[Gagal Menerjemahkan]: " + text;
+      } else {
+        // Matikan Fitur Terjemahan
+        resetTranslateButton();
       }
+      if (window.lucide) lucide.createIcons();
+    });
+  }
+
+  function resetTranslateButton() {
+    isTranslating = false;
+    clearInterval(subtitleInterval);
+    btnTranslate.innerHTML = `<i data-lucide="languages" size="14"></i> Terjemahkan AI`;
+    btnTranslate.style.background = '#38b6ff';
+    btnTranslate.style.color = '#fff';
+    subtitleBox.style.display = 'none';
+  }
+});
+
+// Fungsi untuk mengambil file subtitle & menerjemahkannya secara otomatis
+async function fetchAndTranslateSubtitle(tmdbId) {
+  try {
+    // Menggunakan API Subtitle publik gratis yang mendukung pencarian via ID TMDB
+    // Jika Anda punya database subtitle sendiri, arahkan URL ini ke server Anda
+    const subResponse = await fetch(`https://subtitles.vse.me/api/v1/search?tmdb_id=${tmdbId}&lang=en`);
+    if (!subResponse.ok) return [];
+    
+    const subData = await subResponse.json();
+    // Ambil file .SRT atau .VTT pertama yang ditemukan
+    const subtitleUrl = subData.tracks?.[0]?.src; 
+    if (!subtitleUrl) return [];
+
+    // Download isi file subtitle teks mentah tersebut
+    const fileRes = await fetch(subtitleUrl);
+    const textRaw = await fileRes.text();
+
+    // Parse format SRT/VTT menjadi Array JavaScript objek agar bisa dihitung detiknya
+    const parsedLines = parseSubtitleText(textRaw);
+
+    // Proses terjemahkan teksnya ke Bahasa Indonesia menggunakan API Translasi
+    // Agar hemat dan cepat, kita potong baris teks saja tanpa merusak timestamp
+    for (let i = 0; i < Math.min(parsedLines.length, 150); i++) { // Limit 150 baris awal untuk uji coba kecepatan
+      parsedLines[i].text = await dapatkanTranslasiCepat(parsedLines[i].text);
     }
+
+    return parsedLines;
+  } catch (error) {
+    console.error("Gagal memproses subtitle otomatis:", error);
+    return [];
+  }
+}
+
+// Helper untuk mengubah text SRT/VTT menjadi struktur waktu detik (Seconds)
+function parseSubtitleText(vttText) {
+  const lines = vttText.split('\n');
+  let result = [];
+  let currentLine = null;
+
+  const timeRegex = /(\d+):(\d+):(\d+)[.,](\d+)\s*-->\s*(\d+):(\d+):(\d+)[.,](\d+)/;
+
+  lines.forEach(line => {
+    const match = timeRegex.exec(line);
+    if (match) {
+      if (currentLine) result.push(currentLine);
+      
+      const startSec = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]) + parseInt(match[4])/1000;
+      const endSec = parseInt(match[5]) * 3600 + parseInt(match[6]) * 60 + parseInt(match[7]) + parseInt(match[8])/1000;
+      
+      currentLine = { start: startSec, end: endSec, text: '' };
+    } else if (currentLine && line.trim() !== '' && !line.match(/^\d+$/)) {
+      currentLine.text += (currentLine.text ? ' ' : '') + line.trim();
+    }
+  });
+  if (currentLine) result.push(currentLine);
+  return result;
+}
+
+// API Penerjemah Teks Ke Bahasa Indonesia secara Real-Time tanpa tertinggal
+async function dapatkanTranslasiCepat(englishText) {
+  if (!englishText) return "";
+  try {
+    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishText)}&langpair=en|id`);
+    const data = await response.json();
+    return data.responseData.translatedText || englishText;
+  } catch (e) {
+    return englishText;
+  }
+}
   </script>
 </body>
 </html>
