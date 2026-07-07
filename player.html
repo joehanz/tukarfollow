@@ -1,40 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Player dengan Subtitle</title>
+  <title>Tampilkan Subtitle dari GitHub</title>
   <style>
-    body { background:#000; color:#fff; font-family:sans-serif; margin:0; }
-    .player-container { width:80%; margin:20px auto; aspect-ratio:16/9; }
-    iframe { width:100%; height:100%; border:none; }
-    .subtitles { width:80%; margin:20px auto; background:#111; padding:10px; border-radius:6px; }
-    .cue { margin:5px 0; }
+    body { font-family: Arial, sans-serif; max-width: 750px; margin: 30px auto; padding: 0 20px; }
+    button { padding: 10px 18px; font-size: 16px; cursor: pointer; background: #2ea44f; color: white; border: none; border-radius: 6px; }
+    button:hover { background: #2c974b; }
+    #konten-subtitle {
+      margin-top: 25px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      max-height: 550px;
+      overflow-y: auto;
+      border: 1px solid #e1e4e8;
+    }
+    .item { margin: 12px 0; padding: 10px; border-bottom: 1px solid #ddd; }
+    .waktu { font-weight: bold; color: #0366d6; margin-bottom: 4px; }
+    .teks { color: #24292e; line-height: 1.5; }
   </style>
 </head>
 <body>
-  <!-- Video dari vsembed -->
-  <div class="player-container">
-    <iframe src="https://vsembed.ru/embed/movie?tmdb=1314481" style="width: 100%; height: 100%;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>
-  </div>
 
-  <!-- Subtitle ditampilkan sebagai teks -->
-  <div class="subtitles" id="subtitles">Loading subtitle…</div>
+  <h3>Subtitle dari GitHub</h3>
+  <button onclick="muatDariGitHub()">Tampilkan Subtitle</button>
+  <div id="konten-subtitle"></div>
 
-  <script>
-    // Ambil file VTT
-    fetch("subtitles/1314481.vtt")
-      .then(res => res.text())
-      .then(data => {
-        const lines = data.split("\n");
-        let html = "";
-        lines.forEach(line => {
-          // tampilkan hanya teks subtitle, bukan timestamp
-          if (line && !line.includes("-->") && line !== "WEBVTT") {
-            html += `<div class="cue">${line}</div>`;
-          }
-        });
-        document.getElementById("subtitles").innerHTML = html;
-      });
-  </script>
+<script>
+// GANTI BAGIAN INI dengan tautan RAW file .vtt kamu di GitHub
+const URL_FILE_VTT = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt";
+
+async function muatDariGitHub() {
+  const tampilan = document.getElementById("konten-subtitle");
+  tampilan.innerHTML = "<p>Memuat data dari GitHub...</p>";
+
+  try {
+    const res = await fetch(https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt);
+    if (!res.ok) throw new Error("File tidak ditemukan atau tidak bisa diakses");
+
+    const teksVTT = await res.text();
+    const daftarSub = prosesVTT(teksVTT);
+
+    tampilan.innerHTML = "";
+    daftarSub.forEach(baris => {
+      tampilan.innerHTML += `
+        <div class="item">
+          <div class="waktu">${baris.waktu}</div>
+          <div class="teks">${baris.teks}</div>
+        </div>
+      `;
+    });
+
+  } catch (err) {
+    tampilan.innerHTML = `<p style="color:red;">Gagal memuat: ${err.message}</p>`;
+  }
+}
+
+// Fungsi mengurai format VTT
+function prosesVTT(teks) {
+  const hasil = [];
+  const baris = teks.split("\n").map(b => b.trim());
+  let i = 0;
+
+  // Lewati baris awal "WEBVTT"
+  while (i < baris.length && baris[i] !== "" && baris[i].toUpperCase() !== "WEBVTT") i++;
+  i++;
+
+  while (i < baris.length) {
+    if (baris[i].includes("-->")) {
+      const waktu = baris[i];
+      i++;
+      let teksSub = "";
+      while (i < baris.length && baris[i] !== "") {
+        teksSub += baris[i] + " ";
+        i++;
+      }
+      hasil.push({ waktu, teks: teksSub.trim() });
+    }
+    i++;
+  }
+  return hasil;
+}
+</script>
+
 </body>
 </html>
