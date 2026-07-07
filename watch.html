@@ -91,16 +91,16 @@
       background: #ffdd57;
       color: #000;
       border: none;
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      font-size: 17px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: 0.2s;
+      transition: 0.2s ease;
     }
     .ctrl-btn:hover {
       background: #fff280;
@@ -116,12 +116,20 @@
       text-align: center;
     }
 
+    /* Tetap terlihat sempurna di layar penuh */
+    .video-main-wrapper:fullscreen,
+    .video-main-wrapper:-webkit-full-screen,
+    .video-main-wrapper:-moz-full-screen,
+    .video-main-wrapper:-ms-fullscreen {
+      background: #000;
+    }
     .video-main-wrapper:fullscreen .subtitle-layer,
     .video-main-wrapper:-webkit-full-screen .subtitle-layer,
     .video-main-wrapper:-moz-full-screen .subtitle-layer,
     .video-main-wrapper:-ms-fullscreen .subtitle-layer {
       position: absolute;
       z-index: 999999;
+      bottom: 8%;
     }
 
     .comments-section {
@@ -425,12 +433,12 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
-    let sinkronInterval = null;
 
     // ====================================
     // FUNGSI BANTU
     // ====================================
     function ubahKeWaktu(detik) {
+      if (isNaN(detik) || detik < 0) detik = 0;
       const j = Math.floor(detik / 3600).toString().padStart(2, '0');
       const m = Math.floor((detik % 3600) / 60).toString().padStart(2, '0');
       const d = Math.floor(detik % 60).toString().padStart(2, '0');
@@ -439,11 +447,12 @@
 
     function ubahKeDetik(teksWaktu) {
       if (!teksWaktu) return 0;
-      teksWaktu = teksWaktu.replace(',', '.').replace(/\s/g, '').trim();
+      teksWaktu = teksWaktu.replace(/[, \s]/g, '.').trim();
       const bagian = teksWaktu.split(':');
-      if (bagian.length === 2) return Number(bagian[0]) * 60 + Number(bagian[1]);
-      if (bagian.length === 3) return Number(bagian[0]) * 3600 + Number(bagian[1]) * 60 + Number(bagian[2]);
-      return 0;
+      let hasil = 0;
+      if (bagian.length === 3) hasil = Number(bagian[0]) * 3600 + Number(bagian[1]) * 60 + Number(bagian[2]);
+      if (bagian.length === 2) hasil = Number(bagian[0]) * 60 + Number(bagian[1]);
+      return isNaN(hasil) ? 0 : hasil;
     }
 
     function perbaruiTampilan() {
@@ -453,42 +462,45 @@
     }
 
     // ====================================
-    // FUNGSI SUB & SINKRONISASI
+    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
     // ====================================
-    function mulaiSub() {
+    function mulaiSemua() {
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
       btnMain.textContent = "⏸️";
+      // Jalankan penghitung waktu subtitle
       pemutar = setInterval(() => {
         waktuSekarang += 1;
         perbaruiTampilan();
       }, 1000);
+      // Coba mainkan video (jika gagal, sub tetap jalan)
+      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
     }
 
-    function hentikanSub() {
+    function hentikanSemua() {
       sedangMain = false;
       btnMain.textContent = "▶️";
       clearInterval(pemutar);
+      // Coba jeda video
+      try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
     }
 
     function geserWaktu(ubah) {
       waktuSekarang = Math.max(0, waktuSekarang + ubah);
       perbaruiTampilan();
-    }
-
-    // ✅ SINKRONISASI OTOMATIS LEBIH ANDAL
-    function mulaiSinkronisasi() {
-      if (sinkronInterval) clearInterval(sinkronInterval);
-      sinkronInterval = setInterval(() => {
-        // Sistem cadangan: jika tidak bisa akses video, sub tetap jalan sendiri
-        if (sedangMain) {
+      // Jika sedang jalan, lanjutkan hitung ulang
+      if (sedangMain) {
+        clearInterval(pemutar);
+        pemutar = setInterval(() => {
           waktuSekarang += 1;
           perbaruiTampilan();
-        }
-      }, 1000);
+        }, 1000);
+      }
     }
 
-    // ✅ BACA SUBTITLE DENGAN FORMAT LEBIH FLEKSIBEL
+    // ====================================
+    // BACA SUBTITLE LEBIH FLEKSIBEL
+    // ====================================
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
       subtitles = [];
@@ -496,58 +508,54 @@
       perbaruiTampilan();
 
       try {
-        const res = await fetch(alamat, { cache: 'no-store' });
-        if (!res.ok) throw new Error("Tidak ditemukan");
+        const res = await fetch(alamat, { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`File tidak ditemukan: ${res.status}`);
         const teks = await res.text();
         if (!teks.trim()) throw new Error("File kosong");
 
-        const baris = teks.split('\n').map(b => b.trim());
+        const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
         let i = 0;
 
         // Lewati header VTT
-        while (i < baris.length && !baris[i].includes('-->')) i++;
+        if (baris[0].toUpperCase().includes("WEBVTT")) i++;
 
         while (i < baris.length) {
           if (baris[i].includes('-->')) {
-            const waktuBaru = baris[i].split('-->').map(w => w.trim());
-            const mulai = ubahKeDetik(waktuBaru[0]);
-            const selesai = ubahKeDetik(waktuBaru[1]);
+            const waktu = baris[i].split('-->').map(w => w.trim());
+            const mulai = ubahKeDetik(waktu[0]);
+            const selesai = ubahKeDetik(waktu[1]);
             i++;
             let teksSub = "";
-            while (i < baris.length && baris[i] !== "") {
+            while (i < baris.length && !baris[i].includes('-->')) {
               teksSub += baris[i] + " ";
               i++;
             }
-            if (mulai < selesai) {
+            if (mulai < selesai && teksSub.trim()) {
               subtitles.push({ mulai, selesai, teks: teksSub.trim() });
             }
-          } else i++;
+          } else {
+            i++;
+          }
         }
 
-        if (subtitles.length === 0) throw new Error("Format tidak dikenali");
-        mulaiSinkronisasi();
-        console.log(`✅ Subtitle berhasil dimuat: ${subtitles.length} baris`);
+        if (subtitles.length === 0) throw new Error("Format tidak cocok");
+        console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
       } catch (err) {
         subText.textContent = "Subtitle tidak tersedia";
         console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
 
-    // ✅ TOMBOL PLAY / JEDA
+    // ====================================
+    // KONTROL UTAMA
+    // ====================================
     btnMain.addEventListener('click', () => {
-      if (sedangMain) {
-        hentikanSub();
-        try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
-      } else {
-        mulaiSub();
-        try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
-      }
+      sedangMain ? hentikanSemua() : mulaiSemua();
     });
 
     btnMundur.addEventListener('click', () => geserWaktu(-10));
     btnMaju.addEventListener('click', () => geserWaktu(+10));
 
-    // ✅ TOMBOL LAYAR PENUH
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
         if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen();
@@ -563,7 +571,7 @@
     });
 
     // ====================================
-    // FUNGSI UTAMA
+    // FUNGSI LAINNYA
     // ====================================
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
@@ -601,7 +609,7 @@
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
         if (res.ok) allMoviesCache = (await res.json()).results;
-      } catch (e) { console.error("Gagal ambil data film"); }
+      } catch (e) { console.error("Gagal ambil daftar film"); }
     }
 
     function pasangPemutar(tmdbId) {
