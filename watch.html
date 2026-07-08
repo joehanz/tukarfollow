@@ -11,6 +11,29 @@
 
  <!-- CALL EXTERNAL CSS -->
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* --------------------------
+  FITUR HILANG MUNCUL KONTROL
+--------------------------- */
+.subtitle-controls {
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Lebih cepat sedikit */
+  opacity: 1;
+  visibility: visible;
+}
+
+.subtitle-layer.controls-hidden .subtitle-controls {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Teks subtitle TETAP terlihat selamanya */
+.subtitle-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none;
+}
+  </style>
 </head>
 <body>
 
@@ -354,27 +377,40 @@
   </script>
 
   <script>
-        // ====================================
-    // FITUR: HILANGKAN TOMBOL SETELAH 3 DETIK
+    // ====================================
+    // FITUR: HILANG & MUNCUL KONTROL (LEBIH SENSITIF)
     // ====================================
     let timerSembunyiKontrol;
     const subLayer = document.getElementById('subLayer');
+    const delaySembunyi = 3000; // Tetap 3 detik
 
+    // Fungsi untuk menampilkan kontrol
     function tampilkanKontrol() {
+        // Tampilkan segera
         subLayer.classList.remove('controls-hidden');
+        // Reset hitungan mundur
         clearTimeout(timerSembunyiKontrol);
-        timerSembunyiKontrol = setTimeout(() => {
-            subLayer.classList.add('controls-hidden');
-        }, 3000); // 3000 ms = 3 detik
+        timerSembunyiKontrol = setTimeout(sembunyikanKontrol, delaySembunyi);
     }
 
-    // Pemicu: saat disentuh, diklik, atau kursor bergerak
-    videoWrapper.addEventListener('mousemove', tampilkanKontrol);
-    videoWrapper.addEventListener('click', tampilkanKontrol);
-    videoWrapper.addEventListener('touchstart', tampilkanKontrol);
-    videoWrapper.addEventListener('touchmove', tampilkanKontrol);
+    // Fungsi untuk menyembunyikan kontrol
+    function sembunyikanKontrol() {
+        subLayer.classList.add('controls-hidden');
+    }
 
-    // Saat baru mulai diputar, langsung tampilkan
+    // PEMICU YANG LEBIH LENGKAP & PEKA
+    document.addEventListener('mousemove', tampilkanKontrol);       // Gerak kursor di mana saja
+    document.addEventListener('mousedown', tampilkanKontrol);       // Klik kiri/kanan
+    document.addEventListener('touchstart', tampilkanKontrol);       // Sentuh layar
+    document.addEventListener('touchmove', tampilkanKontrol);       // Geser jari
+    document.addEventListener('click', tampilkanKontrol);            // Klik apa saja
+    document.addEventListener('keydown', tampilkanKontrol);          // Tekan tombol keyboard
+
+    // Khusus untuk area video (agar tetap jalan meski kursor di atas iframe)
+    videoWrapper.addEventListener('mouseenter', tampilkanKontrol);
+    videoWrapper.addEventListener('mousemove', tampilkanKontrol);
+
+    // Saat halaman baru dibuka, langsung tampilkan dulu
     tampilkanKontrol();
   </script>
 </body>
