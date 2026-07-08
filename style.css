@@ -761,22 +761,26 @@ body {
     justify-content: center;
 }
 
-/* Logo Melayang Kanan Atas */
+/* Logo Melayang Kanan Atas (Dengan Background Putih) */
 .watermark-logo {
   position: absolute;
   top: 15px;
   right: 15px;
   z-index: 99999; /* Paling depan */
   pointer-events: none; /* Supaya nggak menghalangi klik di video */
-  opacity: 0.85; /* Sedikit tembus pandang biar nggak terlalu mencolok */
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .watermark-logo img {
-  height: 50px; /* Ukuran tinggi logo, sesuaikan selera */
+  height: 36px; /* Ukuran tinggi logo, sesuaikan selera */
   width: auto;
   display: block;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); /* Bayangan biar jelas di gambar terang/gelap */
+  /* === BARU: BACKGROUND PUTIH + PADDING === */
+  background-color: #ffffff;
+  padding: 5px 10px; /* Atur jarak di sekitar logo */
+  border-radius: 4px; /* Sudut sedikit melengkung (opsional) */
+  /* === AKHIR BACKGROUND === */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Bayangan lebih ringkas */
 }
 
 /* Saat layar penuh, posisikan sedikit lebih jauh ke atas */
