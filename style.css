@@ -298,34 +298,26 @@ body {
 
 /* Panel Info */
 .info-panel {
-    position: fixed;
-    bottom: -250px;
-    left: 0;
-    width: 100vw;
-    background: #121212;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    z-index: 280;
-    padding: 24px;
-    transition: bottom 0.3s cubic-bezier(0.1, 1, 0.1, 1);
-    border-top: 1px solid #222;
-    box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
-    overflow-y: auto;
-    max-height: calc(100vh - 150px);
-}
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #121212;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      z-index: 105;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+    }
 
-.info-panel.show {
-    bottom: 75px;
-}
+    .info-panel.show {
+      transform: translateY(0);
+    }
 
-.panel-content {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    font-size: 0.95rem;
-    color: #ccc;
-    line-height: 1.5;
-}
+    .panel-content {
+      padding: 20px;
+    }
 
 .panel-content i {
     color: #fff;
