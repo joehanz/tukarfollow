@@ -1,323 +1,236 @@
- * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .feed-container {
-            width: 100%;
-            height: 100%;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-        }
-
-        .feed-container::-webkit-scrollbar { display: none; }
-
-        .movie-card {
-            width: 100vw;
-            height: 100vh;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-        /* Pagination Load More Card */
-        .load-more-card {
-            width: 100vw;
-            height: 100vh;
-            scroll-snap-align: start;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #111;
-        }
-
-        .load-more-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-            transition: transform 0.2s;
-        }
-
-        .load-more-btn:active { transform: scale(0.95); }
-
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.5) 100%);
-            z-index: 1;
-        }
-
-        .top-title {
-            position: absolute;
-            top: 12%; left: 50%; transform: translateX(-50%);
-            z-index: 2; font-size: 1.8rem; font-weight: 300; letter-spacing: 6px;
-            text-transform: uppercase; text-align: center; width: 90%;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
-        }
-
-        .play-btn-container {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 3; cursor: pointer;
-        }
-
-        .play-circle {
-            width: 85px; height: 85px; background: rgba(255, 255, 255, 0.15);
-            border: 2.5px solid #fff; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-
-        /* UI Samping Kanan Saja (Kiri Bersih Total) */
-        .main-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: flex-end; /* Dorong ke kanan */
-            padding: 20px;
-            margin-bottom: 80px;
-        }
-
-        .side-actions {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            width: 60px;
-        }
-
-        .action-item span {
-            font-size: 0.75rem; margin-top: 4px; color: #eee;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-align: center;
-        }
-
-        /* Video Player Layer Penuh */
-        .video-player-container {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 200;
-            display: none;
-        }
-
-        .video-player-container.active { display: block; }
-
-        .video-player-container iframe, .video-player-container video {
-            width: 100%; height: 100%; border: none;
-        }
-
-        .close-player {
-            position: absolute;
-            top: 30px; right: 20px; z-index: 210;
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Fixed Navigation */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100vw; height: 75px;
-            background: rgba(0, 0, 0, 0.95); border-top: 1px solid #1a1a1a;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 100; padding-bottom: 12px; transition: transform 0.3s;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #777; cursor: pointer; font-size: 0.75rem; width: 60px;
-        }
-
-        .nav-item.active { color: #fff; }
-        .nav-item span { margin-top: 4px; }
-
-        /* Search Bar Dropdown */
-        .search-container {
-            position: fixed; top: -90px; left: 0; width: 100vw; height: 75px;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); z-index: 110;
-            display: flex; align-items: center; padding: 0 20px;
-            transition: top 0.4s cubic-bezier(0.1, 1, 0.1, 1); border-bottom: 1px solid #222;
-        }
-
-        .search-container.show { top: 0; }
-
-        .search-box {
-            width: 100%; height: 44px; background: #1c1c1e;
-            border: 1px solid #2c2c2e; border-radius: 10px;
-            display: flex; align-items: center; padding: 0 14px;
-        }
-
-        .search-box input {
-            width: 100%; background: transparent; border: none; color: #fff;
-            padding-left: 10px; font-size: 1rem; outline: none;
-        }
-
-        /* Info Panel Cicilan */
-        .info-panel {
-            position: fixed; bottom: -250px; left: 0; width: 100vw;
-            background: #121212; border-top-left-radius: 20px; border-top-right-radius: 20px;
-            z-index: 90; padding: 24px; transition: bottom 0.3s cubic-bezier(0.1, 1, 0.1, 1);
-            border-top: 1px solid #222; box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
-        }
-
-        .info-panel.show { bottom: 75px; }
-
-        .panel-content {
-            display: flex; gap: 14px; align-items: flex-start; font-size: 0.95rem; color: #ccc; line-height: 1.4;
-        }
-
-        .panel-content i { color: #fff; flex-shrink: 0; }
-
-/* --- FITUR DESKTOP DETECTOR & NAVIGASI PANAH DI ATAS INFO --- */
-
-/* Notifikasi Layar Penuh Desktop */
-.desktop-notifier {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-    display: none; 
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 10vh;
-}
-
-/* Box Notifikasi dengan Efek Turun & Mental (Bounce) */
-.notifier-content {
-    background: #1c1c1e;
-    border: 1px solid #2c2c2e;
-    padding: 30px;
-    width: 90%;
-    max-width: 420px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: bounceDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.notifier-content i { color: #34c759; margin-bottom: 15px; }
-.notifier-content h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
-.notifier-content p { font-size: 0.9rem; color: #aaa; line-height: 1.5; margin-bottom: 20px; }
-
-.notifier-content button {
-    background: #fff; color: #000; border: none; padding: 12px 30px;
-    font-size: 0.95rem; font-weight: bold; border-radius: 25px; cursor: pointer;
-    transition: transform 0.2s; width: 100%;
-}
-.notifier-content button:active { transform: scale(0.95); }
-
-@keyframes bounceDown {
-    0% { transform: translateY(-150%); opacity: 0; }
-    60% { transform: translateY(10%); opacity: 1; }
-    80% { transform: translateY(-5%); }
-    100% { transform: translateY(0); }
-}
-
-/* Container Panah Internal yang Berada di Atas Menu Info */
-.arrow-actions-container {
-    display: none; /* Dikontrol via JS: hanya muncul di mode desktop */
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px; /* Memberi jarak ke menu info di bawahnya */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 15px;
-}
-
-.inline-scroll-arrow {
-    width: 45px; height: 45px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.inline-scroll-arrow:hover {
-    background: #fff; color: #000; transform: scale(1.1);
-}
-
-/* Container Utama untuk tombol Load More di dalam film terakhir */
-.inline-load-more {
-    position: absolute;
-    bottom: 90px; /* Pas di atas navigasi menu bawah HP / Desktop */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 99; /* Angka tinggi biar pasti di depan elemen lain */
-    width: auto;
-    text-align: center;
-    pointer-events: auto; /* Memastikan tombol bisa diklik */
-}
-
-/* Style Tombol Premium Semi-Transparan (Glassmorphism) */
-.load-more-btn-inline {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    padding: 12px 26px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    transition: all 0.2s ease-in-out;
-    white-space: nowrap; /* Biar teks gak patah jadi 2 baris di HP */
-}
-
-/* Efek pas disentuh / di-hover */
-.load-more-btn-inline:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
-}
-
-.load-more-btn-inline:active {
-    transform: scale(0.95);
+/* Reset Dasar */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    margin: 0;
-    padding: 0;
     background-color: #000;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Kontainer Gulir Film */
+.feed-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 75px;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    z-index: 10;
+}
+
+.feed-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Kartu Film */
+.movie-card {
+    width: 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+/* Halaman Muat Lebih Banyak */
+.load-more-card {
+    width: 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+}
+
+.load-more-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 15px 35px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+    transition: transform 0.2s;
+}
+
+.load-more-btn:active {
+    transform: scale(0.95);
+}
+
+/* Lapisan Gelap */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.5) 100%);
+    z-index: 1;
+}
+
+/* Judul Film */
+.top-title {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    text-align: center;
+    width: 90%;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+}
+
+/* Tombol Putar */
+.play-btn-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    cursor: pointer;
+}
+
+.play-circle {
+    width: 85px;
+    height: 85px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2.5px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+/* Area Konten & Menu Samping */
+.main-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    margin-bottom: 80px;
+}
+
+.side-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: 60px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.action-item span {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    color: #eee;
+    text-align: center;
+}
+
+/* Pemutar Video */
+.video-player-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 200;
+    display: none;
+}
+
+.video-player-container.active {
+    display: block;
+}
+
+.video-player-container iframe,
+.video-player-container video {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.close-player {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    z-index: 210;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Navigasi Bawah */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 75px;
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid #1a1a1a;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 300;
+    padding-bottom: 12px;
+    transition: transform 0.3s;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #777;
+    cursor: pointer;
+    font-size: 0.75rem;
+    width: 60px;
+    transition: color 0.2s;
+}
+
+.nav-item.active,
+.nav-item:hover {
+    color: #ffdd57;
+}
+
+.nav-item span {
+    margin-top: 4px;
 }
 
 /* Kolom Pencarian */
@@ -325,12 +238,17 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    background: #111;
-    z-index: 300;
-    padding: 12px 15px;
+    width: 100vw;
+    height: 75px;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(15px);
+    z-index: 310;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
     transform: translateY(-100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.1, 1, 0.1, 1);
+    border-bottom: 1px solid #222;
 }
 
 .search-container.show {
@@ -338,32 +256,35 @@ body {
 }
 
 .search-box {
+    width: 100%;
+    height: 44px;
+    background: #1c1c1e;
+    border: 1px solid #2c2c2e;
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    background: #222;
-    border-radius: 25px;
-    padding: 0 15px;
+    padding: 0 14px;
 }
 
 .search-box input {
-    flex: 1;
-    border: none;
+    width: 100%;
     background: transparent;
+    border: none;
     color: #fff;
-    padding: 12px 10px;
+    padding-left: 10px;
+    font-size: 1rem;
     outline: none;
-    font-size: 15px;
 }
 
-/* Layer Hasil Pencarian */
+/* Hasil Pencarian */
 .search-results-layer {
     position: fixed;
-    top: 65px;
+    top: 75px;
     left: 0;
     right: 0;
-    bottom: 70px;
+    bottom: 75px;
     background: #121212;
-    z-index: 250;
+    z-index: 290;
     display: flex;
     flex-direction: column;
     transform: translateY(100%);
@@ -441,137 +362,181 @@ body {
     color: #cccccc;
 }
 
-/* Navigasi Bawah */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #111;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 65px;
-    z-index: 300;
-    border-top: 1px solid #222;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: #999;
-    cursor: pointer;
-    padding: 8px 15px;
-    transition: color 0.2s;
-}
-
-.nav-item.active,
-.nav-item:hover {
-    color: #ffdd57;
-}
-
-/* Info Panel */
+/* Panel Info */
 .info-panel {
     position: fixed;
-    top: 65px;
-    right: 0;
-    width: 320px;
-    max-width: 90%;
-    height: calc(100vh - 130px);
-    background: #1e1e1e;
-    z-index: 250;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
+    bottom: -250px;
+    left: 0;
+    width: 100vw;
+    background: #121212;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 280;
+    padding: 24px;
+    transition: bottom 0.3s cubic-bezier(0.1, 1, 0.1, 1);
+    border-top: 1px solid #222;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
     overflow-y: auto;
-    border-left: 1px solid #333;
+    max-height: calc(100vh - 150px);
 }
 
 .info-panel.show {
-    transform: translateX(0);
+    bottom: 75px;
 }
 
 .panel-content {
-    padding: 20px;
-    color: #fff;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: #ccc;
+    line-height: 1.5;
 }
 
-/* Konten Utama */
-.feed-container {
+.panel-content i {
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Notifikasi Layar Desktop */
+.desktop-notifier {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 65px;
-    overflow-y: auto;
-    z-index: 100;
-}
-
-.movie-card {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    overflow: hidden;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
 }
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+.notifier-content {
+    background: #1c1c1e;
+    border: 1px solid #2c2c2e;
+    padding: 30px;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: bounceDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.top-title {
-    position: absolute;
-    top: 80px;
-    left: 20px;
-    font-size: 22px;
+.notifier-content i {
+    color: #34c759;
+    margin-bottom: 15px;
+}
+
+.notifier-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
     font-weight: 600;
-    z-index: 10;
-    color: #fff;
 }
 
-.play-btn-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
+.notifier-content p {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.notifier-content button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 25px;
     cursor: pointer;
+    transition: transform 0.2s;
+    width: 100%;
 }
 
-.play-circle {
-    width: 70px;
-    height: 70px;
+.notifier-content button:active {
+    transform: scale(0.95);
+}
+
+@keyframes bounceDown {
+    0% { transform: translateY(-150%); opacity: 0; }
+    60% { transform: translateY(10%); opacity: 1; }
+    80% { transform: translateY(-5%); }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Tombol Panah Navigasi */
+.arrow-actions-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.inline-scroll-arrow {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    background: rgba(255,255,255,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px);
-}
-
-.side-actions {
-    position: absolute;
-    right: 15px;
-    bottom: 120px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    z-index: 10;
-}
-
-.action-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
     cursor: pointer;
-    color: #fff;
-    text-shadow: 0 0 8px rgba(0,0,0,0.8);
+    transition: all 0.2s ease;
+}
+
+.inline-scroll-arrow:hover {
+    background: #fff;
+    color: #000;
+    transform: scale(1.1);
+}
+
+/* Tombol Muat Lebih Banyak */
+.inline-load-more {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
+    width: auto;
+    text-align: center;
+    pointer-events: auto;
+}
+
+.load-more-btn-inline {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 12px 26px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+}
+
+.load-more-btn-inline:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.load-more-btn-inline:active {
+    transform: scale(0.95);
 }
