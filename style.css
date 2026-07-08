@@ -773,7 +773,7 @@ body {
 }
 
 .watermark-logo img {
-  height: 36px; /* Ukuran tinggi logo, sesuaikan selera */
+  height: 50px; /* Ukuran tinggi logo, sesuaikan selera */
   width: auto;
   display: block;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); /* Bayangan biar jelas di gambar terang/gelap */
