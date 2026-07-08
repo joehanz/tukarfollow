@@ -761,25 +761,3 @@ body {
     justify-content: center;
 }
 
-/* --------------------------
-  FITUR HILANG MUNCUL KONTROL
---------------------------- */
-.subtitle-controls {
-  transition: opacity 0.4s ease, visibility 0.4s ease;
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Saat tidak aktif: hanya kontrol yang memudar */
-.subtitle-layer.controls-hidden .subtitle-controls {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* Teks terjemahan TETAP terlihat */
-.subtitle-text {
-  transition: none;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
