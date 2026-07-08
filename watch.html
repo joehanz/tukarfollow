@@ -352,5 +352,30 @@
       muatDataAwal();
     });
   </script>
+
+  <script>
+        // ====================================
+    // FITUR: HILANGKAN TOMBOL SETELAH 3 DETIK
+    // ====================================
+    let timerSembunyiKontrol;
+    const subLayer = document.getElementById('subLayer');
+
+    function tampilkanKontrol() {
+        subLayer.classList.remove('controls-hidden');
+        clearTimeout(timerSembunyiKontrol);
+        timerSembunyiKontrol = setTimeout(() => {
+            subLayer.classList.add('controls-hidden');
+        }, 3000); // 3000 ms = 3 detik
+    }
+
+    // Pemicu: saat disentuh, diklik, atau kursor bergerak
+    videoWrapper.addEventListener('mousemove', tampilkanKontrol);
+    videoWrapper.addEventListener('click', tampilkanKontrol);
+    videoWrapper.addEventListener('touchstart', tampilkanKontrol);
+    videoWrapper.addEventListener('touchmove', tampilkanKontrol);
+
+    // Saat baru mulai diputar, langsung tampilkan
+    tampilkanKontrol();
+  </script>
 </body>
 </html>
