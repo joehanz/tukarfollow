@@ -776,8 +776,8 @@ body {
   width: auto;
   display: block;
   /* === BARU: BACKGROUND PUTIH + PADDING === */
-  background-color: #ffffff;
-  padding: 5px 10px; /* Atur jarak di sekitar logo */
+  background-color: ;
+  padding: 2px 2px; /* Atur jarak di sekitar logo */
   border-radius: 4px; /* Sudut sedikit melengkung (opsional) */
   /* === AKHIR BACKGROUND === */
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Bayangan lebih ringkas */
