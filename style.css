@@ -761,3 +761,29 @@ body {
     justify-content: center;
 }
 
+/* Logo Melayang Kanan Atas */
+.watermark-logo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 99999; /* Paling depan */
+  pointer-events: none; /* Supaya nggak menghalangi klik di video */
+  opacity: 0.85; /* Sedikit tembus pandang biar nggak terlalu mencolok */
+  transition: opacity 0.3s ease;
+}
+
+.watermark-logo img {
+  height: 36px; /* Ukuran tinggi logo, sesuaikan selera */
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); /* Bayangan biar jelas di gambar terang/gelap */
+}
+
+/* Saat layar penuh, posisikan sedikit lebih jauh ke atas */
+.video-main-wrapper:fullscreen .watermark-logo,
+.video-main-wrapper:-webkit-full-screen .watermark-logo,
+.video-main-wrapper:-moz-full-screen .watermark-logo,
+.video-main-wrapper:-ms-fullscreen .watermark-logo {
+  top: 25px;
+  right: 25px;
+}
