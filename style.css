@@ -772,7 +772,7 @@ body {
 }
 
 .watermark-logo img {
-  height: 60px; /* Ukuran tinggi logo, sesuaikan selera */
+  height: 70px; /* Ukuran tinggi logo, sesuaikan selera */
   width: auto;
   display: block;
   /* === BARU: BACKGROUND PUTIH + PADDING === */
