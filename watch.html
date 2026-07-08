@@ -69,10 +69,10 @@
       <i data-lucide="plus-circle" size="28"></i>
       <span>Add</span>
     </div>
-    <div class="nav-item" id="navHome">
-      <i data-lucide="home" size="24"></i>
-      <span>Home</span>
-    </div>
+    <div class="nav-item" id="navHome" onclick="if (history.length > 1) history.back(); else window.location.href = 'index.html';">
+  <i data-lucide="home" size="24"></i>
+  <span>Home</span>
+</div>
   </div>
 
   <script>
