@@ -16,7 +16,7 @@ let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
 
-// Deteksi Device
+// Deteksi Ukuran Layar
 function detectDevice() {
     isDesktop = window.innerWidth > 768;
     const notifier = document.getElementById('desktopNotifier');
@@ -27,49 +27,65 @@ function closeNotifier() {
     const notifier = document.getElementById('desktopNotifier');
     if (notifier) {
         notifier.style.opacity = '0';
-        setTimeout(() => notifier.style.display = 'none', 300);
+        setTimeout(() => { notifier.style.display = 'none'; }, 300);
     }
 }
 
-// Scroll Navigasi
+// Fungsi Gulir
 function scrollFeed(direction) {
     if (!feedContainer) return;
     const cardHeight = window.innerHeight;
-    feedContainer.scrollBy({ top: direction === 'down' ? cardHeight : -cardHeight, behavior: 'smooth' });
+    feedContainer.scrollBy({ 
+        top: direction === 'down' ? cardHeight : -cardHeight, 
+        behavior: 'smooth' 
+    });
 }
 
-// Ambil Data Film Populer
+// Ambil Data Film Populer dari TMDB
 async function fetchMovies(page = 1) {
     try {
-        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`);
-        if (!res.ok) throw new Error('Gagal ambil data');
-        const data = await res.json();
-        moviesData = page === 1 ? data.results : [...moviesData, ...data.results];
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`);
+        if (!response.ok) throw new Error('Gagal memuat data');
+        const data = await response.json();
+        
+        if (page === 1) {
+            moviesData = data.results;
+        } else {
+            moviesData = [...moviesData, ...data.results];
+        }
+
         renderFeed(moviesData);
-    } catch {
+    } catch (error) {
+        console.warn('Gagal terhubung ke TMDB, gunakan data cadangan:', error);
         loadFallbackData();
     }
 }
 
+// Data Cadangan Jika Server Sibuk
 function loadFallbackData() {
     const fallback = [
         { id: 726888, title: 'Heartbeast', overview: 'A young girl discovers her passion for rap music...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
         { id: 157336, title: 'Interstellar', overview: 'A team of explorers travel through a wormhole in space...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', origin_country: ['US'] }
     ];
-    moviesData = [...moviesData, ...fallback];
+    if (moviesData.length === 0) moviesData = fallback;
+    else moviesData = [...moviesData, ...fallback];
     renderFeed(moviesData);
 }
 
+// Tampilkan Daftar Film
 function renderFeed(movies) {
     if (!feedContainer) return;
     feedContainer.innerHTML = '';
+
     movies.forEach((movie, index) => {
-        const poster = movie.poster_path ? `${IMAGE_URL}${movie.poster_path}` : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500';
+        const posterUrl = movie.poster_path 
+            ? `${IMAGE_URL}${movie.poster_path}` 
+            : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500';
         const year = movie.release_date ? movie.release_date.split('-')[0] : '-';
 
         const card = document.createElement('div');
         card.className = 'movie-card';
-        card.style.backgroundImage = `url('${poster}')`;
+        card.style.backgroundImage = `url('${posterUrl}')`;
         card.innerHTML = `
             <div class="overlay"></div>
             <div class="top-title">${movie.title}</div>
@@ -78,7 +94,7 @@ function renderFeed(movies) {
             </div>
             <div class="main-content">
                 <div class="side-actions">
-                    <div class="arrow-actions-container" style="display:${isDesktop ? 'flex' : 'none'}">
+                    <div class="arrow-actions-container" style="display: ${isDesktop ? 'flex' : 'none'};">
                         <div class="inline-scroll-arrow" onclick="scrollFeed('up')"><i data-lucide="chevron-up" size="22"></i></div>
                         <div class="inline-scroll-arrow" onclick="scrollFeed('down')"><i data-lucide="chevron-down" size="22"></i></div>
                     </div>
@@ -104,15 +120,16 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
+    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
-        const loadMore = document.createElement('div');
-        loadMore.className = 'inline-load-more';
-        loadMore.innerHTML = `<button class="load-more-btn-inline" onclick="loadNextPage()"><i data-lucide="plus" size="16"></i> Load More (Page ${currentPage + 1})</button>`;
-        lastCard.querySelector('.main-content').appendChild(loadMore);
+        const loadMoreDiv = document.createElement('div');
+        loadMoreDiv.className = 'inline-load-more';
+        loadMoreDiv.innerHTML = `<button class="load-more-btn-inline" onclick="loadNextPage()"><i data-lucide="plus" size="16"></i> Load More (Page ${currentPage + 1})</button>`;
+        lastCard.querySelector('.main-content').appendChild(loadMoreDiv);
     }
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 }
 
 function loadNextPage() {
@@ -121,7 +138,7 @@ function loadNextPage() {
 }
 
 // ==============================================
-// Menu Samping: Info = Sinopsis, Rilis = Tanggal saja
+// Panel Info Samping
 // ==============================================
 async function toggleSection(event, index, section) {
     event.stopPropagation();
@@ -153,53 +170,48 @@ async function toggleSection(event, index, section) {
                 html = `<p style="color:#fff; margin:0;"><strong>Release Date:</strong><br>${detailData.release_date || movie.release_date || 'Unknown'}</p>`;
                 break;
             case 'genre':
-                const genres = detailData.genres?.map(g => g.name) || movie.genre_ids?.map(id => ({
+                const genreMap = {
                     28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary',
                     18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
                     9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western'
-                }[id] || 'Other');
+                };
+                const genres = detailData.genres?.map(g => g.name) || movie.genre_ids?.map(id => genreMap[id] || 'Other');
                 html = `<p style="color:#fff; margin:0;"><strong>Genre:</strong><br>${genres.join(', ') || 'Not specified'}</p>`;
                 break;
             case 'country':
-                const countries = detailData.production_countries?.map(c => c.name) || movie.origin_country?.map(c => ({
-                    'US': 'United States', 'FI': 'Finland', 'KR': 'South Korea', 'JP': 'Japan', 'ID': 'Indonesia',
-                    'GB': 'United Kingdom', 'FR': 'France', 'CN': 'China', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India'
-                }[c] || c));
+                const countries = detailData.production_countries?.map(c => c.name) || movie.origin_country?.map(c => {
+                    const map = { 'US': 'United States', 'FI': 'Finland', 'KR': 'South Korea', 'JP': 'Japan', 'ID': 'Indonesia', 'GB': 'United Kingdom', 'FR': 'France', 'CN': 'China', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India' };
+                    return map[c] || c;
+                });
                 html = `<p style="color:#fff; margin:0;"><strong>Country:</strong><br>${countries.join(', ') || 'Not specified'}</p>`;
                 break;
         }
 
         panelContentArea.innerHTML = html;
-        lucide.createIcons();
-    } catch {
-        panelContentArea.innerHTML = `<p style="color:#ff6b6b;">Failed to load data.</p>`;
+        if (window.lucide) lucide.createIcons();
+    } catch (err) {
+        panelContentArea.innerHTML = `<p style="color:#ff6b6b;">Failed to load details.</p>`;
     }
 }
 
 // ==============================================
-// Pencarian & Navigasi Bawah
+// Fungsi Utama & Navigasi
 // ==============================================
 function playMovie(tmdbId) {
     window.location.href = `watch.html?id=${tmdbId}`;
 }
 
-const closePlayerBtn = document.getElementById('closePlayerBtn');
-if (closePlayerBtn) {
-    closePlayerBtn.addEventListener('click', () => {
-        playerArea.innerHTML = '';
-        videoPlayerContainer.classList.remove('active');
+// Tutup info saat gulir ke film lain
+if (feedContainer) {
+    feedContainer.addEventListener('scroll', () => {
+        const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
+        if (idx !== activeMovieIndex) {
+            activeMovieIndex = idx;
+            infoPanel.classList.remove('show');
+            currentActiveSection = null;
+        }
     });
 }
-
-// Tutup info saat ganti film
-feedContainer?.addEventListener('scroll', () => {
-    const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
-    if (idx !== activeMovieIndex) {
-        activeMovieIndex = idx;
-        infoPanel.classList.remove('show');
-        currentActiveSection = null;
-    }
-});
 
 // Layer Hasil Pencarian
 let searchResultsLayer = document.getElementById('searchResultsLayer');
@@ -222,67 +234,73 @@ function tutupPencarian() {
     searchInput.value = '';
 }
 
+// Cari ke Seluruh Database TMDB
 async function cariFilm(kata) {
-    if (!kata || kata.length < 2) return;
+    if (!kata || kata.trim().length < 2) return;
     document.getElementById('searchContent').innerHTML = `<div style="padding:30px; color:#fff; text-align:center;">Searching...</div>`;
     searchResultsLayer.classList.add('active');
 
     try {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(kata)}&page=1&include_adult=false`);
         const data = await res.json();
-        const hasil = data.results?.map(m => `
-            <div class="search-item-row" onclick="playMovie(${m.id})">
-                <div class="search-item-thumb" style="background-image:url('${m.poster_path ? IMAGE_URL + m.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}')"></div>
+        const hasilHTML = data.results?.map(movie => `
+            <div class="search-item-row" onclick="playMovie(${movie.id})">
+                <div class="search-item-thumb" style="background-image:url('${movie.poster_path ? IMAGE_URL + movie.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}')"></div>
                 <div class="search-item-info">
-                    <h4>${m.title}</h4>
-                    <p>${m.release_date ? m.release_date.split('-')[0] : '-'}</p>
-                    <p style="font-size:12px; opacity:0.7;">${m.overview?.substring(0, 80) || 'No synopsis'}...</p>
+                    <h4>${movie.title}</h4>
+                    <p>${movie.release_date ? movie.release_date.split('-')[0] : '-'}</p>
+                    <p style="font-size:12px; opacity:0.7;">${movie.overview ? movie.overview.substring(0, 80) + '...' : 'No synopsis'}</p>
                 </div>
             </div>
         `).join('') || `<div style="padding:40px; color:#aaa; text-align:center;">No results found</div>`;
-        document.getElementById('searchContent').innerHTML = hasil;
-        lucide.createIcons();
-    } catch {
+
+        document.getElementById('searchContent').innerHTML = hasilHTML;
+        if (window.lucide) lucide.createIcons();
+    } catch (err) {
         document.getElementById('searchContent').innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Connection error</div>`;
     }
 }
 
-// Tekan Enter untuk cari
-searchInput?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        cariFilm(searchInput.value.trim());
-    }
-});
+// Tekan Enter untuk Cari
+if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            cariFilm(searchInput.value.trim());
+        }
+    });
+}
 
-// ✅ Perbaiki Navigasi Bawah & Kolom Pencarian
+// Navigasi Bawah Berfungsi
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
 
-navSearch?.addEventListener('click', e => {
-    e.stopPropagation();
-    searchContainer.classList.toggle('show');
-    if (searchContainer.classList.contains('show')) {
-        setTimeout(() => searchInput.focus(), 100);
-    } else {
+if (navSearch) {
+    navSearch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchContainer.classList.toggle('show');
+        if (searchContainer.classList.contains('show')) {
+            setTimeout(() => searchInput.focus(), 100);
+        } else {
+            tutupPencarian();
+        }
+    });
+}
+
+if (navHome) {
+    navHome.addEventListener('click', () => {
+        searchInput.value = '';
         tutupPencarian();
-    }
-});
+        searchContainer.classList.remove('show');
+        if (feedContainer) feedContainer.scrollTop = 0;
+    });
+}
 
-navHome?.addEventListener('click', () => {
-    searchInput.value = '';
-    tutupPencarian();
-    searchContainer.classList.remove('show');
-    feedContainer.scrollTop = 0;
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    navHome.classList.add('active');
-});
-
-// Jalankan Awal
+// Jalankan Semua Saat Halaman Selesai Dimuat
 window.addEventListener('load', () => {
     detectDevice();
     fetchMovies();
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 });
 
 window.addEventListener('resize', detectDevice);
