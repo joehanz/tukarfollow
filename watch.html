@@ -86,71 +86,15 @@
           <!-- Tombol Bendera / Tutup - tepat di sebelah kanan -->
     <button class="ctrl-btn" id="btnToggleKontrol">🇮🇩</button>
           <style>
-            /* Kontainer utama kontrol */
-.subtitle-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,0,0,0.85);
-  padding: 8px 14px;
-  border-radius: 30px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.6);
-  /* Agar bisa digeser */
+            /* Lapisan utama subtitle & kontrol */
+.subtitle-layer {
   position: absolute;
-  cursor: grab;
-  user-select: none;
-  /* Transisi halus saat muncul/hilang */
-  transition: all 0.3s ease;
-}
-
-/* Saat sedang digeser */
-.subtitle-controls.dragging {
-  cursor: grabbing;
-  opacity: 0.9;
-}
-
-/* Keadaan awal: semua tombol dan waktu disembunyikan */
-.subtitle-controls.tersembunyi #btnMundur,
-.subtitle-controls.tersembunyi #btnMain,
-.subtitle-controls.tersembunyi #btnMaju,
-.subtitle-controls.tersembunyi #jamTayang {
-  opacity: 0;
-  visibility: hidden;
-  width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-/* Tombol kontrol */
-.ctrl-btn {
-  background: #ffdd57;
-  color: #000;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
-}
-
-.ctrl-btn:hover {
-  background: #fff280;
-}
-
-/* Waktu tayang */
-.time-digital {
-  color: #ffdd57;
-  font-family: monospace;
-  font-size: 18px;
-  min-width: 85px;
-  text-align: center;
-  letter-spacing: 1px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  z-index: 99999; /* Paling tinggi agar tidak tertutup */
+  pointer-events: none;
 }
 
 /* Teks subtitle tetap terlihat terus */
@@ -173,92 +117,216 @@
   word-wrap: break-word;
   pointer-events: none;
 }
+
+/* Kontrol utama - bisa digeser */
+.subtitle-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.85);
+  padding: 8px 14px;
+  border-radius: 30px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  cursor: grab;
+  user-select: none;
+  pointer-events: auto; /* Bisa diklik/geser */
+  transition: all 0.3s ease;
+  transform: none;
+}
+
+/* Saat sedang digeser */
+.subtitle-controls.dragging {
+  cursor: grabbing;
+  opacity: 0.95;
+  z-index: 999999;
+}
+
+/* Keadaan tersembunyi: hanya bendera yang terlihat */
+.subtitle-controls.tersembunyi {
+  width: 48px;
+  justify-content: center;
+  padding: 8px;
+}
+
+.subtitle-controls.tersembunyi #btnMundur,
+.subtitle-controls.tersembunyi #btnMain,
+.subtitle-controls.tersembunyi #btnMaju,
+.subtitle-controls.tersembunyi #jamTayang,
+.subtitle-controls.tersembunyi #btnFullscreen {
+  width: 0;
+  opacity: 0;
+  visibility: hidden;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+/* Tombol kontrol */
+.ctrl-btn {
+  background: #ffdd57;
+  color: #000;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ctrl-btn:hover {
+  background: #fff280;
+}
+
+/* Waktu tayang */
+.time-digital {
+  color: #ffdd57;
+  font-family: monospace;
+  font-size: 18px;
+  min-width: 85px;
+  text-align: center;
+  letter-spacing: 1px;
+  transition: all 0.25s ease;
+}
+
+/* Posisi saat layar penuh */
+.video-main-wrapper:fullscreen .subtitle-layer,
+.video-main-wrapper:-webkit-full-screen .subtitle-layer {
+  bottom: 40px;
+}
           </style>
           <script>
-            // ====================================
-// FUNGSI: Tampil/Sembunyi Kontrol + Bisa Geser
+           // ====================================
+// FUNGSI: Tampil/Sembunyi + Geser Kontrol
 // ====================================
 const kontrolUtama = document.getElementById('kontrolUtama');
 const btnToggleKontrol = document.getElementById('btnToggleKontrol');
+const videoWrapper = document.getElementById('videoWrapper');
 
-// Awal: sembunyikan semua kecuali tombol bendera
+// Awal: sembunyikan semua kecuali bendera
 kontrolUtama.classList.add('tersembunyi');
 
-// Klik tombol bendera / X
+// Tombol tampil/sembunyi
 btnToggleKontrol.addEventListener('click', () => {
   if (kontrolUtama.classList.contains('tersembunyi')) {
-    // Tampilkan semua kontrol
     kontrolUtama.classList.remove('tersembunyi');
-    btnToggleKontrol.textContent = '✕'; // ganti ke tanda silang
+    btnToggleKontrol.textContent = '✕';
+    // Kembalikan posisi awal jika belum digeser
+    if (!kontrolUtama.style.left) {
+      kontrolUtama.style.position = 'relative';
+      kontrolUtama.style.top = 'auto';
+      kontrolUtama.style.left = 'auto';
+    }
   } else {
-    // Sembunyikan kembali
     kontrolUtama.classList.add('tersembunyi');
-    btnToggleKontrol.textContent = '🇮🇩'; // ganti kembali ke bendera
+    btnToggleKontrol.textContent = '🇮🇩';
   }
 });
 
-// Logika agar kotak kontrol bisa digeser
+// Variabel untuk geser
 let sedangGeser = false;
-let posisiX, posisiY;
+let posisiAwalX, posisiAwalY;
+let posisiKontrolX = 0;
+let posisiKontrolY = 0;
 
+// Mulai geser (Klik kiri)
 kontrolUtama.addEventListener('mousedown', (e) => {
-  // Jangan mulai geser kalau yang diklik tombol atau waktu
+  // Jangan geser kalau klik tombol
   if (e.target.closest('.ctrl-btn') || e.target.closest('.time-digital')) return;
   
   sedangGeser = true;
   kontrolUtama.classList.add('dragging');
-  posisiX = e.clientX - kontrolUtama.getBoundingClientRect().left;
-  posisiY = e.clientY - kontrolUtama.getBoundingClientRect().top;
+  
+  // Ubah posisi jadi absolut agar bisa bergerak bebas
+  if (kontrolUtama.style.position !== 'absolute') {
+    const rect = kontrolUtama.getBoundingClientRect();
+    const wrapperRect = videoWrapper.getBoundingClientRect();
+    posisiKontrolX = rect.left - wrapperRect.left;
+    posisiKontrolY = rect.top - wrapperRect.top;
+    kontrolUtama.style.position = 'absolute';
+    kontrolUtama.style.left = `${posisiKontrolX}px`;
+    kontrolUtama.style.top = `${posisiKontrolY}px`;
+    kontrolUtama.style.bottom = 'auto';
+    kontrolUtama.style.transform = 'none';
+  }
+
+  posisiAwalX = e.clientX - posisiKontrolX;
+  posisiAwalY = e.clientY - posisiKontrolY;
+  e.preventDefault();
 });
 
+// Proses geser
 document.addEventListener('mousemove', (e) => {
   if (!sedangGeser) return;
-  const areaVideo = document.getElementById('videoWrapper').getBoundingClientRect();
-  let x = e.clientX - areaVideo.left - posisiX;
-  let y = e.clientY - areaVideo.top - posisiY;
 
-  // Batasi agar tidak keluar dari area video
-  x = Math.max(0, Math.min(x, areaVideo.width - kontrolUtama.offsetWidth));
-  y = Math.max(0, Math.min(y, areaVideo.height - kontrolUtama.offsetHeight));
+  const wrapperRect = videoWrapper.getBoundingClientRect();
+  posisiKontrolX = e.clientX - posisiAwalX;
+  posisiKontrolY = e.clientY - posisiAwalY;
 
-  kontrolUtama.style.left = `${x}px`;
-  kontrolUtama.style.top = `${y}px`;
-  kontrolUtama.style.bottom = 'auto'; // Hapus posisi awal
+  // Batasi agar tidak keluar area video
+  posisiKontrolX = Math.max(0, Math.min(posisiKontrolX, wrapperRect.width - kontrolUtama.offsetWidth));
+  posisiKontrolY = Math.max(0, Math.min(posisiKontrolY, wrapperRect.height - kontrolUtama.offsetHeight));
+
+  kontrolUtama.style.left = `${posisiKontrolX}px`;
+  kontrolUtama.style.top = `${posisiKontrolY}px`;
 });
 
+// Selesai geser
 document.addEventListener('mouseup', () => {
   sedangGeser = false;
   kontrolUtama.classList.remove('dragging');
 });
 
-// Dukungan geser untuk layar sentuh HP
+// Dukungan layar sentuh HP
 kontrolUtama.addEventListener('touchstart', (e) => {
   if (e.target.closest('.ctrl-btn') || e.target.closest('.time-digital')) return;
   sedangGeser = true;
+  kontrolUtama.classList.add('dragging');
+
+  if (kontrolUtama.style.position !== 'absolute') {
+    const rect = kontrolUtama.getBoundingClientRect();
+    const wrapperRect = videoWrapper.getBoundingClientRect();
+    posisiKontrolX = rect.left - wrapperRect.left;
+    posisiKontrolY = rect.top - wrapperRect.top;
+    kontrolUtama.style.position = 'absolute';
+    kontrolUtama.style.left = `${posisiKontrolX}px`;
+    kontrolUtama.style.top = `${posisiKontrolY}px`;
+    kontrolUtama.style.bottom = 'auto';
+    kontrolUtama.style.transform = 'none';
+  }
+
   const sentuh = e.touches[0];
-  posisiX = sentuh.clientX - kontrolUtama.getBoundingClientRect().left;
-  posisiY = sentuh.clientY - kontrolUtama.getBoundingClientRect().top;
+  posisiAwalX = sentuh.clientX - posisiKontrolX;
+  posisiAwalY = sentuh.clientY - posisiKontrolY;
   e.preventDefault();
 });
 
 document.addEventListener('touchmove', (e) => {
   if (!sedangGeser) return;
   const sentuh = e.touches[0];
-  const areaVideo = document.getElementById('videoWrapper').getBoundingClientRect();
-  let x = sentuh.clientX - areaVideo.left - posisiX;
-  let y = sentuh.clientY - areaVideo.top - posisiY;
+  const wrapperRect = videoWrapper.getBoundingClientRect();
+  
+  posisiKontrolX = sentuh.clientX - posisiAwalX;
+  posisiKontrolY = sentuh.clientY - posisiAwalY;
 
-  x = Math.max(0, Math.min(x, areaVideo.width - kontrolUtama.offsetWidth));
-  y = Math.max(0, Math.min(y, areaVideo.height - kontrolUtama.offsetHeight));
+  posisiKontrolX = Math.max(0, Math.min(posisiKontrolX, wrapperRect.width - kontrolUtama.offsetWidth));
+  posisiKontrolY = Math.max(0, Math.min(posisiKontrolY, wrapperRect.height - kontrolUtama.offsetHeight));
 
-  kontrolUtama.style.left = `${x}px`;
-  kontrolUtama.style.top = `${y}px`;
-  kontrolUtama.style.bottom = 'auto';
+  kontrolUtama.style.left = `${posisiKontrolX}px`;
+  kontrolUtama.style.top = `${posisiKontrolY}px`;
   e.preventDefault();
 });
 
 document.addEventListener('touchend', () => {
   sedangGeser = false;
+  kontrolUtama.classList.remove('dragging');
 });
           </script>
           <!-- Kelar Sampai Disini -->
