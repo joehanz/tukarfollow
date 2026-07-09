@@ -60,70 +60,6 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- CSS -->
-  <style>
-/* Wadah utama kendali */
-.subtitle-controls {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Tombol utama selalu di ujung kanan */
-  gap: 8px;
-  height: 40px; /* Sesuaikan tinggi dengan tombol */
-}
-
-/* Kotak yang bisa memanjang dan menyusut */
-.sub-panel-geser {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 100%;
-  padding: 0 8px;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 4px;
-  overflow: hidden; /* Supaya isinya tidak kelihatan saat menyempit */
-  white-space: nowrap;
-  /* Animasi utama: lebar berubah halus */
-  width: 0;
-  transform-origin: right center;
-  transition: all 0.35s ease;
-  opacity: 0;
-}
-
-/* Saat aktif: melebar ke kiri */
-.sub-panel-geser.aktif {
-  width: auto; /* Sesuai panjang isinya */
-  opacity: 1;
-  padding: 0 12px;
-}
-
-/* Tombol utama di ujung */
-#btnSubToggle {
-  background: rgba(0, 0, 0, 0.75);
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 16px;
-  height: 40px;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  z-index: 2;
-}
-
-#btnSubToggle:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Sembunyikan teks sub jika tidak aktif */
-#subText {
-  transition: opacity 0.3s ease;
-}
-  </style>
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -140,8 +76,8 @@
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText" style="opacity:0; pointer-events:none;"></div>
 
+
         <div class="subtitle-controls">
-  <!-- SEMUA TOMBOL KENDALI AKAN BERADA DI DALAM KOTAK YANG BISA MEMANJANG -->
   <div class="sub-panel-geser" id="subPanelGeser">
     <button class="ctrl-btn" id="btnMundur">⏪</button>
     <button class="ctrl-btn" id="btnMain">▶️</button>
@@ -149,10 +85,65 @@
     <div class="time-digital" id="jamTayang">00:00:00</div>
     <button class="ctrl-btn" id="btnFullscreen">⛶</button>
   </div>
-
-  <!-- TOMBOL UTAMA DI UJUNG KANAN -->
   <button class="ctrl-btn" id="btnSubToggle" title="Tampilkan/Sembunyikan Kontrol">🇮🇩</button>
 </div>
+
+<style>
+.subtitle-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 40px;
+  gap: 0;
+}
+
+.sub-panel-geser {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0;
+  background: rgba(0,0,0,0.75);
+  border-radius: 4px 0 0 4px;
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  transition: all 0.35s ease;
+}
+
+.sub-panel-geser.aktif {
+  width: auto;
+  opacity: 1;
+  padding: 0 10px;
+}
+
+#btnSubToggle {
+  background: rgba(0,0,0,0.75);
+  border: none;
+  border-radius: 0 4px 4px 0;
+  color: #fff;
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: -1px;
+  transition: background 0.2s ease;
+}
+
+#btnSubToggle:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+#subText {
+  transition: opacity 0.3s ease;
+}
+</style>
+
+        
       </div>
     </div>
 
