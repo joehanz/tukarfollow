@@ -190,8 +190,20 @@
 let pemutar = null;
 let sedangMain = false;
 let waktuSekarang = 0;
-const filmIframe = document.getElementById('filmIframe'); // pastikan ID iframe sama
-const btnMain = document.querySelector('.ctrl-btn#btnMain'); // ambil tombolnya
+
+// Ambil elemen dengan aman
+const filmIframe = document.getElementById('filmIframe');
+const btnMain = document.querySelector('.ctrl-btn#btnMain');
+
+// Pastikan iframe terlihat dan punya ukuran
+if (filmIframe) {
+  filmIframe.style.display = 'block';
+  filmIframe.style.visibility = 'visible';
+  filmIframe.style.width = '100%';
+  filmIframe.style.height = 'auto';
+  filmIframe.style.minHeight = '400px'; // sesuaikan tinggi minimal
+  filmIframe.border = '0';
+}
 
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
@@ -203,15 +215,12 @@ function mulaiSemua() {
     perbaruiTampilan();
   }, 1000);
 
-  // Format perintah yang paling sering diterima iframe pemutar
+  // Kirim semua format perintah sekaligus
   try {
-    filmIframe.contentWindow.postMessage({
-      event: 'play',
-      action: 'play',
-      func: 'play',
-      cmd: 'play',
-      currentTime: waktuSekarang
-    }, '*');
+    filmIframe.contentWindow.postMessage({ cmd: "play" }, "*");
+    filmIframe.contentWindow.postMessage({ action: "play" }, "*");
+    filmIframe.contentWindow.postMessage({ event: "play" }, "*");
+    filmIframe.contentWindow.postMessage({ method: "play" }, "*");
   } catch (e) {}
 }
 
@@ -221,12 +230,10 @@ function hentikanSemua() {
   clearInterval(pemutar);
 
   try {
-    filmIframe.contentWindow.postMessage({
-      event: 'pause',
-      action: 'pause',
-      func: 'pause',
-      cmd: 'pause'
-    }, '*');
+    filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*");
+    filmIframe.contentWindow.postMessage({ action: "pause" }, "*");
+    filmIframe.contentWindow.postMessage({ event: "pause" }, "*");
+    filmIframe.contentWindow.postMessage({ method: "pause" }, "*");
   } catch (e) {}
 }
 
@@ -235,14 +242,8 @@ function geserWaktu(ubah) {
   perbaruiTampilan();
 
   try {
-    filmIframe.contentWindow.postMessage({
-      event: 'seek',
-      action: 'setCurrentTime',
-      func: 'seek',
-      cmd: 'seek',
-      time: waktuSekarang,
-      currentTime: waktuSekarang
-    }, '*');
+    filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang }, "*");
+    filmIframe.contentWindow.postMessage({ action: "setCurrentTime", currentTime: waktuSekarang }, "*");
   } catch (e) {}
 
   if (sedangMain) {
@@ -254,18 +255,17 @@ function geserWaktu(ubah) {
   }
 }
 
-// Pasang aksi klik ke tombol
+// Pasang aksi klik
 btnMain.addEventListener('click', () => {
   sedangMain ? hentikanSemua() : mulaiSemua();
 });
 
-// Fungsi tampilan tetap pakai yang kamu punya
 function perbaruiTampilan() {
   const m = Math.floor(waktuSekarang / 60);
   const d = Math.floor(waktuSekarang % 60);
   document.getElementById('tampilanWaktu').textContent = `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
 }
-
+    
     // ====================================
     // BACA SUBTITLE LEBIH FLEKSIBEL
     // ====================================
