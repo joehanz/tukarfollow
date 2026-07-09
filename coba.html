@@ -78,6 +78,7 @@
 
 
         <div class="subtitle-controls">
+  <!-- Kotak yang memanjang ke kiri -->
   <div class="sub-panel-geser" id="subPanelGeser">
     <button class="ctrl-btn" id="btnMundur">⏪</button>
     <button class="ctrl-btn" id="btnMain">▶️</button>
@@ -85,59 +86,71 @@
     <div class="time-digital" id="jamTayang">00:00:00</div>
     <button class="ctrl-btn" id="btnFullscreen">⛶</button>
   </div>
-  <button class="ctrl-btn" id="btnSubToggle" title="Tampilkan/Sembunyikan Kontrol">🇮🇩</button>
+
+  <!-- Tombol utama di ujung kanan -->
+  <button class="ctrl-btn" id="btnSubToggle" title="Buka/Tutup Kontrol">🇮🇩</button>
 </div>
 
 <style>
+/* Wadah utama */
 .subtitle-controls {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  height: 40px;
-  gap: 0;
+  justify-content: flex-end; /* Pastikan tombol ada di kanan */
+  height: 42px;
+  overflow: visible;
 }
 
+/* Panel yang bisa melebar/menyusut */
 .sub-panel-geser {
   display: flex;
   align-items: center;
   gap: 8px;
   height: 100%;
-  padding: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.75);
   border-radius: 4px 0 0 4px;
-  overflow: hidden;
+  /* Sembunyi penuh di awal */
   width: 0;
+  padding: 0;
   opacity: 0;
+  transform: translateX(100%); /* Dorong keluar ke kanan */
   transition: all 0.35s ease;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
+/* Saat aktif: masuk dan melebar */
 .sub-panel-geser.aktif {
   width: auto;
-  opacity: 1;
   padding: 0 10px;
+  opacity: 1;
+  transform: translateX(0);
 }
 
+/* Tombol bendera/tutup */
 #btnSubToggle {
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.75);
   border: none;
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px;
   color: #fff;
   font-size: 16px;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-left: -1px;
+  margin-left: 0;
+  z-index: 2;
   transition: background 0.2s ease;
 }
 
 #btnSubToggle:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
+/* Subtitle teks */
 #subText {
   transition: opacity 0.3s ease;
 }
@@ -288,29 +301,35 @@
       }
     }
 
-    // ====================================
-    // FUNGSI TOMBOL MEMANJANG / MENYUSUT
-    // ====================================
-    function gantiStatusKontrol() {
-      subAktif = !subAktif;
-      if (subAktif) {
-        // Klik pertama: melebar ke kiri
-        btnSubToggle.textContent = "❌";
-        subPanelGeser.classList.add("aktif");
-        subText.style.opacity = "1";
-        subText.style.pointerEvents = "auto";
-      } else {
-        // Klik kedua: menyusut kembali
-        btnSubToggle.textContent = "🇮🇩";
-        subPanelGeser.classList.remove("aktif");
-        subText.style.opacity = "0";
-        subText.style.pointerEvents = "none";
-      }
-      perbaruiTampilan();
-    }
+   // ====================================
+// FUNGSI BUKA TUTUP PANEL
+// ====================================
+const btnSubToggle = document.getElementById('btnSubToggle');
+const subPanelGeser = document.getElementById('subPanelGeser');
+const subText = document.getElementById('subText');
+let subAktif = false;
 
-    btnSubToggle.addEventListener('click', gantiStatusKontrol);
+function gantiStatusPanel() {
+  subAktif = !subAktif;
 
+  if (subAktif) {
+    // Buka: melebar ke kiri
+    btnSubToggle.textContent = "❌";
+    subPanelGeser.classList.add("aktif");
+    subText.style.opacity = "1";
+    subText.style.pointerEvents = "auto";
+  } else {
+    // Tutup: menyusut kembali
+    btnSubToggle.textContent = "🇮🇩";
+    subPanelGeser.classList.remove("aktif");
+    subText.style.opacity = "0";
+    subText.style.pointerEvents = "none";
+  }
+  perbaruiTampilan();
+}
+
+// Pasang event klik
+btnSubToggle.addEventListener('click', gantiStatusPanel);
     // ====================================
     // BACA SUBTITLE
     // ====================================
