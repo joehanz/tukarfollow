@@ -335,7 +335,7 @@
     }
 
     async function muatKomentar(tmdbId) {
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar...</div>';
+      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:100px 0;">Memuat komentar...</div>';
       try {
         const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
         const data = await res.json();
