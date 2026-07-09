@@ -19,7 +19,7 @@
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
-  <!-- OPEN GRAPH (Untuk tampilan bagus saat dibagikan ke WA/Sosmed) -->
+  <!-- OPEN GRAPH -->
   <meta property="og:type" content="video.movie" />
   <meta property="og:title" content="TUKARFOLLOW - Nonton Film Subtitle Indonesia" />
   <meta property="og:description" content="Nonton film terbaru dengan kualitas HD dan subtitle Indonesia lengkap. Streaming cepat tanpa iklan mengganggu." />
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- STRUCTURED DATA (Diubah jadi Movie untuk halaman tonton) -->
+  <!-- STRUCTURED DATA -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -60,127 +60,87 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- CALL EXTERNAL CSS -->
+  <!-- CSS -->
+  <style>
+    /* Gaya untuk tombol sub geser */
+    .subtitle-controls {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    #btnSubToggle {
+      margin-left: 8px;
+      transition: all 0.2s ease;
+      z-index: 2;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .sub-panel-geser {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 13px;
+      white-space: nowrap;
+      transform: translateX(120%);
+      transition: transform 0.35s ease;
+      z-index: 1;
+    }
+
+    .sub-panel-geser.aktif {
+      transform: translateX(0);
+    }
+
+    /* Sembunyikan sub jika tidak aktif */
+    .subtitle-text {
+      transition: opacity 0.3s ease;
+    }
+  </style>
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <div class="watch-layout">
     <div class="video-main-wrapper" id="videoWrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media" style="width:100%; height:500px; border:none; background:#000;"></iframe>
 
       <!-- LOGO MELAYANG KANAN ATAS -->
-  <div class="watermark-logo">
-    <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
-  </div>
+      <div class="watermark-logo">
+        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
+      </div>
       
       <div class="subtitle-layer" id="subLayer">
-        <div class="subtitle-text" id="subText"></div>
+        <div class="subtitle-text" id="subText" style="opacity:0; pointer-events:none;"></div>
 
-
-
-
-        
         <div class="subtitle-controls">
-  <button class="ctrl-btn" id="btnMundur">⏪</button>
-  <button class="ctrl-btn" id="btnMain">▶️</button>
-  <button class="ctrl-btn" id="btnMaju">⏩</button>
-  <div class="time-digital" id="jamTayang">00:00:00</div>
-  <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+          <button class="ctrl-btn" id="btnMundur">⏪</button>
+          <button class="ctrl-btn" id="btnMain">▶️</button>
+          <button class="ctrl-btn" id="btnMaju">⏩</button>
+          <div class="time-digital" id="jamTayang">00:00:00</div>
+          <button class="ctrl-btn" id="btnFullscreen">⛶</button>
 
-  <!-- TOMBOL UTAMA BENDERA -->
-  <button class="ctrl-btn" id="btnSubToggle" title="Pengaturan Subtitle">🇮🇩</button>
+          <!-- TOMBOL BENDERA -->
+          <button class="ctrl-btn" id="btnSubToggle" title="Nyalakan/Matikan Subtitle">🇮🇩</button>
 
-  <!-- PANEL KONTROL SUB YANG BISA GESER -->
-  <div class="sub-panel-geser" id="subPanelGeser">
-    <span class="sub-label">Subtitle ID</span>
-  </div>
-</div>
-
-<style>
-  /* Wadah kendali utama */
-.subtitle-controls {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow: hidden; /* Supaya panel tidak terlihat saat keluar */
-}
-
-/* Tombol bendera */
-#btnSubToggle {
-  margin-left: 8px;
-  transition: all 0.2s ease;
-  z-index: 2;
-}
-
-/* Panel sub yang bisa meluncur */
-.sub-panel-geser {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
-  background: rgba(0,0,0,0.75);
-  border-radius: 4px;
-  color: #fff;
-  font-size: 13px;
-  white-space: nowrap;
-  transform: translateX(120%); /* Awal di luar layar ke kanan */
-  transition: transform 0.35s ease; /* Gerakan halus */
-  z-index: 1;
-}
-
-/* Saat panel aktif → geser ke kiri */
-.sub-panel-geser.aktif {
-  transform: translateX(0);
-}
-</style>
-
-        <script>
-          // =====================================================
-// SUBTITLE OPSI - MELUNCUR KIRI-KANAN SESUAI KLIK
-// =====================================================
-const btnSubToggle = document.getElementById('btnSubToggle');
-const subPanelGeser = document.getElementById('subPanelGeser');
-const subLayer = document.getElementById('subLayer');
-let subAktif = false; // Awalnya sub mati
-
-// Fungsi ganti tampilan & status
-function gantiTampilanSub() {
-  subAktif = !subAktif;
-
-  if (subAktif) {
-    // Klik pertama → keluar ke kiri
-    btnSubToggle.textContent = "❌";
-    subPanelGeser.classList.add("aktif");
-    subLayer.style.opacity = "1";
-    subLayer.style.pointerEvents = "auto";
-  } else {
-    // Klik kedua → masuk kembali ke kanan
-    btnSubToggle.textContent = "🇮🇩";
-    subPanelGeser.classList.remove("aktif");
-    subLayer.style.opacity = "0";
-    subLayer.style.pointerEvents = "none";
-  }
-}
-
-// Pasang aksi klik
-btnSubToggle.addEventListener('click', gantiTampilanSub);
-
-// Tetap jalankan waktu, tapi sembunyikan teks jika sub mati
-const perbaruiTampilanAsli = perbaruiTampilan;
-perbaruiTampilan = function() {
-  perbaruiTampilanAsli();
-  if (!subAktif) subText.textContent = "";
-};
-        </script>
-
-
-
-        
+          <!-- PANEL SUB -->
+          <div class="sub-panel-geser" id="subPanelGeser">
+            <span class="sub-label">Subtitle Indonesia</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -224,9 +184,9 @@ perbaruiTampilan = function() {
       <span>Add</span>
     </div>
     <div class="nav-item" id="navHome" onclick="if (history.length > 1) history.back(); else window.location.href = 'index.html';">
-  <i data-lucide="home" size="24"></i>
-  <span>Home</span>
-</div>
+      <i data-lucide="home" size="24"></i>
+      <span>Home</span>
+    </div>
   </div>
 
   <script>
@@ -246,6 +206,8 @@ perbaruiTampilan = function() {
     const btnMundur = document.getElementById('btnMundur');
     const btnMaju = document.getElementById('btnMaju');
     const btnFullscreen = document.getElementById('btnFullscreen');
+    const btnSubToggle = document.getElementById('btnSubToggle');
+    const subPanelGeser = document.getElementById('subPanelGeser');
 
     let currentMovieId = null;
     let allMoviesCache = [];
@@ -254,6 +216,7 @@ perbaruiTampilan = function() {
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
+    let subAktif = false; // Status awal sub mati
 
     // ====================================
     // FUNGSI BANTU
@@ -278,7 +241,7 @@ perbaruiTampilan = function() {
 
     function perbaruiTampilan() {
       const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
-      subText.textContent = aktif ? aktif.teks : "";
+      subText.textContent = aktif && subAktif ? aktif.teks : "";
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
@@ -293,19 +256,26 @@ perbaruiTampilan = function() {
         waktuSekarang += 1;
         perbaruiTampilan();
       }, 1000);
-      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+      try { 
+        filmIframe.contentWindow.postMessage({ cmd: "play", action: "play" }, "*"); 
+      } catch (e) {}
     }
 
     function hentikanSemua() {
       sedangMain = false;
       btnMain.textContent = "▶️";
       clearInterval(pemutar);
-      try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
+      try { 
+        filmIframe.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*"); 
+      } catch (e) {}
     }
 
     function geserWaktu(ubah) {
       waktuSekarang = Math.max(0, waktuSekarang + ubah);
       perbaruiTampilan();
+      try {
+        filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang }, "*");
+      } catch (e) {}
       if (sedangMain) {
         clearInterval(pemutar);
         pemutar = setInterval(() => {
@@ -316,7 +286,28 @@ perbaruiTampilan = function() {
     }
 
     // ====================================
-    // BACA SUBTITLE LEBIH FLEKSIBEL
+    // FUNGSI TOMBOL SUB GESER
+    // ====================================
+    function gantiStatusSub() {
+      subAktif = !subAktif;
+      if (subAktif) {
+        btnSubToggle.textContent = "❌";
+        subPanelGeser.classList.add("aktif");
+        subText.style.opacity = "1";
+        subText.style.pointerEvents = "auto";
+      } else {
+        btnSubToggle.textContent = "🇮🇩";
+        subPanelGeser.classList.remove("aktif");
+        subText.style.opacity = "0";
+        subText.style.pointerEvents = "none";
+      }
+      perbaruiTampilan();
+    }
+
+    btnSubToggle.addEventListener('click', gantiStatusSub);
+
+    // ====================================
+    // BACA SUBTITLE
     // ====================================
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
@@ -395,7 +386,6 @@ perbaruiTampilan = function() {
     }
 
     function pasangPemutar(tmdbId) {
-      // Langsung pakai vsembed.ru saja
       filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
     }
 
@@ -429,6 +419,7 @@ perbaruiTampilan = function() {
     }
 
     async function muatKomentar(tmdbId) {
+      const commentList = document.getElementById('commentList');
       commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar...</div>';
       try {
         const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
@@ -467,29 +458,29 @@ perbaruiTampilan = function() {
     }
 
     function bukaFormKomen() {
-      infoPanel.classList.add('show');
-      panelBackdrop.classList.add('active');
+      document.getElementById('infoPanel').classList.add('show');
+      document.getElementById('panelBackdrop').classList.add('active');
     }
     function tutupFormKomen() {
-      infoPanel.classList.remove('show');
-      panelBackdrop.classList.remove('active');
+      document.getElementById('infoPanel').classList.remove('show');
+      document.getElementById('panelBackdrop').classList.remove('active');
     }
 
     document.getElementById('navSearch').addEventListener('click', e => {
       e.stopPropagation();
-      const buka = searchContainer.classList.toggle('show');
+      const buka = document.getElementById('searchContainer').classList.toggle('show');
       if (!buka) {
-        searchInput.value = "";
-        searchResultsLayer.classList.remove('active');
-      } else setTimeout(() => searchInput.focus(), 100);
+        document.getElementById('searchInput').value = "";
+        document.getElementById('searchResultsLayer').classList.remove('active');
+      } else setTimeout(() => document.getElementById('searchInput').focus(), 100);
     });
 
-    searchInput.addEventListener('input', e => {
+    document.getElementById('searchInput').addEventListener('input', e => {
       const kata = e.target.value.toLowerCase().trim();
-      if (!kata) return searchResultsLayer.classList.remove('active');
-      searchResultsLayer.classList.add('active');
+      if (!kata) return document.getElementById('searchResultsLayer').classList.remove('active');
+      document.getElementById('searchResultsLayer').classList.add('active');
       const hasil = allMoviesCache.filter(m => m.title.toLowerCase().includes(kata));
-      searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
+      document.getElementById('searchResultsLayer').innerHTML = hasil.length ? hasil.map(m => `
         <div class="search-item-row" onclick="bukaFilm(${m.id})">
           <div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path}')"></div>
           <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0] || '-'}</p></div>
@@ -498,8 +489,6 @@ perbaruiTampilan = function() {
     });
 
     function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
-    document.getElementById('navAddComment').addEventListener('click', bukaFormKomen);
-    document.getElementById('navHome').addEventListener('click', () => window.history.back() || (window.location.href = 'index.html'));
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
