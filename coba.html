@@ -184,21 +184,34 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
-    // ====================================
+// ====================================
 // FUNGSI UTAMA: KAWINKAN PLAY & SUB
 // ====================================
+let pemutar = null;
+let sedangMain = false;
+let waktuSekarang = 0;
+const filmIframe = document.getElementById('filmIframe'); // pastikan ID iframe sama
+const btnMain = document.querySelector('.ctrl-btn#btnMain'); // ambil tombolnya
+
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
   sedangMain = true;
   btnMain.textContent = "⏸️";
+
   pemutar = setInterval(() => {
     waktuSekarang += 1;
     perbaruiTampilan();
   }, 1000);
 
-  // GANTI BAGIAN INI BIAR BISA TERBACA
+  // Format perintah yang paling sering diterima iframe pemutar
   try {
-    filmIframe.contentWindow.postMessage({ event: "play", action: "play", method: "play" }, "*");
+    filmIframe.contentWindow.postMessage({
+      event: 'play',
+      action: 'play',
+      func: 'play',
+      cmd: 'play',
+      currentTime: waktuSekarang
+    }, '*');
   } catch (e) {}
 }
 
@@ -207,9 +220,13 @@ function hentikanSemua() {
   btnMain.textContent = "▶️";
   clearInterval(pemutar);
 
-  // GANTI BAGIAN INI
   try {
-    filmIframe.contentWindow.postMessage({ event: "pause", action: "pause", method: "pause" }, "*");
+    filmIframe.contentWindow.postMessage({
+      event: 'pause',
+      action: 'pause',
+      func: 'pause',
+      cmd: 'pause'
+    }, '*');
   } catch (e) {}
 }
 
@@ -217,14 +234,15 @@ function geserWaktu(ubah) {
   waktuSekarang = Math.max(0, waktuSekarang + ubah);
   perbaruiTampilan();
 
-  // TAMBAH PERINTAH PINDAH WAKTU BIAR SINKRON
   try {
     filmIframe.contentWindow.postMessage({
-      event: "seek",
-      action: "setCurrentTime",
-      currentTime: waktuSekarang,
-      time: waktuSekarang
-    }, "*");
+      event: 'seek',
+      action: 'setCurrentTime',
+      func: 'seek',
+      cmd: 'seek',
+      time: waktuSekarang,
+      currentTime: waktuSekarang
+    }, '*');
   } catch (e) {}
 
   if (sedangMain) {
@@ -234,6 +252,18 @@ function geserWaktu(ubah) {
       perbaruiTampilan();
     }, 1000);
   }
+}
+
+// Pasang aksi klik ke tombol
+btnMain.addEventListener('click', () => {
+  sedangMain ? hentikanSemua() : mulaiSemua();
+});
+
+// Fungsi tampilan tetap pakai yang kamu punya
+function perbaruiTampilan() {
+  const m = Math.floor(waktuSekarang / 60);
+  const d = Math.floor(waktuSekarang % 60);
+  document.getElementById('tampilanWaktu').textContent = `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
 }
 
     // ====================================
