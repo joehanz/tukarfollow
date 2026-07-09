@@ -184,23 +184,24 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
-// ====================================
-// FUNGSI UTAMA: KAWINKAN PLAY & SUB
-// Pola: Lewati lapisan depan, kirim perintah langsung ke iframe
-// ====================================
+
+
+
+
+
 // =====================================================
-// KHUSUS: playcinematic & archive.org
-// TANPA IKLAN — HUBUNGKAN KLIK → PLAY + SUB
+// PEMUTAR VSEMBED - KAWINKAN KLIK → PLAY + SUB
+// TANPA IKLAN, TANPA BATASAN SUMBER
 // =====================================================
 let pemutar = null;
 let sedangMain = false;
 let waktuSekarang = 0;
 
-// Ambil elemen utama
+// Ambil elemen
 const filmIframe = document.getElementById('filmIframe');
 const btnMain = document.querySelector('.ctrl-btn#btnMain');
 
-// 🔹 Pastikan iframe terlihat dan punya wadah
+// 🔹 Pastikan iframe terlihat jelas dan punya wadah
 if (filmIframe) {
   filmIframe.style.cssText = `
     display: block !important;
@@ -214,7 +215,7 @@ if (filmIframe) {
     z-index: 1;
   `;
 
-  // Bungkus dengan wadah biar lapisan bisa ditaruh rapi
+  // Bungkus biar lapisan pas di atasnya
   if (!filmIframe.parentElement.classList.contains('player-wrapper')) {
     const wrapper = document.createElement('div');
     wrapper.className = 'player-wrapper';
@@ -224,44 +225,35 @@ if (filmIframe) {
   }
 }
 
-// 🔹 Cek sumber iframe yang didukung
-let src = filmIframe?.src || "";
-const pasangPemicu = src.includes("playcinematic") || src.includes("archive.org");
+// 🔹 Lapisan transparan khusus tangkap klik
+const lapisanPemicu = document.createElement("div");
+lapisanPemicu.style.cssText = `
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  cursor: pointer;
+  z-index: 10;
+`;
 
-if (!pasangPemicu) {
-  console.log("Sumber ini tidak butuh pemicu tambahan");
-} else {
+document.querySelector('.player-wrapper').appendChild(lapisanPemicu);
 
-  // ===== LAPISAN TRANSPARAN KHUSUS PEMICU KLIK =====
-  const lapisanPemicu = document.createElement("div");
-  lapisanPemicu.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    cursor: pointer;
-    z-index: 10;
-  `;
+let sudahDipicu = false;
 
-  document.querySelector('.player-wrapper').appendChild(lapisanPemicu);
-
-  let sudahDipicu = false;
-
-  // ===== KLIK = LANGSUNG PLAY + AKTIFKAN SUB =====
-  lapisanPemicu.addEventListener("click", function () {
-    if (!sudahDipicu) {
-      sudahDipicu = true;
-      mulaiSemua();        // Jalankan video
-      aktifkanSubJudul();  // Nyalakan subjudul
-      lapisanPemicu.remove(); // Lepas lapisan agar bisa dikendalikan bebas
-    }
-  });
-}
+// 🔹 KLIK = LANGSUNG JALANKAN SEMUA
+lapisanPemicu.addEventListener("click", function () {
+  if (!sudahDipicu) {
+    sudahDipicu = true;
+    mulaiSemua();        // Jalankan video
+    aktifkanSubJudul();  // Nyalakan sub
+    lapisanPemicu.remove(); // Lepas lapisan agar bebas dikendalikan
+  }
+});
 
 // ====================================
-// FUNGSI UTAMA: KAWINKAN PLAY & SUB
+// FUNGSI UTAMA
 // ====================================
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
@@ -273,7 +265,7 @@ function mulaiSemua() {
     perbaruiTampilan();
   }, 1000);
 
-  // Kirim perintah PLAY ke dalam iframe
+  // Kirim perintah play ke vsembed
   try {
     const perintahPlay = {
       cmd: "play",
@@ -284,9 +276,7 @@ function mulaiSemua() {
     };
     filmIframe.contentWindow.postMessage(perintahPlay, "*");
     setTimeout(() => filmIframe.contentWindow.postMessage(perintahPlay, "*"), 150);
-  } catch (e) {
-    console.log("Gagal kirim perintah play:", e);
-  }
+  } catch (e) {}
 }
 
 function hentikanSemua() {
@@ -300,17 +290,15 @@ function hentikanSemua() {
 }
 
 function aktifkanSubJudul() {
-  // Format perintah yang umum dipakai playcinematic & archive.org
+  // Format perintah yang cocok buat vsembed
   try {
     const perintahSub = [
-      { cmd: "captions", action: "setSubtitle", enable: true, track: 0 },
-      { cmd: "subtitle", action: "toggleSubtitles", enabled: true },
-      { type: "player", event: "subtitles", value: true }
+      { cmd: "subtitle", action: "enable", enabled: true },
+      { cmd: "captions", set: true, track: 0 },
+      { action: "setSubtitle", active: true }
     ];
     perintahSub.forEach(pesan => filmIframe.contentWindow.postMessage(pesan, "*"));
-  } catch (e) {
-    console.log("Gagal kirim perintah sub:", e);
-  }
+  } catch (e) {}
 }
 
 function geserWaktu(ubah) {
@@ -338,6 +326,10 @@ function perbaruiTampilan() {
   document.getElementById('tampilanWaktu').textContent =
     `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
 }
+
+
+
+    
 
 
 
