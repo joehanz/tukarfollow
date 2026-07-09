@@ -413,22 +413,7 @@
       muatDataAwal();
     });
   </script>
-  <script>
-    // Ambil elemen panel dan header
-const commentsSection = document.getElementById('commentsSection');
-const komentarHeader = document.getElementById('komentarHeader');
-
-// Fungsi buka / tutup saat header diklik
-komentarHeader.addEventListener('click', () => {
-  commentsSection.classList.toggle('open');
-});
-
-// Opsional: Tutup juga jika tombol X diklik
-document.querySelector('.close-btn').addEventListener('click', (e) => {
-  e.stopPropagation(); // Agar tidak bentrok dengan klik header
-  commentsSection.classList.remove('open');
-});
-  </script>
+  
 
 </body>
 </html>
