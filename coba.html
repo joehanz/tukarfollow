@@ -190,161 +190,111 @@
 
 
 // =====================================================
-// VSEMBED - KAWINKAN KLIK → PLAY + SUB + TIMER IKUT
-// GABUNGAN DENGAN FUNGSI ASLI SITUS
+// PERBAIKAN AKHIR - IFRAME TETAP KELIHATAN + TIMER + SUB
 // =====================================================
-let timerPutar = null;
-let statusMain = false;
 
-// Pakai variabel yang sudah ada di kode utama:
-// let waktuSekarang = 0;
-// let pemutar = null;
-// let sedangMain = false;
+// 1. PASTIKAN IFRAME TETAP TERLIHAT & TIDAK KETUTUP
+filmIframe.style.cssText = `
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 500px !important;
+  border: none !important;
+  background: #000 !important;
+  position: relative !important;
+  z-index: 1 !important;
+`;
 
-const iframeFilm = document.getElementById('filmIframe');
-const tombolUtama = document.getElementById('btnMain'); // Pakai ID asli
-const jamTayang = document.getElementById('jamTayang'); // Pakai elemen asli
+// Atur posisi wrapper biar lapisan pas
+videoWrapper.style.position = 'relative';
+videoWrapper.style.overflow = 'hidden';
 
-// ✅ Paksa iframe terlihat dan posisinya benar
-if (iframeFilm) {
-  iframeFilm.style.cssText = `
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    height: 500px !important;
-    border: none !important;
-    background: #000 !important;
-    position: relative !important;
-    z-index: 2 !important;
-  `;
+// 2. BUAT LAPISAN TRANSPARAN HANYA SEBAGAI PEMICU KLIK
+const lapisanPemicu = document.createElement('div');
+lapisanPemicu.style.cssText = `
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 5;
+  cursor: pointer;
+`;
+// Pasang tepat di atas iframe, tapi di bawah tombol kendali
+videoWrapper.appendChild(lapisanPemicu);
 
-  // Buat lapisan transparan di atas iframe
-  const lapisanKlik = document.createElement('div');
-  lapisanKlik.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: 10;
-    cursor: pointer;
-  `;
+let sudahDiklik = false;
 
-  // Pasang lapisan di dalam wrapper video
-  const videoWrapper = document.getElementById('videoWrapper');
-  videoWrapper.style.position = 'relative';
-  videoWrapper.appendChild(lapisanKlik);
-
-  let sudahDiklik = false;
-
-  // ✅ Klik = picu play + nyalakan sub + mulai timer
-  lapisanKlik.addEventListener('click', function () {
-    if (!sudahDiklik) {
-      sudahDiklik = true;
-      mulaiPutarDanSinkron();
-      nyalakanSubDiPemutar();
-      lapisanKlik.remove(); // Hapus lapisan setelah klik pertama
-      iframeFilm.style.pointerEvents = 'auto';
-    }
-  });
-
-  // ✅ Dengarkan balasan dari pemutar vsembed
-  window.addEventListener('message', function (e) {
-    if (!e.data) return;
-
-    // Sinkronkan waktu jika pemutar kirim data
-    if (typeof e.data.currentTime === 'number') {
-      waktuSekarang = Math.round(e.data.currentTime);
-      perbaruiTampilan(); // Pakai fungsi asli yang sudah ada
-    }
-
-    if (e.data.event === 'play' || e.data.action === 'play') {
-      if (!statusMain) mulaiPutarDanSinkron();
-    }
-
-    if (e.data.event === 'pause' || e.data.action === 'pause') {
-      jedaPutar();
-    }
-  });
-}
-
-// ====================================
-// FUNGSI UTAMA - TERINTEGRASI DENGAN KODE ASLI
-// ====================================
-function mulaiPutarDanSinkron() {
-  if (timerPutar) clearInterval(timerPutar);
-  statusMain = true;
+// 3. FUNGSI UTAMA - GUNAKAN VARIABEL ASLI AGAR TIDAK BENTROK
+function mulaiSemua() {
+  if (pemutar) clearInterval(pemutar);
   sedangMain = true;
-  tombolUtama.textContent = "⏸️";
+  btnMain.textContent = "⏸️";
 
-  // ✅ Timer jalan setiap detik + panggil fungsi sub asli
-  timerPutar = setInterval(() => {
+  // Timer jalan & langsung panggil fungsi sub asli
+  pemutar = setInterval(() => {
     waktuSekarang += 1;
-    perbaruiTampilan(); // INI YANG PENTING: langsung pakai fungsi asli yang sudah baca sub!
-    
-    // Kirim permintaan waktu ke vsembed untuk sinkron
-    try {
-      iframeFilm.contentWindow.postMessage({ cmd: "getCurrentTime", action: "time" }, "*");
-    } catch (e) {}
+    perbaruiTampilan(); // Ini yang bikin sub & jam ikut berubah
   }, 1000);
 
-  // Kirim perintah putar ke vsembed
+  // Kirim perintah ke vsembed
   try {
-    const perintah = { cmd: "play", action: "play", method: "play", currentTime: waktuSekarang };
-    iframeFilm.contentWindow.postMessage(perintah, "*");
-    setTimeout(() => iframeFilm.contentWindow.postMessage(perintah, "*"), 200);
+    const perintah = { cmd: "play", action: "play", event: "play", currentTime: waktuSekarang };
+    filmIframe.contentWindow.postMessage(perintah, "*");
+    setTimeout(() => filmIframe.contentWindow.postMessage(perintah, "*"), 200);
   } catch (e) {}
-}
 
-function jedaPutar() {
-  statusMain = false;
-  sedangMain = false;
-  tombolUtama.textContent = "▶️";
-  clearInterval(timerPutar);
-
-  try {
-    iframeFilm.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
-  } catch (e) {}
-}
-
-function nyalakanSubDiPemutar() {
-  // Kirim perintah aktifkan sub di dalam pemutar vsembed
+  // Nyalakan sub di dalam pemutar
   try {
     const perintahSub = [
-      { cmd: "subtitle", enable: true, active: true, track: 0 },
-      { cmd: "captions", toggle: true, enabled: true },
-      { action: "setSubtitle", on: true, lang: "id" }
+      { cmd: "subtitle", enable: true, active: true },
+      { cmd: "captions", toggle: true, on: true },
+      { action: "setSubtitle", enabled: true }
     ];
-    perintahSub.forEach(p => iframeFilm.contentWindow.postMessage(p, "*"));
+    perintahSub.forEach(p => filmIframe.contentWindow.postMessage(p, "*"));
   } catch (e) {}
 }
 
-// Ganti fungsi geserWaktu agar terhubung
-function geserWaktu(detik) {
-  waktuSekarang = Math.max(0, waktuSekarang + detik);
-  perbaruiTampilan();
-
+function hentikanSemua() {
+  sedangMain = false;
+  btnMain.textContent = "▶️";
+  clearInterval(pemutar);
   try {
-    iframeFilm.contentWindow.postMessage({
-      cmd: "seek",
-      action: "setCurrentTime",
-      time: waktuSekarang,
-      currentTime: waktuSekarang
-    }, "*");
+    filmIframe.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
   } catch (e) {}
 }
 
-// Hubungkan tombol utama
-tombolUtama.addEventListener('click', () => {
-  statusMain ? jedaPutar() : mulaiPutarDanSinkron();
+function geserWaktu(ubah) {
+  waktuSekarang = Math.max(0, waktuSekarang + ubah);
+  perbaruiTampilan();
+  try {
+    filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang }, "*");
+  } catch (e) {}
+}
+
+// 4. KLIK PERTAMA: JALANKAN SEMUA + HAPUS LAPISAN
+lapisanPemicu.addEventListener('click', function () {
+  if (!sudahDiklik) {
+    sudahDiklik = true;
+    mulaiSemua();
+    lapisanPemicu.remove(); // Langsung hilang setelah diklik
+    filmIframe.style.pointerEvents = 'auto';
+  }
 });
 
-// Hubungkan tombol maju/mundur
-document.getElementById('btnMundur').addEventListener('click', () => geserWaktu(-10));
-document.getElementById('btnMaju').addEventListener('click', () => geserWaktu(+10));
+// 5. PASTIKAN TOMBOL DI BAWAH BISA DIKLIK
+document.querySelector('.subtitle-controls').style.zIndex = '10';
+btnMain.style.pointerEvents = 'auto';
+btnMundur.style.pointerEvents = 'auto';
+btnMaju.style.pointerEvents = 'auto';
+btnFullscreen.style.pointerEvents = 'auto';
 
+// 6. PASANG ULANG KENDALI TOMBOL
+btnMain.onclick = () => sedangMain ? hentikanSemua() : mulaiSemua();
+btnMundur.onclick = () => geserWaktu(-10);
+btnMaju.onclick = () => geserWaktu(+10);
 
     
 
