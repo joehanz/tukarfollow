@@ -82,6 +82,187 @@
           <button class="ctrl-btn" id="btnMaju">⏩</button>
           <div class="time-digital" id="jamTayang">00:00:00</div>
           <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+          
+          <!-- Tombol Bendera / Tutup - tepat di sebelah kanan -->
+    <button class="ctrl-btn" id="btnToggleKontrol">🇮🇩</button>
+          <style>
+            /* Kontainer utama kontrol */
+.subtitle-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.85);
+  padding: 8px 14px;
+  border-radius: 30px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  /* Agar bisa digeser */
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  /* Transisi halus saat muncul/hilang */
+  transition: all 0.3s ease;
+}
+
+/* Saat sedang digeser */
+.subtitle-controls.dragging {
+  cursor: grabbing;
+  opacity: 0.9;
+}
+
+/* Keadaan awal: semua tombol dan waktu disembunyikan */
+.subtitle-controls.tersembunyi #btnMundur,
+.subtitle-controls.tersembunyi #btnMain,
+.subtitle-controls.tersembunyi #btnMaju,
+.subtitle-controls.tersembunyi #jamTayang {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Tombol kontrol */
+.ctrl-btn {
+  background: #ffdd57;
+  color: #000;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.ctrl-btn:hover {
+  background: #fff280;
+}
+
+/* Waktu tayang */
+.time-digital {
+  color: #ffdd57;
+  font-family: monospace;
+  font-size: 18px;
+  min-width: 85px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Teks subtitle tetap terlihat terus */
+.subtitle-text {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #ffff00;
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  line-height: 1.6;
+  text-shadow: 0 0 8px rgba(0,0,0,0.95);
+  max-width: 95%;
+  text-align: center;
+  word-wrap: break-word;
+  pointer-events: none;
+}
+          </style>
+          <script>
+            // ====================================
+// FUNGSI: Tampil/Sembunyi Kontrol + Bisa Geser
+// ====================================
+const kontrolUtama = document.getElementById('kontrolUtama');
+const btnToggleKontrol = document.getElementById('btnToggleKontrol');
+
+// Awal: sembunyikan semua kecuali tombol bendera
+kontrolUtama.classList.add('tersembunyi');
+
+// Klik tombol bendera / X
+btnToggleKontrol.addEventListener('click', () => {
+  if (kontrolUtama.classList.contains('tersembunyi')) {
+    // Tampilkan semua kontrol
+    kontrolUtama.classList.remove('tersembunyi');
+    btnToggleKontrol.textContent = '✕'; // ganti ke tanda silang
+  } else {
+    // Sembunyikan kembali
+    kontrolUtama.classList.add('tersembunyi');
+    btnToggleKontrol.textContent = '🇮🇩'; // ganti kembali ke bendera
+  }
+});
+
+// Logika agar kotak kontrol bisa digeser
+let sedangGeser = false;
+let posisiX, posisiY;
+
+kontrolUtama.addEventListener('mousedown', (e) => {
+  // Jangan mulai geser kalau yang diklik tombol atau waktu
+  if (e.target.closest('.ctrl-btn') || e.target.closest('.time-digital')) return;
+  
+  sedangGeser = true;
+  kontrolUtama.classList.add('dragging');
+  posisiX = e.clientX - kontrolUtama.getBoundingClientRect().left;
+  posisiY = e.clientY - kontrolUtama.getBoundingClientRect().top;
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!sedangGeser) return;
+  const areaVideo = document.getElementById('videoWrapper').getBoundingClientRect();
+  let x = e.clientX - areaVideo.left - posisiX;
+  let y = e.clientY - areaVideo.top - posisiY;
+
+  // Batasi agar tidak keluar dari area video
+  x = Math.max(0, Math.min(x, areaVideo.width - kontrolUtama.offsetWidth));
+  y = Math.max(0, Math.min(y, areaVideo.height - kontrolUtama.offsetHeight));
+
+  kontrolUtama.style.left = `${x}px`;
+  kontrolUtama.style.top = `${y}px`;
+  kontrolUtama.style.bottom = 'auto'; // Hapus posisi awal
+});
+
+document.addEventListener('mouseup', () => {
+  sedangGeser = false;
+  kontrolUtama.classList.remove('dragging');
+});
+
+// Dukungan geser untuk layar sentuh HP
+kontrolUtama.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.ctrl-btn') || e.target.closest('.time-digital')) return;
+  sedangGeser = true;
+  const sentuh = e.touches[0];
+  posisiX = sentuh.clientX - kontrolUtama.getBoundingClientRect().left;
+  posisiY = sentuh.clientY - kontrolUtama.getBoundingClientRect().top;
+  e.preventDefault();
+});
+
+document.addEventListener('touchmove', (e) => {
+  if (!sedangGeser) return;
+  const sentuh = e.touches[0];
+  const areaVideo = document.getElementById('videoWrapper').getBoundingClientRect();
+  let x = sentuh.clientX - areaVideo.left - posisiX;
+  let y = sentuh.clientY - areaVideo.top - posisiY;
+
+  x = Math.max(0, Math.min(x, areaVideo.width - kontrolUtama.offsetWidth));
+  y = Math.max(0, Math.min(y, areaVideo.height - kontrolUtama.offsetHeight));
+
+  kontrolUtama.style.left = `${x}px`;
+  kontrolUtama.style.top = `${y}px`;
+  kontrolUtama.style.bottom = 'auto';
+  e.preventDefault();
+});
+
+document.addEventListener('touchend', () => {
+  sedangGeser = false;
+});
+          </script>
+          <!-- Kelar Sampai Disini -->
+          
         </div>
       </div>
     </div>
