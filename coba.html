@@ -19,7 +19,7 @@
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
-  <!-- OPEN GRAPH (Untuk tampilan bagus saat dibagikan ke WA/Sosmed) -->
+  <!-- OPEN GRAPH -->
   <meta property="og:type" content="video.movie" />
   <meta property="og:title" content="TUKARFOLLOW - Nonton Film Subtitle Indonesia" />
   <meta property="og:description" content="Nonton film terbaru dengan kualitas HD dan subtitle Indonesia lengkap. Streaming cepat tanpa iklan mengganggu." />
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- STRUCTURED DATA (Diubah jadi Movie untuk halaman tonton) -->
+  <!-- STRUCTURED DATA -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -60,79 +60,60 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- GAYA SESUAI KONSEP MAP/FOLDER -->
+  <!-- GAYA SESUAI STRUKTUR YANG KAMU MAU -->
   <style>
-    /* Komentar: Bentuk seperti tutup map */
-    .comments-section {
+    /* Wrapper berisi panel + tombol */
+    #panelWrapper {
       position: fixed;
-      bottom: 65px; /* Jarak pas di atas nav bawah */
       left: 0;
-      width: 100%;
-      z-index: 998;
-      overflow: hidden;
-      background: transparent;
+      right: 0;
+      bottom: 60px; /* Jarak agar tidak ketutup navigasi bawah */
+      height: 320px; /* total tinggi panel */
+      transform: translateY(calc(100% - 42px)); 
+      transition: transform .32s ease;
+      z-index: 9999;
+      pointer-events: none;
     }
 
-    /* Header seperti tutup map: sedikit menonjol ke atas */
-    .comments-header {
-      width: 100%;
-      height: 44px; /* Tinggi pas, tulisan tidak terpotong */
-      background: #1e1e1e;
-      border-top: 1px solid #333;
-      border-radius: 10px 10px 0 0; /* Sudut atas melengkung seperti map */
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      font-size: 15px;
-      font-weight: 500;
-      color: #f0f0f0;
-      cursor: pointer;
-      box-shadow: 0 -1px 3px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Tombol tutup */
-    .tutup-komen {
-      font-size: 18px;
-      color: #ff6b6b;
-      display: none;
-      font-weight: bold;
-    }
-
-    /* Kontainer daftar komentar: isi dalam map */
-    .comments-list-container {
-      background: #121212;
-      border-left: 1px solid #2a2a2a;
-      border-right: 1px solid #2a2a2a;
-      border-bottom: 1px solid #2a2a2a;
-      border-radius: 0 0 10px 10px;
-      max-height: 0; /* Awalnya tertutup */
-      overflow-y: auto;
-      padding: 0 18px;
-      transition: all 0.3s ease;
-      opacity: 0;
-    }
-
-    /* Saat dibuka */
-    .comments-section.buka .comments-list-container {
-      max-height: calc(100vh - 140px); /* Tinggi buka pas */
-      padding: 18px;
-      opacity: 1;
-    }
-
-    .comments-section.buka .tutup-komen {
+    /* TOMBOL YANG MENEMPEL DI ATAS PANEL */
+    #panelBtn {
+      width: 140px;
+      margin: 0 auto;
       display: block;
+      background: #ff0066;
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 18px 18px 0 0;
+      font-size: 16px;
+      cursor: pointer;
+      pointer-events: auto;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+    }
+
+    /* PANEL UTAMA */
+    #panel {
+      background: #111;
+      height: calc(320px - 42px);
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      box-shadow: 0 -6px 18px rgba(0,0,0,.5);
+      padding: 15px;
+      pointer-events: auto;
+      color: #fff;
+      overflow-y: auto;
+    }
+
+    /* Saat panel dibuka penuh */
+    #panelWrapper.open {
+      transform: translateY(0);
     }
 
     /* Item komentar */
     .comment-item {
-      padding: 12px 0;
+      padding: 10px 0;
       border-bottom: 1px solid #2a2a2a;
-    }
-    .comment-item:last-child {
-      border-bottom: none;
     }
     .comment-user {
       font-weight: 600;
@@ -232,10 +213,12 @@
       color: #999;
     }
 
-    /* Jarak bawah agar tidak ketutup */
     body {
-      padding-bottom: 70px;
+      margin: 0;
+      padding: 0;
       background: #0a0a0a;
+      font-family: 'Poppins', sans-serif;
+      padding-bottom: 60px;
     }
   </style>
 
@@ -248,7 +231,6 @@
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 
-      <!-- LOGO MELAYANG KANAN ATAS -->
       <div class="watermark-logo">
         <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
       </div>
@@ -265,13 +247,12 @@
       </div>
     </div>
 
-    <!-- Bagian Komentar Bentuk Map/Folder -->
-    <div class="comments-section" id="commentsSection">
-      <div class="comments-header" id="komentarHeader">
-        <div><i data-lucide="message-square" size="16"></i> Komentar Netizen</div>
-        <div class="tutup-komen">❌</div>
+    <!-- Bagian Komentar Sesuai Struktur Baru -->
+    <div id="panelWrapper">
+      <button id="panelBtn">Komentar Netizen</button>
+      <div id="panel">
+        <div id="commentList"></div>
       </div>
-      <div class="comments-list-container" id="commentList"></div>
     </div>
   </div>
 
@@ -329,12 +310,12 @@
     const btnMundur = document.getElementById('btnMundur');
     const btnMaju = document.getElementById('btnMaju');
     const btnFullscreen = document.getElementById('btnFullscreen');
-    const commentsSection = document.getElementById('commentsSection');
-    const komentarHeader = document.getElementById('komentarHeader');
+    const panelWrapper = document.getElementById('panelWrapper');
+    const panelBtn = document.getElementById('panelBtn');
+    const commentList = document.getElementById('commentList');
     const searchContainer = document.getElementById('searchContainer');
     const searchInput = document.getElementById('searchInput');
     const searchResultsLayer = document.getElementById('searchResultsLayer');
-    const commentList = document.getElementById('commentList');
     const infoPanel = document.getElementById('infoPanel');
     const panelBackdrop = document.getElementById('panelBackdrop');
 
@@ -345,6 +326,12 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
+
+    // Tombol buka/tutup panel komentar
+    panelBtn.addEventListener('click', () => {
+      panelWrapper.classList.toggle('open');
+      panelBtn.textContent = panelWrapper.classList.contains('open') ? '❌ Tutup' : 'Komentar Netizen';
+    });
 
     // ====================================
     // FUNGSI BANTU
@@ -374,7 +361,7 @@
     }
 
     // ====================================
-    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
+    // FUNGSI UTAMA
     // ====================================
     function mulaiSemua() {
       if (pemutar) clearInterval(pemutar);
@@ -407,7 +394,7 @@
     }
 
     // ====================================
-    // BACA SUBTITLE LEBIH FLEKSIBEL
+    // BACA SUBTITLE
     // ====================================
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
@@ -423,7 +410,6 @@
 
         const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
         let i = 0;
-
         if (baris[0].toUpperCase().includes("WEBVTT")) i++;
 
         while (i < baris.length) {
@@ -444,12 +430,8 @@
             i++;
           }
         }
-
-        if (subtitles.length === 0) throw new Error("Format tidak cocok");
-        console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
       } catch (err) {
         subText.textContent = "Subtitle tidak tersedia";
-        console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
 
@@ -464,28 +446,18 @@
     btnMaju.addEventListener('click', () => geserWaktu(+10));
 
     btnFullscreen.addEventListener('click', () => {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-        if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen();
-        else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
-        else if (videoWrapper.mozRequestFullScreen) videoWrapper.mozRequestFullscreen();
-        else if (videoWrapper.msRequestFullscreen) videoWrapper.msRequestFullscreen();
+      if (!document.fullscreenElement) {
+        videoWrapper.requestFullscreen?.() || videoWrapper.webkitRequestFullscreen?.() || videoWrapper.msRequestFullscreen?.();
       } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
+        document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
       }
     });
 
     // ====================================
-    // FUNGSI KOMENTAR BENTUK MAP
+    // FUNGSI KOMENTAR
     // ====================================
-    komentarHeader.addEventListener('click', () => {
-      commentsSection.classList.toggle('buka');
-    });
-
     async function muatKomentar(tmdbId) {
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:10px 0;">Memuat komentar...</div>';
+      commentList.innerHTML = '<div style="opacity:0.5; padding:10px;">Memuat komentar...</div>';
       try {
         const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
         const data = await res.json();
@@ -497,10 +469,10 @@
             </div>
           `).join('');
         } else {
-          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; padding:15px; text-align:center;">Belum ada komentar.</div>';
+          commentList.innerHTML = '<div style="opacity:0.4; padding:20px; text-align:center;">Belum ada komentar.</div>';
         }
       } catch {
-        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px;">Gagal memuat komentar.</div>';
+        commentList.innerHTML = '<div style="color:#ff6b6b; padding:10px;">Gagal memuat komentar.</div>';
       }
     }
 
@@ -532,7 +504,7 @@
     }
 
     // ====================================
-    // FUNGSI PENCARIAN SAMA SEPERTI INDEX
+    // FUNGSI PENCARIAN
     // ====================================
     document.getElementById('navSearch').addEventListener('click', e => {
       e.stopPropagation();
@@ -554,19 +526,18 @@
       searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
         <div class="search-item-row" onclick="bukaFilm(${m.id})">
           <div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path || '/placeholder.jpg'}')"></div>
-          <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date ? m.release_date.split('-')[0] : 'Tahun tidak diketahui'}</p></div>
+          <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date ? m.release_date.split('-')[0] : '-'}</p></div>
         </div>
-      `).join('') : `<div style="padding:30px; text-align:center; color:#999;">Tidak ditemukan</div>`;
+      `).join('') : `<div style="padding:30px; text-align:center;">Tidak ditemukan</div>`;
     });
 
     function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
 
     // ====================================
-    // FUNGSI LAINNYA
+    // INISIALISASI
     // ====================================
     function ambilIdDariUrl() {
-      const param = new URLSearchParams(window.location.search);
-      return param.get('id');
+      return new URLSearchParams(window.location.search).get('id');
     }
 
     function pasangPemutar(tmdbId) {
@@ -576,21 +547,16 @@
     async function muatSemuaFilmTMDB() {
       try {
         let halaman = 1;
-        let ambilLagi = true;
         allMoviesCache = [];
-        while (ambilLagi && halaman <= 10) {
+        while (halaman <= 10) {
           const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${halaman}`);
           if (!res.ok) break;
           const data = await res.json();
-          if (data.results && data.results.length > 0) {
-            allMoviesCache.push(...data.results);
-            halaman++;
-          } else {
-            ambilLagi = false;
-          }
+          allMoviesCache.push(...data.results);
+          halaman++;
         }
       } catch (e) {
-        console.error("❌ Gagal ambil daftar film:", e);
+        console.error("Gagal ambil daftar film:", e);
       }
     }
 
@@ -600,23 +566,10 @@
         videoWrapper.innerHTML += `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan.</div>`;
         return;
       }
-
       pasangPemutar(currentMovieId);
       muatKomentar(currentMovieId);
       await bacaSubtitle(currentMovieId);
       await muatSemuaFilmTMDB();
-
-      setTimeout(() => {
-        const kolomKomen = document.getElementById('commentText');
-        if (kolomKomen) {
-          kolomKomen.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              kirimKomentar();
-            }
-          });
-        }
-      }, 500);
     }
 
     document.getElementById('navAddComment').addEventListener('click', bukaFormKomen);
