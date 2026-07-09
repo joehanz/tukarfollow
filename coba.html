@@ -190,143 +190,128 @@
 
 
 // =====================================================
-// PEMUTAR VSEMBED - KAWINKAN KLIK → PLAY + SUB
-// TANPA IKLAN, TANPA BATASAN SUMBER
+// VSEMBED - KAWINKAN KLIK → PLAY + SUB
+// NAMA VARIABEL SUDAH DIGANTI AGAR TIDAK BENTROK
 // =====================================================
-let pemutar = null;
-let sedangMain = false;
-let waktuSekarang = 0;
+let timerPutar = null;
+let statusMain = false;
+let waktuVideo = 0;
 
 // Ambil elemen
-const filmIframe = document.getElementById('filmIframe');
-const btnMain = document.querySelector('.ctrl-btn#btnMain');
+const iframeFilm = document.getElementById('filmIframe');
+const tombolUtama = document.querySelector('.ctrl-btn#btnMain');
 
-// 🔹 Pastikan iframe terlihat jelas dan punya wadah
-if (filmIframe) {
-  filmIframe.style.cssText = `
+// ✅ PAKSA IFRAME MUNCUL DAN TERLIHAT
+if (iframeFilm) {
+  iframeFilm.style.cssText = `
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     width: 100% !important;
-    height: 480px !important;
+    height: 500px !important;
     border: none !important;
-    background: #000;
-    position: relative;
-    z-index: 1;
+    background: #000 !important;
+    position: relative !important;
+    z-index: 2 !important;
   `;
 
-  // Bungkus biar lapisan pas di atasnya
-  if (!filmIframe.parentElement.classList.contains('player-wrapper')) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'player-wrapper';
-    wrapper.style.cssText = `position: relative; width: 100%; height: auto; overflow: hidden;`;
-    filmIframe.parentNode.insertBefore(wrapper, filmIframe);
-    wrapper.appendChild(filmIframe);
+  // Buat bungkus kalau belum ada
+  if (!iframeFilm.parentElement.classList.contains('wadah-pemutar')) {
+    const wadah = document.createElement('div');
+    wadah.className = 'wadah-pemutar';
+    wadah.style.cssText = `position: relative; width: 100%; max-width: 900px; margin: 0 auto; background: #000;`;
+    iframeFilm.parentNode.insertBefore(wadah, iframeFilm);
+    wadah.appendChild(iframeFilm);
   }
+
+  // Buat lapisan transparan
+  const lapisanKlik = document.createElement('div');
+  lapisanKlik.className = 'lapisan-pemicu';
+  lapisanKlik.style.cssText = `
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: transparent;
+    z-index: 10;
+    cursor: pointer;
+  `;
+  document.querySelector('.wadah-pemutar').appendChild(lapisanKlik);
+
+  let sudahDiklik = false;
+
+  // ✅ KLIK = LANGSUNG PLAY + NYALAKAN SUB
+  lapisanKlik.addEventListener('click', function () {
+    if (sudahDiklik) return;
+    sudahDiklik = true;
+
+    mulaiPutar();
+    nyalakanSub();
+
+    // Hapus lapisan supaya bisa kendalikan video
+    lapisanKlik.remove();
+    iframeFilm.style.pointerEvents = 'auto';
+  });
 }
-
-// 🔹 Lapisan transparan khusus tangkap klik
-const lapisanPemicu = document.createElement("div");
-lapisanPemicu.style.cssText = `
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  cursor: pointer;
-  z-index: 10;
-`;
-
-document.querySelector('.player-wrapper').appendChild(lapisanPemicu);
-
-let sudahDipicu = false;
-
-// 🔹 KLIK = LANGSUNG JALANKAN SEMUA
-lapisanPemicu.addEventListener("click", function () {
-  if (!sudahDipicu) {
-    sudahDipicu = true;
-    mulaiSemua();        // Jalankan video
-    aktifkanSubJudul();  // Nyalakan sub
-    lapisanPemicu.remove(); // Lepas lapisan agar bebas dikendalikan
-  }
-});
 
 // ====================================
 // FUNGSI UTAMA
 // ====================================
-function mulaiSemua() {
-  if (pemutar) clearInterval(pemutar);
-  sedangMain = true;
-  btnMain.textContent = "⏸️";
+function mulaiPutar() {
+  if (timerPutar) clearInterval(timerPutar);
+  statusMain = true;
+  tombolUtama.textContent = "⏸️";
 
-  pemutar = setInterval(() => {
-    waktuSekarang += 1;
-    perbaruiTampilan();
+  timerPutar = setInterval(() => {
+    waktuVideo += 1;
+    perbaruiWaktuTampilan();
   }, 1000);
 
-  // Kirim perintah play ke vsembed
+  // Kirim perintah ke vsembed
   try {
-    const perintahPlay = {
-      cmd: "play",
-      action: "play",
-      event: "play",
-      method: "play",
-      currentTime: waktuSekarang
-    };
-    filmIframe.contentWindow.postMessage(perintahPlay, "*");
-    setTimeout(() => filmIframe.contentWindow.postMessage(perintahPlay, "*"), 150);
+    const perintah = { cmd: "play", action: "play", event: "play", currentTime: waktuVideo };
+    iframeFilm.contentWindow.postMessage(perintah, "*");
+    setTimeout(() => iframeFilm.contentWindow.postMessage(perintah, "*"), 200);
+  } catch (e) { /* biar diam saja kalau gagal */ }
+}
+
+function jedaPutar() {
+  statusMain = false;
+  tombolUtama.textContent = "▶️";
+  clearInterval(timerPutar);
+
+  try {
+    iframeFilm.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
   } catch (e) {}
 }
 
-function hentikanSemua() {
-  sedangMain = false;
-  btnMain.textContent = "▶️";
-  clearInterval(pemutar);
-
-  try {
-    filmIframe.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
-  } catch (e) {}
-}
-
-function aktifkanSubJudul() {
-  // Format perintah yang cocok buat vsembed
+function nyalakanSub() {
   try {
     const perintahSub = [
-      { cmd: "subtitle", action: "enable", enabled: true },
-      { cmd: "captions", set: true, track: 0 },
-      { action: "setSubtitle", active: true }
+      { cmd: "subtitle", enable: true, active: true },
+      { cmd: "captions", toggle: true, on: true },
+      { action: "setSubtitle", enabled: true }
     ];
-    perintahSub.forEach(pesan => filmIframe.contentWindow.postMessage(pesan, "*"));
+    perintahSub.forEach(p => iframeFilm.contentWindow.postMessage(p, "*"));
   } catch (e) {}
 }
 
 function geserWaktu(ubah) {
-  waktuSekarang = Math.max(0, waktuSekarang + ubah);
-  perbaruiTampilan();
-
+  waktuVideo = Math.max(0, waktuVideo + ubah);
+  perbaruiWaktuTampilan();
   try {
-    filmIframe.contentWindow.postMessage({
-      cmd: "seek",
-      action: "setCurrentTime",
-      time: waktuSekarang,
-      currentTime: waktuSekarang
-    }, "*");
+    iframeFilm.contentWindow.postMessage({ cmd: "seek", time: waktuVideo, currentTime: waktuVideo }, "*");
   } catch (e) {}
 }
 
-// Kendali tombol di bawah
-btnMain.addEventListener('click', () => {
-  sedangMain ? hentikanSemua() : mulaiSemua();
+tombolUtama.addEventListener('click', () => {
+  statusMain ? jedaPutar() : mulaiPutar();
 });
 
-function perbaruiTampilan() {
-  const m = Math.floor(waktuSekarang / 60);
-  const d = Math.floor(waktuSekarang % 60);
-  document.getElementById('tampilanWaktu').textContent =
-    `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
+function perbaruiWaktuTampilan() {
+  const m = Math.floor(waktuVideo / 60);
+  const d = Math.floor(waktuVideo % 60);
+  document.getElementById('tampilanWaktu').textContent = `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
 }
-
 
 
     
