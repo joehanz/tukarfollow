@@ -61,6 +61,113 @@
   <link rel="manifest" href="manifest.json" />
 
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+  /* Perbaikan gaya tombol & panel */
+  .subtitle-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 42px;
+    gap: 0;
+  }
+
+  /* Panel geser */
+  .sub-panel-geser {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding: 0 12px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 21px; /* Bulat penuh */
+    overflow: hidden;
+    width: 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.35s ease;
+    white-space: nowrap;
+  }
+
+  .sub-panel-geser.aktif {
+    width: auto;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Tombol bendera bulat */
+  #btnSubToggle {
+    background: rgba(0, 0, 0, 0.75);
+    border: none;
+    border-radius: 50%; /* Bentuk bulat sempurna */
+    color: #fff;
+    font-size: 16px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+    z-index: 2;
+    transition: background 0.2s ease;
+  }
+
+  #btnSubToggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Tombol kontrol juga bulat */
+  .ctrl-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 15px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .ctrl-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Teks waktu */
+  .time-digital {
+    color: #fff;
+    font-size: 13px;
+    font-family: monospace;
+    padding: 0 6px;
+  }
+
+  /* Teks status sub */
+  .sub-status {
+    color: #ffcc00;
+    font-size: 13px;
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+
+  /* Teks subtitle */
+  #subText {
+    transition: opacity 0.3s ease;
+  }
+
+  /* Pastikan iframe terlihat jelas */
+  #filmIframe {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  </style>
 </head>
 <body>
 
@@ -76,74 +183,17 @@
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText" style="opacity:0; pointer-events:none;"></div>
 
-
         <div class="subtitle-controls">
-  <div class="sub-panel-geser" id="subPanelGeser">
-    <button class="ctrl-btn" id="btnMundur">⏪</button>
-    <button class="ctrl-btn" id="btnMain">▶️</button>
-    <button class="ctrl-btn" id="btnMaju">⏩</button>
-    <div class="time-digital" id="jamTayang">00:00:00</div>
-    <button class="ctrl-btn" id="btnFullscreen">⛶</button>
-  </div>
-  <button class="ctrl-btn" id="btnSubToggle" title="Tampilkan/Sembunyikan Kontrol">🇮🇩</button>
-</div>
-
-<style>
-.subtitle-controls {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: 40px;
-  gap: 0;
-}
-
-.sub-panel-geser {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 100%;
-  padding: 0;
-  background: rgba(0,0,0,0.75);
-  border-radius: 4px 0 0 4px;
-  overflow: hidden;
-  width: 0;
-  opacity: 0;
-  transition: all 0.35s ease;
-}
-
-.sub-panel-geser.aktif {
-  width: auto;
-  opacity: 1;
-  padding: 0 10px;
-}
-
-#btnSubToggle {
-  background: rgba(0,0,0,0.75);
-  border: none;
-  border-radius: 0 4px 4px 0;
-  color: #fff;
-  font-size: 16px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-left: -1px;
-  transition: background 0.2s ease;
-}
-
-#btnSubToggle:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-#subText {
-  transition: opacity 0.3s ease;
-}
-</style>
-
-        
+          <div class="sub-panel-geser" id="subPanelGeser">
+            <button class="ctrl-btn" id="btnMundur">⏪</button>
+            <button class="ctrl-btn" id="btnMain">▶️</button>
+            <button class="ctrl-btn" id="btnMaju">⏩</button>
+            <div class="time-digital" id="jamTayang">00:00:00</div>
+            <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+            <span class="sub-status" id="subStatus" style="display:none;">Sub ID belum tersedia</span>
+          </div>
+          <button class="ctrl-btn" id="btnSubToggle" title="Tampilkan/Sembunyikan">🇮🇩</button>
+        </div>
       </div>
     </div>
 
@@ -193,7 +243,7 @@
   </div>
 
   <script>
-        // KONFIGURASI
+    // KONFIGURASI
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
@@ -211,6 +261,7 @@
     const btnFullscreen = document.getElementById('btnFullscreen');
     const btnSubToggle = document.getElementById('btnSubToggle');
     const subPanelGeser = document.getElementById('subPanelGeser');
+    const subStatus = document.getElementById('subStatus');
 
     let currentMovieId = null;
     let allMoviesCache = [];
@@ -219,7 +270,8 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
-    let subAktif = false; // Status awal sub mati
+    let subAktif = false;
+    let subTersedia = false; // Cek apakah sub ada
 
     // ====================================
     // FUNGSI BANTU
@@ -244,7 +296,7 @@
 
     function perbaruiTampilan() {
       const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
-      subText.textContent = aktif && subAktif ? aktif.teks : "";
+      subText.textContent = (aktif && subAktif) ? aktif.teks : "";
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
@@ -289,18 +341,34 @@
     }
 
     // ====================================
-    // FUNGSI TOMBOL MEMANJANG / MENYUSUT
+    // FUNGSI TOMBOL DENGAN CEK SUB
     // ====================================
-    function gantiStatusKontrol() {
+    function gantiStatusPanel() {
       subAktif = !subAktif;
       if (subAktif) {
-        // Klik pertama: melebar ke kiri
         btnSubToggle.textContent = "❌";
         subPanelGeser.classList.add("aktif");
-        subText.style.opacity = "1";
-        subText.style.pointerEvents = "auto";
+        // Tampilkan konten sesuai ketersediaan sub
+        if (subTersedia) {
+          subStatus.style.display = "none";
+          btnMundur.style.display = "flex";
+          btnMain.style.display = "flex";
+          btnMaju.style.display = "flex";
+          jamTayang.style.display = "flex";
+          btnFullscreen.style.display = "flex";
+          subText.style.opacity = "1";
+          subText.style.pointerEvents = "auto";
+        } else {
+          subStatus.style.display = "inline";
+          btnMundur.style.display = "none";
+          btnMain.style.display = "none";
+          btnMaju.style.display = "none";
+          jamTayang.style.display = "none";
+          btnFullscreen.style.display = "none";
+          subText.style.opacity = "0";
+          subText.style.pointerEvents = "none";
+        }
       } else {
-        // Klik kedua: menyusut kembali
         btnSubToggle.textContent = "🇮🇩";
         subPanelGeser.classList.remove("aktif");
         subText.style.opacity = "0";
@@ -309,15 +377,16 @@
       perbaruiTampilan();
     }
 
-    btnSubToggle.addEventListener('click', gantiStatusKontrol);
+    btnSubToggle.addEventListener('click', gantiStatusPanel);
 
     // ====================================
-    // BACA SUBTITLE
+    // BACA SUBTITLE + CEK KETERSEDIAAN
     // ====================================
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
       subtitles = [];
       waktuSekarang = 0;
+      subTersedia = false;
       perbaruiTampilan();
 
       try {
@@ -351,9 +420,10 @@
         }
 
         if (subtitles.length === 0) throw new Error("Format tidak cocok");
+        subTersedia = true;
         console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
       } catch (err) {
-        subText.textContent = "Subtitle tidak tersedia";
+        subTersedia = false;
         console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
