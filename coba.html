@@ -60,63 +60,93 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- GAYA TAMBAHAN SESUAI PERMINTAAN -->
+  <!-- GAYA SESUAI KONSEP MAP/FOLDER -->
   <style>
-    /* Komentar: posisi tetap di atas nav bawah */
+    /* Komentar: Bentuk seperti tutup map */
     .comments-section {
       position: fixed;
-      bottom: 60px;
+      bottom: 65px; /* Jarak pas di atas nav bawah */
       left: 0;
       width: 100%;
-      background: #121212;
-      border-radius: 12px 12px 0 0;
       z-index: 998;
       overflow: hidden;
-      max-height: 48px; /* Awalnya hanya header */
-      transition: max-height 0.3s ease;
+      background: transparent;
     }
 
-    /* Saat dibuka */
-    .comments-section.buka {
-      max-height: calc(100vh - 70px);
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.4);
-    }
-
-    /* Header komentar */
+    /* Header seperti tutup map: sedikit menonjol ke atas */
     .comments-header {
+      width: 100%;
+      height: 44px; /* Tinggi pas, tulisan tidak terpotong */
+      background: #1e1e1e;
+      border-top: 1px solid #333;
+      border-radius: 10px 10px 0 0; /* Sudut atas melengkung seperti map */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 15px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #eee;
+      padding: 0 18px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #f0f0f0;
       cursor: pointer;
-      background: #1a1a1a;
-      border-bottom: 1px solid #222;
-      height: 48px;
-      box-sizing: border-box;
+      box-shadow: 0 -1px 3px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 2;
     }
 
     /* Tombol tutup */
     .tutup-komen {
-      font-size: 20px;
+      font-size: 18px;
       color: #ff6b6b;
       display: none;
+      font-weight: bold;
+    }
+
+    /* Kontainer daftar komentar: isi dalam map */
+    .comments-list-container {
+      background: #121212;
+      border-left: 1px solid #2a2a2a;
+      border-right: 1px solid #2a2a2a;
+      border-bottom: 1px solid #2a2a2a;
+      border-radius: 0 0 10px 10px;
+      max-height: 0; /* Awalnya tertutup */
+      overflow-y: auto;
+      padding: 0 18px;
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+
+    /* Saat dibuka */
+    .comments-section.buka .comments-list-container {
+      max-height: calc(100vh - 140px); /* Tinggi buka pas */
+      padding: 18px;
+      opacity: 1;
     }
 
     .comments-section.buka .tutup-komen {
       display: block;
     }
 
-    /* Daftar komentar */
-    .comments-list-container {
-      padding: 15px;
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
+    /* Item komentar */
+    .comment-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .comment-item:last-child {
+      border-bottom: none;
+    }
+    .comment-user {
+      font-weight: 600;
+      font-size: 13px;
+      color: #5ea8ff;
+      margin-bottom: 4px;
+    }
+    .comment-text {
+      font-size: 14px;
+      color: #e0e0e0;
+      line-height: 1.5;
     }
 
-    /* Pencarian: sama persis gaya index */
+    /* Pencarian sama persis seperti index */
     .search-container {
       position: fixed;
       top: 0;
@@ -202,9 +232,10 @@
       color: #999;
     }
 
-    /* Jarak bawah agar tidak ketutup nav */
+    /* Jarak bawah agar tidak ketutup */
     body {
-      padding-bottom: 60px;
+      padding-bottom: 70px;
+      background: #0a0a0a;
     }
   </style>
 
@@ -234,7 +265,7 @@
       </div>
     </div>
 
-    <!-- Bagian Komentar Disesuaikan -->
+    <!-- Bagian Komentar Bentuk Map/Folder -->
     <div class="comments-section" id="commentsSection">
       <div class="comments-header" id="komentarHeader">
         <div><i data-lucide="message-square" size="16"></i> Komentar Netizen</div>
@@ -447,7 +478,7 @@
     });
 
     // ====================================
-    // FUNGSI KOMENTAR SESUAI PERMINTAAN
+    // FUNGSI KOMENTAR BENTUK MAP
     // ====================================
     komentarHeader.addEventListener('click', () => {
       commentsSection.classList.toggle('buka');
