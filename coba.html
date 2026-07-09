@@ -186,24 +186,52 @@
 
 // ====================================
 // FUNGSI UTAMA: KAWINKAN PLAY & SUB
+// Pola: Lewati lapisan depan, kirim perintah langsung ke iframe
 // ====================================
 let pemutar = null;
 let sedangMain = false;
 let waktuSekarang = 0;
 
-// Ambil elemen dengan aman
+// Ambil elemen
 const filmIframe = document.getElementById('filmIframe');
 const btnMain = document.querySelector('.ctrl-btn#btnMain');
 
-// Pastikan iframe terlihat dan punya ukuran
+// Pastikan iframe TIDAK ketutup, tidak hilang, dan berada di lapisan paling atas
 if (filmIframe) {
-  filmIframe.style.display = 'block';
-  filmIframe.style.visibility = 'visible';
-  filmIframe.style.width = '100%';
-  filmIframe.style.height = 'auto';
-  filmIframe.style.minHeight = '400px'; // sesuaikan tinggi minimal
-  filmIframe.border = '0';
+  filmIframe.style.cssText = `
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 999 !important;
+    width: 100% !important;
+    height: 450px !important;
+    border: none !important;
+    pointer-events: auto !important;
+  `;
 }
+
+// Cari dan sembunyikan lapisan penutup/iklan yang ada di depan iframe
+function sembunyikanLapisanDepan() {
+  document.querySelectorAll('div, span, a').forEach(el => {
+    const pos = el.getBoundingClientRect();
+    const iframePos = filmIframe.getBoundingClientRect();
+    // Cek elemen yang ukurannya sama persis atau menutupi area iframe
+    if (
+      pos.width >= iframePos.width - 10 &&
+      pos.height >= iframePos.height - 10 &&
+      pos.top <= iframePos.top + 5 &&
+      pos.left <= iframePos.left + 5 &&
+      el !== filmIframe
+    ) {
+      el.style.pointerEvents = 'none'; // Biar lewat
+      el.style.zIndex = '1'; // Turunkan lapisannya
+    }
+  });
+}
+
+// Jalankan pengecekan lapisan setiap 1 detik
+setInterval(sembunyikanLapisanDepan, 1000);
 
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
@@ -215,12 +243,12 @@ function mulaiSemua() {
     perbaruiTampilan();
   }, 1000);
 
-  // Kirim semua format perintah sekaligus
+  // Kirim SEMUA format perintah sekaligus biar kena
   try {
-    filmIframe.contentWindow.postMessage({ cmd: "play" }, "*");
-    filmIframe.contentWindow.postMessage({ action: "play" }, "*");
-    filmIframe.contentWindow.postMessage({ event: "play" }, "*");
-    filmIframe.contentWindow.postMessage({ method: "play" }, "*");
+    const pesan = { cmd: "play", action: "play", event: "play", method: "play", currentTime: waktuSekarang };
+    filmIframe.contentWindow.postMessage(pesan, "*");
+    // Ulangi kirim sekali lagi biar lebih pasti
+    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
   } catch (e) {}
 }
 
@@ -230,10 +258,9 @@ function hentikanSemua() {
   clearInterval(pemutar);
 
   try {
-    filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*");
-    filmIframe.contentWindow.postMessage({ action: "pause" }, "*");
-    filmIframe.contentWindow.postMessage({ event: "pause" }, "*");
-    filmIframe.contentWindow.postMessage({ method: "pause" }, "*");
+    const pesan = { cmd: "pause", action: "pause", event: "pause", method: "pause" };
+    filmIframe.contentWindow.postMessage(pesan, "*");
+    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
   } catch (e) {}
 }
 
@@ -242,8 +269,9 @@ function geserWaktu(ubah) {
   perbaruiTampilan();
 
   try {
-    filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang }, "*");
-    filmIframe.contentWindow.postMessage({ action: "setCurrentTime", currentTime: waktuSekarang }, "*");
+    const pesan = { cmd: "seek", action: "setCurrentTime", time: waktuSekarang, currentTime: waktuSekarang };
+    filmIframe.contentWindow.postMessage(pesan, "*");
+    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
   } catch (e) {}
 
   if (sedangMain) {
@@ -255,7 +283,7 @@ function geserWaktu(ubah) {
   }
 }
 
-// Pasang aksi klik
+// Tombol tetap di bawah iframe seperti keinginanmu
 btnMain.addEventListener('click', () => {
   sedangMain ? hentikanSemua() : mulaiSemua();
 });
