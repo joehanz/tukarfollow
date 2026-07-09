@@ -27,7 +27,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 75px;
+    bottom: 65px; /* Disesuaikan dengan tinggi nav baru */
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
@@ -137,7 +137,7 @@ body {
     display: flex;
     justify-content: flex-end;
     padding: 20px;
-    margin-bottom: 80px;
+    margin-bottom: 70px; /* Disesuaikan */
 }
 
 .side-actions {
@@ -173,7 +173,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 75px;
+    height: 65px; /* Disesuaikan */
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(15px);
     z-index: 310;
@@ -191,7 +191,7 @@ body {
 
 .search-box {
     width: 100%;
-    height: 44px;
+    height: 40px; /* Disesuaikan */
     background: #1c1c1e;
     border: 1px solid #2c2c2e;
     border-radius: 10px;
@@ -213,10 +213,10 @@ body {
 /* Hasil Pencarian */
 .search-results-layer {
     position: fixed;
-    top: 75px;
+    top: 65px;
     left: 0;
     right: 0;
-    bottom: 75px;
+    bottom: 65px;
     background: #121212;
     z-index: 290;
     display: flex;
@@ -296,28 +296,28 @@ body {
     color: #cccccc;
 }
 
-/* Panel Info */
+/* Panel Info & Form Komentar */
 .info-panel {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #121212;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      z-index: 999;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-      box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
-    }
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #121212;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 999;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+}
 
-    .info-panel.show {
-      transform: translateY(0);
-    }
+.info-panel.show {
+    transform: translateY(0);
+}
 
-    .panel-content {
-      padding: 20px;
-    }
+.panel-content {
+    padding: 20px;
+}
 
 .panel-content i {
     color: #fff;
@@ -325,20 +325,22 @@ body {
     margin-top: 2px;
 }
 
-/* Navigasi Bawah */
+/* ======================================
+   NAVIGASI BAWAH (DISESUAIKAN)
+====================================== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100vw;
-    height: 75px;
+    height: 65px; /* ✅ Tinggi diperkecil */
     background: rgba(0, 0, 0, 0.95);
-    border-top: 1px solid #1a1a1a;
+    border-top: none; /* ✅ Garis hitam atas dihilangkan */
     display: flex;
     justify-content: space-around;
     align-items: center;
     z-index: 300;
-    padding-bottom: 12px;
+    padding-bottom: 0; /* ✅ Jarak bawah dihapus agar tidak tinggi */
     transition: transform 0.3s;
 }
 
@@ -368,7 +370,7 @@ body {
 .watch-layout {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 75px);
+    height: calc(100vh - 65px); /* ✅ Sesuai tinggi nav baru */
     width: 100%;
 }
 
@@ -641,7 +643,7 @@ body {
 /* Tombol Muat Lebih Banyak */
 .inline-load-more {
     position: absolute;
-    bottom: 90px;
+    bottom: 80px; /* Disesuaikan */
     left: 50%;
     transform: translateX(-50%);
     z-index: 99;
@@ -717,29 +719,26 @@ body {
     justify-content: center;
 }
 
-/* Logo Melayang Kanan Atas (Dengan Background Putih) */
+/* Logo Melayang Kanan Atas */
 .watermark-logo {
   position: absolute;
   top: 15px;
   right: 15px;
-  z-index: 99999; /* Paling depan */
-  pointer-events: none; /* Supaya nggak menghalangi klik di video */
+  z-index: 99999;
+  pointer-events: none;
   transition: all 0.3s ease;
 }
 
 .watermark-logo img {
-  height: 70px; /* Ukuran tinggi logo, sesuaikan selera */
+  height: 70px;
   width: auto;
   display: block;
-  /* === BARU: BACKGROUND PUTIH + PADDING === */
-  background-color: ;
-  padding: 2px 2px; /* Atur jarak di sekitar logo */
-  border-radius: 4px; /* Sudut sedikit melengkung (opsional) */
-  /* === AKHIR BACKGROUND === */
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Bayangan lebih ringkas */
+  background-color: #ffffff;
+  padding: 2px 2px;
+  border-radius: 4px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
-/* Saat layar penuh, posisikan sedikit lebih jauh ke atas */
 .video-main-wrapper:fullscreen .watermark-logo,
 .video-main-wrapper:-webkit-full-screen .watermark-logo,
 .video-main-wrapper:-moz-full-screen .watermark-logo,
