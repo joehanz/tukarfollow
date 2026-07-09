@@ -60,6 +60,87 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
+  <!-- GAYA TAMBAHAN KHUSUS KOMENTAR SESUAI PERMINTAAN -->
+  <style>
+    /* Panel Komentar */
+    .comments-section {
+      position: fixed;
+      bottom: 60px; /* Pas di atas nav bawah */
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      background: #121212;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+      max-height: 48px; /* Awal hanya header */
+      transition: max-height 0.3s ease;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Saat panel terbuka */
+    .comments-section.open {
+      max-height: calc(100vh - 60px); /* Tinggi sampai atas layar, kecuali nav bawah */
+    }
+
+    /* Header Komentar */
+    .comments-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 18px;
+      background: #1e1e1e;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 15px;
+      font-weight: 500;
+      color: #f0f0f0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Tombol Tutup */
+    .btn-tutup {
+      font-size: 18px;
+      color: #ff5555;
+      display: none;
+      font-weight: bold;
+    }
+
+    /* Tampilkan tombol tutup saat terbuka */
+    .comments-section.open .btn-tutup {
+      display: block;
+    }
+
+    /* Kontainer Daftar Komentar */
+    .comments-list-container {
+      padding: 15px 18px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    /* Item Komentar */
+    .comment-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .comment-user {
+      font-weight: 600;
+      font-size: 13px;
+      color: #5ea8ff;
+      margin-bottom: 4px;
+    }
+    .comment-text {
+      font-size: 14px;
+      color: #e0e0e0;
+      line-height: 1.5;
+    }
+
+    /* Jarak bawah agar tidak ketutup nav */
+    body {
+      padding-bottom: 60px;
+    }
+  </style>
+
   <!-- CALL EXTERNAL CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -86,9 +167,11 @@
       </div>
     </div>
 
-    <div class="comments-section">
-      <div class="comments-header">
-        <i data-lucide="message-square" size="16"></i> Komentar Netizen
+    <!-- Bagian Komentar Diperbarui -->
+    <div class="comments-section" id="commentsSection">
+      <div class="comments-header" id="komentarHeader">
+        <div><i data-lucide="message-square" size="16"></i> Komentar Netizen</div>
+        <div class="btn-tutup">❌</div>
       </div>
       <div class="comments-list-container" id="commentList"></div>
     </div>
@@ -148,6 +231,14 @@
     const btnMundur = document.getElementById('btnMundur');
     const btnMaju = document.getElementById('btnMaju');
     const btnFullscreen = document.getElementById('btnFullscreen');
+    const commentsSection = document.getElementById('commentsSection');
+    const komentarHeader = document.getElementById('komentarHeader');
+    const commentList = document.getElementById('commentList');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchResultsLayer = document.getElementById('searchResultsLayer');
+    const infoPanel = document.getElementById('infoPanel');
+    const panelBackdrop = document.getElementById('panelBackdrop');
 
     let currentMovieId = null;
     let allMoviesCache = [];
@@ -156,6 +247,13 @@
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
+
+    // ====================================
+    // FUNGSI BUKA TUTUP PANEL KOMENTAR
+    // ====================================
+    komentarHeader.addEventListener('click', () => {
+      commentsSection.classList.toggle('open');
+    });
 
     // ====================================
     // FUNGSI BANTU
