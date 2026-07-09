@@ -86,12 +86,17 @@
       </div>
     </div>
 
-    <div class="comments-section">
-      <div class="comments-header">
-        <i data-lucide="message-square" size="16"></i> Komentar Netizen
-      </div>
-      <div class="comments-list-container" id="commentList"></div>
-    </div>
+    <!-- Bagian Komentar -->
+<div class="comments-section" id="commentsSection">
+  <div class="comments-header" id="komentarHeader">
+    <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
+    <span class="close-btn">❌</span>
+  </div>
+  <div class="comments-list-container" id="commentList">
+    <!-- Daftar komentar akan muncul di sini -->
+  </div>
+</div>
+    
   </div>
 
   <div class="search-container" id="searchContainer">
@@ -407,6 +412,22 @@
       lucide.createIcons();
       muatDataAwal();
     });
+  </script>
+  <script>
+    // Ambil elemen panel dan header
+const commentsSection = document.getElementById('commentsSection');
+const komentarHeader = document.getElementById('komentarHeader');
+
+// Fungsi buka / tutup saat header diklik
+komentarHeader.addEventListener('click', () => {
+  commentsSection.classList.toggle('open');
+});
+
+// Opsional: Tutup juga jika tombol X diklik
+document.querySelector('.close-btn').addEventListener('click', (e) => {
+  e.stopPropagation(); // Agar tidak bentrok dengan klik header
+  commentsSection.classList.remove('open');
+});
   </script>
 
 </body>
