@@ -60,6 +60,134 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
+  <!-- ✅ CSS KHUSUS KOMENTAR -->
+  <style>
+  /* ======================================
+     PANEL KOMENTAR - SESUAI PERMINTAAN
+  ====================================== */
+  .comments-panel {
+      position: fixed;
+      bottom: 65px;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 250;
+      transform: translateY(calc(100% - 40px));
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      max-height: calc(100vh - 65px);
+  }
+
+  .comments-panel.open {
+      transform: translateY(0);
+  }
+
+  .comments-header {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .comments-header span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ddd;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+  }
+
+  .comments-header .close-comments {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      opacity: 0;
+      pointer-events: none;
+  }
+
+  .comments-panel.open .close-comments {
+      opacity: 1;
+      pointer-events: auto;
+  }
+
+  .comments-header .close-comments:hover {
+      background: rgba(255, 255, 255, 0.2);
+  }
+
+  .comments-section {
+      width: 100%;
+  }
+
+  .comments-list-container {
+      max-height: calc(100vh - 65px - 40px);
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  }
+
+  .comments-list-container::-webkit-scrollbar {
+      width: 4px;
+  }
+  .comments-list-container::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+  }
+  .comments-list-container::-webkit-scrollbar-thumb {
+      background: rgba(255,221,87,0.4);
+      border-radius: 2px;
+  }
+
+  .comment-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 12px 15px;
+      border-left: 2px solid #ffdd57;
+  }
+
+  .comment-name {
+      font-weight: 600;
+      color: #ffdd57;
+      font-size: 14px;
+      margin-bottom: 6px;
+  }
+
+  .comment-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #f0f0f0;
+      margin-bottom: 8px;
+      word-wrap: break-word;
+  }
+
+  .comment-date {
+      font-size: 11px;
+      color: #888;
+      text-align: right;
+  }
+
+  .empty-comments {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-style: italic;
+  }
+  </style>
+
   <!-- CALL EXTERNAL CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -70,9 +198,9 @@
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 
       <!-- LOGO MELAYANG KANAN ATAS -->
-  <div class="watermark-logo">
-    <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
-  </div>
+      <div class="watermark-logo">
+        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
+      </div>
       
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
@@ -86,15 +214,18 @@
       </div>
     </div>
 
-    <!-- Bagian Komentar -->
-<div class="comments-section" style="display:none;">
-  <div class="comments-header">
-    <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
-  </div>
-  <div class="comments-list-container" id="commentList">
-    <!-- Daftar komentar akan muncul di sini -->
-  </div>
-</div>
+    <!-- ✅ PANEL KOMENTAR -->
+    <div class="comments-panel" id="commentsPanel">
+      <div class="comments-header" id="commentsHeader">
+        <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
+        <button class="close-comments" id="closeCommentsBtn">&times;</button>
+      </div>
+      <div class="comments-section" id="commentsSection">
+        <div class="comments-list-container" id="commentList">
+          <div class="empty-comments">Buka untuk melihat komentar...</div>
+        </div>
+      </div>
+    </div>
     
   </div>
 
@@ -130,9 +261,9 @@
       <span>Add</span>
     </div>
     <div class="nav-item" id="navHome" onclick="if (history.length > 1) history.back(); else window.location.href = 'index.html';">
-  <i data-lucide="home" size="24"></i>
-  <span>Home</span>
-</div>
+      <i data-lucide="home" size="24"></i>
+      <span>Home</span>
+    </div>
   </div>
 
   <script>
@@ -152,6 +283,10 @@
     const btnMundur = document.getElementById('btnMundur');
     const btnMaju = document.getElementById('btnMaju');
     const btnFullscreen = document.getElementById('btnFullscreen');
+    const commentsPanel = document.getElementById('commentsPanel');
+    const commentsHeader = document.getElementById('commentsHeader');
+    const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+    const commentListEl = document.getElementById('commentList');
 
     let currentMovieId = null;
     let allMoviesCache = [];
@@ -293,6 +428,66 @@
     });
 
     // ====================================
+    // BUKA/TUTUP PANEL + MUAT KOMENTAR (SUDAH SESUAI DOGET ANDA)
+    // ====================================
+    commentsHeader.addEventListener('click', function(e) {
+      if (!e.target.closest('.close-comments')) {
+        const isOpen = commentsPanel.classList.toggle('open');
+        if (isOpen) muatKomentar();
+      }
+    });
+
+    closeCommentsBtn.addEventListener('click', function() {
+      commentsPanel.classList.remove('open');
+    });
+
+    // ✅ FUNGSI MUAT KOMENTAR - COCOK 100% DENGAN DOGET ANDA
+    async function muatKomentar() {
+      if (!currentMovieId) return;
+      commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+
+      try {
+        // Panggil tanpa parameter &action=get, langsung sesuai doGet
+        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        const hasil = await res.json();
+
+        if (hasil.status !== "success") {
+          commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`;
+          return;
+        }
+
+        const komentar = hasil.data;
+
+        if (!komentar || komentar.length === 0) {
+          commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>';
+          return;
+        }
+
+        // Gunakan nama kolom yang benar: timestamp
+        let html = '';
+        komentar.forEach(item => {
+          html += `
+            <div class="comment-item">
+              <div class="comment-name">${item.nama || 'Anonim'}</div>
+              <div class="comment-text">${item.komentar || ''}</div>
+              <div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div>
+            </div>
+          `;
+        });
+
+        commentListEl.innerHTML = html;
+
+      } catch (err) {
+        console.error("❌ Error:", err);
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>';
+      }
+    }
+
+    // ====================================
     // FUNGSI LAINNYA
     // ====================================
     function ambilIdDariUrl() {
@@ -301,7 +496,6 @@
     }
 
     function pasangPemutar(tmdbId) {
-      // Langsung pakai vsembed.ru saja
       filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
     }
 
@@ -313,7 +507,6 @@
       }
 
       pasangPemutar(currentMovieId);
-      muatKomentar(currentMovieId);
       await bacaSubtitle(currentMovieId);
 
       setTimeout(() => {
@@ -334,39 +527,23 @@
       } catch (e) { console.error("Gagal ambil daftar film"); }
     }
 
-    async function muatKomentar(tmdbId) {
-      commentList.innerHTML = '<div style="opacity:0.5; font-size:12px; padding:100px 0;">Memuat komentar...</div>';
-      try {
-        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${tmdbId}`);
-        const data = await res.json();
-        if (data.status === "success" && data.data.length > 0) {
-          commentList.innerHTML = data.data.map(c => `
-            <div class="comment-item">
-              <div class="comment-user">@${c.nama}</div>
-              <div class="comment-text">${c.komentar}</div>
-            </div>
-          `).join('');
-        } else {
-          commentList.innerHTML = '<div style="opacity:0.4; font-size:12px; padding:15px; text-align:center;">Belum ada komentar.</div>';
-        }
-      } catch {
-        commentList.innerHTML = '<div style="color:#ff6b6b; font-size:12px; padding:10px;">Gagal memuat komentar.</div>';
-      }
-    }
-
     async function kirimKomentar() {
       const nama = document.getElementById('commentName').value.trim();
       const teks = document.getElementById('commentText').value.trim();
       if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
       tutupFormKomen();
+
       try {
         await fetch(URL_APPS_SCRIPT, {
           method: 'POST',
           mode: 'no-cors',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({tmdbId: currentMovieId, nama, komentar: teks})
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
         });
-        setTimeout(() => muatKomentar(currentMovieId), 1200);
+
+        // Segarkan daftar setelah kirim
+        setTimeout(muatKomentar, 800);
+
       } catch {
         alert("Gagal mengirim komentar.");
       }
@@ -412,7 +589,6 @@
       muatDataAwal();
     });
   </script>
-  
 
 </body>
 </html>
