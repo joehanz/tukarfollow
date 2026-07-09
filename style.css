@@ -470,7 +470,7 @@ body {
 }
 
 /* ======================================
-   HALAMAN WATCH.HTML
+   HALAMAN WATCH.HTML - SUDAH DISESUAIKAN
 ====================================== */
 .watch-layout {
     display: flex;
@@ -479,6 +479,7 @@ body {
     width: 100%;
     margin-bottom: 0;
     padding-bottom: 0;
+    position: relative;
 }
 
 .video-main-wrapper {
@@ -496,9 +497,10 @@ body {
     display: block;
 }
 
+/* ✅ SUBTITLE & KONTROL - DIKUNCI POSISINYA */
 .subtitle-layer {
     position: absolute;
-    bottom: 20%;
+    bottom: 40px; /* Tepat di atas header komentar */
     left: 0;
     width: 100%;
     z-index: 99999;
@@ -507,8 +509,16 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    transform: translateY(0);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* Saat komentar dibuka → subtitle naik */
+.comments-panel.open ~ .watch-layout .subtitle-layer {
+    transform: translateY(-100%);
+}
+
+/* Gaya subtitle tetap sama persis */
 .subtitle-text {
     display: inline-block;
     background: rgba(0, 0, 0, 0.75);
@@ -566,6 +576,7 @@ body {
     text-align: center;
 }
 
+/* Penyesuaian saat layar penuh */
 .video-main-wrapper:fullscreen,
 .video-main-wrapper:-webkit-full-screen,
 .video-main-wrapper:-moz-full-screen,
@@ -577,9 +588,8 @@ body {
 .video-main-wrapper:-webkit-full-screen .subtitle-layer,
 .video-main-wrapper:-moz-full-screen .subtitle-layer,
 .video-main-wrapper:-ms-fullscreen .subtitle-layer {
-    position: absolute;
-    z-index: 999999;
     bottom: 8%;
+    transform: translateY(0) !important;
 }
 
 /* Form Komentar saja */
@@ -847,4 +857,3 @@ body {
   top: 25px;
   right: 25px;
 }
-
