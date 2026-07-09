@@ -188,51 +188,69 @@
 // FUNGSI UTAMA: KAWINKAN PLAY & SUB
 // Pola: Lewati lapisan depan, kirim perintah langsung ke iframe
 // ====================================
+// ====================================
+// POLA: LAPISAN TRANSPARAN + KLIK KEDUA = IKLAN + PLAY
+// ====================================
 let pemutar = null;
 let sedangMain = false;
 let waktuSekarang = 0;
+let hitungKlik = 0; // Penghitung klik persis seperti pola LK21
 
-// Ambil elemen
 const filmIframe = document.getElementById('filmIframe');
 const btnMain = document.querySelector('.ctrl-btn#btnMain');
 
-// Pastikan iframe TIDAK ketutup, tidak hilang, dan berada di lapisan paling atas
+// 🔹 Atur iframe agar terlihat jelas
 if (filmIframe) {
   filmIframe.style.cssText = `
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     position: relative !important;
-    z-index: 999 !important;
+    z-index: 2 !important;
     width: 100% !important;
-    height: 450px !important;
+    height: 480px !important;
     border: none !important;
-    pointer-events: auto !important;
+    background: #000;
   `;
 }
 
-// Cari dan sembunyikan lapisan penutup/iklan yang ada di depan iframe
-function sembunyikanLapisanDepan() {
-  document.querySelectorAll('div, span, a').forEach(el => {
-    const pos = el.getBoundingClientRect();
-    const iframePos = filmIframe.getBoundingClientRect();
-    // Cek elemen yang ukurannya sama persis atau menutupi area iframe
-    if (
-      pos.width >= iframePos.width - 10 &&
-      pos.height >= iframePos.height - 10 &&
-      pos.top <= iframePos.top + 5 &&
-      pos.left <= iframePos.left + 5 &&
-      el !== filmIframe
-    ) {
-      el.style.pointerEvents = 'none'; // Biar lewat
-      el.style.zIndex = '1'; // Turunkan lapisannya
-    }
-  });
+// 🔹 Buat LAPISAN TRANSPARAN di atas iframe (tanpa warna)
+const lapisanTransparan = document.createElement('div');
+lapisanTransparan.style.cssText = `
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent; /* MURNI BENING, TANPA WARNA */
+  z-index: 3; /* Ada di atas iframe */
+  cursor: pointer;
+`;
+
+// Masukkan lapisan tepat di atas iframe
+if (filmIframe.parentNode) {
+  filmIframe.parentNode.style.position = 'relative';
+  filmIframe.parentNode.appendChild(lapisanTransparan);
 }
 
-// Jalankan pengecekan lapisan setiap 1 detik
-setInterval(sembunyikanLapisanDepan, 1000);
+// 🔹 Logika klik persis: Klik 1 = iklan, Klik 2 = iklan + play
+lapisanTransparan.addEventListener('click', () => {
+  hitungKlik++;
 
+  // Selalu buka iklan setiap diklik
+  window.open('https://link-iklan-kamu.com', '_blank'); // Ganti dengan link iklanmu
+
+  // Klik kedua dan seterusnya = jalankan pemutar
+  if (hitungKlik >= 2) {
+    mulaiSemua();
+    // Biar sekali jalan, klik selanjutnya tetap kendalikan
+    lapisanTransparan.style.pointerEvents = 'none';
+  }
+});
+
+// ====================================
+// FUNGSI UTAMA KAWINKAN PLAY & SUB
+// ====================================
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
   sedangMain = true;
@@ -243,12 +261,11 @@ function mulaiSemua() {
     perbaruiTampilan();
   }, 1000);
 
-  // Kirim SEMUA format perintah sekaligus biar kena
+  // Kirim perintah ke pemutar
   try {
-    const pesan = { cmd: "play", action: "play", event: "play", method: "play", currentTime: waktuSekarang };
+    const pesan = { cmd: "play", action: "play", event: "play", currentTime: waktuSekarang };
     filmIframe.contentWindow.postMessage(pesan, "*");
-    // Ulangi kirim sekali lagi biar lebih pasti
-    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
+    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 150);
   } catch (e) {}
 }
 
@@ -258,9 +275,8 @@ function hentikanSemua() {
   clearInterval(pemutar);
 
   try {
-    const pesan = { cmd: "pause", action: "pause", event: "pause", method: "pause" };
+    const pesan = { cmd: "pause", action: "pause", event: "pause" };
     filmIframe.contentWindow.postMessage(pesan, "*");
-    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
   } catch (e) {}
 }
 
@@ -269,21 +285,12 @@ function geserWaktu(ubah) {
   perbaruiTampilan();
 
   try {
-    const pesan = { cmd: "seek", action: "setCurrentTime", time: waktuSekarang, currentTime: waktuSekarang };
+    const pesan = { cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang };
     filmIframe.contentWindow.postMessage(pesan, "*");
-    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 200);
   } catch (e) {}
-
-  if (sedangMain) {
-    clearInterval(pemutar);
-    pemutar = setInterval(() => {
-      waktuSekarang += 1;
-      perbaruiTampilan();
-    }, 1000);
-  }
 }
 
-// Tombol tetap di bawah iframe seperti keinginanmu
+// Tombol kendali tetap di bawah iframe
 btnMain.addEventListener('click', () => {
   sedangMain ? hentikanSemua() : mulaiSemua();
 });
@@ -291,9 +298,9 @@ btnMain.addEventListener('click', () => {
 function perbaruiTampilan() {
   const m = Math.floor(waktuSekarang / 60);
   const d = Math.floor(waktuSekarang % 60);
-  document.getElementById('tampilanWaktu').textContent = `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
-}
-    
+  document.getElementById('tampilanWaktu').textContent = 
+    `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
+}    
     // ====================================
     // BACA SUBTITLE LEBIH FLEKSIBEL
     // ====================================
