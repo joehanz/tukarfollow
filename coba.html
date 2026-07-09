@@ -188,68 +188,80 @@
 // FUNGSI UTAMA: KAWINKAN PLAY & SUB
 // Pola: Lewati lapisan depan, kirim perintah langsung ke iframe
 // ====================================
-// ====================================
-// POLA: LAPISAN TRANSPARAN + KLIK KEDUA = IKLAN + PLAY
-// ====================================
+// =====================================================
+// KHUSUS: playcinematic & archive.org
+// TANPA IKLAN — HUBUNGKAN KLIK → PLAY + SUB
+// =====================================================
 let pemutar = null;
 let sedangMain = false;
 let waktuSekarang = 0;
-let hitungKlik = 0; // Penghitung klik persis seperti pola LK21
 
+// Ambil elemen utama
 const filmIframe = document.getElementById('filmIframe');
 const btnMain = document.querySelector('.ctrl-btn#btnMain');
 
-// 🔹 Atur iframe agar terlihat jelas
+// 🔹 Pastikan iframe terlihat dan punya wadah
 if (filmIframe) {
   filmIframe.style.cssText = `
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    position: relative !important;
-    z-index: 2 !important;
     width: 100% !important;
     height: 480px !important;
     border: none !important;
     background: #000;
+    position: relative;
+    z-index: 1;
   `;
-}
 
-// 🔹 Buat LAPISAN TRANSPARAN di atas iframe (tanpa warna)
-const lapisanTransparan = document.createElement('div');
-lapisanTransparan.style.cssText = `
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent; /* MURNI BENING, TANPA WARNA */
-  z-index: 3; /* Ada di atas iframe */
-  cursor: pointer;
-`;
-
-// Masukkan lapisan tepat di atas iframe
-if (filmIframe.parentNode) {
-  filmIframe.parentNode.style.position = 'relative';
-  filmIframe.parentNode.appendChild(lapisanTransparan);
-}
-
-// 🔹 Logika klik persis: Klik 1 = iklan, Klik 2 = iklan + play
-lapisanTransparan.addEventListener('click', () => {
-  hitungKlik++;
-
-  // Selalu buka iklan setiap diklik
-  window.open('https://link-iklan-kamu.com', '_blank'); // Ganti dengan link iklanmu
-
-  // Klik kedua dan seterusnya = jalankan pemutar
-  if (hitungKlik >= 2) {
-    mulaiSemua();
-    // Biar sekali jalan, klik selanjutnya tetap kendalikan
-    lapisanTransparan.style.pointerEvents = 'none';
+  // Bungkus dengan wadah biar lapisan bisa ditaruh rapi
+  if (!filmIframe.parentElement.classList.contains('player-wrapper')) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'player-wrapper';
+    wrapper.style.cssText = `position: relative; width: 100%; height: auto; overflow: hidden;`;
+    filmIframe.parentNode.insertBefore(wrapper, filmIframe);
+    wrapper.appendChild(filmIframe);
   }
-});
+}
+
+// 🔹 Cek sumber iframe yang didukung
+let src = filmIframe?.src || "";
+const pasangPemicu = src.includes("playcinematic") || src.includes("archive.org");
+
+if (!pasangPemicu) {
+  console.log("Sumber ini tidak butuh pemicu tambahan");
+} else {
+
+  // ===== LAPISAN TRANSPARAN KHUSUS PEMICU KLIK =====
+  const lapisanPemicu = document.createElement("div");
+  lapisanPemicu.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    z-index: 10;
+  `;
+
+  document.querySelector('.player-wrapper').appendChild(lapisanPemicu);
+
+  let sudahDipicu = false;
+
+  // ===== KLIK = LANGSUNG PLAY + AKTIFKAN SUB =====
+  lapisanPemicu.addEventListener("click", function () {
+    if (!sudahDipicu) {
+      sudahDipicu = true;
+      mulaiSemua();        // Jalankan video
+      aktifkanSubJudul();  // Nyalakan subjudul
+      lapisanPemicu.remove(); // Lepas lapisan agar bisa dikendalikan bebas
+    }
+  });
+}
 
 // ====================================
-// FUNGSI UTAMA KAWINKAN PLAY & SUB
+// FUNGSI UTAMA: KAWINKAN PLAY & SUB
 // ====================================
 function mulaiSemua() {
   if (pemutar) clearInterval(pemutar);
@@ -261,12 +273,20 @@ function mulaiSemua() {
     perbaruiTampilan();
   }, 1000);
 
-  // Kirim perintah ke pemutar
+  // Kirim perintah PLAY ke dalam iframe
   try {
-    const pesan = { cmd: "play", action: "play", event: "play", currentTime: waktuSekarang };
-    filmIframe.contentWindow.postMessage(pesan, "*");
-    setTimeout(() => filmIframe.contentWindow.postMessage(pesan, "*"), 150);
-  } catch (e) {}
+    const perintahPlay = {
+      cmd: "play",
+      action: "play",
+      event: "play",
+      method: "play",
+      currentTime: waktuSekarang
+    };
+    filmIframe.contentWindow.postMessage(perintahPlay, "*");
+    setTimeout(() => filmIframe.contentWindow.postMessage(perintahPlay, "*"), 150);
+  } catch (e) {
+    console.log("Gagal kirim perintah play:", e);
+  }
 }
 
 function hentikanSemua() {
@@ -275,9 +295,22 @@ function hentikanSemua() {
   clearInterval(pemutar);
 
   try {
-    const pesan = { cmd: "pause", action: "pause", event: "pause" };
-    filmIframe.contentWindow.postMessage(pesan, "*");
+    filmIframe.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
   } catch (e) {}
+}
+
+function aktifkanSubJudul() {
+  // Format perintah yang umum dipakai playcinematic & archive.org
+  try {
+    const perintahSub = [
+      { cmd: "captions", action: "setSubtitle", enable: true, track: 0 },
+      { cmd: "subtitle", action: "toggleSubtitles", enabled: true },
+      { type: "player", event: "subtitles", value: true }
+    ];
+    perintahSub.forEach(pesan => filmIframe.contentWindow.postMessage(pesan, "*"));
+  } catch (e) {
+    console.log("Gagal kirim perintah sub:", e);
+  }
 }
 
 function geserWaktu(ubah) {
@@ -285,12 +318,16 @@ function geserWaktu(ubah) {
   perbaruiTampilan();
 
   try {
-    const pesan = { cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang };
-    filmIframe.contentWindow.postMessage(pesan, "*");
+    filmIframe.contentWindow.postMessage({
+      cmd: "seek",
+      action: "setCurrentTime",
+      time: waktuSekarang,
+      currentTime: waktuSekarang
+    }, "*");
   } catch (e) {}
 }
 
-// Tombol kendali tetap di bawah iframe
+// Kendali tombol di bawah
 btnMain.addEventListener('click', () => {
   sedangMain ? hentikanSemua() : mulaiSemua();
 });
@@ -298,9 +335,14 @@ btnMain.addEventListener('click', () => {
 function perbaruiTampilan() {
   const m = Math.floor(waktuSekarang / 60);
   const d = Math.floor(waktuSekarang % 60);
-  document.getElementById('tampilanWaktu').textContent = 
+  document.getElementById('tampilanWaktu').textContent =
     `${m < 10 ? '0' + m : m}:${d < 10 ? '0' + d : d}`;
-}    
+}
+
+
+
+
+    
     // ====================================
     // BACA SUBTITLE LEBIH FLEKSIBEL
     // ====================================
