@@ -87,6 +87,51 @@
     </div>
 
     <!-- ✅ BAGIAN DAFTAR KOMENTAR SUDAH DIHAPUS, FORM DAN FUNGSI MASIH TETAP ADA -->
+    <!-- Panel Daftar Komentar -->
+<div class="comments-panel" id="commentsPanel">
+  <div class="comments-header" id="commentsHeader">
+    <h5>💬 Komentar</h5>
+    <button class="close-comments" id="closeCommentsBtn">&times;</button>
+  </div>
+  <div class="comments-content" id="commentsContent">
+    <!-- Contoh daftar komentar -->
+    <div class="comment-item">
+      <div class="comment-author">Pengguna123</div>
+      <div class="comment-text">Filmnya bagus sekali, ceritanya menarik!</div>
+      <div class="comment-time">2 jam yang lalu</div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-author">PencintaFilm</div>
+      <div class="comment-text">Kualitas videonya jernih, mantap!</div>
+      <div class="comment-time">5 jam yang lalu</div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-author">Anonim</div>
+      <div class="comment-text">Alur ceritanya sedikit lambat tapi tetap seru.</div>
+      <div class="comment-time">1 hari yang lalu</div>
+    </div>
+    <!-- Komentar akan ditambahkan di sini secara dinamis -->
+  </div>
+</div>
+
+<!-- Script untuk fungsi buka/tutup -->
+<script>
+const commentsPanel = document.getElementById('commentsPanel');
+const commentsHeader = document.getElementById('commentsHeader');
+const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+
+// Buka saat header diklik
+commentsHeader.addEventListener('click', function(e) {
+  if (!e.target.closest('.close-comments')) {
+    commentsPanel.classList.toggle('open');
+  }
+});
+
+// Tutup saat tombol X diklik
+closeCommentsBtn.addEventListener('click', function() {
+  commentsPanel.classList.remove('open');
+});
+</script>
     
   </div>
 
