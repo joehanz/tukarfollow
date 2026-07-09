@@ -498,7 +498,7 @@ body {
 
 .subtitle-layer {
     position: absolute;
-    bottom: 8%;
+    bottom: 20%;
     left: 0;
     width: 100%;
     z-index: 99999;
