@@ -477,6 +477,7 @@ body {
 /* Kolom Komentar */
 .comments-section {
     width: 100%;
+    bottom: 20px;
     flex: 1;
     background: #0d0d0d;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
