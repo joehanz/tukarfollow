@@ -16,8 +16,8 @@
   <link rel="canonical" href="https://tukarfollow.web.id/watch.html" />
 
   <!-- ICONS -->
-  <link rel="icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/heartbeast.webp" />
+  <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
   <!-- OPEN GRAPH (Untuk tampilan bagus saat dibagikan ke WA/Sosmed) -->
   <meta property="og:type" content="video.movie" />
@@ -71,18 +71,116 @@
 
       <!-- LOGO MELAYANG KANAN ATAS -->
   <div class="watermark-logo">
-    <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp alt="TukarFollow" />
+    <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
   </div>
       
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
+
+
+
+
+        
         <div class="subtitle-controls">
-          <button class="ctrl-btn" id="btnMundur">⏪</button>
-          <button class="ctrl-btn" id="btnMain">▶️</button>
-          <button class="ctrl-btn" id="btnMaju">⏩</button>
-          <div class="time-digital" id="jamTayang">00:00:00</div>
-          <button class="ctrl-btn" id="btnFullscreen">⛶</button>
-        </div>
+  <button class="ctrl-btn" id="btnMundur">⏪</button>
+  <button class="ctrl-btn" id="btnMain">▶️</button>
+  <button class="ctrl-btn" id="btnMaju">⏩</button>
+  <div class="time-digital" id="jamTayang">00:00:00</div>
+  <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+
+  <!-- TOMBOL UTAMA BENDERA -->
+  <button class="ctrl-btn" id="btnSubToggle" title="Pengaturan Subtitle">🇮🇩</button>
+
+  <!-- PANEL KONTROL SUB YANG BISA GESER -->
+  <div class="sub-panel-geser" id="subPanelGeser">
+    <span class="sub-label">Subtitle ID</span>
+  </div>
+</div>
+
+<style>
+  /* Wadah kendali utama */
+.subtitle-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden; /* Supaya panel tidak terlihat saat keluar */
+}
+
+/* Tombol bendera */
+#btnSubToggle {
+  margin-left: 8px;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+/* Panel sub yang bisa meluncur */
+.sub-panel-geser {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: rgba(0,0,0,0.75);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  transform: translateX(120%); /* Awal di luar layar ke kanan */
+  transition: transform 0.35s ease; /* Gerakan halus */
+  z-index: 1;
+}
+
+/* Saat panel aktif → geser ke kiri */
+.sub-panel-geser.aktif {
+  transform: translateX(0);
+}
+</style>
+
+        <script>
+          // =====================================================
+// SUBTITLE OPSI - MELUNCUR KIRI-KANAN SESUAI KLIK
+// =====================================================
+const btnSubToggle = document.getElementById('btnSubToggle');
+const subPanelGeser = document.getElementById('subPanelGeser');
+const subLayer = document.getElementById('subLayer');
+let subAktif = false; // Awalnya sub mati
+
+// Fungsi ganti tampilan & status
+function gantiTampilanSub() {
+  subAktif = !subAktif;
+
+  if (subAktif) {
+    // Klik pertama → keluar ke kiri
+    btnSubToggle.textContent = "❌";
+    subPanelGeser.classList.add("aktif");
+    subLayer.style.opacity = "1";
+    subLayer.style.pointerEvents = "auto";
+  } else {
+    // Klik kedua → masuk kembali ke kanan
+    btnSubToggle.textContent = "🇮🇩";
+    subPanelGeser.classList.remove("aktif");
+    subLayer.style.opacity = "0";
+    subLayer.style.pointerEvents = "none";
+  }
+}
+
+// Pasang aksi klik
+btnSubToggle.addEventListener('click', gantiTampilanSub);
+
+// Tetap jalankan waktu, tapi sembunyikan teks jika sub mati
+const perbaruiTampilanAsli = perbaruiTampilan;
+perbaruiTampilan = function() {
+  perbaruiTampilanAsli();
+  if (!subAktif) subText.textContent = "";
+};
+        </script>
+
+
+
+        
       </div>
     </div>
 
@@ -184,124 +282,39 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
+    // ====================================
+    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
+    // ====================================
+    function mulaiSemua() {
+      if (pemutar) clearInterval(pemutar);
+      sedangMain = true;
+      btnMain.textContent = "⏸️";
+      pemutar = setInterval(() => {
+        waktuSekarang += 1;
+        perbaruiTampilan();
+      }, 1000);
+      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+    }
 
+    function hentikanSemua() {
+      sedangMain = false;
+      btnMain.textContent = "▶️";
+      clearInterval(pemutar);
+      try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
+    }
 
+    function geserWaktu(ubah) {
+      waktuSekarang = Math.max(0, waktuSekarang + ubah);
+      perbaruiTampilan();
+      if (sedangMain) {
+        clearInterval(pemutar);
+        pemutar = setInterval(() => {
+          waktuSekarang += 1;
+          perbaruiTampilan();
+        }, 1000);
+      }
+    }
 
-
-
-// =====================================================
-// PERBAIKAN AKHIR - IFRAME TETAP KELIHATAN + TIMER + SUB
-// =====================================================
-
-// 1. PASTIKAN IFRAME TETAP TERLIHAT & TIDAK KETUTUP
-filmIframe.style.cssText = `
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: 100% !important;
-  height: 500px !important;
-  border: none !important;
-  background: #000 !important;
-  position: relative !important;
-  z-index: 1 !important;
-`;
-
-// Atur posisi wrapper biar lapisan pas
-videoWrapper.style.position = 'relative';
-videoWrapper.style.overflow = 'hidden';
-
-// 2. BUAT LAPISAN TRANSPARAN HANYA SEBAGAI PEMICU KLIK
-const lapisanPemicu = document.createElement('div');
-lapisanPemicu.style.cssText = `
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 5;
-  cursor: pointer;
-`;
-// Pasang tepat di atas iframe, tapi di bawah tombol kendali
-videoWrapper.appendChild(lapisanPemicu);
-
-let sudahDiklik = false;
-
-// 3. FUNGSI UTAMA - GUNAKAN VARIABEL ASLI AGAR TIDAK BENTROK
-function mulaiSemua() {
-  if (pemutar) clearInterval(pemutar);
-  sedangMain = true;
-  btnMain.textContent = "⏸️";
-
-  // Timer jalan & langsung panggil fungsi sub asli
-  pemutar = setInterval(() => {
-    waktuSekarang += 1;
-    perbaruiTampilan(); // Ini yang bikin sub & jam ikut berubah
-  }, 1000);
-
-  // Kirim perintah ke vsembed
-  try {
-    const perintah = { cmd: "play", action: "play", event: "play", currentTime: waktuSekarang };
-    filmIframe.contentWindow.postMessage(perintah, "*");
-    setTimeout(() => filmIframe.contentWindow.postMessage(perintah, "*"), 200);
-  } catch (e) {}
-
-  // Nyalakan sub di dalam pemutar
-  try {
-    const perintahSub = [
-      { cmd: "subtitle", enable: true, active: true },
-      { cmd: "captions", toggle: true, on: true },
-      { action: "setSubtitle", enabled: true }
-    ];
-    perintahSub.forEach(p => filmIframe.contentWindow.postMessage(p, "*"));
-  } catch (e) {}
-}
-
-function hentikanSemua() {
-  sedangMain = false;
-  btnMain.textContent = "▶️";
-  clearInterval(pemutar);
-  try {
-    filmIframe.contentWindow.postMessage({ cmd: "pause", action: "pause" }, "*");
-  } catch (e) {}
-}
-
-function geserWaktu(ubah) {
-  waktuSekarang = Math.max(0, waktuSekarang + ubah);
-  perbaruiTampilan();
-  try {
-    filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang, currentTime: waktuSekarang }, "*");
-  } catch (e) {}
-}
-
-// 4. KLIK PERTAMA: JALANKAN SEMUA + HAPUS LAPISAN
-lapisanPemicu.addEventListener('click', function () {
-  if (!sudahDiklik) {
-    sudahDiklik = true;
-    mulaiSemua();
-    lapisanPemicu.remove(); // Langsung hilang setelah diklik
-    filmIframe.style.pointerEvents = 'auto';
-  }
-});
-
-// 5. PASTIKAN TOMBOL DI BAWAH BISA DIKLIK
-document.querySelector('.subtitle-controls').style.zIndex = '10';
-btnMain.style.pointerEvents = 'auto';
-btnMundur.style.pointerEvents = 'auto';
-btnMaju.style.pointerEvents = 'auto';
-btnFullscreen.style.pointerEvents = 'auto';
-
-// 6. PASANG ULANG KENDALI TOMBOL
-btnMain.onclick = () => sedangMain ? hentikanSemua() : mulaiSemua();
-btnMundur.onclick = () => geserWaktu(-10);
-btnMaju.onclick = () => geserWaktu(+10);
-
-    
-
-
-
-
-    
     // ====================================
     // BACA SUBTITLE LEBIH FLEKSIBEL
     // ====================================
