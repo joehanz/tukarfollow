@@ -287,7 +287,7 @@ body {
     color: #cccccc;
 }
 
-/* Panel Info & Form Komentar saja (TANPA ruang daftar komentar) */
+/* Panel Info & Form Komentar saja */
 .info-panel {
     position: fixed;
     bottom: 0;
@@ -332,7 +332,7 @@ body {
     align-items: center;
     z-index: 300;
     padding-bottom: 0;
-    margin-top: 0; /* ✅ Jarak kosong dihapus total */
+    margin-top: 0;
     transition: transform 0.3s;
 }
 
@@ -357,6 +357,119 @@ body {
 }
 
 /* ======================================
+   ✅ DAFTAR KOMENTAR - SESUAI PERMINTAAN
+====================================== */
+.comments-panel {
+    position: fixed;
+    bottom: 65px; /* Tepat di atas nav bawah */
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95); /* Sama persis warna nav bawah */
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Garis putih tipis penanda */
+    z-index: 250;
+    transform: translateY(calc(100% - 40px)); /* Hanya tampil header 40px di awal */
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    max-height: calc(100vh - 65px); /* Tinggi maksimal sampai atas layar */
+}
+
+.comments-panel.open {
+    transform: translateY(0); /* Turunkan ke posisi penuh saat dibuka */
+}
+
+/* Header yang selalu terlihat */
+.comments-header {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comments-header h5 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ddd;
+}
+
+.comments-header .close-comments {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.comments-panel.open .close-comments {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.comments-header .close-comments:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Isi daftar komentar */
+.comments-content {
+    max-height: calc(100vh - 65px - 40px);
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.comments-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.comments-content::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+.comments-content::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}
+
+.comment-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    border-left: 2px solid rgba(255,221,87,0.6);
+}
+
+.comment-author {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffdd57;
+    margin-bottom: 4px;
+}
+
+.comment-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #eee;
+    word-wrap: break-word;
+}
+
+.comment-time {
+    font-size: 11px;
+    color: #888;
+    margin-top: 6px;
+    text-align: right;
+}
+
+/* ======================================
    HALAMAN WATCH.HTML
 ====================================== */
 .watch-layout {
@@ -364,13 +477,13 @@ body {
     flex-direction: column;
     height: calc(100vh - 65px);
     width: 100%;
-    margin-bottom: 0; /* ✅ Tidak ada jarak bawah tersisa */
-    padding-bottom: 0; /* ✅ Kosongkan semua ruang tambahan */
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .video-main-wrapper {
     width: 100%;
-    height: 100%; /* ✅ Diubah jadi 100% agar penuh sampai atas nav */
+    height: 100%;
     background: #000;
     position: relative;
     overflow: hidden;
