@@ -60,29 +60,28 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- ✅ CSS KHUSUS KOMENTAR DISISIPKAN DI SINI -->
+  <!-- ✅ CSS KHUSUS KOMENTAR -->
   <style>
   /* ======================================
      PANEL KOMENTAR - SESUAI PERMINTAAN
   ====================================== */
   .comments-panel {
       position: fixed;
-      bottom: 65px; /* Tepat di atas nav bawah */
+      bottom: 65px;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.95); /* Sama persis warna nav bawah */
-      border-top: 1px solid rgba(255, 255, 255, 0.2); /* Garis putih tipis penanda */
+      background: rgba(0, 0, 0, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
       z-index: 250;
-      transform: translateY(calc(100% - 40px)); /* Hanya tampil header 40px di awal */
+      transform: translateY(calc(100% - 40px));
       transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-      max-height: calc(100vh - 65px); /* Tinggi maksimal sampai atas layar */
+      max-height: calc(100vh - 65px);
   }
 
   .comments-panel.open {
-      transform: translateY(0); /* Turunkan ke posisi penuh saat dibuka */
+      transform: translateY(0);
   }
 
-  /* Header yang selalu terlihat */
   .comments-header {
       height: 40px;
       display: flex;
@@ -129,7 +128,6 @@
       background: rgba(255, 255, 255, 0.2);
   }
 
-  /* Isi daftar komentar */
   .comments-section {
       width: 100%;
   }
@@ -216,7 +214,7 @@
       </div>
     </div>
 
-    <!-- ✅ PANEL KOMENTAR SUDAH DIPERBAIKI SESUAI PERMINTAAN -->
+    <!-- ✅ PANEL KOMENTAR -->
     <div class="comments-panel" id="commentsPanel">
       <div class="comments-header" id="commentsHeader">
         <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
@@ -430,14 +428,12 @@
     });
 
     // ====================================
-    // FUNGSI BUKA/TUTUP PANEL KOMENTAR + AMBIL DATA
+    // BUKA/TUTUP PANEL + MUAT KOMENTAR (SUDAH SESUAI DOGET ANDA)
     // ====================================
     commentsHeader.addEventListener('click', function(e) {
       if (!e.target.closest('.close-comments')) {
         const isOpen = commentsPanel.classList.toggle('open');
-        if (isOpen) {
-          muatKomentar(); // Ambil data setiap kali dibuka
-        }
+        if (isOpen) muatKomentar();
       }
     });
 
@@ -445,35 +441,40 @@
       commentsPanel.classList.remove('open');
     });
 
-    // ✅ Fungsi ambil komentar dari Google Apps Script
+    // ✅ FUNGSI MUAT KOMENTAR - COCOK 100% DENGAN DOGET ANDA
     async function muatKomentar() {
       if (!currentMovieId) return;
       commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
 
       try {
-        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}&action=get`, {
+        // Panggil tanpa parameter &action=get, langsung sesuai doGet
+        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
           method: 'GET',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' }
+          redirect: 'follow'
         });
 
-        const data = await res.json();
+        const hasil = await res.json();
 
-        if (!data || data.length === 0) {
+        if (hasil.status !== "success") {
+          commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`;
+          return;
+        }
+
+        const komentar = hasil.data;
+
+        if (!komentar || komentar.length === 0) {
           commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>';
           return;
         }
 
-        // Urutkan dari terbaru ke terlama
-        const urutTerbaru = data.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-
+        // Gunakan nama kolom yang benar: timestamp
         let html = '';
-        urutTerbaru.forEach(item => {
+        komentar.forEach(item => {
           html += `
             <div class="comment-item">
               <div class="comment-name">${item.nama || 'Anonim'}</div>
               <div class="comment-text">${item.komentar || ''}</div>
-              <div class="comment-date">${item.tanggal ? new Date(item.tanggal).toLocaleString('id-ID') : 'Baru saja'}</div>
+              <div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div>
             </div>
           `;
         });
@@ -481,8 +482,8 @@
         commentListEl.innerHTML = html;
 
       } catch (err) {
-        console.error("Gagal memuat komentar:", err);
-        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar. Coba lagi nanti.</div>';
+        console.error("❌ Error:", err);
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>';
       }
     }
 
@@ -531,15 +532,18 @@
       const teks = document.getElementById('commentText').value.trim();
       if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
       tutupFormKomen();
+
       try {
         await fetch(URL_APPS_SCRIPT, {
           method: 'POST',
           mode: 'no-cors',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({tmdbId: currentMovieId, nama, komentar: teks})
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
         });
-        // Segar daftar komentar setelah berhasil kirim
+
+        // Segarkan daftar setelah kirim
         setTimeout(muatKomentar, 800);
+
       } catch {
         alert("Gagal mengirim komentar.");
       }
