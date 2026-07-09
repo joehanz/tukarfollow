@@ -62,52 +62,66 @@
 
   <!-- CSS -->
   <style>
-    /* Gaya untuk tombol sub geser */
-    .subtitle-controls {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-    }
+/* Wadah utama kendali */
+.subtitle-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Tombol utama selalu di ujung kanan */
+  gap: 8px;
+  height: 40px; /* Sesuaikan tinggi dengan tombol */
+}
 
-    #btnSubToggle {
-      margin-left: 8px;
-      transition: all 0.2s ease;
-      z-index: 2;
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
+/* Kotak yang bisa memanjang dan menyusut */
+.sub-panel-geser {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 8px;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  overflow: hidden; /* Supaya isinya tidak kelihatan saat menyempit */
+  white-space: nowrap;
+  /* Animasi utama: lebar berubah halus */
+  width: 0;
+  transform-origin: right center;
+  transition: all 0.35s ease;
+  opacity: 0;
+}
 
-    .sub-panel-geser {
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      background: rgba(0,0,0,0.75);
-      border-radius: 4px;
-      color: #fff;
-      font-size: 13px;
-      white-space: nowrap;
-      transform: translateX(120%);
-      transition: transform 0.35s ease;
-      z-index: 1;
-    }
+/* Saat aktif: melebar ke kiri */
+.sub-panel-geser.aktif {
+  width: auto; /* Sesuai panjang isinya */
+  opacity: 1;
+  padding: 0 12px;
+}
 
-    .sub-panel-geser.aktif {
-      transform: translateX(0);
-    }
+/* Tombol utama di ujung */
+#btnSubToggle {
+  background: rgba(0, 0, 0, 0.75);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 2;
+}
 
-    /* Sembunyikan sub jika tidak aktif */
-    .subtitle-text {
-      transition: opacity 0.3s ease;
-    }
+#btnSubToggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Sembunyikan teks sub jika tidak aktif */
+#subText {
+  transition: opacity 0.3s ease;
+}
   </style>
 
   <link rel="stylesheet" href="style.css" />
@@ -127,20 +141,18 @@
         <div class="subtitle-text" id="subText" style="opacity:0; pointer-events:none;"></div>
 
         <div class="subtitle-controls">
-          <button class="ctrl-btn" id="btnMundur">⏪</button>
-          <button class="ctrl-btn" id="btnMain">▶️</button>
-          <button class="ctrl-btn" id="btnMaju">⏩</button>
-          <div class="time-digital" id="jamTayang">00:00:00</div>
-          <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+  <!-- SEMUA TOMBOL KENDALI AKAN BERADA DI DALAM KOTAK YANG BISA MEMANJANG -->
+  <div class="sub-panel-geser" id="subPanelGeser">
+    <button class="ctrl-btn" id="btnMundur">⏪</button>
+    <button class="ctrl-btn" id="btnMain">▶️</button>
+    <button class="ctrl-btn" id="btnMaju">⏩</button>
+    <div class="time-digital" id="jamTayang">00:00:00</div>
+    <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+  </div>
 
-          <!-- TOMBOL BENDERA -->
-          <button class="ctrl-btn" id="btnSubToggle" title="Nyalakan/Matikan Subtitle">🇮🇩</button>
-
-          <!-- PANEL SUB -->
-          <div class="sub-panel-geser" id="subPanelGeser">
-            <span class="sub-label">Subtitle Indonesia</span>
-          </div>
-        </div>
+  <!-- TOMBOL UTAMA DI UJUNG KANAN -->
+  <button class="ctrl-btn" id="btnSubToggle" title="Tampilkan/Sembunyikan Kontrol">🇮🇩</button>
+</div>
       </div>
     </div>
 
@@ -190,7 +202,7 @@
   </div>
 
   <script>
-    // KONFIGURASI
+        // KONFIGURASI
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
@@ -286,16 +298,18 @@
     }
 
     // ====================================
-    // FUNGSI TOMBOL SUB GESER
+    // FUNGSI TOMBOL MEMANJANG / MENYUSUT
     // ====================================
-    function gantiStatusSub() {
+    function gantiStatusKontrol() {
       subAktif = !subAktif;
       if (subAktif) {
+        // Klik pertama: melebar ke kiri
         btnSubToggle.textContent = "❌";
         subPanelGeser.classList.add("aktif");
         subText.style.opacity = "1";
         subText.style.pointerEvents = "auto";
       } else {
+        // Klik kedua: menyusut kembali
         btnSubToggle.textContent = "🇮🇩";
         subPanelGeser.classList.remove("aktif");
         subText.style.opacity = "0";
@@ -304,7 +318,7 @@
       perbaruiTampilan();
     }
 
-    btnSubToggle.addEventListener('click', gantiStatusSub);
+    btnSubToggle.addEventListener('click', gantiStatusKontrol);
 
     // ====================================
     // BACA SUBTITLE
