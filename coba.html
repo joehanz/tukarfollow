@@ -221,6 +221,22 @@
       gap: 12px;
     }
 
+    /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
+@media (max-width: 768px) {
+  .subtitle-layer {
+    bottom: 15px;      /* Naik 6 piksel dari tepi bawah - langsung terlihat */
+    padding: 10px 12px 8px;
+  }
+}
+
+/* ✅ Khusus HP mode lebar/penuh layar */
+@media (max-width: 768px) and (orientation: landscape) {
+  .subtitle-layer {
+    bottom: 10px;     /* Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+  }
+}
+
+
     .subtitle-text {
       text-align: center;
       font-size: 18px;
