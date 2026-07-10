@@ -226,6 +226,7 @@
   .subtitle-layer {
     bottom: 15px;      /* Naik 6 piksel dari tepi bawah - langsung terlihat */
     padding: 10px 12px 8px;
+    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
   }
 }
 
@@ -233,6 +234,7 @@
 @media (max-width: 768px) and (orientation: landscape) {
   .subtitle-layer {
     bottom: 10px;     /* Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
   }
 }
 
