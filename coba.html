@@ -47,7 +47,11 @@
       background: #000; overflow: hidden; border-radius: 12px;
       transition: all 0.3s ease;
     }
-    #filmIframe { width: 100%; height: 100%; border: none; }
+    /* Perbaikan iframe */
+    #filmIframe { 
+      width: 100%; height: 100%; border: none; 
+      background: #000; display: block;
+    }
     .watermark-logo { position: absolute; top: 16px; left: 16px; z-index: 10; opacity: 0.6; pointer-events: none; }
     .watermark-logo img { width: 40px; height: auto; }
 
@@ -110,12 +114,13 @@
 
   <div class="watch-layout">
     <div class="video-main-wrapper" id="videoWrapper">
+      <!-- ✅ IZIN DIPERLUAS BIAR TIDAK SEMBUNYI -->
       <iframe 
         id="filmIframe" 
         src="" 
         allowfullscreen 
-        allow="autoplay; encrypted-media; picture-in-picture"
-        sandbox="allow-scripts allow-same-origin allow-presentation"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write; gyroscope; accelerometer"
+        referrerpolicy="no-referrer-when-downgrade"
       ></iframe>
       <div class="watermark-logo"><img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" /></div>
       
@@ -191,17 +196,17 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
-    // ✅ Format perintah yang DIMENGERTI oleh pemutar baru
+    // Perintah ke pemutar
     function mulaiSemua() {
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
       btnMain.innerHTML = '<i data-lucide="pause"></i>';
       lucide.createIcons();
       pemutar = setInterval(() => { waktuSekarang += 1; perbaruiTampilan(); }, 1000);
-      // Kirim perintah ke dalam iframe
       try {
-        filmIframe.contentWindow.postMessage({ event: "play" }, "*");
+        filmIframe.contentWindow.postMessage({ type: "play" }, "*");
         filmIframe.contentWindow.postMessage({ cmd: "play" }, "*");
+        filmIframe.contentWindow.postMessage({ event: "play" }, "*");
       } catch (e) {}
     }
 
@@ -211,8 +216,9 @@
       lucide.createIcons();
       clearInterval(pemutar);
       try {
-        filmIframe.contentWindow.postMessage({ event: "pause" }, "*");
+        filmIframe.contentWindow.postMessage({ type: "pause" }, "*");
         filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*");
+        filmIframe.contentWindow.postMessage({ event: "pause" }, "*");
       } catch (e) {}
     }
 
@@ -220,8 +226,9 @@
       waktuSekarang = Math.max(0, waktuSekarang + ubah);
       perbaruiTampilan();
       try {
-        filmIframe.contentWindow.postMessage({ event: "seek", time: waktuSekarang }, "*");
+        filmIframe.contentWindow.postMessage({ type: "seek", time: waktuSekarang }, "*");
         filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*");
+        filmIframe.contentWindow.postMessage({ event: "seek", time: waktuSekarang }, "*");
       } catch (e) {}
       if (sedangMain) {
         clearInterval(pemutar);
@@ -236,9 +243,9 @@
       perbaruiTampilan();
       try {
         const res = await fetch(alamat, { cache: 'no-cache' });
-        if (!res.ok) throw new Error(`File tidak ditemukan: ${res.status}`);
+        if (!res.ok) throw new Error(`Tidak ada`);
         const teks = await res.text();
-        if (!teks.trim()) throw new Error("File kosong");
+        if (!teks.trim()) throw new Error(`Kosong`);
         const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
         let i = baris[0].toUpperCase().includes("WEBVTT") ? 1 : 0;
         while (i < baris.length) {
@@ -257,7 +264,6 @@
       }
     }
 
-    // ✅ Layar penuh bisa vertikal & horizontal
     function toggleFullscreen() {
       if (!isFullscreen) {
         document.body.classList.add('fullscreen-active');
@@ -309,21 +315,24 @@
 
     function ambilIdDariUrl() { return new URLSearchParams(window.location.search).get('id'); }
 
-    // ✅ PEMUTAR PINJAMAN YANG KOMPATIBEL
+    // ✅ PEMUTAR DIPILIH YANG PALING MUDAH NONGOL
     function pasangPemutar(tmdbId) {
-      // Utama: Multiembed.mov (paling stabil & terima perintah)
-      filmIframe.src = `https://multiembed.mov/directstream.php?video_id=${tmdbId}&tmdb=1`;
+      // Utama: Multiembed (paling jarang ngumpet)
+      filmIframe.src = `https://multiembed.mov/directstream.php?video_id=${tmdbId}&tmdb=1&autoplay=0`;
 
-      // Cadangan 1: Kalau mati ganti ini
-      // filmIframe.src = `https://autoembed.to/tmdb/movie/${tmdbId}`;
+      // Cadangan 1:
+      // filmIframe.src = `https://autoembed.to/movie/${tmdbId}`;
 
-      // Cadangan 2: Kalau keduanya mati
-      // filmIframe.src = `https://vidplay.site/embed/movie?tmdb=${tmdbId}`;
+      // Cadangan 2:
+      // filmIframe.src = `https://embed.su/embed/movie/${tmdbId}`;
+
+      // Cadangan 3: Kalau semuanya ngumpet
+      // filmIframe.src = `https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`;
     }
 
     async function muatDataAwal() {
       currentMovieId = parseInt(ambilIdDariUrl());
-      if (!currentMovieId) { videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`; return; }
+      if (!currentMovieId) { videoWrapper.innerHTML += `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan.</div>`; return; }
       pasangPemutar(currentMovieId);
       await bacaSubtitle(currentMovieId);
     }
@@ -335,3 +344,6 @@
 
 </body>
 </html>
+
+
+
