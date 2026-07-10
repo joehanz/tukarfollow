@@ -62,10 +62,109 @@
 
   <!-- ✅ CSS DIPERBAIKI: POSISI SUBTITLE & KONTROL MENEMPEL DI ATAS KOMENTAR -->
   <link rel="stylesheet" href="style.css">
+<style>
+  /* ======================================
+   HALAMAN WATCH.HTML - DISESUAIKAN
+====================================== */
+.watch-layout {
+  position: relative;
+  width: 100%;
+  /* Tinggi otomatis sampai batas atas komentar */
+  height: calc(100vh - 65px);
+  overflow: hidden;
+}
 
+.video-main-wrapper {
+  width: 100%;
+  /* Tinggi iframe = layar dikurangi tinggi header komentar */
+  height: calc(100% - 40px);
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Atur iframe Vidsrc */
+#filmIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #000;
+  /* Sembunyikan kontrol asli kecuali bar waktu */
+  clip-path: inset(0 0 38px 0); /* Potong bagian bawah kontrol asli */
+  margin-bottom: -38px; /* Tarik sedikit agar bar waktu tetap terlihat */
+}
+
+/* Sesuaikan posisi saat komentar terbuka */
+.comments-panel.open ~ .watch-layout .video-main-wrapper {
+  height: calc(100vh - 65px - 40px);
+}
+
+.comments-panel.open ~ .watch-layout #filmIframe {
+  clip-path: inset(0 0 38px 0);
+  margin-bottom: -38px;
+}
+
+/* Penyesuaian Subtitle saat komentar terbuka */
+.comments-panel.open ~ .watch-layout .subtitle-layer {
+  transform: translateY(-100%);
+}
+
+/* Layar Penuh */
+.video-main-wrapper:fullscreen,
+.video-main-wrapper:-webkit-full-screen,
+.video-main-wrapper:-moz-full-screen,
+.video-main-wrapper:-ms-fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+.video-main-wrapper:fullscreen #filmIframe,
+.video-main-wrapper:-webkit-full-screen #filmIframe,
+.video-main-wrapper:-moz-full-screen #filmIframe,
+.video-main-wrapper:-ms-fullscreen #filmIframe {
+  height: 100vh;
+  clip-path: none; /* Hapus pemotongan saat layar penuh */
+  margin-bottom: 0;
+}
+
+.video-main-wrapper:fullscreen .subtitle-layer,
+.video-main-wrapper:-webkit-full-screen .subtitle-layer,
+.video-main-wrapper:-moz-full-screen .subtitle-layer,
+.video-main-wrapper:-ms-fullscreen .subtitle-layer {
+  bottom: 8%;
+  transform: translateY(0) !important;
+  z-index: 999999;
+}
+</style>
 </head>
 <body>
+<script>
+  const btnFullscreen = document.getElementById('btnFullscreen');
+const videoWrapper = document.getElementById('videoWrapper');
 
+btnFullscreen.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    // Masuk layar penuh
+    if (videoWrapper.requestFullscreen) {
+      videoWrapper.requestFullscreen();
+    } else if (videoWrapper.webkitRequestFullscreen) {
+      videoWrapper.webkitRequestFullscreen();
+    } else if (videoWrapper.msRequestFullscreen) {
+      videoWrapper.msRequestFullscreen();
+    }
+  } else {
+    // Keluar layar penuh
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+});
+</script>
 <!-- Panel Komentar -->
 <div class="comments-panel" id="commentsPanel">
   <div class="comments-header" id="commentsHeader">
