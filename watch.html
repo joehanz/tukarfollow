@@ -163,30 +163,35 @@
     }
 
     .watch-layout {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-    }
+  width: 100vw;        /* Lebar = 100% lebar layar */
+  height: 100vh;       /* Tinggi = 100% tinggi layar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;          /* ❌ Hapus semua ruang kosong */
+  margin: 0;
+  position: relative;
+  overflow: hidden;    /* Jangan ada yang meluber keluar layar */
+}
 
     .video-main-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
+  position: relative;
+  width: 100%;         /* Penuhi lebar pembungkusnya */
+  height: 100%;        /* Penuhi tinggi pembungkusnya */
+  max-width: 100%;     /* ❌ Hapus batas lebar maksimal */
+  max-height: 100%;    /* ❌ Hapus batas tinggi maksimal */
+  margin: 0;
+  padding: 0;
+  border-radius: 0;    /* ❌ Buang lengkungan sudut biar rapat */
+  overflow: hidden;
+  background: #000;
+}
     #filmIframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;   /* ⚠️ Ini kuncinya: isi akan membesar menutupi seluruh kotak tanpa terdistorsi berlebih */
+}
 
     .watermark-logo {
       position: absolute;
@@ -198,7 +203,7 @@
     }
 
     .watermark-logo img {
-      width: 40px;
+      width: 60px;
       height: auto;
     }
 
@@ -215,6 +220,24 @@
       flex-direction: column;
       gap: 12px;
     }
+
+    /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
+@media (max-width: 768px) {
+  .subtitle-layer {
+    bottom: 15px;      /* Naik 6 piksel dari tepi bawah - langsung terlihat */
+    padding: 10px 12px 8px;
+    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
+  }
+}
+
+/* ✅ Khusus HP mode lebar/penuh layar */
+@media (max-width: 768px) and (orientation: landscape) {
+  .subtitle-layer {
+    bottom: 10px;     /* Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
+  }
+}
+
 
     .subtitle-text {
       text-align: center;
@@ -905,6 +928,4 @@
 
 </body>
 </html>
-
-
 
