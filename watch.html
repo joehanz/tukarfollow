@@ -221,31 +221,35 @@
       gap: 12px;
     }
 
+
     /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
 @media (max-width: 768px) {
   .subtitle-layer {
-    bottom: 0px;      /* Naik 5 piksel dari tepi bawah - langsung terlihat */
+    position: absolute;  /* Tetap mengikuti wadah videonya, bukan kunci ke seluruh layar */
+    bottom: 5px;         /* ✅ Naik 5 piksel dari tepi bawah — langsung terlihat */
+    left: 0;
+    right: 0;
+    width: 100%;         /* Lebar penuh saja, tidak tinggi */
     padding: 10px 12px 8px;
-    overflow: hidden; 
-    position: fixed;
-    overscroll-behavior: none;
-    height: 100dvh;
-    height: 100dvw;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* HAPUS: height, fixed, overscroll — tidak perlu di sini */
   }
 }
 
 /* ✅ Khusus HP mode lebar/penuh layar */
 @media (max-width: 768px) and (orientation: landscape) {
   .subtitle-layer {
-    bottom: 0px;     /* Naik sedikit lagi agar tidak ketutup tombol sistem HP */
-    overflow: hidden; 
-    position: fixed;
-    overscroll-behavior: none;
-    height: 100dvh;
-    height: 100dvw;
+    bottom: 10px;        /* ✅ Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 10px 12px 8px;
+    margin: 0;
+    box-sizing: border-box;
   }
 }
-
 
     .subtitle-text {
       text-align: center;
