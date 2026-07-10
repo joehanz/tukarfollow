@@ -230,26 +230,30 @@
     }
 
     .watch-layout {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      position: relative;
-    }
+      .watch-layout {
+  width: 100vw;       /* Lebar penuh layar */
+  height: 100vh;      /* Tinggi penuh layar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;         /* HAPUS SEMUA JARAK LUAR */
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+   .video-main-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 100vh;
+  margin: 0;          /* Tidak ada jarak kosong */
+  padding: 0;
+  border-radius: 0;   /* Buang lengkungan biar rapat */
+  overflow: hidden;
+  background: #000;
+}
 
-    .video-main-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      margin: auto;
-    }
 
     #filmIframe {
       width: 100%;
@@ -275,39 +279,30 @@
     /* Bagian Subtitle & Kontrol */
 .subtitle-layer {
   position: absolute;
-  bottom: 0;          /* Titik acuannya = TEPI BAWAH LAYAR */
+  bottom: 0;          /* ✅ Sekarang benar-benar TEPi BAWAH kotak video = tepi layar */
   left: 0;
   right: 0;
-  width: 100%;        /* Lebar penuh */
+  width: 100%;
   z-index: 20;
   background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
   padding: 12px 16px 10px;
   margin: 0;
   box-sizing: border-box;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition: opacity 0.4s ease;
 }
 
-/* 👉 Khusus Desktop: Naik sedikit saja */
+/* Sesuai keinginanmu: naik 1px langsung terlihat */
 @media (min-width: 769px) {
   .subtitle-layer {
-    bottom: 15px;      /* Naik 15 piksel dari tepi bawah */
+    bottom: 1px;      /* Naik 1 piksel dari tepi bawah */
   }
 }
 
-/* 👉 Khusus HP semua merek: Naik sedikit lebih tinggi */
 @media (max-width: 768px) {
   .subtitle-layer {
-    bottom: 15px;     /* Naik 15 piksel dari tepi bawah */
+    bottom: 1px;      /* Sama persis di semua HP */
   }
 }
-
-/* 👉 Khusus HP mode lebar/penuh layar */
-@media (max-width: 768px) and (orientation: landscape) {
-  .subtitle-layer {
-    bottom: 15px;     /* Naik 15 piksel dari tepi bawah */
-  }
-}
-
     .subtitle-text {
       text-align: center;
       font-size: 18px;
