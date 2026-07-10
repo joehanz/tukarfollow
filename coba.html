@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- STRUCTURED DATA (Diubah jadi Movie untuk halaman tonton) -->
+  <!-- STRUCTURED DATA -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -60,174 +60,56 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- ✅ CSS KHUSUS KOMENTAR -->
-  <style>
-  /* ======================================
-     PANEL KOMENTAR - SESUAI PERMINTAAN
-  ====================================== */
-  .comments-panel {
-      position: fixed;
-      bottom: 65px;
-      left: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      z-index: 250;
-      transform: translateY(calc(100% - 40px));
-      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-      max-height: calc(100vh - 65px);
-  }
+  <!-- ✅ CSS DIPERBAIKI: POSISI SUBTITLE & KONTROL MENEMPEL DI ATAS KOMENTAR -->
+  <link rel="stylesheet" href="style.css">
 
-  .comments-panel.open {
-      transform: translateY(0);
-  }
-
-  .comments-header {
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      cursor: pointer;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .comments-header span {
-      font-size: 14px;
-      font-weight: 500;
-      color: #ddd;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-  }
-
-  .comments-header .close-comments {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s;
-      opacity: 0;
-      pointer-events: none;
-  }
-
-  .comments-panel.open .close-comments {
-      opacity: 1;
-      pointer-events: auto;
-  }
-
-  .comments-header .close-comments:hover {
-      background: rgba(255, 255, 255, 0.2);
-  }
-
-  .comments-section {
-      width: 100%;
-  }
-
-  .comments-list-container {
-      max-height: calc(100vh - 65px - 40px);
-      overflow-y: auto;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-  }
-
-  .comments-list-container::-webkit-scrollbar {
-      width: 4px;
-  }
-  .comments-list-container::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.05);
-  }
-  .comments-list-container::-webkit-scrollbar-thumb {
-      background: rgba(255,221,87,0.4);
-      border-radius: 2px;
-  }
-
-  .comment-item {
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      padding: 12px 15px;
-      border-left: 2px solid #ffdd57;
-  }
-
-  .comment-name {
-      font-weight: 600;
-      color: #ffdd57;
-      font-size: 14px;
-      margin-bottom: 6px;
-  }
-
-  .comment-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #f0f0f0;
-      margin-bottom: 8px;
-      word-wrap: break-word;
-  }
-
-  .comment-date {
-      font-size: 11px;
-      color: #888;
-      text-align: right;
-  }
-
-  .empty-comments {
-      text-align: center;
-      padding: 30px;
-      color: #888;
-      font-style: italic;
-  }
-  </style>
-
-  <!-- CALL EXTERNAL CSS -->
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="watch-layout">
-    <div class="video-main-wrapper" id="videoWrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-
-      <!-- LOGO MELAYANG KANAN ATAS -->
-      <div class="watermark-logo">
-        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
-      </div>
-      
-      <div class="subtitle-layer" id="subLayer">
-        <div class="subtitle-text" id="subText"></div>
-        <div class="subtitle-controls">
-          <button class="ctrl-btn" id="btnMundur">⏪</button>
-          <button class="ctrl-btn" id="btnMain">▶️</button>
-          <button class="ctrl-btn" id="btnMaju">⏩</button>
-          <div class="time-digital" id="jamTayang">00:00:00</div>
-          <button class="ctrl-btn" id="btnFullscreen">⛶</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ✅ PANEL KOMENTAR -->
-    <div class="comments-panel" id="commentsPanel">
-      <div class="comments-header" id="commentsHeader">
-        <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
-        <button class="close-comments" id="closeCommentsBtn">&times;</button>
-      </div>
-      <div class="comments-section" id="commentsSection">
-        <div class="comments-list-container" id="commentList">
-          <div class="empty-comments">Buka untuk melihat komentar...</div>
-        </div>
-      </div>
-    </div>
-    
+<!-- Panel Komentar -->
+<div class="comments-panel" id="commentsPanel">
+  <div class="comments-header" id="commentsHeader">
+    <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
+    <button class="close-comments" id="closeCommentsBtn">&times;</button>
   </div>
+  <div class="comments-section" id="commentsSection">
+    <div class="comments-list-container" id="commentList">
+      <div class="empty-comments">Buka untuk melihat komentar...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bagian Tonton -->
+<div class="watch-layout">
+  <div class="video-main-wrapper" id="videoWrapper">
+    <iframe
+      id="filmIframe"
+      src=""
+      allowfullscreen
+      allow="autoplay; encrypted-media; picture-in-picture"
+      scrolling="no"
+      frameborder="0"
+    ></iframe>
+
+    <div class="watermark-logo">
+      <img
+        src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
+        alt="TukarFollow"
+      />
+    </div>
+
+    <div class="subtitle-layer" id="subLayer">
+      <div class="subtitle-text" id="subText"></div>
+      <div class="subtitle-controls">
+        <button class="ctrl-btn" id="btnMundur">⏪</button>
+        <button class="ctrl-btn" id="btnMain">▶️</button>
+        <button class="ctrl-btn" id="btnMaju">⏩</button>
+        <div class="time-digital" id="jamTayang">00:00:00</div>
+        <button class="ctrl-btn" id="btnFullscreen">⛶</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <div class="search-container" id="searchContainer">
     <div class="search-box">
@@ -428,7 +310,7 @@
     });
 
     // ====================================
-    // BUKA/TUTUP PANEL + MUAT KOMENTAR (SUDAH SESUAI DOGET ANDA)
+    // BUKA/TUTUP PANEL + MUAT KOMENTAR
     // ====================================
     commentsHeader.addEventListener('click', function(e) {
       if (!e.target.closest('.close-comments')) {
@@ -441,13 +323,11 @@
       commentsPanel.classList.remove('open');
     });
 
-    // ✅ FUNGSI MUAT KOMENTAR - COCOK 100% DENGAN DOGET ANDA
     async function muatKomentar() {
       if (!currentMovieId) return;
       commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
 
       try {
-        // Panggil tanpa parameter &action=get, langsung sesuai doGet
         const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
           method: 'GET',
           redirect: 'follow'
@@ -467,7 +347,6 @@
           return;
         }
 
-        // Gunakan nama kolom yang benar: timestamp
         let html = '';
         komentar.forEach(item => {
           html += `
@@ -541,7 +420,6 @@
           body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
         });
 
-        // Segarkan daftar setelah kirim
         setTimeout(muatKomentar, 800);
 
       } catch {
