@@ -273,34 +273,39 @@
     }
 
     /* Bagian Subtitle & Kontrol */
-  .subtitle-layer {
+  /* Kontrol bawah / Subtitle */
+.subtitle-layer {
   position: absolute;
-  bottom: 25px;       /* ← Naik sedikit saja untuk desktop, cukup tutup kontrol vsembed */
+  bottom: 0;          /* Titik acuannya = TEPI BAWAH LAYAR */
   left: 0;
   right: 0;
-  width: 100%;       /* ← Pastikan lebar penuh */
+  width: 100%;        /* Lebar penuh */
   z-index: 20;
-  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); /* ← Sedikit lebih gelap biar rapat */
-  padding: 12px 16px 10px; /* ← Kurangi padding agar tidak ada ruang kosong berlebih */
-  margin: 0;         /* ← Hapus jarak tambahan */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+  padding: 12px 16px 10px;
+  margin: 0;
+  box-sizing: border-box;
   transition: opacity 0.4s ease, visibility 0.4s ease;
-  box-sizing: border-box; /* ← Pastikan ukuran tidak melar */
 }
 
-/* Khusus HP saja: naik sedikit, tidak sampai tengah */
-@media (max-width: 768px) {
+/* 👉 Khusus Desktop: Naik sedikit saja */
+@media (min-width: 769px) {
   .subtitle-layer {
-    bottom: 25px;  /* Cukup naik 10px saja, aman */
+    bottom: 5px;      /* Naik 5 piksel dari tepi bawah */
   }
 }
 
-/* Khusus HP mode layar penuh: naik sedikit lagi agar tidak ketutup tombol sistem */
+/* 👉 Khusus HP semua merek: Naik sedikit lebih tinggi */
+@media (max-width: 768px) {
+  .subtitle-layer {
+    bottom: 10px;     /* Naik 10 piksel dari tepi bawah */
+  }
+}
+
+/* 👉 Khusus HP mode lebar/penuh layar */
 @media (max-width: 768px) and (orientation: landscape) {
   .subtitle-layer {
-    bottom: 14px;
+    bottom: 14px;     /* Naik 14 piksel dari tepi bawah */
   }
 }
 
