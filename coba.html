@@ -48,20 +48,11 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body { background-color: #0a0a0a; color: #ffffff; overflow-x: hidden; }
 
-    /* Kelas khusus saat layar penuh */
-    body.fullscreen-active {
-      overflow: hidden;
-    }
+    body.fullscreen-active { overflow: hidden; }
     .video-main-wrapper.fullscreen {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      border-radius: 0 !important;
-      z-index: 9999 !important;
-      background: #000;
+      position: fixed !important; top: 0 !important; left: 0 !important;
+      width: 100vw !important; height: 100vh !important; max-width: none !important;
+      border-radius: 0 !important; z-index: 9999 !important; background: #000;
     }
 
     .comments-panel {
@@ -158,7 +149,6 @@
     .submit-btn { background: #2563eb; border: none; color: #fff; font-weight: 500; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
     .submit-btn:hover { background: #1d4ed8; }
 
-    /* Responsif HP */
     @media (max-width: 768px) {
       .watch-layout { padding: 0; }
       .video-main-wrapper { border-radius: 0; }
@@ -186,7 +176,7 @@
 
   <div class="watch-layout">
     <div class="video-main-wrapper" id="videoWrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
       <div class="watermark-logo"><img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" /></div>
       
       <div class="subtitle-layer" id="subLayer">
@@ -284,13 +274,17 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
+    // Format perintah standar untuk semua pemutar
     function mulaiSemua() {
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
       btnMain.innerHTML = '<i data-lucide="pause"></i>';
       lucide.createIcons();
       pemutar = setInterval(() => { waktuSekarang += 1; perbaruiTampilan(); }, 1000);
-      try { filmIframe.contentWindow.postMessage({ event: "play" }, "*"); } catch (e) {}
+      try { 
+        filmIframe.contentWindow.postMessage({ event: "play" }, "*"); 
+        filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); 
+      } catch (e) {}
     }
 
     function hentikanSemua() {
@@ -298,13 +292,19 @@
       btnMain.innerHTML = '<i data-lucide="play"></i>';
       lucide.createIcons();
       clearInterval(pemutar);
-      try { filmIframe.contentWindow.postMessage({ event: "pause" }, "*"); } catch (e) {}
+      try { 
+        filmIframe.contentWindow.postMessage({ event: "pause" }, "*"); 
+        filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); 
+      } catch (e) {}
     }
 
     function geserWaktu(ubah) {
       waktuSekarang = Math.max(0, waktuSekarang + ubah);
       perbaruiTampilan();
-      try { filmIframe.contentWindow.postMessage({ event: "seek", time: waktuSekarang }, "*"); } catch (e) {}
+      try { 
+        filmIframe.contentWindow.postMessage({ event: "seek", time: waktuSekarang }, "*"); 
+        filmIframe.contentWindow.postMessage({ cmd: "seek", time: waktuSekarang }, "*"); 
+      } catch (e) {}
       if (sedangMain) {
         clearInterval(pemutar);
         pemutar = setInterval(() => { waktuSekarang += 1; perbaruiTampilan(); }, 1000);
@@ -341,53 +341,30 @@
       }
     }
 
-    // ✅ PERBAIKAN LAYAR PENUH: BISA VERTIKAL & HORISONTAL
     function toggleFullscreen() {
       if (!isFullscreen) {
-        // Masuk mode layar penuh
         document.body.classList.add('fullscreen-active');
         videoWrapper.classList.add('fullscreen');
         btnFullscreen.innerHTML = '<i data-lucide="minimize"></i>';
         lucide.createIcons();
         isFullscreen = true;
-
-        // Coba gunakan API browser jika didukung
-        if (videoWrapper.requestFullscreen) {
-          videoWrapper.requestFullscreen().catch(() => {});
-        } else if (videoWrapper.webkitRequestFullscreen) {
-          videoWrapper.webkitRequestFullscreen();
-        } else if (videoWrapper.msRequestFullscreen) {
-          videoWrapper.msRequestFullscreen();
-        }
+        if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen().catch(() => {});
+        else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
+        else if (videoWrapper.msRequestFullscreen) videoWrapper.msRequestFullscreen();
       } else {
-        // Keluar mode layar penuh
         document.body.classList.remove('fullscreen-active');
         videoWrapper.classList.remove('fullscreen');
         btnFullscreen.innerHTML = '<i data-lucide="maximize"></i>';
         lucide.createIcons();
         isFullscreen = false;
-
-        if (document.exitFullscreen) {
-          document.exitFullscreen().catch(() => {});
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
       }
     }
 
-    // Tangani jika keluar layar penuh lewat tombol sistem HP
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement && isFullscreen) {
-        toggleFullscreen();
-      }
-    });
-    document.addEventListener('webkitfullscreenchange', () => {
-      if (!document.webkitFullscreenElement && isFullscreen) {
-        toggleFullscreen();
-      }
-    });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && isFullscreen) toggleFullscreen(); });
+    document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement && isFullscreen) toggleFullscreen(); });
 
     btnMain.addEventListener('click', () => sedangMain ? hentikanSemua() : mulaiSemua());
     btnMundur.addEventListener('click', () => geserWaktu(-10));
@@ -421,9 +398,14 @@
 
     function ambilIdDariUrl() { return new URLSearchParams(window.location.search).get('id'); }
 
-    // ✅ Pakai VidSrc.in
+    // ✅ GANTI PEMUTAR KE YANG BISA TERHUBUNG
     function pasangPemutar(tmdbId) {
-      filmIframe.src = `https://vidsrc.in/embed/movie?tmdb=${tmdbId}`;
+      // Pilihan 1: VidSrc.me (paling aman sekarang)
+      filmIframe.src = `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`;
+      
+      // Kalau mati, ganti ke ini saja:
+      // filmIframe.src = `https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`;
+      // filmIframe.src = `https://2embed.cc/embed/movie/${tmdbId}`;
     }
 
     async function muatDataAwal() {
