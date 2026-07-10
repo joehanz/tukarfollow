@@ -6,8 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <title>TUKARFOLLOW - Nonton Film Subtitle Indonesia</title>
-  <meta name="description" content="Nonton film terbaru dengan kualitas HD dan subtitle Indonesia lengkap." />
-  <meta name="keywords" content="nonton film, streaming, sub indo, bioskop online" />
+  <meta name="description" content="Nonton film terbaru dengan subtitle Indonesia." />
+  <meta name="keywords" content="nonton film, streaming, sub indo" />
   <meta name="robots" content="index, follow" />
 
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
@@ -33,37 +33,41 @@
       width: 100%; height: 100%; border: none; background: #000;
       display: block;
     }
-    .watermark { position: absolute; top: 16px; left: 16px; opacity: 0.6; pointer-events: none; }
+    .watermark { position: absolute; top: 16px; left: 16px; opacity: 0.6; pointer-events: none; z-index: 10; }
     .watermark img { width: 40px; }
 
     .subtitle-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 20;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      padding: 20px 16px; display: flex; flex-direction: column; gap: 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
+      padding: 24px 16px 20px; display: flex; flex-direction: column; gap: 14px;
     }
     .subtitle-text {
-      text-align: center; font-size: 18px; font-weight: 500;
-      text-shadow: 0 2px 4px #000; min-height: 32px;
+      text-align: center; font-size: 19px; font-weight: 500;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.9); min-height: 36px; line-height: 1.5;
+      transition: all 0.15s ease;
     }
     .subtitle-controls {
-      display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px;
-      background: rgba(255,255,255,0.08); padding: 10px 16px;
-      border-radius: 12px; backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px;
+      background: rgba(255,255,255,0.1); padding: 12px 18px;
+      border-radius: 14px; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);
     }
     .ctrl-btn {
-      width: 40px; height: 40px; border-radius: 8px; border: none;
-      background: rgba(255,255,255,0.15); color: #fff;
+      width: 42px; height: 42px; border-radius: 10px; border: none;
+      background: rgba(255,255,255,0.2); color: #fff;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.2s;
+      cursor: pointer; transition: all 0.2s ease;
     }
-    .ctrl-btn:hover { background: rgba(255,255,255,0.25); }
-    .time-digital { font-size: 14px; min-width: 90px; text-align: center; }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.08); }
+    .ctrl-btn svg { width: 21px; height: 21px; }
+    .time-digital { font-size: 15px; font-weight: 500; min-width: 95px; text-align: center; color: #f8f8f8; }
 
     @media (max-width:768px) {
       .watch-layout { padding:0; }
       .video-main-wrapper { border-radius:0; }
-      .subtitle-text { font-size:16px; }
-      .ctrl-btn { width:36px; height:36px; }
+      .subtitle-text { font-size:17px; }
+      .ctrl-btn { width:38px; height:38px; }
+      .ctrl-btn svg { width:19px; height:19px; }
+      .time-digital { font-size:14px; }
     }
   </style>
 </head>
@@ -71,25 +75,25 @@
 
 <div class="watch-layout">
   <div class="video-main-wrapper" id="videoWrapper">
-    <!-- Tetap vsembed.ru, izin pas biar nggak gelap -->
+    <!-- Tetap vsembed.ru, izin lengkap biar nggak gelap -->
     <iframe 
       id="filmIframe" 
       src="" 
       allowfullscreen
-      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen; gyroscope; accelerometer"
       referrerpolicy="no-referrer-when-downgrade"
     ></iframe>
 
     <div class="watermark"><img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="Logo"></div>
 
-    <div class="subtitle-layer">
+    <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-text" id="subText"></div>
       <div class="subtitle-controls">
-        <button class="ctrl-btn" id="btnMundur" title="Mundur 10d"><i data-lucide="rotate-ccw"></i></button>
-        <button class="ctrl-btn" id="btnMain" title="Putar/Jeda"><i data-lucide="play"></i></button>
-        <button class="ctrl-btn" id="btnMaju" title="Maju 10d"><i data-lucide="rotate-cw"></i></button>
+        <button class="ctrl-btn" id="btnMundur" title="Mundur 10 Detik"><i data-lucide="rotate-ccw"></i></button>
+        <button class="ctrl-btn" id="btnMain" title="Putar / Jeda"><i data-lucide="play"></i></button>
+        <button class="ctrl-btn" id="btnMaju" title="Maju 10 Detik"><i data-lucide="rotate-cw"></i></button>
         <div class="time-digital" id="jamTayang">00:00:00</div>
-        <button class="ctrl-btn" id="btnHome" title="Beranda"><i data-lucide="home"></i></button>
+        <button class="ctrl-btn" id="btnHome" title="Kembali"><i data-lucide="home"></i></button>
         <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh"><i data-lucide="maximize"></i></button>
       </div>
     </div>
@@ -111,105 +115,116 @@ const videoWrapper = document.getElementById('videoWrapper');
 
 let subtitles = [];
 let waktuSekarang = 0;
-let pemutarTimer = null;
-let sedangMain = false;
+let timerSub = null;   // Timer khusus kendali subtitle
+let sedangPutar = false;
 let isFullscreen = false;
 
-// Format waktu
+// Format waktu ke jam:menit:detik
 function ubahKeWaktu(detik) {
   if (isNaN(detik) || detik < 0) detik = 0;
-  const j = String(Math.floor(detik/3600)).padStart(2,'0');
-  const m = String(Math.floor((detik%3600)/60)).padStart(2,'0');
-  const d = String(Math.floor(detik%60)).padStart(2,'0');
+  const j = String(Math.floor(detik / 3600)).padStart(2, '0');
+  const m = String(Math.floor((detik % 3600) / 60)).padStart(2, '0');
+  const d = String(Math.floor(detik % 60)).padStart(2, '0');
   return `${j}:${m}:${d}`;
 }
 
+// Ubah teks waktu ke angka detik
 function ubahKeDetik(waktuStr) {
   if (!waktuStr) return 0;
-  const b = waktuStr.trim().split(':');
-  return b.length===3 ? (+b[0]*3600)+(+b[1]*60)+(+b[2]) : b.length===2 ? (+b[0]*60)+(+b[1]) : 0;
+  waktuStr = waktuStr.replace(',', '.').trim();
+  const bagian = waktuStr.split(':');
+  if (bagian.length === 3) return (+bagian[0] * 3600) + (+bagian[1] * 60) + (+parseFloat(bagian[2]));
+  if (bagian.length === 2) return (+bagian[0] * 60) + (+parseFloat(bagian[1]));
+  return 0;
 }
 
-// Perbarui tampilan subtitle
-function perbaruiSub() {
+// Perbarui tampilan teks subtitle sesuai waktu
+function tampilkanSubtitle() {
   const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
   subText.textContent = aktif ? aktif.teks : "";
   jamTayang.textContent = ubahKeWaktu(waktuSekarang);
 }
 
-// ✅ MANIPULASI UTAMA: Picu waktu subtitle pas tombol ditekan
-function mulaiPutar() {
-  if (pemutarTimer) clearInterval(pemutarTimer);
-  sedangMain = true;
+// ✅ FUNGSI UTAMA: Kendali penuh subtitle
+function mulaiSub() {
+  if (timerSub) clearInterval(timerSub);
+  sedangPutar = true;
   btnMain.innerHTML = '<i data-lucide="pause"></i>';
   lucide.createIcons();
-  // Jalankan hitungan detik subtitle
-  pemutarTimer = setInterval(() => {
+  
+  // Jalankan hitungan detik sendiri
+  timerSub = setInterval(() => {
     waktuSekarang++;
-    perbaruiSub();
+    tampilkanSubtitle();
   }, 1000);
-  // Coba kirim ke vsembed (walaupun jarang dengar, nggak apa)
-  try {
-    filmIframe.contentWindow.postMessage({cmd:"play"}, "*");
-  }catch(e){}
 }
 
-function hentikanPutar() {
-  sedangMain = false;
+function jedaSub() {
+  sedangPutar = false;
   btnMain.innerHTML = '<i data-lucide="play"></i>';
   lucide.createIcons();
-  clearInterval(pemutarTimer);
-  try {
-    filmIframe.contentWindow.postMessage({cmd:"pause"}, "*");
-  }catch(e){}
+  clearInterval(timerSub);
 }
 
-function geserWaktu(ubah) {
-  waktuSekarang = Math.max(0, waktuSekarang + ubah);
-  perbaruiSub();
-  try {
-    filmIframe.contentWindow.postMessage({cmd:"seek", time:waktuSekarang}, "*");
-  }catch(e){}
+function geserSub(detik) {
+  waktuSekarang = Math.max(0, waktuSekarang + detik);
+  tampilkanSubtitle();
 }
 
-// Baca subtitle
-async function muatSub(id) {
-  subtitles = []; waktuSekarang = 0; perbaruiSub();
+// Baca file subtitle VTT
+async function muatSubtitle(idFilm) {
+  subtitles = [];
+  waktuSekarang = 0;
+  tampilkanSubtitle();
+
   try {
-    const r = await fetch(`${SUBTITLE_URL}${id}.vtt`, {cache:"no-cache"});
-    if (!r.ok) throw "";
-    const t = await r.text();
-    const baris = t.split("\n").map(b=>b.trim()).filter(Boolean);
-    let i = baris[0].toUpperCase()==="WEBVTT" ? 1 : 0;
-    while(i<baris.length) {
-      if (baris[i].includes("-->")) {
-        const [mulaiStr, selesaiStr] = baris[i].split("-->");
+    const res = await fetch(`${SUBTITLE_URL}${idFilm}.vtt`, { cache: 'no-cache' });
+    if (!res.ok) throw new Error("File tidak ada");
+    const teks = await res.text();
+    if (!teks.trim()) throw new Error("Kosong");
+
+    const baris = teks.split('\n').map(b => b.trim()).filter(Boolean);
+    let i = baris[0].toUpperCase() === "WEBVTT" ? 1 : 0;
+
+    while (i < baris.length) {
+      if (baris[i].includes('-->')) {
+        const [mulaiStr, selesaiStr] = baris[i].split('-->');
         const mulai = ubahKeDetik(mulaiStr);
         const selesai = ubahKeDetik(selesaiStr);
-        let teks = ""; i++;
-        while(i<baris.length && !baris[i].includes("-->")) teks += baris[i++] + " ";
-        if (mulai<selesai && teks.trim()) subtitles.push({mulai, selesai, teks:teks.trim()});
-      } else i++;
+        let teksSub = "";
+        i++;
+        while (i < baris.length && !baris[i].includes('-->')) {
+          teksSub += baris[i] + " ";
+          i++;
+        }
+        if (mulai < selesai && teksSub.trim()) {
+          subtitles.push({ mulai, selesai, teks: teksSub.trim() });
+        }
+      } else {
+        i++;
+      }
     }
-  }catch{
+  } catch (err) {
     subText.textContent = "Subtitle tidak tersedia";
   }
 }
 
-// Layar penuh
-function toggleFullscreen() {
+// Fungsi layar penuh
+function toggleLayarPenuh() {
   if (!isFullscreen) {
     videoWrapper.classList.add("fullscreen");
     btnFullscreen.innerHTML = '<i data-lucide="minimize"></i>';
     lucide.createIcons();
     isFullscreen = true;
-    videoWrapper.requestFullscreen?.() || videoWrapper.webkitRequestFullscreen?.();
+    if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen().catch(() => {});
+    else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
   } else {
     videoWrapper.classList.remove("fullscreen");
     btnFullscreen.innerHTML = '<i data-lucide="maximize"></i>';
     lucide.createIcons();
     isFullscreen = false;
-    document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
   }
 }
 
@@ -218,35 +233,36 @@ function pasangPemutar(tmdbId) {
   filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
 }
 
-function ambilId() {
+// Ambil ID dari URL
+function ambilIdDariURL() {
   return new URLSearchParams(window.location.search).get("id") || "";
 }
 
-// Jalankan awal
+// Jalankan saat halaman siap
 window.addEventListener("DOMContentLoaded", async () => {
   lucide.createIcons();
-  const id = ambilId();
+  const id = ambilIdDariURL();
   if (!id) {
-    subText.textContent = "ID film tidak ditemukan";
+    subText.textContent = "ID Film tidak ditemukan";
     return;
   }
   pasangPemutar(id);
-  await muatSub(id);
+  await muatSubtitle(id);
 });
 
-// Tombol
-btnMain.addEventListener("click", () => sedangMain ? hentikanPutar() : mulaiPutar());
-btnMundur.addEventListener("click", () => geserWaktu(-10));
-btnMaju.addEventListener("click", () => geserWaktu(+10));
-btnFullscreen.addEventListener("click", toggleFullscreen);
+// Pasang aksi tombol
+btnMain.addEventListener("click", () => sedangPutar ? jedaSub() : mulaiSub());
+btnMundur.addEventListener("click", () => geserSub(-10));
+btnMaju.addEventListener("click", () => geserSub(+10));
+btnFullscreen.addEventListener("click", toggleLayarPenuh);
 btnHome.addEventListener("click", () => window.history.back());
 
-// Deteksi keluar layar penuh
+// Tangani keluar layar penuh
 document.addEventListener("fullscreenchange", () => {
-  if (!document.fullscreenElement && isFullscreen) toggleFullscreen();
+  if (!document.fullscreenElement && isFullscreen) toggleLayarPenuh();
 });
 document.addEventListener("webkitfullscreenchange", () => {
-  if (!document.webkitFullscreenElement && isFullscreen) toggleFullscreen();
+  if (!document.webkitFullscreenElement && isFullscreen) toggleLayarPenuh();
 });
 </script>
 
