@@ -3,133 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template TMDB - Klik Poster Putar</title>
-    <!-- Pemutar Video -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.8.2/plyr.css">
-    <script src="https://cdn.plyr.io/3.8.2/plyr.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { max-width: 900px; margin: 20px auto; padding: 0 15px; background: #f5f5f5; }
-
-        /* Area Poster & Info */
-        .film-card {
-            display: flex;
-            gap: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-bottom: 20px;
+    <title>Streaming Film - TMDB ID Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0F172A',
+                        darker: '#020617',
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
         }
-        .film-card:hover { transform: scale(1.01); }
-        .poster {
-            width: 185px;
-            height: 278px;
-            border-radius: 6px;
-            object-fit: cover;
-            background: #eee;
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .player-container {
+                aspect-ratio: 16/9;
+            }
+            .control-bar {
+                transition: opacity 0.3s ease;
+            }
+            .player-container:hover .control-bar {
+                opacity: 1;
+            }
+            .volume-slider {
+                width: 0;
+                transition: width 0.3s ease;
+            }
+            .volume-group:hover .volume-slider {
+                width: 100px;
+            }
         }
-        .info { flex: 1; }
-        .info h2 { margin-bottom: 10px; color: #222; }
-        .info p { color: #555; line-height: 1.5; margin-bottom: 8px; }
-        .klik-info { font-size: 13px; color: #007bff; font-weight: bold; }
-
-        /* Area Pemutar */
-        .player-wrap {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: none;
-        }
-        #player { width: 100%; height: 480px; background: #000; border-radius: 6px; }
     </style>
 </head>
-<body>
+<body class="bg-darker text-white font-inter min-h-screen">
 
-    <!-- Kartu Film (Poster + Info) -->
-    <div class="film-card" id="filmArea" data-tmdb-id="550">
-        <img class="poster" id="poster" alt="Poster Film">
-        <div class="info">
-            <h2 id="judul">Memuat...</h2>
-            <p id="ringkasan">Sedang mengambil data dari TMDB...</p>
-            <p class="klik-info">👉 Klik poster atau area ini untuk mulai memutar</p>
+    <!-- Header -->
+    <header class="bg-dark/90 backdrop-blur-md fixed w-full z-50 py-4 shadow-lg">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                STREAMING TMDB ID
+            </h1>
+            <div class="flex gap-3">
+                <input type="text" id="searchInput" placeholder="Cari film..." 
+                    class="px-3 py-1.5 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary w-40 md:w-60">
+                <button onclick="searchMovies()" class="bg-primary hover:bg-primary/80 px-3 py-1.5 rounded transition">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Pemutar Video -->
-    <div class="player-wrap" id="playerArea">
-        <video id="player" controls playsinline></video>
-    </div>
+    <main class="pt-24 pb-12">
+        <div class="container mx-auto px-4">
+            <!-- Area Pemutar Video -->
+            <div id="playerSection" class="hidden mb-10">
+                <div class="player-container w-full bg-black rounded-xl overflow-hidden shadow-2xl relative">
+                    <!-- Elemen Video -->
+                    <video id="videoPlayer" class="w-full h-full object-contain" preload="metadata">
+                        Browser Anda tidak mendukung pemutaran video.
+                    </video>
+
+                    <!-- Info TMDB ID Aktif -->
+                    <div class="absolute top-3 left-3 bg-black/70 px-2 py-1 rounded text-xs">
+                        TMDB ID: <span id="activeTmdbId">-</span>
+                    </div>
+
+                    <!-- Kontrol Kustom -->
+                    <div id="controls" class="control-bar absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 opacity-0">
+                        <div class="flex items-center mb-3 gap-2">
+                            <span id="currentTime" class="text-xs">00:00</span>
+                            <input type="range" id="progressBar" min="0" max="100" value="0" 
+                                class="flex-1 h-1 bg-gray-500 rounded-full outline-none appearance-none cursor-pointer accent-primary">
+                            <span id="duration" class="text-xs">00:00</span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-4">
+                                <button id="playPauseBtn" class="text-xl hover:text-primary transition">
+                                    <i class="fa fa-play"></i>
+                                </button>
+                                <div class="flex items-center gap-2 volume-group">
+                                    <button id="volumeBtn" class="text-lg hover:text-primary transition">
+                                        <i class="fa fa-volume-up"></i>
+                                    </button>
+                                    <input type="range" id="volumeBar" min="0" max="100" value="70" 
+                                        class="volume-slider h-1 bg-gray-500 rounded-full outline-none accent-primary">
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button id="speedBtn" class="text-sm bg-gray-700 px-2 py-0.5 rounded hover:bg-gray-600">1x</button>
+                                <button id="fullscreenBtn" class="text-xl hover:text-primary transition">
+                                    <i class="fa fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Film Lengkap -->
+                <div id="movieInfo" class="mt-6 bg-dark/50 rounded-xl p-5 shadow-lg">
+                    <h2 id="movieTitle" class="text-2xl font-bold mb-2"></h2>
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-300 mb-4">
+                        <span>TMDB ID: <span id="tmdbIdInfo"></span></span>
+                        <span>Tahun: <span id="releaseDate"></span></span>
+                        <span>Rating: <i class="fa fa-star text-yellow-400"></i> <span id="rating"></span>/10</span>
+                    </div>
+                    <p id="overview" class="text-gray-200 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Daftar Film -->
+            <div id="moviesContainer">
+                <h2 class="text-xl font-semibold mb-5">Film Populer</h2>
+                <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+                    <!-- Data film dimuat di sini -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark py-4 text-center text-gray-400 text-sm">
+        Data disediakan oleh <a href="https://www.themoviedb.org/" target="_blank" class="text-primary hover:underline">TMDB</a>
+    </footer>
 
     <script>
-        // === DATA DARI KAMU ===
-        const API_KEY        = 'c000d7b8b0f5ee16b98b6103009745d8';
-        const BASE_URL       = 'https://api.themoviedb.org/3';
-        const IMAGE_URL      = 'https://image.tmdb.org/t/p/w185';
-        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-        const SUBTITLE_URL   = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
+        // KONFIGURASI
+        const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
-        // Inisialisasi pemutar
-        const player = new Plyr('#player');
-
-        // Ambil & tampilkan data film dari TMDB
-        async function muatDataFilm(tmdbId) {
+        // 🎯 FUNGSI UTAMA: Ambil TMDB ID & Siapkan Pemutar
+        async function loadMovieByTmdbId(tmdbId) {
             try {
+                // Ambil data film dari TMDB menggunakan ID
                 const res = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}&language=id-ID`);
-                if (!res.ok) throw new Error("ID tidak ditemukan");
-                const data = await res.json();
+                const movie = await res.json();
 
-                document.getElementById('poster').src = data.poster_path ? `${IMAGE_URL}${data.poster_path}` : 'placeholder.jpg';
-                document.getElementById('judul').textContent = data.title;
-                document.getElementById('ringkasan').textContent = data.overview || "Tidak ada keterangan untuk film ini.";
+                // Tampilkan informasi film
+                document.getElementById('activeTmdbId').textContent = tmdbId;
+                document.getElementById('tmdbIdInfo').textContent = tmdbId;
+                document.getElementById('movieTitle').textContent = movie.title;
+                document.getElementById('releaseDate').textContent = movie.release_date || 'Tidak diketahui';
+                document.getElementById('rating').textContent = movie.vote_average.toFixed(1);
+                document.getElementById('overview').textContent = movie.overview || 'Tidak ada deskripsi.';
+
+                // ✅ CONTOH PENGGUNAAN TMDB ID UNTUK SUMBER VIDEO
+                // Ganti bagian ini dengan layanan pemutaran yang kamu gunakan
+                // Contoh format: `https://sumber-video-kamu.com/play?tmdb_id=${tmdbId}`
+                video.src = `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4`;
+                video.load();
+
+                // Tampilkan pemutar
+                document.getElementById('playerSection').classList.remove('hidden');
+                document.getElementById('playerSection').scrollIntoView({ behavior: 'smooth' });
+
             } catch (err) {
-                document.getElementById('judul').textContent = "Gagal Memuat";
-                document.getElementById('ringkasan').textContent = err.message;
+                console.error('Gagal memuat data film:', err);
+                alert(`Film dengan ID ${tmdbId} tidak ditemukan.`);
             }
         }
 
-        // Putar video saat diklik
-        async function putarFilm() {
-            const tmdbId = this.dataset.tmdbId;
-            if (!tmdbId) return;
+        // --- Fungsi Pendukung API TMDB ---
+        window.addEventListener('load', fetchPopularMovies);
 
-            // Ambil link video
-            const resLink = await fetch(`${URL_APPS_SCRIPT}?id=${tmdbId}`);
-            const hasil = await resLink.json();
-            const linkVideo = hasil.data?.[0]?.link;
+        async function fetchPopularMovies() {
+            const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
+            const data = await res.json();
+            displayMovies(data.results);
+        }
 
-            if (!linkVideo) {
-                alert("Maaf, link video belum tersedia untuk film ini.");
+        async function searchMovies() {
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q) return fetchPopularMovies();
+            const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=id-ID&query=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            displayMovies(data.results);
+        }
+
+        function displayMovies(movies) {
+            const grid = document.getElementById('moviesGrid');
+            if (!movies.length) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-400">Tidak ada hasil</p>`;
                 return;
             }
-
-            // Ambil subtitle
-            const linkSub = `${SUBTITLE_URL}${tmdbId}/id.vtt`;
-
-            // Tampilkan pemutar & masukkan sumber
-            const playerArea = document.getElementById('playerArea');
-            playerArea.style.display = 'block';
-
-            player.source = {
-                type: 'video',
-                title: document.getElementById('judul').textContent,
-                poster: document.getElementById('poster').src,
-                sources: [{ src: linkVideo, type: 'video/mp4' }],
-                tracks: [{ kind: 'subtitles', label: 'Bahasa Indonesia', srclang: 'id', src: linkSub, default: true }]
-            };
-
-            // Gulir otomatis ke pemutar
-            playerArea.scrollIntoView({ behavior: 'smooth' });
+            grid.innerHTML = movies.map(movie => `
+                <div onclick="loadMovieByTmdbId(${movie.id})" class="bg-dark rounded-lg overflow-hidden shadow hover:shadow-primary/20 transition-shadow cursor-pointer group">
+                    <img src="${movie.poster_path ? IMAGE_URL + movie.poster_path : 'https://via.placeholder.com/300x450?text=Tidak+Ada+Gambar'}" 
+                        alt="${movie.title}" class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <div class="p-3">
+                        <h3 class="font-medium text-sm truncate">${movie.title}</h3>
+                        <div class="flex justify-between items-center mt-2 text-xs text-gray-300">
+                            <span>TMDB ID: ${movie.id}</span>
+                            <span><i class="fa fa-star text-yellow-400"></i> ${movie.vote_average.toFixed(1)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Jalankan awal
-        const idAwal = document.getElementById('filmArea').dataset.tmdbId;
-        muatDataFilm(idAwal);
-        document.getElementById('filmArea').addEventListener('click', putarFilm);
-    </script>
+        // --- Kontrol Pemutar Video Kustom ---
+        const video = document.getElementById('videoPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeBtn = document.getElementById('volumeBtn');
+        const volumeBar = document.getElementById('volumeBar');
+        const speedBtn = document.getElementById('speedBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const controls = document.getElementById('controls');
 
+        playPauseBtn.addEventListener('click', () => {
+            video.paused ? (video.play(), playPauseBtn.innerHTML = '<i class="fa fa-pause"></i>') : (video.pause(), playPauseBtn.innerHTML = '<i class="fa fa-play"></i>');
+        });
+
+        video.addEventListener('loadedmetadata', () => durationEl.textContent = formatTime(video.duration));
+        video.addEventListener('timeupdate', () => {
+            progressBar.value = (video.currentTime / video.duration) * 100 || 0;
+            currentTimeEl.textContent = formatTime(video.currentTime);
+        });
+
+        progressBar.addEventListener('input', () => video.currentTime = (progressBar.value / 100) * video.duration);
+
+        volumeBar.addEventListener('input', () => {
+            video.volume = volumeBar.value / 100;
+            updateVolumeIcon();
+        });
+
+        volumeBtn.addEventListener('click', () => {
+            video.muted = !video.muted;
+            updateVolumeIcon();
+        });
+
+        function updateVolumeIcon() {
+            if (video.muted || video.volume === 0) volumeBtn.innerHTML = '<i class="fa fa-volume-off"></i>';
+            else if (video.volume < 0.5) volumeBtn.innerHTML = '<i class="fa fa-volume-down"></i>';
+            else volumeBtn.innerHTML = '<i class="fa fa-volume-up"></i>';
+        }
+
+        let speed = 1;
+        speedBtn.addEventListener('click', () => {
+            const speeds = [0.5, 1, 1.25, 1.5, 2];
+            speed = speeds[(speeds.indexOf(speed) + 1) % speeds.length];
+            video.playbackRate = speed;
+            speedBtn.textContent = speed + 'x';
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            const container = document.querySelector('.player-container');
+            document.fullscreenElement ? document.exitFullscreen() : container.requestFullscreen().catch(err => {});
+        });
+
+        let hideTimer;
+        video.addEventListener('mousemove', () => {
+            controls.style.opacity = '1';
+            clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => video.paused || (controls.style.opacity = '0'), 3000);
+        });
+
+        function formatTime(sec) {
+            if (isNaN(sec)) return '00:00';
+            const m = Math.floor(sec / 60).toString().padStart(2, '0');
+            const s = Math.floor(sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+    </script>
 </body>
 </html>
