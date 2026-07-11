@@ -671,25 +671,23 @@ body {
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
-    // ====================================
-    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
-    // ====================================
-    function mulaiSemua() {
-      if (pemutar) clearInterval(pemutar);
-      sedangMain = true;
-      btnMain.innerHTML = '<i data-lucide="pause"></i>';
-      lucide.createIcons();
-      pemutar = setInterval(() => {
-        waktuSekarang += 1;
-        perbaruiTampilan();
-      }, 1000);
-      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+// ====================================
+// FUNGSI UTAMA: KAWINKAN PLAY & SUB
+// ====================================
+function mulaiSemua() {
+  if (pemutar) clearInterval(pemutar);
+  sedangMain = true;
+  btnMain.innerHTML = '<i data-lucide="pause"></i>';
+  lucide.createIcons();
+  pemutar = setInterval(() => {
+    waktuSekarang += 1;
+    perbaruiTampilan();
+  }, 1000);
+  try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
 
-      // ✅ Tambahan: Jalankan fullscreen otomatis jika ada tanda
-      if (autoFullscreen) {
-        aktifkanFullscreenOtomatis();
-      }
-    }
+  // ✅ Otomatis masuk layar penuh setiap kali tombol Putar diklik
+  aktifkanFullscreenOtomatis();
+}
 
     function hentikanSemua() {
       sedangMain = false;
