@@ -214,7 +214,7 @@
       left: 0;
       right: 0;
       z-index: 20;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
       padding: 20px 16px 16px;
       display: flex;
       flex-direction: column;
@@ -663,23 +663,25 @@
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
 
-// ====================================
-// FUNGSI UTAMA: KAWINKAN PLAY & SUB
-// ====================================
-function mulaiSemua() {
-  if (pemutar) clearInterval(pemutar);
-  sedangMain = true;
-  btnMain.innerHTML = '<i data-lucide="pause"></i>';
-  lucide.createIcons();
-  pemutar = setInterval(() => {
-    waktuSekarang += 1;
-    perbaruiTampilan();
-  }, 1000);
-  try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+    // ====================================
+    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
+    // ====================================
+    function mulaiSemua() {
+      if (pemutar) clearInterval(pemutar);
+      sedangMain = true;
+      btnMain.innerHTML = '<i data-lucide="pause"></i>';
+      lucide.createIcons();
+      pemutar = setInterval(() => {
+        waktuSekarang += 1;
+        perbaruiTampilan();
+      }, 1000);
+      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
 
-  // ✅ Otomatis masuk layar penuh setiap kali tombol Putar diklik
-  aktifkanFullscreenOtomatis();
-}
+      // ✅ Tambahan: Jalankan fullscreen otomatis jika ada tanda
+      if (autoFullscreen) {
+        aktifkanFullscreenOtomatis();
+      }
+    }
 
     function hentikanSemua() {
       sedangMain = false;
@@ -963,4 +965,3 @@ function mulaiSemua() {
 
 </body>
 </html>
-
