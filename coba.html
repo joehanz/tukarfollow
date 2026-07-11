@@ -520,7 +520,11 @@
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 
-      <h2>🎬 Suara Film → Teks (AI Whisper)</h2>
+      <div class="watermark-logo">
+        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
+      </div>
+
+            <h2>🎬 Suara Film → Teks (AI Whisper)</h2>
   <p class="info">Berjalan 100% di browser, tidak dikirim ke server mana pun</p>
 
   <button id="captureBtn">🔴 Mulai Tangkap Suara Tab</button>
@@ -585,10 +589,6 @@
     function status(txt){document.getElementById("status").textContent = "Status: " + txt;}
     loadModel();
   </script>
-
-      <div class="watermark-logo">
-        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
-      </div>
       
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
