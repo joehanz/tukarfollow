@@ -672,6 +672,7 @@ body {
     }
 
 // ====================================
+// ====================================
 // FUNGSI UTAMA: KAWINKAN PLAY & SUB
 // ====================================
 function mulaiSemua() {
@@ -679,13 +680,17 @@ function mulaiSemua() {
   sedangMain = true;
   btnMain.innerHTML = '<i data-lucide="pause"></i>';
   lucide.createIcons();
+
   pemutar = setInterval(() => {
     waktuSekarang += 1;
     perbaruiTampilan();
   }, 1000);
-  try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
 
-  // ✅ Otomatis masuk layar penuh setiap kali tombol Putar diklik
+  try {
+    filmIframe.contentWindow.postMessage({ cmd: "play" }, "*");
+  } catch (e) {}
+
+  // ✅ Paksa jalan fungsi layar penuh
   aktifkanFullscreenOtomatis();
 }
 
