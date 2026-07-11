@@ -198,7 +198,7 @@ async function toggleSection(event, index, section) {
 // Fungsi Utama & Navigasi
 // ==============================================
 function playMovie(tmdbId) {
-    window.location.href = `watch.html?id=${tmdbId}`;
+    window.location.href = `watch.html?id=${tmdbId}&auto_fs=1`;
 }
 
 // Tutup info saat gulir ke film lain
