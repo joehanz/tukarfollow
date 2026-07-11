@@ -1,159 +1,343 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Subtitle Berjalan Otomatis</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 800px; 
-      margin: 40px auto; 
-      padding: 0 20px; 
-      text-align: center;
+ <script>
+    // KONFIGURASI
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
+    const SUBTITLE_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
+
+    // Elemen
+    const videoWrapper = document.getElementById('videoWrapper');
+    const filmIframe = document.getElementById('filmIframe');
+    const subText = document.getElementById('subText');
+    const jamTayang = document.getElementById('jamTayang');
+    const btnMain = document.getElementById('btnMain');
+    const btnMundur = document.getElementById('btnMundur');
+    const btnMaju = document.getElementById('btnMaju');
+    const btnFullscreen = document.getElementById('btnFullscreen');
+    const btnSearch = document.getElementById('btnSearch');
+    const btnAddComment = document.getElementById('btnAddComment');
+    const btnHome = document.getElementById('btnHome');
+    const btnViewComments = document.getElementById('btnViewComments');
+    const commentsPanel = document.getElementById('commentsPanel');
+    const commentsHeader = document.getElementById('commentsHeader');
+    const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+    const commentListEl = document.getElementById('commentList');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchResultsLayer = document.getElementById('searchResultsLayer');
+    const infoPanel = document.getElementById('infoPanel');
+    const panelBackdrop = document.getElementById('panelBackdrop');
+
+    let currentMovieId = null;
+    let allMoviesCache = [];
+
+    let subtitles = [];
+    let waktuSekarang = 0;
+    let pemutar = null;
+    let sedangMain = false;
+
+    // ====================================
+    // FUNGSI BANTU
+    // ====================================
+    function ubahKeWaktu(detik) {
+      if (isNaN(detik) || detik < 0) detik = 0;
+      const j = Math.floor(detik / 3600).toString().padStart(2, '0');
+      const m = Math.floor((detik % 3600) / 60).toString().padStart(2, '0');
+      const d = Math.floor(detik % 60).toString().padStart(2, '0');
+      return `${j}:${m}:${d}`;
     }
-    .waktu {
-      font-size: 28px;
-      font-weight: bold;
-      color: #222;
-      margin: 20px 0;
+
+    function ubahKeDetik(teksWaktu) {
+      if (!teksWaktu) return 0;
+      teksWaktu = teksWaktu.replace(/[, \s]/g, '.').trim();
+      const bagian = teksWaktu.split(':');
+      let hasil = 0;
+      if (bagian.length === 3) hasil = Number(bagian[0]) * 3600 + Number(bagian[1]) * 60 + Number(bagian[2]);
+      if (bagian.length === 2) hasil = Number(bagian[0]) * 60 + Number(bagian[1]);
+      return isNaN(hasil) ? 0 : hasil;
     }
-    .kotak-teks {
-      font-size: 22px;
-      line-height: 1.7;
-      min-height: 100px;
-      padding: 25px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      margin: 25px 0;
-      color: #000;
-      border: 1px solid #e0e0e0;
+
+    function perbaruiTampilan() {
+      const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
+      subText.textContent = aktif ? aktif.teks : "";
+      jamTayang.textContent = ubahKeWaktu(waktuSekarang);
     }
-    button {
-      padding: 12px 22px;
-      font-size: 17px;
-      margin: 0 8px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      color: white;
+
+    // ====================================
+    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
+    // ====================================
+    function mulaiSemua() {
+      if (pemutar) clearInterval(pemutar);
+      sedangMain = true;
+      btnMain.innerHTML = '<i data-lucide="pause"></i>';
+      lucide.createIcons();
+      pemutar = setInterval(() => {
+        waktuSekarang += 1;
+        perbaruiTampilan();
+      }, 1000);
+      try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
     }
-    .mulai { background: #28a745; }
-    .jeda { background: #ffc107; color: #222; }
-    .ulang { background: #17a2b8; }
-  </style>
-</head>
-<body>
 
-  <h2>Subtitle Berjalan Otomatis</h2>
+    function hentikanSemua() {
+      sedangMain = false;
+      btnMain.innerHTML = '<i data-lucide="play"></i>';
+      lucide.createIcons();
+      clearInterval(pemutar);
+      try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
+    }
 
-  <div class="waktu" id="tampilWaktu">00:00:00</div>
-
-  <div class="kotak-teks" id="tampilSubtitle">
-    Tekan tombol Mulai untuk memulai...
-  </div>
-
-  <button class="mulai" onclick="mulai()">Mulai</button>
-  <button class="jeda" onclick="jeda()">Jeda</button>
-  <button class="ulang" onclick="ulang()">Ulang</button>
-
-<script>
-// Link langsung ke file subtitle kamu
-const URL_VTT = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/1314481.vtt";
-
-let daftarSub = [];
-let waktuMulai = 0;
-let timer = null;
-let sedangJalan = false;
-
-// Ubah format waktu (00:00:30.547) jadi detik
-function keDetik(strWaktu) {
-  const bagian = strWaktu.split(':');
-  const jam = Number(bagian[0]);
-  const menit = Number(bagian[1]);
-  const detik = Number(bagian[2]);
-  return jam * 3600 + menit * 60 + detik;
-}
-
-// Ubah detik jadi format jam:menit:detik
-function keJam(detik) {
-  const j = Math.floor(detik / 3600).toString().padStart(2, '0');
-  const m = Math.floor((detik % 3600) / 60).toString().padStart(2, '0');
-  const d = Math.floor(detik % 60).toString().padStart(2, '0');
-  return `${j}:${m}:${d}`;
-}
-
-// Baca dan olah file VTT
-async function muatSubtitle() {
-  try {
-    const res = await fetch(URL_VTT);
-    if (!res.ok) throw new Error("File tidak bisa diakses");
-
-    const teks = await res.text();
-    const baris = teks.split('\n').map(b => b.trim());
-    let i = 0;
-    daftarSub = [];
-
-    if (baris[0].toUpperCase() === "WEBVTT") i++;
-
-    while (i < baris.length) {
-      if (baris[i].includes("-->")) {
-        const [awalStr, akhirStr] = baris[i].split('-->').map(s => s.trim());
-        i++;
-        let teksSub = "";
-        while (i < baris.length && baris[i] !== "") {
-          teksSub += baris[i] + " ";
-          i++;
-        }
-        daftarSub.push({
-          awal: keDetik(awalStr),
-          akhir: keDetik(akhirStr),
-          teks: teksSub.trim()
-        });
+    function geserWaktu(ubah) {
+      waktuSekarang = Math.max(0, waktuSekarang + ubah);
+      perbaruiTampilan();
+      if (sedangMain) {
+        clearInterval(pemutar);
+        pemutar = setInterval(() => {
+          waktuSekarang += 1;
+          perbaruiTampilan();
+        }, 1000);
       }
-      i++;
     }
-  } catch (err) {
-    document.getElementById("tampilSubtitle").innerHTML = "Gagal memuat: " + err.message;
-  }
-}
 
-// Cari teks yang harus tampil pada waktu sekarang
-function cekSubtitle(waktuSekarang) {
-  const elemen = document.getElementById("tampilSubtitle");
-  const cocok = daftarSub.find(s => waktuSekarang >= s.awal && waktuSekarang <= s.akhir);
-  elemen.innerHTML = cocok ? cocok.teks : "";
-}
+    // ====================================
+    // BACA SUBTITLE LEBIH FLEKSIBEL
+    // ====================================
+    async function bacaSubtitle(idFilm) {
+      const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
+      subtitles = [];
+      waktuSekarang = 0;
+      perbaruiTampilan();
 
-// Tombol mulai
-function mulai() {
-  if (!daftarSub.length) { muatSubtitle().then(mulai); return; }
-  if (sedangJalan) return;
-  sedangJalan = true;
-  const waktuAwal = Date.now() - waktuMulai * 1000;
-  timer = setInterval(() => {
-    waktuMulai = (Date.now() - waktuAwal) / 1000;
-    document.getElementById("tampilWaktu").textContent = keJam(waktuMulai);
-    cekSubtitle(waktuMulai);
-  }, 100);
-}
+      try {
+        const res = await fetch(alamat, { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`File tidak ditemukan: ${res.status}`);
+        const teks = await res.text();
+        if (!teks.trim()) throw new Error("File kosong");
 
-// Tombol jeda
-function jeda() {
-  sedangJalan = false;
-  clearInterval(timer);
-}
+        const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
+        let i = 0;
 
-// Tombol ulang dari awal
-function ulang() {
-  jeda();
-  waktuMulai = 0;
-  document.getElementById("tampilWaktu").textContent = "00:00:00";
-  document.getElementById("tampilSubtitle").innerHTML = "";
-}
+        if (baris[0].toUpperCase().includes("WEBVTT")) i++;
 
-// Muat otomatis saat halaman dibuka
-muatSubtitle();
-</script>
+        while (i < baris.length) {
+          if (baris[i].includes('-->')) {
+            const waktu = baris[i].split('-->').map(w => w.trim());
+            const mulai = ubahKeDetik(waktu[0]);
+            const selesai = ubahKeDetik(waktu[1]);
+            i++;
+            let teksSub = "";
+            while (i < baris.length && !baris[i].includes('-->')) {
+              teksSub += baris[i] + " ";
+              i++;
+            }
+            if (mulai < selesai && teksSub.trim()) {
+              subtitles.push({ mulai, selesai, teks: teksSub.trim() });
+            }
+          } else {
+            i++;
+          }
+        }
 
-</body>
-</html>
+        if (subtitles.length === 0) throw new Error("Format tidak cocok");
+        console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
+      } catch (err) {
+        subText.textContent = "Subtitle tidak tersedia";
+        console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
+      }
+    }
+
+    // ====================================
+    // KONTROL UTAMA
+    // ====================================
+    btnMain.addEventListener('click', () => {
+      sedangMain ? hentikanSemua() : mulaiSemua();
+    });
+
+    btnMundur.addEventListener('click', () => geserWaktu(-10));
+    btnMaju.addEventListener('click', () => geserWaktu(+10));
+
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen();
+        else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
+        else if (videoWrapper.mozRequestFullScreen) videoWrapper.mozRequestFullScreen();
+        else if (videoWrapper.msRequestFullscreen) videoWrapper.msRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
+    });
+
+    // Tombol Baru
+    btnSearch.addEventListener('click', () => {
+      const buka = searchContainer.classList.toggle('show');
+      if (!buka) {
+        searchInput.value = "";
+        searchResultsLayer.classList.remove('active');
+      } else setTimeout(() => searchInput.focus(), 100);
+    });
+
+    btnAddComment.addEventListener('click', bukaFormKomen);
+
+    btnHome.addEventListener('click', () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    btnViewComments.addEventListener('click', () => {
+      const isOpen = commentsPanel.classList.toggle('open');
+      if (isOpen) muatKomentar();
+    });
+
+    // ====================================
+    // BUKA/TUTUP PANEL + MUAT KOMENTAR
+    // ====================================
+    commentsHeader.addEventListener('click', function(e) {
+      if (!e.target.closest('.close-comments')) {
+        const isOpen = commentsPanel.classList.toggle('open');
+        if (isOpen) muatKomentar();
+      }
+    });
+
+    closeCommentsBtn.addEventListener('click', function() {
+      commentsPanel.classList.remove('open');
+    });
+
+    async function muatKomentar() {
+      if (!currentMovieId) return;
+      commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+
+      try {
+        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        const hasil = await res.json();
+
+        if (hasil.status !== "success") {
+          commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`;
+          return;
+        }
+
+        const komentar = hasil.data;
+
+        if (!komentar || komentar.length === 0) {
+          commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>';
+          return;
+        }
+
+        let html = '';
+        komentar.forEach(item => {
+          html += `
+            <div class="comment-item">
+              <div class="comment-name">${item.nama || 'Anonim'}</div>
+              <div class="comment-text">${item.komentar || ''}</div>
+              <div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div>
+            </div>
+          `;
+        });
+
+        commentListEl.innerHTML = html;
+
+      } catch (err) {
+        console.error("❌ Error:", err);
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>';
+      }
+    }
+
+    // ====================================
+    // FUNGSI LAINNYA
+    // ====================================
+    function ambilIdDariUrl() {
+      const param = new URLSearchParams(window.location.search);
+      return param.get('id');
+    }
+
+    function pasangPemutar(tmdbId) {
+      filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+    }
+
+    async function muatDataAwal() {
+      currentMovieId = parseInt(ambilIdDariUrl());
+      if (!currentMovieId) {
+        videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
+        return;
+      }
+
+      pasangPemutar(currentMovieId);
+      await bacaSubtitle(currentMovieId);
+
+      setTimeout(() => {
+        const kolomKomen = document.getElementById('voiceText');
+        if (kolomKomen) {
+          kolomKomen.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              kirimKomentar();
+            }
+          });
+        }
+      }, 500);
+
+      try {
+        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
+        if (res.ok) allMoviesCache = (await res.json()).results;
+      } catch (e) { console.error("Gagal ambil daftar film"); }
+    }
+
+    async function kirimKomentar() {
+      const nama = document.getElementById('commentName').value.trim();
+      const teks = document.getElementById('commentText').value.trim();
+      if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+      tutupFormKomen();
+
+      try {
+        await fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
+        });
+
+        setTimeout(muatKomentar, 800);
+
+      } catch {
+        alert("Gagal mengirim komentar.");
+      }
+    }
+
+    function bukaFormKomen() {
+      infoPanel.classList.add('show');
+      panelBackdrop.classList.add('active');
+    }
+    function tutupFormKomen() {
+      infoPanel.classList.remove('show');
+      panelBackdrop.classList.remove('active');
+    }
+
+    searchInput.addEventListener('input', e => {
+      const kata = e.target.value.toLowerCase().trim();
+      if (!kata) return searchResultsLayer.classList.remove('active');
+      searchResultsLayer.classList.add('active');
+      const hasil = allMoviesCache.filter(m => m.title.toLowerCase().includes(kata));
+      searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
+        <div class="search-item-row" onclick="bukaFilm(${m.id})">
+          <div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path}')"></div>
+          <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0] || '-'}</p></div>
+        </div>
+      `).join('') : `<div style="padding:30px; text-align:center;">Tidak ditemukan</div>`;
+    });
+
+    function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      muatDataAwal();
+    });
+  </script>
