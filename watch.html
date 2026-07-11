@@ -760,7 +760,7 @@
         if (subtitles.length === 0) throw new Error("Format tidak cocok");
         console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
       } catch (err) {
-        subText.textContent = "Subtitle tidak tersedia";
+        subText.textContent = "Subtitle belum tersedia";
         console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
