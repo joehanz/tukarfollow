@@ -31,6 +31,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TUKARFOLLOW - Nonton Film Subtitle Indonesia" />
   <meta name="twitter:description" content="Nonton film terbaru dengan kualitas HD dan subtitle Indonesia lengkap. Streaming cepat tanpa iklan mengganggu." />
+  <meta name="twitter:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
 
   <!-- FONTS & ICON SCRIPT -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
@@ -59,8 +60,16 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- CSS LENGKAP -->
+  <!-- CSS DIPERBAIKI -->
   <style>
+    html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: #0a0a0a;
+}
     * {
       margin: 0;
       padding: 0;
@@ -69,227 +78,33 @@
     }
 
     body {
-      background-color: #000000;
+      background-color: #0a0a0a;
       color: #ffffff;
-      overflow: hidden;
-      position: relative;
+      overflow-x: hidden;
     }
 
-    /* LAYAR UTAMA */
-    .watch-layout {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .video-main-wrapper {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      position: relative;
-    }
-
-    #filmIframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      opacity: 0.85;
-      transition: opacity 0.3s ease;
-    }
-
-    /* ✅ LAPISAN PENUTUP - KUNCI AGAR TIDAK LANGSUNG PICU IKLAN */
-    #overlayScreen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 50;
-      background: rgba(0,0,0,0.35);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.4s ease;
-    }
-
-    #overlayScreen.hidden {
-      opacity: 0;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .overlay-play-btn {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      transition: transform 0.2s ease;
-    }
-
-    .overlay-play-btn:hover {
-      transform: scale(1.08);
-      background: rgba(255,255,255,0.25);
-    }
-
-    .overlay-text {
-      font-size: 15px;
-      color: #fff;
-      text-align: center;
-      padding: 0 20px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-    }
-
-    /* SUBTITLE */
-    .subtitle-layer {
-      position: absolute;
-      bottom: 120px;
-      left: 0;
-      right: 0;
-      z-index: 40;
-      padding: 0 16px;
-      text-align: center;
-      pointer-events: none;
-    }
-
-    .subtitle-text {
-      font-size: 18px;
-      font-weight: 500;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.95);
-      line-height: 1.5;
-    }
-
-    /* NAVIGASI BAWAH - TANPA LATAR, Z-INDEX LEBIH TINGGI */
-    .bottom-nav {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 60;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 8px 14px;
-      transition: transform 0.3s ease, opacity 0.25s ease;
-      background: transparent;
-      pointer-events: auto;
-    }
-
-    .bottom-nav.hidden {
-      transform: translateX(-50%) translateY(100px);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .ctrl-btn {
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: #fff;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(6px);
-      transition: all 0.15s ease;
-    }
-
-    .ctrl-btn:hover {
-      background: rgba(255,255,255,0.25);
-      transform: scale(1.08);
-    }
-
-    .time-display {
-      font-size: 14px;
-      font-weight: 500;
-      min-width: 80px;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    }
-
-    /* NAVIGASI SAMPING - POSISI KANAN, Z-INDEX LEBIH TINGGI */
-    .side-nav {
-      position: fixed;
-      top: 50%;
-      right: 20px;
-      transform: translateY(-50%);
-      z-index: 60;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px 6px;
-      transition: transform 0.3s ease, opacity 0.25s ease;
-      background: transparent;
-      pointer-events: auto;
-    }
-
-    .side-nav.hidden {
-      transform: translateY(-50%) translateX(80px);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .side-nav .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: background 0.15s ease;
-    }
-
-    .side-nav .nav-item:hover {
-      background: rgba(255,255,255,0.12);
-    }
-
-    .side-nav .nav-item span {
-      font-size: 10px;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    }
-
-    /* PANEL KOMENTAR - KELUAR DARI KIRI */
     .comments-panel {
       position: fixed;
       top: 0;
-      left: -360px;
-      width: 340px;
+      right: -380px;
+      width: 360px;
       height: 100vh;
-      background: rgba(18, 18, 18, 0.92);
-      backdrop-filter: blur(12px);
-      border-right: 1px solid rgba(255,255,255,0.1);
-      z-index: 70;
-      transition: left 0.3s ease;
+      background: #121212;
+      border-left: 1px solid #2a2a2a;
+      z-index: 999;
+      transition: right 0.3s ease;
       display: flex;
       flex-direction: column;
     }
 
     .comments-panel.open {
-      left: 0;
+      right: 0;
     }
 
     .comments-header {
       padding: 16px;
-      background: rgba(30,30,30,0.85);
+      background: #1e1e1e;
+      border-bottom: 1px solid #2a2a2a;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -297,16 +112,22 @@
     }
 
     .close-comments {
-      background: rgba(255,255,255,0.15);
+      background: none;
       border: none;
       color: #fff;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
+      font-size: 20px;
       cursor: pointer;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .close-comments:hover {
+      background: #2a2a2a;
     }
 
     .comments-section {
@@ -315,45 +136,201 @@
       overflow-y: auto;
     }
 
+    .empty-comments {
+      text-align: center;
+      color: #888;
+      padding: 40px 20px;
+      font-size: 14px;
+    }
+
     .comment-item {
-      background: rgba(30,30,30,0.75);
+      background: #1e1e1e;
       border-radius: 8px;
       padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 12px;
+      border: 1px solid #2a2a2a;
     }
 
     .comment-name {
-      color: #4facff;
       font-weight: 500;
       font-size: 14px;
       margin-bottom: 4px;
+      color: #4facff;
     }
 
     .comment-text {
       font-size: 13px;
-      color: #eee;
-      line-height: 1.4;
+      line-height: 1.5;
+      color: #ddd;
+      margin-bottom: 6px;
     }
 
     .comment-date {
       font-size: 11px;
-      color: #999;
-      margin-top: 6px;
+      color: #777;
     }
 
-    /* PANEL PENCARIAN & FORM */
+    .watch-layout {
+  width: 100%;        /* Lebar = 100% lebar layar */
+  height: 100vh;       /* Tinggi = 100% tinggi layar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;          /* ❌ Hapus semua ruang kosong */
+  margin: 0;
+  position: relative;
+  overflow: hidden;    /* Jangan ada yang meluber keluar layar */
+  background: #000; 
+}
+
+    .video-main-wrapper {
+  position: relative;
+  width: 100%;         /* Penuhi lebar pembungkusnya */
+  height: 100%;        /* Penuhi tinggi pembungkusnya */
+  max-width: 100%;     /* ❌ Hapus batas lebar maksimal */
+  max-height: 100%;    /* ❌ Hapus batas tinggi maksimal */
+  margin: 0;
+  padding: 0;
+  border-radius: 0;    /* ❌ Buang lengkungan sudut biar rapat */
+  overflow: hidden;
+  background: #000;
+}
+    #filmIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block; 
+}
+
+    .watermark-logo {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .watermark-logo img {
+      width: 60px;
+      height: auto;
+    }
+
+    /* Bagian Subtitle & Kontrol */
+    .subtitle-layer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding: 20px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+
+    /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
+@media (max-width: 768px) {
+  .subtitle-layer {
+    position: absolute;  /* Tetap mengikuti wadah videonya, bukan kunci ke seluruh layar */
+    bottom: 5px;         /* ✅ Naik 5 piksel dari tepi bawah — langsung terlihat */
+    left: 0;
+    right: 0;
+    width: auto;         /* Lebar penuh saja, tidak tinggi */
+    height: auto;
+    padding: 10px 12px 8px;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* HAPUS: height, fixed, overscroll — tidak perlu di sini */
+  }
+}
+
+/* ✅ Khusus HP mode lebar/penuh layar */
+@media (max-width: 768px) and (orientation: landscape) {
+  .subtitle-layer {
+    bottom: 10px;        /* ✅ Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+    padding: 10px 12px 8px;
+    margin: 0;
+    box-sizing: border-box;
+  }
+}
+
+    .subtitle-text {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      min-height: 32px;
+      line-height: 1.4;
+      padding: 0 10px;
+    }
+
+    .subtitle-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(255,255,255,0.08);
+      padding: 10px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .ctrl-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.05);
+    }
+
+    .ctrl-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .time-digital {
+      font-size: 14px;
+      font-weight: 500;
+      color: #eee;
+      padding: 0 8px;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    /* Panel Pencarian */
     .search-container {
       position: fixed;
-      top: 20px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 90;
       width: 90%;
-      max-width: 460px;
-      z-index: 75;
+      max-width: 600px;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.25s ease;
+      transition: all 0.3s ease;
     }
 
     .search-container.show {
@@ -362,13 +339,18 @@
     }
 
     .search-box {
-      background: rgba(26,26,26,0.95);
-      backdrop-filter: blur(14px);
+      background: rgba(20,20,20,0.95);
       border-radius: 12px;
       display: flex;
       align-items: center;
       padding: 10px 14px;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .search-box i {
+      margin-right: 10px;
+      color: #aaa;
     }
 
     #searchInput {
@@ -377,7 +359,72 @@
       border: none;
       outline: none;
       color: #fff;
-      padding-left: 8px;
+      font-size: 15px;
+    }
+
+    #searchInput::placeholder {
+      color: #888;
+    }
+
+    .search-results-layer {
+      margin-top: 8px;
+      background: rgba(20,20,20,0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .search-results-layer.active {
+      display: block;
+    }
+
+    .search-item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-item-row:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .search-item-thumb {
+      width: 50px;
+      height: 70px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 6px;
+    }
+
+    .search-item-info h4 {
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .search-item-info p {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Panel Komentar */
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .panel-backdrop.active {
+      opacity: 1;
+      visibility: visible;
     }
 
     .info-panel {
@@ -385,17 +432,16 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
+      z-index: 999;
       width: 90%;
-      max-width: 360px;
-      background: rgba(26,26,26,0.96);
-      backdrop-filter: blur(14px);
-      border-radius: 12px;
-      padding: 20px;
-      z-index: 80;
+      max-width: 420px;
+      background: #1a1a1a;
+      border-radius: 14px;
+      border: 1px solid #2e2e2e;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       opacity: 0;
       visibility: hidden;
-      transition: all 0.25s ease;
-      border: 1px solid rgba(255,255,255,0.12);
+      transition: all 0.3s ease;
     }
 
     .info-panel.show {
@@ -404,168 +450,172 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
+    .form-title {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px;
+      border-bottom: 1px solid #2e2e2e;
+    }
+
     .form-group {
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 16px;
     }
 
     .form-group input,
     .form-group textarea {
-      background: rgba(37,37,37,0.85);
-      border: 1px solid rgba(255,255,255,0.15);
+      width: 100%;
+      background: #252525;
+      border: 1px solid #3a3a3a;
       border-radius: 8px;
-      padding: 10px;
+      padding: 10px 12px;
       color: #fff;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4facff;
     }
 
     .submit-btn {
       background: #2563eb;
       border: none;
       color: #fff;
+      font-weight: 500;
       padding: 10px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
+      transition: background 0.2s;
     }
 
-    .panel-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 78;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.2s ease;
+    .submit-btn:hover {
+      background: #1d4ed8;
     }
 
-    .panel-backdrop.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* KHUSUS LAYAR HP */
+    /* Responsif untuk HP */
     @media (max-width: 768px) {
+      .video-main-wrapper {
+        border-radius: 0;
+        aspect-ratio: auto;
+        min-height: 80vh;
+      }
+
       .subtitle-text {
         font-size: 16px;
       }
-      .bottom-nav {
-        bottom: 15px;
-        gap: 14px;
+
+      .ctrl-btn {
+        width: 36px;
+        height: 36px;
       }
-      .side-nav {
-        right: 12px;
-        gap: 18px;
+
+      .time-digital {
+        font-size: 13px;
       }
-      .overlay-play-btn {
-        width: 65px;
-        height: 65px;
+
+      .comments-panel {
+        width: 90%;
+        right: -95%;
       }
     }
   </style>
+
 </head>
 <body>
 
-  <!-- Panel Komentar -->
   <div class="comments-panel" id="commentsPanel">
-    <div class="comments-header">
-      <span><i data-lucide="message-square" size="16"></i> Komentar</span>
+    <div class="comments-header" id="commentsHeader">
+      <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
       <button class="close-comments" id="closeCommentsBtn">&times;</button>
     </div>
-    <div class="comments-section" id="commentList">
-      <div style="text-align:center; color:#999; padding:30px;">Belum ada komentar</div>
-    </div>
-  </div>
-
-  <!-- Panel Pencarian -->
-  <div class="search-container" id="searchContainer">
-    <div class="search-box">
-      <i data-lucide="search" size="18" color="#aaa"></i>
-      <input type="text" id="searchInput" placeholder="Cari film lain...">
-    </div>
-    <div class="search-results-layer" id="searchResultsLayer" style="margin-top:8px; background:rgba(26,26,26,0.95); border-radius:8px; display:none; max-height:280px; overflow-y:auto;"></div>
-  </div>
-
-  <!-- Panel Tulis Komentar -->
-  <div class="panel-backdrop" id="panelBackdrop"></div>
-  <div class="info-panel" id="infoPanel">
-    <h4>Tulis Komentar</h4>
-    <div class="form-group">
-      <input type="text" id="commentName" placeholder="Nama samaran...">
-      <textarea id="commentText" rows="3" placeholder="Tulis pendapatmu..."></textarea>
-      <button class="submit-btn" onclick="kirimKomentar()">Kirim</button>
-    </div>
-  </div>
-
-  <!-- AREA PEMUTAR -->
-  <div class="watch-layout" id="mainArea">
-    <div class="video-main-wrapper">
-      <!-- ✅ TANPA AUTOPLAY, AGAR TIDAK LANGSUNG PICU IKLAN -->
-      <iframe id="filmIframe" src="" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe>
-
-      <!-- ✅ LAPISAN PENUTUP AWAL -->
-      <div id="overlayScreen">
-        <div class="overlay-play-btn">
-          <i data-lucide="play" size="32" color="#fff"></i>
-        </div>
-        <div class="overlay-text">Klik untuk memutar film</div>
+    <div class="comments-section" id="commentsSection">
+      <div class="comments-list-container" id="commentList">
+        <div class="empty-comments">Buka untuk melihat komentar...</div>
       </div>
+    </div>
+  </div>
 
+  <div class="watch-layout">
+    <div class="video-main-wrapper" id="videoWrapper">
+      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+
+      <div class="watermark-logo">
+        <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
+      </div>
+      
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
+        <div class="subtitle-controls">
+          <!-- Kontrol Pemutar -->
+          <button class="ctrl-btn" id="btnMundur" title="Mundur 10 detik">
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+          <button class="ctrl-btn" id="btnMain" title="Putar / Jeda">
+            <i data-lucide="play"></i>
+          </button>
+          <button class="ctrl-btn" id="btnMaju" title="Maju 10 detik">
+            <i data-lucide="rotate-cw"></i>
+          </button>
+          <div class="time-digital" id="jamTayang">00:00:00</div>
+
+          <!-- Menu Baru yang Dipindah dari Nav Bawah -->
+          <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh">
+            <i data-lucide="maximize"></i>
+          </button>
+          <button class="ctrl-btn" id="btnSearch" title="Cari Film">
+            <i data-lucide="search"></i>
+          </button>
+          <button class="ctrl-btn" id="btnAddComment" title="Tulis Komentar">
+            <i data-lucide="plus-circle"></i>
+          </button>
+          <button class="ctrl-btn" id="btnHome" title="Kembali ke Beranda">
+            <i data-lucide="home"></i>
+          </button>
+          <button class="ctrl-btn" id="btnViewComments" title="Lihat Komentar">
+            <i data-lucide="message-square"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- NAVIGASI SAMPING KANAN -->
-  <div class="side-nav auto-hide" id="sideNav">
-    <div class="nav-item" id="btnSearch">
-      <i data-lucide="search" size="22"></i>
-      <span>Cari</span>
-    </div>
-    <div class="nav-item" id="btnAddComment">
-      <i data-lucide="plus-circle" size="22"></i>
-      <span>Tulis</span>
-    </div>
-    <div class="nav-item" id="btnHome">
-      <i data-lucide="home" size="22"></i>
-      <span>Beranda</span>
-    </div>
-    <div class="nav-item" id="btnViewComments">
-      <i data-lucide="message-square" size="22"></i>
-      <span>Komen</span>
+  <div class="search-container" id="searchContainer">
+    <div class="search-box">
+      <i data-lucide="search" size="18" color="#888"></i>
+      <input type="text" id="searchInput" placeholder="Cari film lain...">
     </div>
   </div>
 
-  <!-- NAVIGASI BAWAH -->
-  <div class="bottom-nav auto-hide" id="bottomNav">
-    <button class="ctrl-btn" id="btnMundur" title="Mundur 10 detik">
-      <i data-lucide="rotate-ccw" size="18"></i>
-    </button>
-    <button class="ctrl-btn" id="btnMain" title="Putar / Jeda">
-      <i data-lucide="play" size="20"></i>
-    </button>
-    <button class="ctrl-btn" id="btnMaju" title="Maju 10 detik">
-      <i data-lucide="rotate-cw" size="18"></i>
-    </button>
-    <div class="time-display" id="jamTayang">00:00:00</div>
-    <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh">
-      <i data-lucide="maximize" size="18"></i>
-    </button>
+  <div class="search-results-layer" id="searchResultsLayer"></div>
+
+  <div class="panel-backdrop" id="panelBackdrop" onclick="tutupFormKomen()"></div>
+
+  <div class="info-panel" id="infoPanel">
+    <div class="panel-content">
+      <div class="form-title">Tulis Komentar Kamu</div>
+      <div class="form-group">
+        <input type="text" id="commentName" placeholder="Nama samaran kamu...">
+        <textarea id="commentText" placeholder="Tulis opini/komentar film di sini..." rows="3" maxlength="300"></textarea>
+        <button class="submit-btn" onclick="kirimKomentar()">Kirim Komentar</button>
+      </div>
+    </div>
   </div>
 
   <script>
     // KONFIGURASI
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
     const SUBTITLE_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
 
-    // ELEMEN
+    // Elemen
+    const videoWrapper = document.getElementById('videoWrapper');
     const filmIframe = document.getElementById('filmIframe');
-    const overlayScreen = document.getElementById('overlayScreen');
     const subText = document.getElementById('subText');
     const jamTayang = document.getElementById('jamTayang');
     const btnMain = document.getElementById('btnMain');
@@ -577,6 +627,7 @@
     const btnHome = document.getElementById('btnHome');
     const btnViewComments = document.getElementById('btnViewComments');
     const commentsPanel = document.getElementById('commentsPanel');
+    const commentsHeader = document.getElementById('commentsHeader');
     const closeCommentsBtn = document.getElementById('closeCommentsBtn');
     const commentListEl = document.getElementById('commentList');
     const searchContainer = document.getElementById('searchContainer');
@@ -584,18 +635,15 @@
     const searchResultsLayer = document.getElementById('searchResultsLayer');
     const infoPanel = document.getElementById('infoPanel');
     const panelBackdrop = document.getElementById('panelBackdrop');
-    const sideNav = document.getElementById('sideNav');
-    const bottomNav = document.getElementById('bottomNav');
-    const mainArea = document.getElementById('mainArea');
 
     let currentMovieId = null;
     let allMoviesCache = [];
+    let autoFullscreen = false; // ✅ Tambahan: variabel penanda
+
     let subtitles = [];
     let waktuSekarang = 0;
     let pemutar = null;
     let sedangMain = false;
-    let hideTimer;
-    let iframeAktif = false;
 
     // ====================================
     // FUNGSI BANTU
@@ -625,34 +673,28 @@
     }
 
     // ====================================
-    // AKTIFKAN PEMUTAR SETELAH KLIK AWAL
-    // ====================================
-    function aktifkanPemutar() {
-      if (iframeAktif) return;
-      iframeAktif = true;
-      overlayScreen.classList.add('hidden');
-      filmIframe.style.opacity = '1';
-      mulaiSemua();
-    }
-
-    // ====================================
-    // KONTROL PEMUTAR
+    // FUNGSI UTAMA: KAWINKAN PLAY & SUB
     // ====================================
     function mulaiSemua() {
       if (pemutar) clearInterval(pemutar);
       sedangMain = true;
-      btnMain.innerHTML = '<i data-lucide="pause" size="20"></i>';
+      btnMain.innerHTML = '<i data-lucide="pause"></i>';
       lucide.createIcons();
       pemutar = setInterval(() => {
         waktuSekarang += 1;
         perbaruiTampilan();
       }, 1000);
       try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+
+      // ✅ Tambahan: Jalankan fullscreen otomatis jika ada tanda
+      if (autoFullscreen) {
+        aktifkanFullscreenOtomatis();
+      }
     }
 
     function hentikanSemua() {
       sedangMain = false;
-      btnMain.innerHTML = '<i data-lucide="play" size="20"></i>';
+      btnMain.innerHTML = '<i data-lucide="play"></i>';
       lucide.createIcons();
       clearInterval(pemutar);
       try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
@@ -670,8 +712,23 @@
       }
     }
 
+    // ✅ Tambahan: Fungsi khusus fullscreen otomatis
+    function aktifkanFullscreenOtomatis() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (videoWrapper.requestFullscreen) {
+          videoWrapper.requestFullscreen().catch(err => console.log("Fullscreen diblokir:", err));
+        } else if (videoWrapper.webkitRequestFullscreen) {
+          videoWrapper.webkitRequestFullscreen();
+        } else if (videoWrapper.mozRequestFullScreen) {
+          videoWrapper.mozRequestFullScreen();
+        } else if (videoWrapper.msRequestFullscreen) {
+          videoWrapper.msRequestFullscreen();
+        }
+      }
+    }
+
     // ====================================
-    // BACA SUBTITLE
+    // BACA SUBTITLE LEBIH FLEKSIBEL
     // ====================================
     async function bacaSubtitle(idFilm) {
       const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
@@ -681,12 +738,13 @@
 
       try {
         const res = await fetch(alamat, { cache: 'no-cache' });
-        if (!res.ok) throw new Error("Tidak ada");
+        if (!res.ok) throw new Error(`File tidak ditemukan: ${res.status}`);
         const teks = await res.text();
-        if (!teks.trim()) throw new Error("Kosong");
+        if (!teks.trim()) throw new Error("File kosong");
 
         const baris = teks.split('\n').map(b => b.trim()).filter(b => b);
         let i = 0;
+
         if (baris[0].toUpperCase().includes("WEBVTT")) i++;
 
         while (i < baris.length) {
@@ -707,111 +765,160 @@
             i++;
           }
         }
+
+        if (subtitles.length === 0) throw new Error("Format tidak cocok");
+        console.log(`✅ Subtitle ID ${idFilm} dimuat: ${subtitles.length} baris`);
       } catch (err) {
-        subText.textContent = "";
+        subText.textContent = "Subtitle tidak tersedia";
+        console.log(`❌ Gagal baca sub ID ${idFilm}:`, err.message);
       }
     }
 
     // ====================================
-    // NAVIGASI SENSITIF TAPI AMAN
+    // KONTROL UTAMA
     // ====================================
-    function resetHideTimer(e) {
-      // Abaikan jika klik/gerakan ke area yang tidak mengganggu
-      if (e && e.target.closest('#overlayScreen, .ctrl-btn, .nav-item, .search-container, .info-panel, .comments-panel')) {
-        clearTimeout(hideTimer);
-        sideNav.classList.remove('hidden');
-        bottomNav.classList.remove('hidden');
-        hideTimer = setTimeout(() => {
-          sideNav.classList.add('hidden');
-          bottomNav.classList.add('hidden');
-        }, 2500);
-      }
-    }
+    btnMain.addEventListener('click', () => {
+      sedangMain ? hentikanSemua() : mulaiSemua();
+    });
 
-    // ====================================
-    // LAYAR PENUH
-    // ====================================
-    function toggleFullscreen() {
-      const elem = document.documentElement;
-      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    btnMundur.addEventListener('click', () => geserWaktu(-10));
+    btnMaju.addEventListener('click', () => geserWaktu(+10));
+
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (videoWrapper.requestFullscreen) videoWrapper.requestFullscreen();
+        else if (videoWrapper.webkitRequestFullscreen) videoWrapper.webkitRequestFullscreen();
+        else if (videoWrapper.mozRequestFullScreen) videoWrapper.mozRequestFullScreen();
+        else if (videoWrapper.msRequestFullscreen) videoWrapper.msRequestFullscreen();
       } else {
         if (document.exitFullscreen) document.exitFullscreen();
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
         else if (document.msExitFullscreen) document.msExitFullscreen();
       }
-      resetHideTimer();
+    });
+
+    // Tombol Baru
+    btnSearch.addEventListener('click', () => {
+      const buka = searchContainer.classList.toggle('show');
+      if (!buka) {
+        searchInput.value = "";
+        searchResultsLayer.classList.remove('active');
+      } else setTimeout(() => searchInput.focus(), 100);
+    });
+
+    btnAddComment.addEventListener('click', bukaFormKomen);
+
+    btnHome.addEventListener('click', () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    btnViewComments.addEventListener('click', () => {
+      const isOpen = commentsPanel.classList.toggle('open');
+      if (isOpen) muatKomentar();
+    });
+
+    // ====================================
+    // BUKA/TUTUP PANEL + MUAT KOMENTAR
+    // ====================================
+    commentsHeader.addEventListener('click', function(e) {
+      if (!e.target.closest('.close-comments')) {
+        const isOpen = commentsPanel.classList.toggle('open');
+        if (isOpen) muatKomentar();
+      }
+    });
+
+    closeCommentsBtn.addEventListener('click', function() {
+      commentsPanel.classList.remove('open');
+    });
+
+    async function muatKomentar() {
+      if (!currentMovieId) return;
+      commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+
+      try {
+        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        const hasil = await res.json();
+
+        if (hasil.status !== "success") {
+          commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`;
+          return;
+        }
+
+        const komentar = hasil.data;
+
+        if (!komentar || komentar.length === 0) {
+          commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>';
+          return;
+        }
+
+        let html = '';
+        komentar.forEach(item => {
+          html += `
+            <div class="comment-item">
+              <div class="comment-name">${item.nama || 'Anonim'}</div>
+              <div class="comment-text">${item.komentar || ''}</div>
+              <div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div>
+            </div>
+          `;
+        });
+
+        commentListEl.innerHTML = html;
+
+      } catch (err) {
+        console.error("❌ Error:", err);
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>';
+      }
     }
 
     // ====================================
-    // MUAT DATA & PEMUTAR
+    // FUNGSI LAINNYA
     // ====================================
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
+      // ✅ Tambahan: Baca parameter auto_fs
+      autoFullscreen = param.get('auto_fs') === '1';
       return param.get('id');
     }
 
     function pasangPemutar(tmdbId) {
-      // ✅ TANPA AUTOPLAY, TANPA PARAMETER YANG MEMICU IKLAN
       filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
     }
 
     async function muatDataAwal() {
       currentMovieId = parseInt(ambilIdDariUrl());
       if (!currentMovieId) {
-        document.querySelector('.video-main-wrapper').innerHTML = `<div style="padding:50px; text-align:center; font-size:15px;">ID Film tidak ditemukan</div>`;
+        videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
         return;
       }
 
       pasangPemutar(currentMovieId);
       await bacaSubtitle(currentMovieId);
 
+      setTimeout(() => {
+        const kolomKomen = document.getElementById('voiceText');
+        if (kolomKomen) {
+          kolomKomen.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              kirimKomentar();
+            }
+          });
+        }
+      }, 500);
+
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
         if (res.ok) allMoviesCache = (await res.json()).results;
-      } catch (e) {}
-    }
-
-    // ====================================
-    // FUNGSI KOMENTAR & PENCARIAN
-    // ====================================
-    async function muatKomentar() {
-      if (!currentMovieId) return;
-      commentListEl.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Memuat...</div>';
-
-      try {
-        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
-        const hasil = await res.json();
-        if (hasil.status !== "success") throw new Error(hasil.message);
-
-        if (!hasil.data.length) {
-          commentListEl.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Belum ada komentar</div>';
-          return;
-        }
-
-        commentListEl.innerHTML = hasil.data.map(item => `
-          <div class="comment-item">
-            <div class="comment-name">${item.nama || 'Anonim'}</div>
-            <div class="comment-text">${item.komentar}</div>
-            <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
-          </div>
-        `).join('');
-      } catch (err) {
-        commentListEl.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Gagal memuat</div>';
-      }
-    }
-
-    function bukaFormKomen() {
-      panelBackdrop.classList.add('active');
-      infoPanel.classList.add('show');
-      resetHideTimer();
-    }
-
-    function tutupFormKomen() {
-      panelBackdrop.classList.remove('active');
-      infoPanel.classList.remove('show');
+      } catch (e) { console.error("Gagal ambil daftar film"); }
     }
 
     async function kirimKomentar() {
@@ -824,80 +931,47 @@
         await fetch(URL_APPS_SCRIPT, {
           method: 'POST',
           mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
         });
+
         setTimeout(muatKomentar, 800);
+
       } catch {
         alert("Gagal mengirim komentar.");
       }
     }
 
-    function bukaFilm(id) {
-      window.location.href = `watch.html?id=${id}`;
+    function bukaFormKomen() {
+      infoPanel.classList.add('show');
+      panelBackdrop.classList.add('active');
+    }
+    function tutupFormKomen() {
+      infoPanel.classList.remove('show');
+      panelBackdrop.classList.remove('active');
     }
 
-    // ====================================
-    // EVENT LISTENER
-    // ====================================
+    searchInput.addEventListener('input', e => {
+      const kata = e.target.value.toLowerCase().trim();
+      if (!kata) return searchResultsLayer.classList.remove('active');
+      searchResultsLayer.classList.add('active');
+      const hasil = allMoviesCache.filter(m => m.title.toLowerCase().includes(kata));
+      searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
+        <div class="search-item-row" onclick="bukaFilm(${m.id})">
+          <div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path}')"></div>
+          <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0] || '-'}</p></div>
+        </div>
+      `).join('') : `<div style="padding:30px; text-align:center;">Tidak ditemukan</div>`;
+    });
+
+    function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
+
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       muatDataAwal();
-      resetHideTimer();
     });
-
-    // Klik lapisan awal untuk aktifkan pemutar
-    overlayScreen.addEventListener('click', aktifkanPemutar);
-
-    // Kontrol tombol
-    btnMain.addEventListener('click', () => {
-      if (!iframeAktif) aktifkanPemutar();
-      else sedangMain ? hentikanSemua() : mulaiSemua();
-      resetHideTimer();
-    });
-    btnMundur.addEventListener('click', () => { geserWaktu(-10); resetHideTimer(); });
-    btnMaju.addEventListener('click', () => { geserWaktu(+10); resetHideTimer(); });
-    btnFullscreen.addEventListener('click', toggleFullscreen);
-
-    // Menu navigasi
-    btnSearch.addEventListener('click', () => {
-      const buka = searchContainer.classList.toggle('show');
-      if (buka) setTimeout(() => searchInput.focus(), 100);
-      resetHideTimer();
-    });
-    btnAddComment.addEventListener('click', bukaFormKomen);
-    btnHome.addEventListener('click', () => window.location.href = 'index.html');
-    btnViewComments.addEventListener('click', () => {
-      commentsPanel.classList.toggle('open');
-      if (commentsPanel.classList.contains('open')) muatKomentar();
-      resetHideTimer();
-    });
-    closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
-    panelBackdrop.addEventListener('click', tutupFormKomen);
-
-    // Pencarian
-    searchInput.addEventListener('input', e => {
-      const kata = e.target.value.toLowerCase().trim();
-      if (!kata) {
-        searchResultsLayer.style.display = 'none';
-        return;
-      }
-      const hasil = allMoviesCache.filter(m => m.title.toLowerCase().includes(kata));
-      searchResultsLayer.style.display = 'block';
-      searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
-        <div onclick="bukaFilm(${m.id})" style="display:flex; gap:10px; padding:8px; cursor:pointer; border-radius:6px;">
-          <div style="width:40px; height:55px; background:url('${IMAGE_URL}${m.poster_path}') center/cover; border-radius:4px;"></div>
-          <div><div>${m.title}</div><div style="font-size:11px; color:#999;">${m.release_date?.split('-')[0] || '-'}</div></div>
-        </div>
-      `).join('') : `<div style="padding:15px; text-align:center;">Tidak ditemukan</div>`;
-    });
-
-    // Deteksi gerakan - SANGAT SENSITIF TAPI AMAN
-    mainArea.addEventListener('touchstart', resetHideTimer, { passive: true });
-    mainArea.addEventListener('touchmove', resetHideTimer, { passive: true });
-    mainArea.addEventListener('mousemove', resetHideTimer, { passive: true });
-    mainArea.addEventListener('click', resetHideTimer, { passive: true });
-    document.addEventListener('mousemove', resetHideTimer, { passive: true });
   </script>
 
 </body>
 </html>
+
