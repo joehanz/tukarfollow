@@ -629,6 +629,7 @@
 
     let currentMovieId = null;
     let allMoviesCache = [];
+    let autoFullscreen = false; // ✅ Tambahan: variabel penanda
 
     let subtitles = [];
     let waktuSekarang = 0;
@@ -675,6 +676,11 @@
         perbaruiTampilan();
       }, 1000);
       try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
+
+      // ✅ Tambahan: Jalankan fullscreen otomatis jika ada tanda
+      if (autoFullscreen) {
+        aktifkanFullscreenOtomatis();
+      }
     }
 
     function hentikanSemua() {
@@ -694,6 +700,21 @@
           waktuSekarang += 1;
           perbaruiTampilan();
         }, 1000);
+      }
+    }
+
+    // ✅ Tambahan: Fungsi khusus fullscreen otomatis
+    function aktifkanFullscreenOtomatis() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (videoWrapper.requestFullscreen) {
+          videoWrapper.requestFullscreen().catch(err => console.log("Fullscreen diblokir:", err));
+        } else if (videoWrapper.webkitRequestFullscreen) {
+          videoWrapper.webkitRequestFullscreen();
+        } else if (videoWrapper.mozRequestFullScreen) {
+          videoWrapper.mozRequestFullScreen();
+        } else if (videoWrapper.msRequestFullscreen) {
+          videoWrapper.msRequestFullscreen();
+        }
       }
     }
 
@@ -854,6 +875,8 @@
     // ====================================
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
+      // ✅ Tambahan: Baca parameter auto_fs
+      autoFullscreen = param.get('auto_fs') === '1';
       return param.get('id');
     }
 
