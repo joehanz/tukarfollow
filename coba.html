@@ -163,35 +163,36 @@
     }
 
     .watch-layout {
-  width: 100vw;        /* Lebar = 100% lebar layar */
-  height: 100vh;       /* Tinggi = 100% tinggi layar */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;          /* ❌ Hapus semua ruang kosong */
-  margin: 0;
-  position: relative;
-  overflow: hidden;    /* Jangan ada yang meluber keluar layar */
-}
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
 
     .video-main-wrapper {
-  position: relative;
-  width: 100%;         /* Penuhi lebar pembungkusnya */
-  height: 100%;        /* Penuhi tinggi pembungkusnya */
-  max-width: 100%;     /* ❌ Hapus batas lebar maksimal */
-  max-height: 100%;    /* ❌ Hapus batas tinggi maksimal */
-  margin: 0;
-  padding: 0;
-  border-radius: 0;    /* ❌ Buang lengkungan sudut biar rapat */
-  overflow: hidden;
-  background: #000;
-}
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
     #filmIframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  object-fit: cover;   /* ⚠️ Ini kuncinya: isi akan membesar menutupi seluruh kotak tanpa terdistorsi berlebih */
-}
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
 
     .watermark-logo {
       position: absolute;
@@ -222,22 +223,21 @@
     }
 
     /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
-@media (max-width: 768px) {
-  .subtitle-layer {
-    bottom: 15px;      /* Naik 6 piksel dari tepi bawah - langsung terlihat */
-    padding: 10px 12px 8px;
-    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
-  }
-}
+    @media (max-width: 768px) {
+      .subtitle-layer {
+        bottom: 15px;
+        padding: 10px 12px 8px;
+        overflow: hidden;
+      }
+    }
 
-/* ✅ Khusus HP mode lebar/penuh layar */
-@media (max-width: 768px) and (orientation: landscape) {
-  .subtitle-layer {
-    bottom: 10px;     /* Naik sedikit lagi agar tidak ketutup tombol sistem HP */
-    overflow: hidden;      /* ❌ TUTUP SEMUA GESEKAN */
-  }
-}
-
+    /* ✅ Khusus HP mode lebar/penuh layar */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .subtitle-layer {
+        bottom: 10px;
+        overflow: hidden;
+      }
+    }
 
     .subtitle-text {
       text-align: center;
@@ -473,6 +473,61 @@
       background: #1d4ed8;
     }
 
+    /* ✅ Kotak Fitur AI Suara → Teks - Ditempatkan dengan Rapi */
+    .voice-to-text-panel {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 100;
+      background: rgba(18, 18, 18, 0.92);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 12px;
+      width: 320px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+    }
+
+    .voice-to-text-panel h2 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #4facff;
+    }
+
+    .voice-to-text-panel p.info {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .voice-to-text-panel button {
+      font-size: 12px;
+      padding: 6px 8px;
+      margin: 2px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #hasil {
+      width: 100%;
+      height: 90px;
+      margin-top: 8px;
+      background: #222;
+      border: 1px solid #333;
+      color: #fff;
+      font-size: 12px;
+      padding: 6px;
+      border-radius: 6px;
+      resize: none;
+    }
+
+    #status {
+      font-size: 11px;
+      margin-top: 6px;
+      color: #999;
+    }
+
     /* Responsif untuk HP */
     @media (max-width: 768px) {
       .video-main-wrapper {
@@ -497,6 +552,12 @@
       .comments-panel {
         width: 90%;
         right: -95%;
+      }
+
+      .voice-to-text-panel {
+        width: 260px;
+        top: 8px;
+        left: 8px;
       }
     }
   </style>
@@ -524,72 +585,17 @@
         <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
       </div>
 
-            <h2>🎬 Suara Film → Teks (AI Whisper)</h2>
-  <p class="info">Berjalan 100% di browser, tidak dikirim ke server mana pun</p>
+      <!-- ✅ Kotak Fitur AI Suara → Teks -->
+      <div class="voice-to-text-panel">
+        <h2>🎬 Suara Film → Teks</h2>
+        <p class="info">Berjalan 100% di browser, tidak dikirim ke server</p>
+        <button id="captureBtn">🔴 Mulai Rekam</button>
+        <button id="stopBtn" disabled>⏹️ Berhenti</button>
+        <button id="exportBtn" disabled>💾 Simpan</button>
+        <div id="status">Status: Siap</div>
+        <textarea id="hasil" placeholder="Teks akan muncul di sini..."></textarea>
+      </div>
 
-  <button id="captureBtn">🔴 Mulai Tangkap Suara Tab</button>
-  <button id="stopBtn" disabled>⏹️ Berhenti & Proses</button>
-  <button id="exportBtn" disabled>💾 Simpan Teks</button>
-
-  <div id="status">Status: Siap</div>
-  <textarea id="hasil" placeholder="Teks akan muncul di sini..."></textarea>
-
-  <script>
-    let mediaRecorder, audioChunks=[];
-    let transcriber;
-
-    // Muat model Whisper
-    async function loadModel() {
-      status("Memuat model AI... (sekali saja)");
-      transcriber = await pipeline("automatic-speech-recognition", "Xenova/whisper-base", {
-        progress_callback: p => status(`Memuat: ${Math.round(p.progress*100)}%`)
-      });
-      status("Model siap! Silakan mulai rekam");
-    }
-
-    // Tangkap suara tab aktif
-    document.getElementById("captureBtn").onclick = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: true, audio: { echoCancellation: false, noiseSuppression: false }
-        });
-        const audioTrack = stream.getAudioTracks()[0];
-        if(!audioTrack) throw new Error("Suara tidak terdeteksi");
-
-        mediaRecorder = new MediaRecorder(new MediaStream([audioTrack]));
-        audioChunks=[];
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.onstop = prosesTeks;
-
-        mediaRecorder.start(1000);
-        status("Sedang merekam... putar film sekarang");
-        captureBtn.disabled=true; stopBtn.disabled=false;
-      } catch(err) { status("Gagal: " + err.message); }
-    };
-
-    // Proses jadi teks
-    async function prosesTeks() {
-      status("Mengubah suara → teks...");
-      const blob = new Blob(audioChunks, {type:"audio/webm"});
-      const hasil = await transcriber(URL.createObjectURL(blob), {language:"id", task:"transcribe"});
-      document.getElementById("hasil").value = hasil.text;
-      exportBtn.disabled=false;
-      status("Selesai ✅");
-    }
-
-    // Simpan ke file
-    document.getElementById("exportBtn").onclick = () => {
-      const teks = hasil.value;
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([teks], {type:"text/plain"}));
-      a.download = "hasil_teks.txt"; a.click();
-    };
-
-    stopBtn.onclick = () => { mediaRecorder.stop(); stopBtn.disabled=true; };
-    function status(txt){document.getElementById("status").textContent = "Status: " + txt;}
-    loadModel();
-  </script>
-      
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
         <div class="subtitle-controls">
@@ -649,8 +655,105 @@
   </div>
 
   <script>
-    // KONFIGURASI
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+    // ====================================
+    // PUSTAKA & FITUR AI SUARA → TEKS
+    // ====================================
+    let mediaRecorder, audioChunks = [];
+    let transcriber;
+
+    // Muat pustaka Whisper
+    async function loadWhisperLibrary() {
+      if (!window.pipeline) {
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0/dist/transformers.min.js";
+        script.async = true;
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+    }
+
+    // Muat model AI
+    async function loadModel() {
+      try {
+        updateStatus("Memuat model AI... (sekali saja)");
+        transcriber = await pipeline("automatic-speech-recognition", "Xenova/whisper-base", {
+          progress_callback: p => updateStatus(`Memuat: ${Math.round(p.progress * 100)}%`)
+        });
+        updateStatus("Model siap! Silakan mulai rekam");
+      } catch (err) {
+        updateStatus("Gagal memuat model: " + err.message);
+      }
+    }
+
+    // Tangkap suara tab aktif
+    document.getElementById("captureBtn").onclick = async () => {
+      try {
+        if (!transcriber) await loadModel();
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true }
+        });
+        const audioTrack = stream.getAudioTracks()[0];
+        if (!audioTrack) throw new Error("Centang 'Bagikan Suara' saat memilih jendela");
+
+        mediaRecorder = new MediaRecorder(new MediaStream([audioTrack]));
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = prosesTeks;
+
+        mediaRecorder.start(1000);
+        updateStatus("Sedang merekam... putar film sekarang");
+        captureBtn.disabled = true;
+        stopBtn.disabled = false;
+      } catch (err) {
+        updateStatus("Gagal: " + err.message);
+      }
+    };
+
+    // Proses jadi teks
+    async function prosesTeks() {
+      updateStatus("Mengubah suara → teks...");
+      try {
+        const blob = new Blob(audioChunks, { type: "audio/webm; codecs=opus" });
+        const hasil = await transcriber(URL.createObjectURL(blob), { language: "id", task: "transcribe" });
+        document.getElementById("hasil").value = hasil.text;
+        exportBtn.disabled = false;
+        updateStatus("Selesai ✅");
+      } catch (err) {
+        updateStatus("Gagal memproses: " + err.message);
+      }
+    }
+
+    // Simpan ke file
+    document.getElementById("exportBtn").onclick = () => {
+      const teks = document.getElementById("hasil").value;
+      if (!teks) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([teks], { type: "text/plain;charset=utf-8" }));
+      a.download = "hasil_teks_film.txt";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    document.getElementById("stopBtn").onclick = () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      }
+      stopBtn.disabled = true;
+    };
+
+    function updateStatus(txt) {
+      document.getElementById("status").textContent = "Status: " + txt;
+    }
+
+    // ====================================
+    // KONFIGURASI UTAMA SITUS
+    // ====================================
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
@@ -681,7 +784,6 @@
 
     let currentMovieId = null;
     let allMoviesCache = [];
-
     let subtitles = [];
     let waktuSekarang = 0;
     let pemutar = null;
@@ -923,18 +1025,6 @@
       pasangPemutar(currentMovieId);
       await bacaSubtitle(currentMovieId);
 
-      setTimeout(() => {
-        const kolomKomen = document.getElementById('voiceText');
-        if (kolomKomen) {
-          kolomKomen.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              kirimKomentar();
-            }
-          });
-        }
-      }, 500);
-
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
         if (res.ok) allMoviesCache = (await res.json()).results;
@@ -986,12 +1076,12 @@
 
     function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
+      await loadWhisperLibrary();
       muatDataAwal();
     });
   </script>
 
 </body>
 </html>
-
