@@ -59,7 +59,7 @@
   <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- CSS SESUAI PERBAIKAN -->
+  <!-- CSS LENGKAP -->
   <style>
     * {
       margin: 0;
@@ -90,12 +90,64 @@
       width: 100%;
       height: 100%;
       background: #000;
+      position: relative;
     }
 
     #filmIframe {
       width: 100%;
       height: 100%;
       border: none;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+    }
+
+    /* ✅ LAPISAN PENUTUP - KUNCI AGAR TIDAK LANGSUNG PICU IKLAN */
+    #overlayScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      background: rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    #overlayScreen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .overlay-play-btn {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .overlay-play-btn:hover {
+      transform: scale(1.08);
+      background: rgba(255,255,255,0.25);
+    }
+
+    .overlay-text {
+      font-size: 15px;
+      color: #fff;
+      text-align: center;
+      padding: 0 20px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
 
     /* SUBTITLE */
@@ -104,10 +156,10 @@
       bottom: 120px;
       left: 0;
       right: 0;
-      z-index: 15;
+      z-index: 40;
       padding: 0 16px;
       text-align: center;
-      transition: opacity 0.2s ease;
+      pointer-events: none;
     }
 
     .subtitle-text {
@@ -118,20 +170,21 @@
       line-height: 1.5;
     }
 
-    /* NAVIGASI BAWAH - TANPA LATAR */
+    /* NAVIGASI BAWAH - TANPA LATAR, Z-INDEX LEBIH TINGGI */
     .bottom-nav {
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 25;
+      z-index: 60;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
-      padding: 10px 16px;
+      gap: 16px;
+      padding: 8px 14px;
       transition: transform 0.3s ease, opacity 0.25s ease;
       background: transparent;
+      pointer-events: auto;
     }
 
     .bottom-nav.hidden {
@@ -141,53 +194,54 @@
     }
 
     .ctrl-btn {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.15);
       border: none;
       color: #fff;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       transition: all 0.15s ease;
     }
 
     .ctrl-btn:hover {
-      background: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.25);
       transform: scale(1.08);
     }
 
     .time-display {
       font-size: 14px;
       font-weight: 500;
-      min-width: 85px;
+      min-width: 80px;
       text-align: center;
       color: #fff;
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    /* ✅ NAVIGASI SAMPING: POSISI DI KANAN */
+    /* NAVIGASI SAMPING - POSISI KANAN, Z-INDEX LEBIH TINGGI */
     .side-nav {
       position: fixed;
       top: 50%;
-      right: 20px; /* Pindah ke kanan */
+      right: 20px;
       transform: translateY(-50%);
-      z-index: 25;
+      z-index: 60;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 22px;
-      padding: 12px 8px;
+      gap: 20px;
+      padding: 10px 6px;
       transition: transform 0.3s ease, opacity 0.25s ease;
-      background: transparent; /* Tetap tanpa latar hitam */
+      background: transparent;
+      pointer-events: auto;
     }
 
     .side-nav.hidden {
-      transform: translateY(-50%) translateX(80px); /* Sembunyi ke kanan */
+      transform: translateY(-50%) translateX(80px);
       opacity: 0;
       pointer-events: none;
     }
@@ -196,7 +250,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       cursor: pointer;
       padding: 8px;
       border-radius: 8px;
@@ -204,7 +258,7 @@
     }
 
     .side-nav .nav-item:hover {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.12);
     }
 
     .side-nav .nav-item span {
@@ -213,29 +267,29 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    /* ✅ PANEL KOMENTAR: TETAP KELUAR DARI KIRI */
+    /* PANEL KOMENTAR - KELUAR DARI KIRI */
     .comments-panel {
       position: fixed;
       top: 0;
-      left: -360px; /* Mulai dari luar kiri */
+      left: -360px;
       width: 340px;
       height: 100vh;
       background: rgba(18, 18, 18, 0.92);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border-right: 1px solid rgba(255,255,255,0.1);
-      z-index: 35;
+      z-index: 70;
       transition: left 0.3s ease;
       display: flex;
       flex-direction: column;
     }
 
     .comments-panel.open {
-      left: 0; /* Muncul masuk ke kanan */
+      left: 0;
     }
 
     .comments-header {
       padding: 16px;
-      background: rgba(30,30,30,0.8);
+      background: rgba(30,30,30,0.85);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -243,7 +297,7 @@
     }
 
     .close-comments {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.15);
       border: none;
       color: #fff;
       width: 30px;
@@ -262,7 +316,7 @@
     }
 
     .comment-item {
-      background: rgba(30,30,30,0.7);
+      background: rgba(30,30,30,0.75);
       border-radius: 8px;
       padding: 12px;
       margin-bottom: 10px;
@@ -295,8 +349,8 @@
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
-      max-width: 480px;
-      z-index: 40;
+      max-width: 460px;
+      z-index: 75;
       opacity: 0;
       visibility: hidden;
       transition: all 0.25s ease;
@@ -308,8 +362,8 @@
     }
 
     .search-box {
-      background: rgba(26,26,26,0.92);
-      backdrop-filter: blur(12px);
+      background: rgba(26,26,26,0.95);
+      backdrop-filter: blur(14px);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -332,16 +386,16 @@
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
       width: 90%;
-      max-width: 380px;
-      background: rgba(26,26,26,0.95);
-      backdrop-filter: blur(12px);
+      max-width: 360px;
+      background: rgba(26,26,26,0.96);
+      backdrop-filter: blur(14px);
       border-radius: 12px;
       padding: 20px;
-      z-index: 45;
+      z-index: 80;
       opacity: 0;
       visibility: hidden;
       transition: all 0.25s ease;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
     }
 
     .info-panel.show {
@@ -359,7 +413,7 @@
 
     .form-group input,
     .form-group textarea {
-      background: rgba(37,37,37,0.8);
+      background: rgba(37,37,37,0.85);
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
       padding: 10px;
@@ -380,7 +434,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.75);
-      z-index: 42;
+      z-index: 78;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.2s ease;
@@ -391,35 +445,22 @@
       visibility: visible;
     }
 
-    /* KHUSUS MOBILE */
+    /* KHUSUS LAYAR HP */
     @media (max-width: 768px) {
       .subtitle-text {
         font-size: 16px;
       }
-
-      .ctrl-btn {
-        width: 38px;
-        height: 38px;
-      }
-
       .bottom-nav {
         bottom: 15px;
         gap: 14px;
       }
-
       .side-nav {
-        right: 12px; /* Sesuaikan jarak di HP */
+        right: 12px;
         gap: 18px;
       }
-    }
-
-    /* DESKTOP - TETAP TAMPIL */
-    @media (min-width: 769px) {
-      .side-nav.hidden,
-      .bottom-nav.hidden {
-        transform: none;
-        opacity: 1;
-        pointer-events: auto;
+      .overlay-play-btn {
+        width: 65px;
+        height: 65px;
       }
     }
   </style>
@@ -429,7 +470,7 @@
   <!-- Panel Komentar -->
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header">
-      <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
+      <span><i data-lucide="message-square" size="16"></i> Komentar</span>
       <button class="close-comments" id="closeCommentsBtn">&times;</button>
     </div>
     <div class="comments-section" id="commentList">
@@ -443,7 +484,7 @@
       <i data-lucide="search" size="18" color="#aaa"></i>
       <input type="text" id="searchInput" placeholder="Cari film lain...">
     </div>
-    <div class="search-results-layer" id="searchResultsLayer" style="margin-top:8px; background:rgba(26,26,26,0.92); border-radius:8px; display:none; max-height:300px; overflow-y:auto;"></div>
+    <div class="search-results-layer" id="searchResultsLayer" style="margin-top:8px; background:rgba(26,26,26,0.95); border-radius:8px; display:none; max-height:280px; overflow-y:auto;"></div>
   </div>
 
   <!-- Panel Tulis Komentar -->
@@ -452,22 +493,32 @@
     <h4>Tulis Komentar</h4>
     <div class="form-group">
       <input type="text" id="commentName" placeholder="Nama samaran...">
-      <textarea id="commentText" rows="3" placeholder="Tulis pendapatmu tentang film ini..."></textarea>
-      <button class="submit-btn" onclick="kirimKomentar()">Kirim Komentar</button>
+      <textarea id="commentText" rows="3" placeholder="Tulis pendapatmu..."></textarea>
+      <button class="submit-btn" onclick="kirimKomentar()">Kirim</button>
     </div>
   </div>
 
-  <!-- AREA PEMUTAR LANGSUNG -->
+  <!-- AREA PEMUTAR -->
   <div class="watch-layout" id="mainArea">
     <div class="video-main-wrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+      <!-- ✅ TANPA AUTOPLAY, AGAR TIDAK LANGSUNG PICU IKLAN -->
+      <iframe id="filmIframe" src="" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe>
+
+      <!-- ✅ LAPISAN PENUTUP AWAL -->
+      <div id="overlayScreen">
+        <div class="overlay-play-btn">
+          <i data-lucide="play" size="32" color="#fff"></i>
+        </div>
+        <div class="overlay-text">Klik untuk memutar film</div>
+      </div>
+
       <div class="subtitle-layer" id="subLayer">
         <div class="subtitle-text" id="subText"></div>
       </div>
     </div>
   </div>
 
-  <!-- ✅ NAVIGASI SAMPING DI KANAN -->
+  <!-- NAVIGASI SAMPING KANAN -->
   <div class="side-nav auto-hide" id="sideNav">
     <div class="nav-item" id="btnSearch">
       <i data-lucide="search" size="22"></i>
@@ -487,7 +538,7 @@
     </div>
   </div>
 
-  <!-- NAVIGASI BAWAH KONTROL VIDEO -->
+  <!-- NAVIGASI BAWAH -->
   <div class="bottom-nav auto-hide" id="bottomNav">
     <button class="ctrl-btn" id="btnMundur" title="Mundur 10 detik">
       <i data-lucide="rotate-ccw" size="18"></i>
@@ -506,7 +557,7 @@
 
   <script>
     // KONFIGURASI
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
@@ -514,6 +565,7 @@
 
     // ELEMEN
     const filmIframe = document.getElementById('filmIframe');
+    const overlayScreen = document.getElementById('overlayScreen');
     const subText = document.getElementById('subText');
     const jamTayang = document.getElementById('jamTayang');
     const btnMain = document.getElementById('btnMain');
@@ -543,6 +595,7 @@
     let pemutar = null;
     let sedangMain = false;
     let hideTimer;
+    let iframeAktif = false;
 
     // ====================================
     // FUNGSI BANTU
@@ -569,6 +622,17 @@
       const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
       subText.textContent = aktif ? aktif.teks : "";
       jamTayang.textContent = ubahKeWaktu(waktuSekarang);
+    }
+
+    // ====================================
+    // AKTIFKAN PEMUTAR SETELAH KLIK AWAL
+    // ====================================
+    function aktifkanPemutar() {
+      if (iframeAktif) return;
+      iframeAktif = true;
+      overlayScreen.classList.add('hidden');
+      filmIframe.style.opacity = '1';
+      mulaiSemua();
     }
 
     // ====================================
@@ -649,17 +713,19 @@
     }
 
     // ====================================
-    // NAV OTOMATIS & SENSITIF TINGGI
+    // NAVIGASI SENSITIF TAPI AMAN
     // ====================================
-    function resetHideTimer() {
-      if (window.innerWidth > 768) return;
-      clearTimeout(hideTimer);
-      sideNav.classList.remove('hidden');
-      bottomNav.classList.remove('hidden');
-      hideTimer = setTimeout(() => {
-        sideNav.classList.add('hidden');
-        bottomNav.classList.add('hidden');
-      }, 2200);
+    function resetHideTimer(e) {
+      // Abaikan jika klik/gerakan ke area yang tidak mengganggu
+      if (e && e.target.closest('#overlayScreen, .ctrl-btn, .nav-item, .search-container, .info-panel, .comments-panel')) {
+        clearTimeout(hideTimer);
+        sideNav.classList.remove('hidden');
+        bottomNav.classList.remove('hidden');
+        hideTimer = setTimeout(() => {
+          sideNav.classList.add('hidden');
+          bottomNav.classList.add('hidden');
+        }, 2500);
+      }
     }
 
     // ====================================
@@ -680,7 +746,7 @@
     }
 
     // ====================================
-    // MUAT & PUTAR LANGSUNG
+    // MUAT DATA & PEMUTAR
     // ====================================
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
@@ -688,7 +754,8 @@
     }
 
     function pasangPemutar(tmdbId) {
-      filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}&autoplay=1&muted=0`;
+      // ✅ TANPA AUTOPLAY, TANPA PARAMETER YANG MEMICU IKLAN
+      filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
     }
 
     async function muatDataAwal() {
@@ -700,7 +767,6 @@
 
       pasangPemutar(currentMovieId);
       await bacaSubtitle(currentMovieId);
-      mulaiSemua();
 
       try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
@@ -709,7 +775,7 @@
     }
 
     // ====================================
-    // KOMENTAR
+    // FUNGSI KOMENTAR & PENCARIAN
     // ====================================
     async function muatKomentar() {
       if (!currentMovieId) return;
@@ -766,9 +832,49 @@
       }
     }
 
+    function bukaFilm(id) {
+      window.location.href = `watch.html?id=${id}`;
+    }
+
     // ====================================
-    // PENCARIAN
+    // EVENT LISTENER
     // ====================================
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      muatDataAwal();
+      resetHideTimer();
+    });
+
+    // Klik lapisan awal untuk aktifkan pemutar
+    overlayScreen.addEventListener('click', aktifkanPemutar);
+
+    // Kontrol tombol
+    btnMain.addEventListener('click', () => {
+      if (!iframeAktif) aktifkanPemutar();
+      else sedangMain ? hentikanSemua() : mulaiSemua();
+      resetHideTimer();
+    });
+    btnMundur.addEventListener('click', () => { geserWaktu(-10); resetHideTimer(); });
+    btnMaju.addEventListener('click', () => { geserWaktu(+10); resetHideTimer(); });
+    btnFullscreen.addEventListener('click', toggleFullscreen);
+
+    // Menu navigasi
+    btnSearch.addEventListener('click', () => {
+      const buka = searchContainer.classList.toggle('show');
+      if (buka) setTimeout(() => searchInput.focus(), 100);
+      resetHideTimer();
+    });
+    btnAddComment.addEventListener('click', bukaFormKomen);
+    btnHome.addEventListener('click', () => window.location.href = 'index.html');
+    btnViewComments.addEventListener('click', () => {
+      commentsPanel.classList.toggle('open');
+      if (commentsPanel.classList.contains('open')) muatKomentar();
+      resetHideTimer();
+    });
+    closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
+    panelBackdrop.addEventListener('click', tutupFormKomen);
+
+    // Pencarian
     searchInput.addEventListener('input', e => {
       const kata = e.target.value.toLowerCase().trim();
       if (!kata) {
@@ -785,39 +891,7 @@
       `).join('') : `<div style="padding:15px; text-align:center;">Tidak ditemukan</div>`;
     });
 
-    function bukaFilm(id) {
-      window.location.href = `watch.html?id=${id}`;
-    }
-
-    // ====================================
-    // EVENT LISTENER SENSITIF
-    // ====================================
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-      muatDataAwal();
-      resetHideTimer();
-    });
-
-    btnMain.addEventListener('click', () => sedangMain ? hentikanSemua() : mulaiSemua());
-    btnMundur.addEventListener('click', () => geserWaktu(-10));
-    btnMaju.addEventListener('click', () => geserWaktu(+10));
-    btnFullscreen.addEventListener('click', toggleFullscreen);
-
-    btnSearch.addEventListener('click', () => {
-      const buka = searchContainer.classList.toggle('show');
-      if (buka) setTimeout(() => searchInput.focus(), 100);
-      resetHideTimer();
-    });
-    btnAddComment.addEventListener('click', bukaFormKomen);
-    btnHome.addEventListener('click', () => window.location.href = 'index.html');
-    btnViewComments.addEventListener('click', () => {
-      commentsPanel.classList.toggle('open');
-      if (commentsPanel.classList.contains('open')) muatKomentar();
-      resetHideTimer();
-    });
-    closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
-    panelBackdrop.addEventListener('click', tutupFormKomen);
-
+    // Deteksi gerakan - SANGAT SENSITIF TAPI AMAN
     mainArea.addEventListener('touchstart', resetHideTimer, { passive: true });
     mainArea.addEventListener('touchmove', resetHideTimer, { passive: true });
     mainArea.addEventListener('mousemove', resetHideTimer, { passive: true });
