@@ -520,6 +520,72 @@
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 
+      <h2>🎬 Suara Film → Teks (AI Whisper)</h2>
+  <p class="info">Berjalan 100% di browser, tidak dikirim ke server mana pun</p>
+
+  <button id="captureBtn">🔴 Mulai Tangkap Suara Tab</button>
+  <button id="stopBtn" disabled>⏹️ Berhenti & Proses</button>
+  <button id="exportBtn" disabled>💾 Simpan Teks</button>
+
+  <div id="status">Status: Siap</div>
+  <textarea id="hasil" placeholder="Teks akan muncul di sini..."></textarea>
+
+  <script>
+    let mediaRecorder, audioChunks=[];
+    let transcriber;
+
+    // Muat model Whisper
+    async function loadModel() {
+      status("Memuat model AI... (sekali saja)");
+      transcriber = await pipeline("automatic-speech-recognition", "Xenova/whisper-base", {
+        progress_callback: p => status(`Memuat: ${Math.round(p.progress*100)}%`)
+      });
+      status("Model siap! Silakan mulai rekam");
+    }
+
+    // Tangkap suara tab aktif
+    document.getElementById("captureBtn").onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true, audio: { echoCancellation: false, noiseSuppression: false }
+        });
+        const audioTrack = stream.getAudioTracks()[0];
+        if(!audioTrack) throw new Error("Suara tidak terdeteksi");
+
+        mediaRecorder = new MediaRecorder(new MediaStream([audioTrack]));
+        audioChunks=[];
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = prosesTeks;
+
+        mediaRecorder.start(1000);
+        status("Sedang merekam... putar film sekarang");
+        captureBtn.disabled=true; stopBtn.disabled=false;
+      } catch(err) { status("Gagal: " + err.message); }
+    };
+
+    // Proses jadi teks
+    async function prosesTeks() {
+      status("Mengubah suara → teks...");
+      const blob = new Blob(audioChunks, {type:"audio/webm"});
+      const hasil = await transcriber(URL.createObjectURL(blob), {language:"id", task:"transcribe"});
+      document.getElementById("hasil").value = hasil.text;
+      exportBtn.disabled=false;
+      status("Selesai ✅");
+    }
+
+    // Simpan ke file
+    document.getElementById("exportBtn").onclick = () => {
+      const teks = hasil.value;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([teks], {type:"text/plain"}));
+      a.download = "hasil_teks.txt"; a.click();
+    };
+
+    stopBtn.onclick = () => { mediaRecorder.stop(); stopBtn.disabled=true; };
+    function status(txt){document.getElementById("status").textContent = "Status: " + txt;}
+    loadModel();
+  </script>
+
       <div class="watermark-logo">
         <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
       </div>
