@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <title>Heartbeast - TUKARFOLLOW</title>
-  <meta name="description" content="Nonton film Heartbeast (2022) sub Indonesia. Elina, rapper Finlandia, jatuh cinta pada Sofia, saudari tiri balerina di Prancis." />
-  <meta name="keywords" content="nonton Heartbeast, streaming Heartbeast sub indo, film Heartbeast 2022, drama thriller Finlandia" />
+  <title>TUKARFOLLOW - Nonton Film</title>
+  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, bioskop online" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="id" />
-
-  <!-- CANONICAL -->
-  <link rel="canonical" href="https://tukarfollow.web.id/watch.html?tmdb=726888" />
 
   <!-- ICONS -->
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
@@ -20,81 +17,46 @@
 
   <!-- OPEN GRAPH -->
   <meta property="og:type" content="video.movie" />
-  <meta property="og:title" content="Heartbeast - TUKARFOLLOW" />
-  <meta property="og:description" content="Nonton film Heartbeast (2022) sub Indonesia. Elina, rapper Finlandia, jatuh cinta pada Sofia, saudari tiri balerina di Prancis." />
-  <meta property="og:url" content="https://tukarfollow.web.id/watch.html?tmdb=726888" />
-  <meta property="og:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
+  <meta property="og:title" content="TUKARFOLLOW" />
+  <meta property="og:description" content="Nonton film dan serial TV terbaru sub Indonesia." />
+  <meta property="og:url" content="https://tukarfollow.web.id/watch.html" />
+  <meta property="og:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
   <meta property="og:site_name" content="TUKARFOLLOW" />
 
-  <!-- TWITTER CARD -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Heartbeast - TUKARFOLLOW" />
-  <meta name="twitter:description" content="Nonton film Heartbeast (2022) sub Indonesia." />
-  <meta name="twitter:image" content="https://tukarfollow.web.id/banner/heartbeast.webp" />
-
-  <!-- FONTS & ICON SCRIPT -->
+  <!-- FONTS & ICON -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- STRUCTURED DATA -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Movie",
-      "name": "Heartbeast",
-      "description": "Elina, rapper Finlandia, jatuh cinta pada Sofia, saudari tiri balerina di Prancis.",
-      "datePublished": "2022-11-04",
-      "genre": ["Drama", "Thriller"],
-      "countryOfOrigin": "Finlandia",
-      "image": "https://tukarfollow.web.id/banner/heartbeast.webp",
-      "sameAs": "https://www.themoviedb.org/movie/726888"
-    }
-  </script>
-
-  <!-- PWA MANIFEST -->
-  <link rel="manifest" href="manifest.json" />
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Tombol Kembali -->
-  <div class="back-button">
-    <a href="index.html">
-      <i data-lucide="arrow-left" size="24"></i>
-      <span>Kembali</span>
-    </a>
+  <!-- Search Bar -->
+  <div class="search-container" id="searchContainer">
+    <div class="search-box">
+      <i data-lucide="search" size="18" color="#888"></i>
+      <input type="text" id="searchInput" placeholder="Cari film...">
+    </div>
   </div>
 
   <!-- Area Pemutar Video -->
-  <div class="video-player-full">
-    <iframe 
-      src="https://playcinematic.com/video/oQp4DbVfKfTrVsP" 
-      frameborder="0" 
-      allowfullscreen 
-      allow="autoplay; fullscreen; picture-in-picture"
-      title="Heartbeast"
-    ></iframe>
+  <div class="video-player-container" id="videoPlayerContainer">
+    <div class="close-player" id="closePlayerBtn">
+      <i data-lucide="x" size="24" color="#fff"></i>
+    </div>
+    <div id="playerArea" style="width:100%; height:100%;"></div>
   </div>
 
-  <!-- Info Film -->
-  <div class="movie-info-container">
-    <h1 class="movie-title">Heartbeast (2022)</h1>
-    <div class="movie-meta">
-      <span class="release">04 November 2022</span>
-      <span class="dot">•</span>
-      <span class="country">Finlandia</span>
-      <span class="dot">•</span>
-      <span class="genre">Drama, Thriller</span>
-    </div>
-    <div class="movie-synopsis">
-      <h3>Sinopsis</h3>
-      <p>Elina, rapper Finlandia, jatuh cinta pada Sofia, saudari tiri balerina di Prancis.</p>
-    </div>
+  <!-- Tampilan Film (Sama persis dengan index) -->
+  <div class="feed-container" id="feedContainer"></div>
+
+  <!-- Panel Info -->
+  <div class="info-panel" id="infoPanel">
+    <div class="panel-content" id="panelContentArea"></div>
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- Navigasi Bawah -->
   <div class="bottom-nav" id="bottomNav">
     <div class="nav-item" id="navSearch">
       <i data-lucide="search" size="24"></i>
@@ -104,31 +66,194 @@
       <i data-lucide="plus-circle" size="28" color="#fff"></i>
       <span>Add</span>
     </div>
-    <div class="nav-item" id="navHome">
-      <a href="index.html" style="color:inherit; text-decoration:none;">
-        <i data-lucide="home" size="24"></i>
-        <span>Home</span>
-      </a>
+    <div class="nav-item active" id="navHome">
+      <i data-lucide="home" size="24"></i>
+      <span>Home</span>
     </div>
   </div>
 
-  <!-- Notifier Desktop -->
+  <!-- Notifikasi Desktop -->
   <div class="desktop-notifier" id="desktopNotifier">
     <div class="notifier-content">
       <i data-lucide="smartphone" size="40"></i>
       <h3>Tampilan Lebih Asyik di HP!</h3>
-      <p>Situs ini didesain khusus untuk kenyamanan layar mobile. Rekomendasi terbaik gunakan smartphone kamu ya, bro!</p>
+      <p>Situs ini didesain khusus untuk kenyamanan layar mobile.</p>
       <button onclick="closeNotifier()">Siap, Paham!</button>
     </div>
   </div>
 
-  <!-- Script -->
-  <script src="script.js"></script>
+  <!-- Script Utama -->
   <script>
-    lucide.createIcons();
-    function closeNotifier() {
-      document.getElementById('desktopNotifier').style.display = 'none';
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
+    const MOVIES_JSON_PATH = 'movies.json';
+
+    const feedContainer = document.getElementById('feedContainer');
+    const playerContainer = document.getElementById('videoPlayerContainer');
+    const playerArea = document.getElementById('playerArea');
+    const infoPanel = document.getElementById('infoPanel');
+    const panelContentArea = document.getElementById('panelContentArea');
+
+    let currentMovie = null;
+
+    // Ambil ID dari URL
+    function getTmdbId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
     }
+
+    // Cek ke movies.json
+    async function cekDataFilm(tmdbId) {
+      try {
+        const res = await fetch(MOVIES_JSON_PATH);
+        if (!res.ok) throw new Error('File tidak ditemukan');
+        const data = await res.json();
+        const ketemu = data.movies?.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        return { sumber: ketemu ? 'manual' : 'tmdb', data: ketemu };
+      } catch (err) {
+        console.warn('Gagal baca movies.json:', err);
+        return { sumber: 'tmdb', data: null };
+      }
+    }
+
+    // Ambil data dari TMDB jika tidak ada di JSON
+    async function ambilDariTMDB(tmdbId) {
+      try {
+        const res = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}&language=id-ID`);
+        if (!res.ok) throw new Error('Data TMDB tidak ada');
+        return await res.json();
+      } catch (err) {
+        console.warn('Gagal ambil dari TMDB:', err);
+        return null;
+      }
+    }
+
+    // Tampilkan poster & info sama seperti di index
+    function tampilkanTampilanFilm(film) {
+      feedContainer.innerHTML = '';
+      const poster = film.image ? film.image : (film.poster_path ? `${IMAGE_URL}${film.poster_path}` : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500');
+      const tahun = film.release_date ? film.release_date.split('-')[0] : '-';
+
+      const card = document.createElement('div');
+      card.className = 'movie-card';
+      card.style.backgroundImage = `url('${poster}')`;
+      card.innerHTML = `
+        <div class="overlay"></div>
+        <div class="top-title">${film.title || 'Tanpa Judul'}</div>
+        <div class="play-btn-container" onclick="mainkanFilm()">
+          <div class="play-circle"><i data-lucide="play" fill="#fff" size="32"></i></div>
+        </div>
+        <div class="main-content">
+          <div class="side-actions">
+            <div class="action-item" onclick="bukaInfo('sinopsis')">
+              <i data-lucide="info" size="28"></i>
+              <span>Info</span>
+            </div>
+            <div class="action-item" onclick="bukaInfo('rilis')">
+              <i data-lucide="calendar" size="28"></i>
+              <span>${tahun}</span>
+            </div>
+            <div class="action-item" onclick="bukaInfo('genre')">
+              <i data-lucide="clapperboard" size="28"></i>
+              <span>Genre</span>
+            </div>
+            <div class="action-item" onclick="bukaInfo('negara')">
+              <i data-lucide="globe" size="28"></i>
+              <span>Negara</span>
+            </div>
+          </div>
+        </div>
+      `;
+      feedContainer.appendChild(card);
+      lucide.createIcons();
+    }
+
+    // Buka panel info sesuai sumber data
+    function bukaInfo(jenis) {
+      if (!currentMovie) return;
+      infoPanel.classList.add('show');
+      let isi = '';
+
+      if (currentMovie.sumber === 'manual') {
+        const d = currentMovie.data;
+        switch (jenis) {
+          case 'sinopsis': isi = `<p>${d.sinopsis || 'Tidak ada sinopsis'}</p>`; break;
+          case 'rilis': isi = `<p>Tanggal Rilis:<br>${d.release_date || '-'}</p>`; break;
+          case 'genre': isi = `<p>Genre:<br>${d.genre?.join(', ') || '-'}</p>`; break;
+          case 'negara': isi = `<p>Negara:<br>${d.country?.join(', ') || '-'}</p>`; break;
+        }
+      } else {
+        const d = currentMovie.data;
+        switch (jenis) {
+          case 'sinopsis': isi = `<p>${d.overview || 'Tidak ada sinopsis'}</p>`; break;
+          case 'rilis': isi = `<p>Tanggal Rilis:<br>${d.release_date || '-'}</p>`; break;
+          case 'genre': isi = `<p>Genre:<br>${d.genres?.map(g => g.name).join(', ') || '-'}</p>`; break;
+          case 'negara': isi = `<p>Negara:<br>${d.production_countries?.map(c => c.name).join(', ') || '-'}</p>`; break;
+        }
+      }
+      panelContentArea.innerHTML = isi;
+    }
+
+    // Mainkan film sesuai sumber
+    function mainkanFilm() {
+      if (!currentMovie) return;
+      let src = '';
+
+      if (currentMovie.sumber === 'manual') {
+        src = currentMovie.data.iframe || '';
+      } else {
+        const id = getTmdbId();
+        src = `https://vsembed.ru/embed/${id}`;
+      }
+
+      if (!src) {
+        alert('Tidak ada sumber pemutar!');
+        return;
+      }
+
+      playerArea.innerHTML = `
+        <iframe 
+          src="${src}" 
+          frameborder="0" 
+          allowfullscreen 
+          allow="autoplay; fullscreen; picture-in-picture"
+          style="width:100%; height:100%; border:none;"
+        ></iframe>
+      `;
+      playerContainer.classList.add('active');
+    }
+
+    // Tutup pemutar
+    document.getElementById('closePlayerBtn').addEventListener('click', () => {
+      playerContainer.classList.remove('active');
+      playerArea.innerHTML = '';
+    });
+
+    // Mulai jalankan
+    async function mulai() {
+      const id = getTmdbId();
+      if (!id) {
+        feedContainer.innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">ID film tidak ditemukan</p>';
+        return;
+      }
+
+      const cek = await cekDataFilm(id);
+      if (cek.sumber === 'manual') {
+        currentMovie = { sumber: 'manual', data: cek.data };
+      } else {
+        const dataTMDB = await ambilDariTMDB(id);
+        if (!dataTMDB) {
+          feedContainer.innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">Data film tidak ditemukan</p>';
+          return;
+        }
+        currentMovie = { sumber: 'tmdb', data: dataTMDB };
+      }
+
+      tampilkanTampilanFilm(currentMovie.data);
+    }
+
+    window.addEventListener('load', mulai);
   </script>
 
 </body>
