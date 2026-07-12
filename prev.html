@@ -3,83 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemutar + Subtitle</title>
+    <title>Pemutar Film TMDB</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #121212; color: #fff; padding: 20px; }
 
-        /* Wadah Pemutar */
-        .player {
+        /* === HALAMAN DAFTAR POSTER === */
+        .daftar-film {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 18px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .kartu-film {
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #222;
+            transition: transform 0.2s;
+        }
+        .kartu-film:hover { transform: scale(1.05); }
+        .poster { width: 100%; height: auto; display: block; }
+        .judul { padding: 8px; text-align: center; font-size: 14px; }
+
+        /* === HALAMAN PEMUTAR === */
+        .halaman-pemutar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            position: relative;
+            background: #000;
+            z-index: 999;
         }
-
         iframe {
             width: 100%;
             height: 100%;
             border: none;
-            display: block;
         }
-
-        /* Lapisan Subtitle */
-        .subtitle {
+        .tombol-kembali {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .lapisan-sub {
             position: absolute;
             bottom: 80px;
             left: 0;
             right: 0;
             text-align: center;
-            z-index: 999;
+            z-index: 1000;
             pointer-events: none;
             padding: 0 20px;
         }
-
-        #subText {
+        .teks-sub {
             font-size: 24px;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 0 4px #000, 0 0 8px #000, 0 0 12px #000;
             line-height: 1.5;
         }
-
-        /* Kontrol Sederhana */
+        .teks-sub-terjemahan {
+            font-size: 18px;
+            color: #ffff88;
+            margin-top: 5px;
+        }
         .kontrol {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
+            z-index: 1001;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             background: rgba(0,0,0,0.7);
             padding: 10px 20px;
             border-radius: 8px;
         }
-
         .kontrol button {
-            background: #222;
+            background: #333;
             color: #fff;
             border: none;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-        }
-
-        .kontrol button:hover {
-            background: #444;
         }
     </style>
 </head>
 <body>
 
-<div class="player">
-    <iframe id="filmFrame" allowfullscreen></iframe>
+<!-- Daftar Poster -->
+<div class="daftar-film" id="daftarFilm"></div>
 
-    <div class="subtitle">
-        <div id="subText"></div>
+<!-- Halaman Pemutar -->
+<div class="halaman-pemutar" id="halamanPemutar">
+    <button class="tombol-kembali" onclick="kembaliKeDaftar()">← Kembali</button>
+    <iframe id="frameVideo" allowfullscreen></iframe>
+    <div class="lapisan-sub">
+        <div class="teks-sub" id="subUtama"></div>
+        <div class="teks-sub-terjemahan" id="subTerjemahan"></div>
     </div>
-
     <div class="kontrol">
         <button id="btnMain">Putar</button>
         <button id="btnMundur">-10d</button>
@@ -92,19 +125,111 @@
 // ====================
 // KONFIGURASI
 // ====================
-const SUBTITLE_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
-let subtitles = [];
+const TMDB_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
+const EMBED_URL = "https://vsembed.ru/embed/movie?tmdb=";
+const SUB_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
+
+let subUtama = [];
+let subTerjemahan = [];
 let waktuSekarang = 0;
 let timer = null;
 let sedangJalankan = false;
 
-// Ambil ID dari alamat
-function ambilId() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("id");
+// ====================
+// AMBIL DAFTAR FILM & TAMPILKAN POSTER
+// ====================
+async function muatDaftarFilm() {
+    try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&language=id-ID&page=1`);
+        const data = await res.json();
+        const wadah = document.getElementById("daftarFilm");
+        wadah.innerHTML = "";
+
+        data.results.forEach(film => {
+            if (!film.poster_path) return;
+            const kartu = document.createElement("div");
+            kartu.className = "kartu-film";
+            kartu.innerHTML = `
+                <img class="poster" src="https://image.tmdb.org/t/p/w300${film.poster_path}" alt="${film.title}">
+                <div class="judul">${film.title}</div>
+            `;
+            kartu.addEventListener("click", () => putarFilm(film.id));
+            wadah.appendChild(kartu);
+        });
+    } catch (err) {
+        console.error("Gagal ambil daftar film:", err);
+    }
 }
 
-// Ubah waktu teks ke detik
+// ====================
+// PUTAR FILM SAAT POSTER DIKLIK
+// ====================
+function putarFilm(tmdbId) {
+    document.getElementById("daftarFilm").style.display = "none";
+    const pemutar = document.getElementById("halamanPemutar");
+    pemutar.style.display = "block";
+
+    // Muat video
+    document.getElementById("frameVideo").src = `${EMBED_URL}${tmdbId}`;
+
+    // Reset data lama
+    waktuSekarang = 0;
+    subUtama = [];
+    subTerjemahan = [];
+    perbaruiTampilan();
+    if (timer) clearInterval(timer);
+    sedangJalankan = false;
+    document.getElementById("btnMain").textContent = "Putar";
+
+    // Muat subtitle
+    bacaSubtitle(tmdbId);
+}
+
+// ====================
+// BACA SUBTITLE & TERJEMAHAN
+// ====================
+async function bacaSubtitle(id) {
+    // Subtitle utama
+    try {
+        const res1 = await fetch(`${SUB_URL}${id}.vtt`);
+        if (res1.ok) subUtama = olahVTT(await res1.text());
+    } catch {}
+
+    // Subtitle terjemahan (jika ada, nama: 12345_id.vtt)
+    try {
+        const res2 = await fetch(`${SUB_URL}${id}_id.vtt`);
+        if (res2.ok) subTerjemahan = olahVTT(await res2.text());
+    } catch {}
+}
+
+function olahVTT(teks) {
+    const baris = teks.split("\n").map(b => b.trim()).filter(b => b);
+    let hasil = [];
+    let i = 0;
+    if (baris[0].toUpperCase().includes("WEBVTT")) i++;
+
+    while (i < baris.length) {
+        if (baris[i].includes("-->")) {
+            const [awal, akhir] = baris[i].split("-->").map(w => w.trim());
+            const mulai = ubahKeDetik(awal);
+            const selesai = ubahKeDetik(akhir);
+            let teksSub = "";
+            i++;
+            while (i < baris.length && !baris[i].includes("-->")) {
+                teksSub += baris[i] + " ";
+                i++;
+            }
+            if (mulai < selesai && teksSub.trim()) {
+                hasil.push({ mulai, selesai, teks: teksSub.trim() });
+            }
+        } else i++;
+    }
+    return hasil;
+}
+
+// ====================
+// FUNGSI BANTU
+// ====================
 function ubahKeDetik(teks) {
     teks = teks.replace(/[, ]/g, ".").trim();
     const b = teks.split(":");
@@ -115,7 +240,6 @@ function ubahKeDetik(teks) {
     return 0;
 }
 
-// Ubah detik ke format jam:menit:detik
 function ubahKeWaktu(detik) {
     const j = Math.floor(detik / 3600).toString().padStart(2, "0");
     const m = Math.floor((detik % 3600) / 60).toString().padStart(2, "0");
@@ -123,89 +247,49 @@ function ubahKeWaktu(detik) {
     return `${j}:${m}:${d}`;
 }
 
-// Perbarui tampilan subtitle & waktu
-function perbarui() {
-    const aktif = subtitles.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
-    document.getElementById("subText").textContent = aktif ? aktif.teks : "";
+function perbaruiTampilan() {
+    const utama = subUtama.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
+    const terjemah = subTerjemahan.find(s => waktuSekarang >= s.mulai && waktuSekarang <= s.selesai);
+
+    document.getElementById("subUtama").textContent = utama ? utama.teks : "";
+    document.getElementById("subTerjemahan").textContent = terjemah ? terjemah.teks : "";
     document.getElementById("waktuTayang").textContent = ubahKeWaktu(waktuSekarang);
 }
 
-// Baca file subtitle dari GitHub
-async function bacaSub(id) {
-    const alamat = `${SUBTITLE_URL}${id}.vtt`;
-    subtitles = [];
-    waktuSekarang = 0;
-    perbarui();
-
-    try {
-        const res = await fetch(alamat);
-        if (!res.ok) throw new Error("Tidak ada");
-        const teks = await res.text();
-        const baris = teks.split("\n").map(b => b.trim()).filter(b => b);
-        let i = 0;
-
-        if (baris[0].toUpperCase().includes("WEBVTT")) i++;
-
-        while (i < baris.length) {
-            if (baris[i].includes("-->")) {
-                const [awal, akhir] = baris[i].split("-->").map(w => w.trim());
-                const mulai = ubahKeDetik(awal);
-                const selesai = ubahKeDetik(akhir);
-                let teksSub = "";
-                i++;
-                while (i < baris.length && !baris[i].includes("-->")) {
-                    teksSub += baris[i] + " ";
-                    i++;
-                }
-                if (mulai < selesai && teksSub.trim()) {
-                    subtitles.push({ mulai, selesai, teks: teksSub.trim() });
-                }
-            } else {
-                i++;
-            }
-        }
-        console.log("✅ Subtitle dimuat:", subtitles.length);
-    } catch (err) {
-        console.log("ℹ️ Tidak ada subtitle:", err.message);
-    }
-}
-
-// Mulai hitung waktu
 function mulai() {
     if (timer) clearInterval(timer);
     sedangJalankan = true;
     document.getElementById("btnMain").textContent = "Jeda";
     timer = setInterval(() => {
         waktuSekarang += 1;
-        perbarui();
+        perbaruiTampilan();
     }, 1000);
 }
 
-// Hentikan hitungan
 function hentikan() {
     sedangJalankan = false;
     document.getElementById("btnMain").textContent = "Putar";
     clearInterval(timer);
 }
 
-// Geser waktu
 function geser(ubah) {
     waktuSekarang = Math.max(0, waktuSekarang + ubah);
-    perbarui();
+    perbaruiTampilan();
 }
 
-// Jalankan awal
-window.addEventListener("load", async () => {
-    const id = ambilId();
-    if (!id) return alert("Masukkan ID film di alamat: ?id=12345");
+function kembaliKeDaftar() {
+    document.getElementById("halamanPemutar").style.display = "none";
+    document.getElementById("daftarFilm").style.display = "grid";
+    document.getElementById("frameVideo").src = "";
+    hentikan();
+}
 
-    // Muat video dari vsembed
-    document.getElementById("filmFrame").src = `https://vsembed.ru/embed/movie?tmdb=${id}`;
+// ====================
+// JALANKAN AWAL
+// ====================
+window.addEventListener("load", () => {
+    muatDaftarFilm();
 
-    // Muat subtitle
-    await bacaSub(id);
-
-    // Pasang tombol
     document.getElementById("btnMain").addEventListener("click", () => sedangJalankan ? hentikan() : mulai());
     document.getElementById("btnMundur").addEventListener("click", () => geser(-10));
     document.getElementById("btnMaju").addEventListener("click", () => geser(+10));
