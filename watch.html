@@ -1025,6 +1025,45 @@
         lucide.createIcons();
         muatDataAwal();
       });
+
+      // ✅ PENGATURAN SENSITIVITAS TINGGI - SELURUH HALAMAN
+let timerSembunyiKontrol;
+const WAKTU_TUNGGU = 1800; // Lebih responsif: 1,8 detik saja
+const AMBANG_SENSITIVITAS = 1; // Deteksi gerakan sekecil apa pun
+
+let posisiTerakhir = { x: -9999, y: -9999 };
+
+function tampilkanKontrol() {
+  if (!subLayer.classList.contains('hidden')) return;
+  subLayer.classList.remove('hidden');
+  watchLayout.classList.add('nav-visible');
+  resetTimerSembunyi();
+}
+
+function sembunyikanKontrol() {
+  if (subLayer.classList.contains('hidden')) return;
+  subLayer.classList.add('hidden');
+  watchLayout.classList.remove('nav-visible');
+}
+
+function resetTimerSembunyi() {
+  clearTimeout(timerSembunyiKontrol);
+  timerSembunyiKontrol = setTimeout(sembunyikanKontrol, WAKTU_TUNGGU);
+}
+
+// ✅ Deteksi di SELURUH HALAMAN, sangat peka
+document.addEventListener('mousemove', (e) => {
+  const jarak = Math.hypot(e.clientX - posisiTerakhir.x, e.clientY - posisiTerakhir.y);
+  if (jarak > AMBANG_SENSITIVITAS) {
+    posisiTerakhir = { x: e.clientX, y: e.clientY };
+    tampilkanKontrol();
+  }
+}, { passive: true });
+
+document.addEventListener('mouseenter', tampilkanKontrol);
+document.addEventListener('touchstart', tampilkanKontrol, { passive: true });
+document.addEventListener('touchmove', tampilkanKontrol, { passive: true });
+document.addEventListener('click', tampilkanKontrol);
     </script>
   </body>
 </html>
