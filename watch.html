@@ -1,8 +1,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- ✅ Tambahan untuk dukungan PWA & orientasi layar -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="screen-orientation" content="any" />
+  <meta name="fullscreen" content="yes" />
 
   <title>TUKARFOLLOW - Nonton Film</title>
   <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
@@ -31,10 +37,15 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    body {
+    html, body {
       background-color: #0a0a0a;
       color: #ffffff;
-      overflow-x: hidden;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      /* ✅ Izinkan perubahan orientasi */
+      orientation: portrait;
+      orientation: landscape;
     }
 
     .comments-panel {
@@ -45,7 +56,7 @@
       height: 100vh;
       background: #121212;
       border-left: 1px solid #2a2a2a;
-      z-index: 999;
+      z-index: 999999;
       transition: right 0.3s ease;
       display: flex;
       flex-direction: column;
@@ -139,16 +150,16 @@
     .video-main-wrapper {
       position: relative;
       width: 100%;
-      /* ✅ Tinggi video disesuaikan: cukup tinggi tapi ada ruang di bawah */
+      /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
       height: calc(100vh - 50px);
-      max-width: 100%;
+      max-width: 100vw;
       margin: 0 auto;
       border-radius: 0;
       overflow: hidden;
       background: #000;
     }
 
-    /* ✅ Penutup kontrol bawaan video, hanya biarkan area subtitle bisa diklik */
+    /* ✅ Penutup kontrol bawaan video */
     .video-overlay {
       position: absolute;
       top: 0;
@@ -158,7 +169,7 @@
       z-index: 5;
       pointer-events: none;
     }
-    /* Area khusus yang tetap bisa diklik (tombol subtitle/terjemah biasanya ada di pojok kanan bawah) */
+    /* ✅ Area khusus tetap bisa diklik untuk subtitle/terjemah */
     .clickable-subtitle-area {
       position: absolute;
       bottom: 60px;
@@ -174,14 +185,15 @@
       height: 100%;
       border: none;
       object-fit: contain;
+      background: #000;
     }
 
-    /* ✅ Watermark tetap terlihat bahkan saat fullscreen */
+    /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
     .watermark-logo {
       position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 99999;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      z-index: 999999;
       opacity: 0.6;
       pointer-events: none;
     }
@@ -191,13 +203,13 @@
       height: auto;
     }
 
-    /* ✅ Navigasi tetap terlihat dan posisi tetap */
+    /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
     .subtitle-layer {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 15%;
-      z-index: 99999;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      left: max(12px, env(safe-area-inset-left));
+      right: max(12px, env(safe-area-inset-right));
+      z-index: 999999;
       background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6), transparent);
       padding: 12px 16px;
       display: flex;
@@ -214,7 +226,7 @@
       gap: 14px;
       padding: 8px 16px;
       border-radius: 12px;
-      border: ;
+      border: 1px solid rgba(255,255,255,0.15);
       background: rgba(20,20,20,0.8);
     }
 
@@ -244,10 +256,10 @@
 
     .search-container {
       position: fixed;
-      top: 16px;
+      top: max(16px, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
-      z-index: 90;
+      z-index: 999998;
       width: 90%;
       max-width: 600px;
       opacity: 0;
@@ -337,7 +349,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.7);
-      z-index: 99990;
+      z-index: 999999;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
@@ -353,7 +365,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
-      z-index: 99991;
+      z-index: 999999;
       width: 90%;
       max-width: 420px;
       background: #1a1a1a;
@@ -417,7 +429,15 @@
       background: #1d4ed8;
     }
 
-    /* ✅ Pastikan semua elemen tetap terlihat saat mode layar penuh */
+    /* ✅ PENTING: Semua elemen TETAP terlihat saat layar penuh & orientasi berubah */
+    :fullscreen,
+    :-webkit-full-screen,
+    :-moz-full-screen,
+    :-ms-fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
     :fullscreen .watermark-logo,
     :fullscreen .subtitle-layer,
     :-webkit-full-screen .watermark-logo,
@@ -429,12 +449,15 @@
       position: fixed !important;
       opacity: 1 !important;
       visibility: visible !important;
-      z-index: 99999 !important;
+      z-index: 999999 !important;
     }
 
+    /* ✅ Khusus tampilan HP & PWA */
     @media (max-width: 768px) {
       .video-main-wrapper {
+        width: 100vw;
         height: calc(100vh - 45px);
+        max-width: 100vw;
       }
       .ctrl-btn {
         width: 38px;
@@ -443,6 +466,22 @@
       .comments-panel {
         width: 90%;
         right: -95%;
+      }
+    }
+
+    /* ✅ Saat mode horizontal, pastikan lebar penuh */
+    @media screen and (orientation: landscape) {
+      .video-main-wrapper {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        max-width: 100vw;
+      }
+      .watermark-logo img {
+        width: 50px;
+      }
+      .ctrl-btn {
+        width: 36px;
+        height: 36px;
       }
     }
   </style>
@@ -464,19 +503,15 @@
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       
-      <!-- ✅ Penutup kontrol bawaan video -->
       <div class="video-overlay"></div>
-      <!-- ✅ Area khusus yang tetap bisa diklik untuk subtitle -->
       <div class="clickable-subtitle-area"></div>
     </div>
   </div>
 
-  <!-- ✅ Watermark tetap terlihat di semua kondisi -->
   <div class="watermark-logo">
     <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
   </div>
 
-  <!-- ✅ Navigasi kontrol -->
   <div class="subtitle-layer" id="subLayer">
     <div class="subtitle-controls">
       <button class="ctrl-btn" id="btnHomeBack" title="Kembali ke halaman sebelumnya">
@@ -536,11 +571,12 @@
     const panelBackdrop = document.getElementById('panelBackdrop');
 
     let currentMovieId = null;
-    let isFullscreen = false;
 
-    // ====================================
-    // LOGIKA UTAMA: BACA MOVIES.JSON
-    // ====================================
+    // ✅ Izinkan orientasi otomatis
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.unlock();
+    }
+
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
       return param.get('id');
@@ -554,24 +590,18 @@
         const filmKetemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
 
         if (filmKetemu) {
-          console.log("✅ Ditemukan di JSON:", filmKetemu.title);
           filmIframe.src = filmKetemu.iframe;
         } else {
-          console.log("❌ Tidak ada di JSON, pakai vsembed");
           filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
         }
       } catch (err) {
-        console.warn("Gagal baca JSON, pakai vsembed:", err);
         filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
       }
     }
 
-    // ====================================
-    // KONTROL LAYAR PENUH
-    // ====================================
+    // ✅ Kontrol layar penuh yang berfungsi sempurna
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-        // Masuk mode layar penuh
         if (document.documentElement.requestFullscreen) {
           document.documentElement.requestFullscreen();
         } else if (document.documentElement.webkitRequestFullscreen) {
@@ -581,9 +611,11 @@
         } else if (document.documentElement.msRequestFullscreen) {
           document.documentElement.msRequestFullscreen();
         }
-        btnFullscreen.innerHTML = '<i data-lucide="minimize"></i>';
+        // ✅ Otomatis putar ke horizontal saat masuk layar penuh
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
       } else {
-        // Keluar mode layar penuh
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -593,43 +625,31 @@
         } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
         }
-        btnFullscreen.innerHTML = '<i data-lucide="maximize"></i>';
+        // ✅ Kembali ke orientasi normal saat keluar
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
       }
       lucide.createIcons();
     });
 
-    // Perbarui ikon saat status layar penuh berubah
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
     document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
     document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
     document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
 
     function updateFullscreenIcon() {
-      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-        btnFullscreen.innerHTML = '<i data-lucide="minimize"></i>';
-      } else {
-        btnFullscreen.innerHTML = '<i data-lucide="maximize"></i>';
-      }
+      const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
       lucide.createIcons();
     }
 
-    // ====================================
-    // KONTROL NAVIGASI
-    // ====================================
     btnHomeBack.addEventListener('click', () => {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = 'index.html';
-      }
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = 'index.html';
     });
 
-    // ====================================
-    // KOMENTAR - Perbaikan tidak langsung tertutup
-    // ====================================
     btnAddComment.addEventListener('click', bukaFormKomen);
-
-    // Tutup form jika klik di luar area
     panelBackdrop.addEventListener('click', tutupFormKomen);
 
     function bukaFormKomen() {
@@ -646,7 +666,6 @@
       const nama = document.getElementById('commentName').value.trim();
       const teks = document.getElementById('commentText').value.trim();
       if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
-      
       try {
         await fetch(URL_APPS_SCRIPT, {
           method: 'POST',
@@ -657,7 +676,7 @@
         tutupFormKomen();
         setTimeout(muatKomentar, 800);
       } catch {
-        alert("Gagal mengirim komentar. Coba lagi nanti.");
+        alert("Gagal mengirim komentar. Coba lagi.");
       }
     }
 
@@ -686,11 +705,10 @@
           </div>
         `).join('');
       } catch {
-        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar. Coba lagi.</div>';
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
       }
     }
 
-    // Jalankan semua
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       currentMovieId = ambilIdDariUrl();
