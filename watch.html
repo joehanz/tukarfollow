@@ -200,33 +200,26 @@
           }
 
           .watch-layout {
-        width: 100vw;
-        height: 100vh;
+        width: 100vw;        /* Lebar = 100% lebar layar */
+        height: 100vh;       /* Tinggi = 100% tinggi layar */
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0;
+        padding: 0;          /* ❌ Hapus semua ruang kosong */
         margin: 0;
         position: relative;
-        overflow: hidden;
-        /* ✅ Jadikan area deteksi utama */
-        cursor: none;
-      }
-
-      /* ✅ Tampilkan kursor saat kontrol terlihat */
-      .watch-layout.nav-visible {
-        cursor: default;
+        overflow: hidden;    /* Jangan ada yang meluber keluar layar */
       }
 
           .video-main-wrapper {
         position: relative;
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
+        width: 100%;         /* Penuhi lebar pembungkusnya */
+        height: 100%;        /* Penuhi tinggi pembungkusnya */
+        max-width: 100%;     /* ❌ Hapus batas lebar maksimal */
+        max-height: 100%;    /* ❌ Hapus batas tinggi maksimal */
         margin: 0;
         padding: 0;
-        border-radius: 0;
+        border-radius: 0;    /* ❌ Buang lengkungan sudut biar rapat */
         overflow: hidden;
         background: #000;
       }
@@ -234,7 +227,7 @@
         width: 100%;
         height: 100%;
         border: none;
-        object-fit: cover;
+        object-fit: cover;   /* ⚠️ Ini kuncinya: isi akan membesar menutupi seluruh kotak tanpa terdistorsi berlebih */
       }
 
           .watermark-logo {
@@ -251,44 +244,61 @@
             height: auto;
           }
 
-          /* SUBTITLE & KONTROL */
+          /* Bagian Subtitle & Kontrol */
           .subtitle-layer {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             z-index: 20;
-            background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             padding: 20px 16px 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            transform: translateY(0);
-            transition: transform 0.3s ease, opacity 0.2s ease; /* ✅ Lebih cepat */
-            will-change: transform; /* ✅ Agar animasi lebih mulus */
           }
 
-          .subtitle-layer.hidden {
-            transform: translateY(100%);
-            background: transparent;
-            padding-bottom: 8px;
-          }
 
-          .subtitle-layer.hidden .subtitle-text {
-            transform: translateY(-8px);
-          }
+          /* ✅ Khusus HP - naik sedikit saja sesuai keinginan */
+      @media (max-width: 768px) {
+        .subtitle-layer {
+          position: absolute;  /* Tetap mengikuti wadah videonya, bukan kunci ke seluruh layar */
+          bottom: 5px;         /* ✅ Naik 5 piksel dari tepi bawah — langsung terlihat */
+          left: 0;
+          right: 0;
+          width: auto;         /* Lebar penuh saja, tidak tinggi */
+          height: auto;
+          padding: 10px 12px 8px;
+          margin: 0;
+          box-sizing: border-box;
+          overflow: hidden;
+          /* HAPUS: height, fixed, overscroll — tidak perlu di sini */
+        }
+      }
+
+      /* ✅ Khusus HP mode lebar/penuh layar */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .subtitle-layer {
+          bottom: 10px;        /* ✅ Naik sedikit lagi agar tidak ketutup tombol sistem HP */
+          left: 0;
+          right: 0;
+          width: auto;
+          height: auto;
+          padding: 10px 12px 8px;
+          margin: 0;
+          box-sizing: border-box;
+        }
+      }
 
           .subtitle-text {
             text-align: center;
-            font-size: 22px;
-            font-weight: 600;
-            color: #ffffff;
-            text-shadow: 0 0 3px #000, 0 0 6px #000, 0 0 9px #000, 0 0 12px #000;
-            min-height: 45px;
-            line-height: 1.5;
-            padding: 0 15px;
-            transition: transform 0.3s ease;
-            pointer-events: none; /* ✅ Tidak mengganggu klik */
+            font-size: 18px;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            min-height: 32px;
+            line-height: 1.4;
+            padding: 0 10px;
           }
 
           .subtitle-controls {
@@ -297,24 +307,19 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 12px;
+
             padding: 10px 16px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.18);
-            opacity: 1;
-            transition: opacity 0.25s ease;
-          }
 
-          .subtitle-layer.hidden .subtitle-controls {
-            opacity: 0;
-            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.12);
           }
 
           .ctrl-btn {
-            background: rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.15);
             border: none;
             color: #fff;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
             cursor: pointer;
             display: flex;
@@ -324,8 +329,8 @@
           }
 
           .ctrl-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.08);
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
           }
 
           .ctrl-btn svg {
@@ -341,43 +346,6 @@
             min-width: 90px;
             text-align: center;
           }
-
-      /* RESPONSIF HP */
-      @media (max-width: 768px) {
-        .subtitle-layer {
-          bottom: 0;
-          padding: 12px 12px 10px;
-        }
-
-        .subtitle-text {
-          font-size: 19px;
-          line-height: 1.45;
-        }
-
-        .subtitle-layer.hidden .subtitle-text {
-          transform: translateY(-6px);
-        }
-
-        .ctrl-btn {
-          width: 38px;
-          height: 38px;
-        }
-
-        .time-digital {
-          font-size: 13px;
-        }
-
-        .comments-panel {
-          width: 92%;
-          right: -95%;
-        }
-      }
-
-      @media (max-width: 768px) and (orientation: landscape) {
-        .subtitle-layer {
-          bottom: 5px;
-        }
-      }
 
           /* Panel Pencarian */
           .search-container {
@@ -555,6 +523,33 @@
           .submit-btn:hover {
             background: #1d4ed8;
           }
+
+          /* Responsif untuk HP */
+          @media (max-width: 768px) {
+            .video-main-wrapper {
+              border-radius: 0;
+              aspect-ratio: auto;
+              min-height: 80vh;
+            }
+
+            .subtitle-text {
+              font-size: 16px;
+            }
+
+            .ctrl-btn {
+              width: 36px;
+              height: 36px;
+            }
+
+            .time-digital {
+              font-size: 13px;
+            }
+
+            .comments-panel {
+              width: 90%;
+              right: -95%;
+            }
+          }
     </style>
   </head>
   <body>
@@ -572,7 +567,7 @@
       </div>
     </div>
 
-    <div class="watch-layout" id="watchLayout">
+    <div class="watch-layout">
       <div class="video-main-wrapper" id="videoWrapper">
         <iframe
           id="filmIframe"
@@ -591,6 +586,7 @@
         <div class="subtitle-layer" id="subLayer">
           <div class="subtitle-text" id="subText"></div>
           <div class="subtitle-controls">
+            <!-- Kontrol Pemutar -->
             <button class="ctrl-btn" id="btnMundur" title="Mundur 10 detik">
               <i data-lucide="rotate-ccw"></i>
             </button>
@@ -602,6 +598,7 @@
             </button>
             <div class="time-digital" id="jamTayang">00:00:00</div>
 
+            <!-- Menu Baru yang Dipindah dari Nav Bawah -->
             <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh">
               <i data-lucide="maximize"></i>
             </button>
@@ -672,10 +669,8 @@
       const SUBTITLE_URL = "https://raw.githubusercontent.com/joehanz/tukarfollow/refs/heads/main/subtitles/";
 
       // Elemen
-      const watchLayout = document.getElementById('watchLayout');
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
-      const subLayer = document.getElementById('subLayer');
       const subText = document.getElementById('subText');
       const jamTayang = document.getElementById('jamTayang');
       const btnMain = document.getElementById('btnMain');
@@ -698,43 +693,12 @@
 
       let currentMovieId = null;
       let allMoviesCache = [];
-      let autoFullscreen = false;
+      let autoFullscreen = false; // ✅ Tambahan: variabel penanda
+
       let subtitles = [];
       let waktuSekarang = 0;
       let pemutar = null;
       let sedangMain = false;
-
-      // ✅ PENGATURAN SENSITIVITAS
-      let timerSembunyiKontrol;
-      const WAKTU_TUNGGU = 2200; // Lebih cepat sembunyi: 2,2 detik
-      const AREA_DETEKSI = watchLayout; // Deteksi hanya di area pemutar saja
-
-      // ====================================
-      // ✅ FUNGSI TAMPIL / SEMBUNYI LEBIH SENSITIF
-      // ====================================
-      function tampilkanKontrol() {
-        if (!subLayer.classList.contains('hidden')) return;
-        subLayer.classList.remove('hidden');
-        watchLayout.classList.add('nav-visible');
-        resetTimerSembunyi();
-      }
-
-      function sembunyikanKontrol() {
-        if (subLayer.classList.contains('hidden')) return;
-        subLayer.classList.add('hidden');
-        watchLayout.classList.remove('nav-visible');
-      }
-
-      function resetTimerSembunyi() {
-        clearTimeout(timerSembunyiKontrol);
-        timerSembunyiKontrol = setTimeout(sembunyikanKontrol, WAKTU_TUNGGU);
-      }
-
-      // ✅ Deteksi hanya di area pemutar (tidak ke luar)
-      AREA_DETEKSI.addEventListener('mousemove', tampilkanKontrol);
-      AREA_DETEKSI.addEventListener('mouseenter', tampilkanKontrol);
-      AREA_DETEKSI.addEventListener('touchstart', tampilkanKontrol, { passive: true });
-      AREA_DETEKSI.addEventListener('touchmove', tampilkanKontrol, { passive: true });
 
       // ====================================
       // FUNGSI BANTU
@@ -764,7 +728,7 @@
       }
 
       // ====================================
-      // FUNGSI UTAMA
+      // FUNGSI UTAMA: KAWINKAN PLAY & SUB
       // ====================================
       function mulaiSemua() {
         if (pemutar) clearInterval(pemutar);
@@ -777,8 +741,10 @@
         }, 1000);
         try { filmIframe.contentWindow.postMessage({ cmd: "play" }, "*"); } catch (e) {}
 
-        if (autoFullscreen) aktifkanFullscreenOtomatis();
-        resetTimerSembunyi();
+        // ✅ Tambahan: Jalankan fullscreen otomatis jika ada tanda
+        if (autoFullscreen) {
+          aktifkanFullscreenOtomatis();
+        }
       }
 
       function hentikanSemua() {
@@ -786,7 +752,6 @@
         btnMain.innerHTML = '<i data-lucide="play"></i>';
         lucide.createIcons();
         clearInterval(pemutar);
-        clearTimeout(timerSembunyiKontrol);
         try { filmIframe.contentWindow.postMessage({ cmd: "pause" }, "*"); } catch (e) {}
       }
 
@@ -800,9 +765,9 @@
             perbaruiTampilan();
           }, 1000);
         }
-        tampilkanKontrol();
       }
 
+      // ✅ Tambahan: Fungsi khusus fullscreen otomatis
       function aktifkanFullscreenOtomatis() {
         if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
           if (videoWrapper.requestFullscreen) {
@@ -818,7 +783,7 @@
       }
 
       // ====================================
-      // BACA SUBTITLE
+      // BACA SUBTITLE LEBIH FLEKSIBEL
       // ====================================
       async function bacaSubtitle(idFilm) {
         const alamat = `${SUBTITLE_URL}${idFilm}.vtt`;
@@ -869,7 +834,6 @@
       // ====================================
       btnMain.addEventListener('click', () => {
         sedangMain ? hentikanSemua() : mulaiSemua();
-        tampilkanKontrol();
       });
 
       btnMundur.addEventListener('click', () => geserWaktu(-10));
@@ -887,51 +851,95 @@
           else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
           else if (document.msExitFullscreen) document.msExitFullscreen();
         }
-        tampilkanKontrol();
       });
 
+      // Tombol Baru
       btnSearch.addEventListener('click', () => {
         const buka = searchContainer.classList.toggle('show');
         if (!buka) {
           searchInput.value = "";
           searchResultsLayer.classList.remove('active');
         } else setTimeout(() => searchInput.focus(), 100);
-        tampilkanKontrol();
       });
 
-      btnAddComment.addEventListener('click', () => { bukaFormKomen(); tampilkanKontrol(); });
-      btnHome.addEventListener('click', () => { if (window.history.length > 1) window.history.back(); else window.location.href = 'index.html'; tampilkanKontrol(); });
-      btnViewComments.addEventListener('click', () => { const isOpen = commentsPanel.classList.toggle('open'); if (isOpen) muatKomentar(); tampilkanKontrol(); });
+      btnAddComment.addEventListener('click', bukaFormKomen);
 
+      btnHome.addEventListener('click', () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      });
+
+      btnViewComments.addEventListener('click', () => {
+        const isOpen = commentsPanel.classList.toggle('open');
+        if (isOpen) muatKomentar();
+      });
+
+      // ====================================
+      // BUKA/TUTUP PANEL + MUAT KOMENTAR
+      // ====================================
       commentsHeader.addEventListener('click', function(e) {
         if (!e.target.closest('.close-comments')) {
           const isOpen = commentsPanel.classList.toggle('open');
           if (isOpen) muatKomentar();
-          tampilkanKontrol();
         }
       });
 
-      closeCommentsBtn.addEventListener('click', function() { commentsPanel.classList.remove('open'); tampilkanKontrol(); });
+      closeCommentsBtn.addEventListener('click', function() {
+        commentsPanel.classList.remove('open');
+      });
 
       async function muatKomentar() {
         if (!currentMovieId) return;
         commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+
         try {
-          const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, { method: 'GET', redirect: 'follow' });
+          const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`, {
+            method: 'GET',
+            redirect: 'follow'
+          });
+
           const hasil = await res.json();
-          if (hasil.status !== "success") { commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`; return; }
+
+          if (hasil.status !== "success") {
+            commentListEl.innerHTML = `<div class="empty-comments">${hasil.message || "Gagal memuat"}</div>`;
+            return;
+          }
+
           const komentar = hasil.data;
-          if (!komentar || komentar.length === 0) { commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>'; return; }
+
+          if (!komentar || komentar.length === 0) {
+            commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</div>';
+            return;
+          }
+
           let html = '';
           komentar.forEach(item => {
-            html += `<div class="comment-item"><div class="comment-name">${item.nama || 'Anonim'}</div><div class="comment-text">${item.komentar || ''}</div><div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div></div>`;
+            html += `
+              <div class="comment-item">
+                <div class="comment-name">${item.nama || 'Anonim'}</div>
+                <div class="comment-text">${item.komentar || ''}</div>
+                <div class="comment-date">${item.timestamp ? new Date(item.timestamp).toLocaleString('id-ID') : 'Baru saja'}</div>
+              </div>
+            `;
           });
+
           commentListEl.innerHTML = html;
-        } catch (err) { console.error("❌ Error:", err); commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>'; }
+
+        } catch (err) {
+          console.error("❌ Error:", err);
+          commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat. Coba klik lagi.</div>';
+        }
       }
 
+      // ====================================
+      // FUNGSI LAINNYA
+      // ====================================
       function ambilIdDariUrl() {
         const param = new URLSearchParams(window.location.search);
+        // ✅ Tambahan: Baca parameter auto_fs
         autoFullscreen = param.get('auto_fs') === '1';
         return param.get('id');
       }
@@ -942,12 +950,30 @@
 
       async function muatDataAwal() {
         currentMovieId = parseInt(ambilIdDariUrl());
-        if (!currentMovieId) { videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`; return; }
+        if (!currentMovieId) {
+          videoWrapper.innerHTML += `<div style="padding:50px; text-align:center;">ID Film tidak ditemukan.</div>`;
+          return;
+        }
+
         pasangPemutar(currentMovieId);
         await bacaSubtitle(currentMovieId);
-        setTimeout(() => { const kolomKomen = document.getElementById('voiceText'); if (kolomKomen) kolomKomen.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirimKomentar(); } }); }, 500);
-        try { const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`); if (res.ok) allMoviesCache = (await res.json()).results; } catch (e) { console.error("Gagal ambil daftar film"); }
-        tampilkanKontrol();
+
+        setTimeout(() => {
+          const kolomKomen = document.getElementById('voiceText');
+          if (kolomKomen) {
+            kolomKomen.addEventListener('keydown', e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                kirimKomentar();
+              }
+            });
+          }
+        }, 500);
+
+        try {
+          const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=1`);
+          if (res.ok) allMoviesCache = (await res.json()).results;
+        } catch (e) { console.error("Gagal ambil daftar film"); }
       }
 
       async function kirimKomentar() {
@@ -955,19 +981,42 @@
         const teks = document.getElementById('commentText').value.trim();
         if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
         tutupFormKomen();
-        try { await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks }) }); setTimeout(muatKomentar, 800); } catch { alert("Gagal mengirim komentar."); }
+
+        try {
+          await fetch(URL_APPS_SCRIPT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
+          });
+
+          setTimeout(muatKomentar, 800);
+
+        } catch {
+          alert("Gagal mengirim komentar.");
+        }
       }
 
-      function bukaFormKomen() { infoPanel.classList.add('show'); panelBackdrop.classList.add('active'); tampilkanKontrol(); }
-      function tutupFormKomen() { infoPanel.classList.remove('show'); panelBackdrop.classList.remove('active'); tampilkanKontrol(); }
+      function bukaFormKomen() {
+        infoPanel.classList.add('show');
+        panelBackdrop.classList.add('active');
+      }
+      function tutupFormKomen() {
+        infoPanel.classList.remove('show');
+        panelBackdrop.classList.remove('active');
+      }
 
       searchInput.addEventListener('input', e => {
         const kata = e.target.value.toLowerCase().trim();
         if (!kata) return searchResultsLayer.classList.remove('active');
         searchResultsLayer.classList.add('active');
         const hasil = allMoviesCache.filter(m => m.title.toLowerCase().includes(kata));
-        searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `<div class="search-item-row" onclick="bukaFilm(${m.id})"><div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path}')"></div><div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0] || '-'}</p></div></div>`).join('') : `<div style="padding:30px; text-align:center;">Tidak ditemukan</div>`;
-        tampilkanKontrol();
+        searchResultsLayer.innerHTML = hasil.length ? hasil.map(m => `
+          <div class="search-item-row" onclick="bukaFilm(${m.id})">
+            <div class="search-item-thumb" style="background-image:url('${IMAGE_URL}${m.poster_path}')"></div>
+            <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0] || '-'}</p></div>
+          </div>
+        `).join('') : `<div style="padding:30px; text-align:center;">Tidak ditemukan</div>`;
       });
 
       function bukaFilm(id) { window.location.href = `watch.html?id=${id}`; }
