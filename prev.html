@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>TMDB Player + Subtitle VTT</title>
+    <title>Pemutar TMDB + Subtitle VTT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
@@ -43,7 +43,7 @@
             border: none;
             display: block;
         }
-        /* Lapisan Subtitle di atas iframe */
+        /* Lapisan Subtitle */
         .subtitle-layer {
             position: absolute;
             bottom: 75px;
@@ -97,14 +97,15 @@
 
 <script>
 // --------------------------
-// 🔧 KONFIGURASI
+// 🔧 PENGATURAN
 // --------------------------
-const TMDB_KEY = "c000d7b8b0f5ee16b98b6103009745d8"; // API kamu
+const TMDB_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
 const EMBED_URL = "https://vsembed.ru/embed/movie?tmdb=";
-const SUB_FOLDER = "./subs/"; // Tempat simpan file .vtt kamu
+const SUB_FOLDER = "./subs/"; // Tempat simpan file .vtt
 let subtitles = [];
 let syncTimer = null;
 let currentTime = 0;
+let isPlaying = false;
 
 // --------------------------
 // 📥 Ambil Data Film TMDB
@@ -128,15 +129,14 @@ async function loadMovies() {
             container.appendChild(card);
         });
     } catch (err) {
-        console.error("Gagal ambil data TMDB:", err);
+        console.error("Gagal memuat data TMDB:", err);
     }
 }
 
 // --------------------------
-// 🎬 Putar Film + Muat Subtitle
+// 🎬 Jalankan Film & Muat Subtitle
 // --------------------------
 function playMovie(tmdbId) {
-    // Tampilkan pemutar, sembunyikan daftar
     document.getElementById("movieList").style.display = "none";
     const player = document.getElementById("playerArea");
     player.style.display = "block";
@@ -144,86 +144,96 @@ function playMovie(tmdbId) {
     // Muat video dari vsembed
     document.getElementById("videoFrame").src = EMBED_URL + tmdbId;
 
-    // Reset data lama
+    // Reset semua data lama
     subtitles = [];
+    currentTime = 0;
+    isPlaying = false;
     document.getElementById("subDisplay").textContent = "";
     if (syncTimer) clearInterval(syncTimer);
 
-    // Muat file subtitle otomatis: [ID].vtt
+    // Muat file subtitle sesuai ID TMDB
     loadVTT(`${SUB_FOLDER}${tmdbId}.vtt`);
 }
 
 // --------------------------
-// 📖 Baca & Parse File VTT
+// 📖 Baca File VTT
 // --------------------------
-async function loadVTT(path) {
+async function loadVTT(filePath) {
     try {
-        const res = await fetch(path);
-        if (!res.ok) throw new Error("File subtitle tidak ditemukan");
-        const text = await res.text();
-        subtitles = parseVTT(text);
-        startSync();
+        const res = await fetch(filePath);
+        if (!res.ok) throw new Error("Tidak ada file subtitle");
+        const vttText = await res.text();
+        subtitles = parseVTT(vttText);
+        startSync(); // Mulai jalankan sinkronisasi
     } catch (err) {
-        console.warn("Subtitle tidak tersedia:", err.message);
-        subtitles = [];
+        document.getElementById("subDisplay").textContent = "Subtitle tidak tersedia";
+        console.warn(err);
     }
 }
 
-// Ubah format VTT jadi array {start, end, text}
-function parseVTT(vttText) {
-    const lines = vttText.trim().split("\n");
-    const cues = [];
-    let timeRegex = /(\d+:\d+:\d+\.\d+)\s*-->\s*(\d+:\d+:\d+\.\d+)/;
+// Ubah format VTT jadi daftar waktu dan teks
+function parseVTT(vtt) {
+    const lines = vtt.trim().split("\n");
+    const hasil = [];
+    const polaWaktu = /(\d+:\d+:\d+\.\d+)\s*-->\s*(\d+:\d+:\d+\.\d+)/;
 
-    for (let i=0; i<lines.length; i++) {
-        const match = lines[i].match(timeRegex);
-        if (match) {
-            const start = timeToSeconds(match[1]);
-            const end = timeToSeconds(match[2]);
-            let text = "";
-            while (i+1 < lines.length && !lines[i+1].includes("-->") && lines[i+1].trim() !== "") {
-                text += lines[++i].trim() + "<br>";
+    for (let i = 0; i < lines.length; i++) {
+        const cocok = lines[i].match(polaWaktu);
+        if (cocok) {
+            const mulai = ubahKeDetik(cocok[1]);
+            const selesai = ubahKeDetik(cocok[2]);
+            let teks = "";
+            while (i + 1 < lines.length && !lines[i + 1].includes("-->") && lines[i + 1].trim() !== "") {
+                teks += lines[++i].trim() + " ";
             }
-            cues.push({ start, end, text: text.trim() });
+            hasil.push({ mulai, selesai, teks: teks.trim() });
         }
     }
-    return cues;
+    return hasil;
 }
 
-// Ubah hh:mm:ss.ms → detik
-function timeToSeconds(t) {
-    const p = t.split(":");
-    const sec = p[2].split(".");
-    return (+p[0])*3600 + (+p[1])*60 + (+sec[0]) + ((+sec[1]||0)/1000);
+// Ubah format jam:menit:detik → angka detik
+function ubahKeDetik(waktu) {
+    const [jam, menit, detik] = waktu.split(":");
+    const [dt, milidetik] = detik.split(".");
+    return Number(jam) * 3600 + Number(menit) * 60 + Number(dt) + (Number(milidetik || 0) / 1000);
 }
 
 // --------------------------
-// ⏱️ Sinkronisasi Waktu
+// ⏱️ Sinkronisasi yang Jelas & Bisa Dikontrol
 // --------------------------
 function startSync() {
+    // Cek setiap 250ms, sama seperti logika sebelumnya
     syncTimer = setInterval(() => {
-        currentTime += 0.25; // Sesuai kecepatan video
-        let active = "";
+        if (!isPlaying) {
+            // Saat video diputar, mulai hitung
+            isPlaying = true;
+        } else {
+            currentTime += 0.25; // Naik 0,25 detik setiap kali cek
+        }
+
+        let teksTampil = "";
         for (const sub of subtitles) {
-            if (currentTime >= sub.start && currentTime <= sub.end) {
-                active = sub.text;
+            if (currentTime >= sub.mulai && currentTime <= sub.selesai) {
+                teksTampil = sub.teks;
                 break;
             }
         }
-        document.getElementById("subDisplay").innerHTML = active;
+        document.getElementById("subDisplay").textContent = teksTampil;
     }, 250);
 }
 
-// Tombol kembali ke daftar
+// Tombol kembali ke daftar film
 function showList() {
     document.getElementById("playerArea").style.display = "none";
     document.getElementById("movieList").style.display = "grid";
     if (syncTimer) clearInterval(syncTimer);
     document.getElementById("videoFrame").src = "";
     currentTime = 0;
+    isPlaying = false;
 }
 
-// Jalankan awal
+// Jalankan saat halaman pertama dibuka
 loadMovies();
 </script>
 
