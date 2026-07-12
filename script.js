@@ -1,6 +1,9 @@
-const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8'; 
+const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
+
+// 📁 Alamat file data film yang kamu buat sendiri
+const MOVIES_JSON_PATH = 'movies.json';
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -16,7 +19,9 @@ let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
 
-// Deteksi Ukuran Layar
+// ==============================================
+// 📱 Deteksi Jenis Perangkat
+// ==============================================
 function detectDevice() {
     isDesktop = window.innerWidth > 768;
     const notifier = document.getElementById('desktopNotifier');
@@ -31,7 +36,9 @@ function closeNotifier() {
     }
 }
 
-// Fungsi Gulir
+// ==============================================
+// 🎯 Fungsi Gulir Daftar Film
+// ==============================================
 function scrollFeed(direction) {
     if (!feedContainer) return;
     const cardHeight = window.innerHeight;
@@ -41,7 +48,9 @@ function scrollFeed(direction) {
     });
 }
 
-// Ambil Data Film Populer dari TMDB
+// ==============================================
+// 🎬 Ambil Data Film Populer dari TMDB
+// ==============================================
 async function fetchMovies(page = 1) {
     try {
         const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`);
@@ -61,7 +70,9 @@ async function fetchMovies(page = 1) {
     }
 }
 
-// Data Cadangan Jika Server Sibuk
+// ==============================================
+// 📂 Data Cadangan Jika Server Sibuk
+// ==============================================
 function loadFallbackData() {
     const fallback = [
         { id: 726888, title: 'Heartbeast', overview: 'A young girl discovers her passion for rap music...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
@@ -72,7 +83,9 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
-// Tampilkan Daftar Film
+// ==============================================
+// 🖼️ Tampilkan Daftar Film ke Halaman
+// ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
     feedContainer.innerHTML = '';
@@ -120,7 +133,6 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
         const loadMoreDiv = document.createElement('div');
@@ -138,7 +150,7 @@ function loadNextPage() {
 }
 
 // ==============================================
-// Panel Info Samping
+// ℹ️ Panel Info Samping
 // ==============================================
 async function toggleSection(event, index, section) {
     event.stopPropagation();
@@ -195,25 +207,38 @@ async function toggleSection(event, index, section) {
 }
 
 // ==============================================
-// Fungsi Utama & Navigasi
+// 🔍 Cek Data di movies.json & Arahkan Pemutaran
 // ==============================================
-function playMovie(tmdbId) {
-    window.location.href = `watch.html?id=${tmdbId}&auto_fs=1`;
-}
+async function playMovie(tmdbId) {
+    try {
+        // Ambil data dari file movies.json
+        const res = await fetch(MOVIES_JSON_PATH);
+        if (!res.ok) throw new Error('File movies.json tidak ditemukan');
 
-// Tutup info saat gulir ke film lain
-if (feedContainer) {
-    feedContainer.addEventListener('scroll', () => {
-        const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
-        if (idx !== activeMovieIndex) {
-            activeMovieIndex = idx;
-            infoPanel.classList.remove('show');
-            currentActiveSection = null;
+        const data = await res.json();
+        // Cari apakah ID TMDB ada di dalam data
+        const found = data.movies?.find(item => Number(item.tmdb_id) === Number(tmdbId));
+
+        if (found) {
+            // ✅ Jika ada: arahkan ke halaman pemutar dengan sumber playcinematic + abyssplayer
+            window.location.href = `watch.html?id=${tmdbId}&source=manual&auto_fs=1`;
+        } else {
+            // ❌ Jika tidak ada: arahkan ke vsembed
+            const vsLink = `https://vsembed.ru/embed/${tmdbId}`;
+            window.location.href = `watch.html?id=${tmdbId}&source=vsembed&url=${encodeURIComponent(vsLink)}&auto_fs=1`;
         }
-    });
+
+    } catch (err) {
+        // ⚠️ Jika gagal baca file: langsung pakai cadangan vsembed
+        console.warn('Cek data gagal, gunakan vsembed:', err);
+        const vsLink = `https://vsembed.su/embed/${tmdbId}`;
+        window.location.href = `watch.html?id=${tmdbId}&source=vsembed&url=${encodeURIComponent(vsLink)}&auto_fs=1`;
+    }
 }
 
-// Layer Hasil Pencarian
+// ==============================================
+// ⌨️ Bagian Pencarian Film
+// ==============================================
 let searchResultsLayer = document.getElementById('searchResultsLayer');
 if (!searchResultsLayer) {
     searchResultsLayer = document.createElement('div');
@@ -234,7 +259,6 @@ function tutupPencarian() {
     searchInput.value = '';
 }
 
-// Cari ke Seluruh Database TMDB
 async function cariFilm(kata) {
     if (!kata || kata.trim().length < 2) return;
     document.getElementById('searchContent').innerHTML = `<div style="padding:30px; color:#fff; text-align:center;">Searching...</div>`;
@@ -261,7 +285,6 @@ async function cariFilm(kata) {
     }
 }
 
-// Tekan Enter untuk Cari
 if (searchInput) {
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -271,7 +294,9 @@ if (searchInput) {
     });
 }
 
-// Navigasi Bawah Berfungsi
+// ==============================================
+// 🧭 Navigasi Bawah
+// ==============================================
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
 
@@ -296,7 +321,21 @@ if (navHome) {
     });
 }
 
-// Jalankan Semua Saat Halaman Selesai Dimuat
+// Tutup info saat gulir ke film lain
+if (feedContainer) {
+    feedContainer.addEventListener('scroll', () => {
+        const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
+        if (idx !== activeMovieIndex) {
+            activeMovieIndex = idx;
+            infoPanel.classList.remove('show');
+            currentActiveSection = null;
+        }
+    });
+}
+
+// ==============================================
+// 🚀 Jalankan Semua Saat Halaman Selesai Dimuat
+// ==============================================
 window.addEventListener('load', () => {
     detectDevice();
     fetchMovies();
