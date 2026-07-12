@@ -2,171 +2,87 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pemutar via ID TMDB</title>
+    <title>Pemutar TMDB + Subtitle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #121212; color: #fff; padding: 20px; }
+        * {margin:0; padding:0; box-sizing:border-box; font-family:Arial}
+        body {background:#121212; color:#fff; padding:20px}
 
-        /* === BAGIAN DAFTAR FILM === */
-        .movie-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            max-width: 1000px;
-            margin: 0 auto 40px;
-        }
-        .movie-item {
-            cursor: pointer;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
-            background: #222;
-        }
-        .movie-item:hover { transform: scale(1.05); }
-        .movie-poster { width: 100%; height: auto; display: block; }
-        .movie-title { padding: 8px; text-align: center; font-size: 14px; }
+        /* Daftar Poster */
+        .grid {display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:16px; max-width:1100px; margin:0 auto 30px}
+        .item {cursor:pointer; border-radius:8px; overflow:hidden; background:#222; transition:0.2s}
+        .item:hover {transform:scale(1.05)}
+        .poster {width:100%; display:block}
+        .judul {padding:8px; text-align:center; font-size:14px}
 
-        /* === BAGIAN PEMUTAR === */
-        .player-container {
-            max-width: 960px;
-            margin: 0 auto;
-            position: relative;
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        #videoPlayer {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .subtitle-layer {
-            position: absolute;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            padding: 0 20px;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .subtitle-text {
-            font-size: 22px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 4px #000, 0 0 8px #000;
-            line-height: 1.5;
-            min-height: 45px;
-        }
-        @media (max-width: 768px) {
-            .subtitle-text { font-size: 18px; }
-        }
+        /* Pemutar + Subtitle */
+        .pemutar {max-width:960px; margin:0 auto; position:relative; background:#000; border-radius:8px; overflow:hidden; display:none}
+        iframe {width:100%; height:520px; border:none; display:block}
+        .subtitle {position:absolute; bottom:70px; left:0; right:0; text-align:center; z-index:10; pointer-events:none; padding:0 20px}
+        .teks-sub {font-size:22px; font-weight:bold; color:#fff; text-shadow:0 0 4px #000,0 0 8px #000; line-height:1.5; min-height:45px}
+        @media (max-width:768px) {iframe {height:320px} .teks-sub {font-size:18px}}
     </style>
 </head>
 <body>
 
-<!-- DAFTAR FILM DARI TMDB -->
-<div class="movie-list" id="movieContainer"></div>
-
-<!-- PEMUTAR VIDEO -->
-<div class="player-container" id="playerSection" style="display: none;">
-    <video id="videoPlayer" controls preload="metadata">
-        <source id="videoSource" src="" type="video/mp4">
-        Browser tidak mendukung pemutaran video.
-    </video>
-    <div class="subtitle-layer">
-        <div class="subtitle-text" id="subtitleDisplay"></div>
-    </div>
+<div class="grid" id="daftarFilm"></div>
+<div class="pemutar" id="wadahPemutar">
+    <iframe id="iframeVideo" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    <div class="subtitle"><div class="teks-sub" id="tampilSub"></div></div>
 </div>
 
 <script>
-// ======================================
-// 🔑 KONFIGURASI
-// ======================================
-const TMDB_API_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
-// Sumber pemutar yang menerima ID TMDB (bisa pakai vsembed atau sumber lain yang kompatibel)
-const EMBED_BASE_URL = "https://vsembed.ru/embed/movie?tmdb=";
+const TMDB_KEY = "c000d7b8b0f5ee16b98b6103009745d8";
+const EMBED_URL = "https://vsembed.ru/embed/movie?tmdb="; // Bisa ganti ke vidsrc dll
+let daftarSub = [];
 
-// ======================================
-// 📥 AMBIL DATA FILM DARI TMDB
-// ======================================
-async function loadMovies() {
-    try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=id-ID`);
-        const data = await res.json();
-        const container = document.getElementById("movieContainer");
+// Ambil daftar film populer dari TMDB
+async function muatFilm() {
+  const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&language=id-ID`);
+  const data = await res.json();
+  const wadah = document.getElementById("daftarFilm");
+  wadah.innerHTML = "";
 
-        data.results.forEach(movie => {
-            const div = document.createElement("div");
-            div.className = "movie-item";
-            div.innerHTML = `
-                <img class="movie-poster" src="https://image.tmdb.org/t/p/w300${movie.poster_path}" alt="${movie.title}">
-                <div class="movie-title">${movie.title}</div>
-            `;
-            // Saat diklik, kirim ID ke pemutar
-            div.addEventListener("click", () => openPlayer(movie.id));
-            container.appendChild(div);
-        });
-    } catch (err) {
-        console.error("Gagal memuat data film:", err);
-    }
+  data.results.forEach(film => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <img class="poster" src="https://image.tmdb.org/t/p/w300${film.poster_path}" alt="${film.title}">
+      <div class="judul">${film.title}</div>`;
+    div.onclick = () => putarFilm(film.id);
+    wadah.appendChild(div);
+  });
 }
 
-// ======================================
-// 🎬 BUKA PEMUTAR BERDASARKAN ID TMDB
-// ======================================
-function openPlayer(tmdbId) {
-    // Sembunyikan daftar film, tampilkan pemutar
-    document.getElementById("movieContainer").style.display = "none";
-    const playerSection = document.getElementById("playerSection");
-    playerSection.style.display = "block";
+// Jalankan saat poster diklik
+function putarFilm(tmdbId) {
+  document.getElementById("daftarFilm").style.display = "none";
+  const pemutar = document.getElementById("wadahPemutar");
+  pemutar.style.display = "block";
 
-    // ✅ INTI: Cukup pakai ID TMDB untuk memuat sumber video
-    // Di sini kita gunakan vsembed, tapi nanti bisa diganti logikanya jika punya sumber lain
-    const embedUrl = EMBED_BASE_URL + tmdbId;
+  // Muat video hanya pakai ID TMDB
+  document.getElementById("iframeVideo").src = EMBED_URL+tmdbId;
 
-    // Jika ingin memuat langsung ke dalam pemutar kita sendiri:
-    // Kamu bisa menambahkan fungsi ekstrak tautan MP4 dari embedUrl jika diperlukan
-    // Sementara ini, contoh sederhana untuk sinkronisasi subtitle tetap jalan
+  // === SUBTITLE KAMU ===
+  daftarSub = [
+    {start:2, end:5, teks:"Selamat menonton"},
+    {start:6, end:10, teks:"ID TMDB: "+tmdbId},
+    {start:12, end:16, teks:"Subtitle tetap bisa jalan terpisah"}
+  ];
 
-    // Contoh daftar subtitle yang kamu miliki (bisa juga dimuat otomatis per ID)
-    const subtitles = [
-        { start: 2, end: 5, text: "Selamat menonton" },
-        { start: 6, end: 10, text: "Film ini diambil dari data TMDB" },
-        { start: 12, end: 16, text: "Subtitle bisa disesuaikan sendiri" }
-    ];
-
-    // Fungsi sinkronisasi subtitle
-    const video = document.getElementById("videoPlayer");
-    const subtitleDisplay = document.getElementById("subtitleDisplay");
-
-    function updateSubtitle() {
-        const now = video.currentTime;
-        let active = "";
-        for (const sub of subtitles) {
-            if (now >= sub.start && now <= sub.end) {
-                active = sub.text;
-                break;
-            }
-        }
-        subtitleDisplay.textContent = active;
-    }
-
-    video.addEventListener("play", () => {
-        updateSubtitle();
-        video.addEventListener("timeupdate", updateSubtitle);
+  // Sinkronisasi subtitle
+  let waktu = 0;
+  setInterval(() => {
+    waktu += 0.2; // Simulasi waktu, bisa disesuaikan lebih akurat
+    let tampil = "";
+    daftarSub.forEach(s => {
+      if (waktu >= s.start && waktu <= s.end) tampil = s.teks;
     });
-    video.addEventListener("pause", () => video.removeEventListener("timeupdate", updateSubtitle));
-    video.addEventListener("seeking", updateSubtitle);
-
-    // Contoh: jika sudah dapat tautan MP4 dari ID, masukkan di sini
-    // video.src = "TAUTAN_MP4_DARI_ID_" + tmdbId;
+    document.getElementById("tampilSub").textContent = tampil;
+  }, 200);
 }
 
-// Jalankan saat halaman dibuka
-loadMovies();
+muatFilm();
 </script>
-
 </body>
 </html>
