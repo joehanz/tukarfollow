@@ -1,6 +1,5 @@
 <html lang="id">
 <head>
-  <!-- BASIC META -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -11,11 +10,9 @@
   <meta name="robots" content="index, follow" />
   <meta name="language" content="id" />
 
-  <!-- ICONS -->
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
-  <!-- OPEN GRAPH -->
   <meta property="og:type" content="video.movie" />
   <meta property="og:title" content="TUKARFOLLOW" />
   <meta property="og:description" content="Nonton film dan serial TV terbaru sub Indonesia." />
@@ -23,16 +20,13 @@
   <meta property="og:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
   <meta property="og:site_name" content="TUKARFOLLOW" />
 
-  <!-- FONTS & ICON -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Search Bar -->
   <div class="search-container" id="searchContainer">
     <div class="search-box">
       <i data-lucide="search" size="18" color="#888"></i>
@@ -40,7 +34,6 @@
     </div>
   </div>
 
-  <!-- Area Pemutar Video -->
   <div class="video-player-container" id="videoPlayerContainer">
     <div class="close-player" id="closePlayerBtn">
       <i data-lucide="x" size="24" color="#fff"></i>
@@ -48,15 +41,12 @@
     <div id="playerArea" style="width:100%; height:100%;"></div>
   </div>
 
-  <!-- Tampilan Film Sama Persis Seperti Index -->
   <div class="feed-container" id="feedContainer"></div>
 
-  <!-- Panel Info -->
   <div class="info-panel" id="infoPanel">
     <div class="panel-content" id="panelContentArea"></div>
   </div>
 
-  <!-- Navigasi Bawah -->
   <div class="bottom-nav" id="bottomNav">
     <div class="nav-item" id="navSearch">
       <i data-lucide="search" size="24"></i>
@@ -74,7 +64,6 @@
     </div>
   </div>
 
-  <!-- Notifikasi Desktop -->
   <div class="desktop-notifier" id="desktopNotifier">
     <div class="notifier-content">
       <i data-lucide="smartphone" size="40"></i>
@@ -84,188 +73,154 @@
     </div>
   </div>
 
-  <!-- ✅ INI SCRIPT UTAMA UNTUK WATCH.HTML -->
-  <script>
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
-    const MOVIES_JSON_PATH = 'movies.json';
+<!-- INI SCRIPT YANG DIPERBAIKI TOTAL -->
+<script>
+const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
+const MOVIES_JSON_PATH = './movies.json'; // Jalur relatif yang benar
 
-    const feedContainer = document.getElementById('feedContainer');
-    const playerContainer = document.getElementById('videoPlayerContainer');
-    const playerArea = document.getElementById('playerArea');
-    const infoPanel = document.getElementById('infoPanel');
-    const panelContentArea = document.getElementById('panelContentArea');
+let currentMovie = null;
 
-    let currentMovie = null;
+// Ambil ID dari URL
+function getTmdbId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
 
-    // Ambil ID dari URL
-    function getTmdbId() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('id');
+// Fungsi utama cek data
+async function cekDanMuatFilm() {
+  const tmdbId = getTmdbId();
+  if (!tmdbId) {
+    document.getElementById('feedContainer').innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">ID film tidak ada</p>';
+    return;
+  }
+
+  try {
+    // 1. Coba baca movies.json
+    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" }); // Hindari cache
+    if (!res.ok) throw new Error("File tidak ditemukan");
+
+    const daftarFilm = await res.json();
+    const filmKetemu = daftarFilm.find(film => Number(film.tmdb_id) === Number(tmdbId));
+
+    if (filmKetemu) {
+      // ✅ KETEMU DI JSON → PAKAI PLAYCINEMATIC
+      console.log("✅ Ditemukan di JSON:", filmKetemu.title);
+      currentMovie = filmKetemu;
+      tampilkanInfoFilm(filmKetemu);
+      putarVideo(filmKetemu.iframe);
+    } else {
+      // ❌ TIDAK KETEMU → AMBIL DARI TMDB & PAKAI VSEMBED
+      console.log("❌ Tidak ada di JSON, ambil dari TMDB");
+      const dataTMDB = await ambilDariTMDB(tmdbId);
+      if (!dataTMDB) throw new Error("Data TMDB gagal dimuat");
+      currentMovie = dataTMDB;
+      tampilkanInfoFilm(dataTMDB);
+      putarVideo(`https://vsembed.ru/embed/${tmdbId}`);
     }
 
-    // ✅ CEK SESUAI FORMAT JSON KAMU (langsung array)
-    async function cekDataFilm(tmdbId) {
-      try {
-        const res = await fetch(MOVIES_JSON_PATH);
-        if (!res.ok) throw new Error('File tidak ditemukan');
-        const daftarFilm = await res.json();
-        const ketemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        return { ada: !!ketemu, data: ketemu || null };
-      } catch (err) {
-        console.warn('Gagal baca movies.json:', err);
-        return { ada: false, data: null };
-      }
-    }
+  } catch (err) {
+    console.error("Error:", err);
+    document.getElementById('feedContainer').innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">Gagal memuat data</p>';
+  }
+}
 
-    // Ambil data dari TMDB jika tidak ada di JSON
-    async function ambilDariTMDB(tmdbId) {
-      try {
-        const res = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}&language=id-ID`);
-        if (!res.ok) throw new Error('Data TMDB tidak ada');
-        return await res.json();
-      } catch (err) {
-        console.warn('Gagal ambil dari TMDB:', err);
-        return null;
-      }
-    }
+// Ambil data dari TMDB
+async function ambilDariTMDB(tmdbId) {
+  const res = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}&language=id-ID`);
+  if (!res.ok) return null;
+  return await res.json();
+}
 
-    // Tampilkan tampilan sama seperti index
-    function tampilkanTampilanFilm(film) {
-      feedContainer.innerHTML = '';
-      const poster = film.image || (film.poster_path ? `${IMAGE_URL}${film.poster_path}` : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500');
-      const tahun = film.release_date ? film.release_date.split('-')[0] : '-';
+// Tampilkan poster dan info
+function tampilkanInfoFilm(film) {
+  const poster = film.image || (film.poster_path ? `${IMAGE_URL}${film.poster_path}` : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500');
+  const tahun = film.release_date ? film.release_date.split('-')[0] : '-';
 
-      const card = document.createElement('div');
-      card.className = 'movie-card';
-      card.style.backgroundImage = `url('${poster}')`;
-      card.innerHTML = `
-        <div class="overlay"></div>
-        <div class="top-title">${film.title || 'Tanpa Judul'}</div>
-        <div class="play-btn-container">
-          <div class="play-circle"><i data-lucide="play" fill="#fff" size="32"></i></div>
-        </div>
-        <div class="main-content">
-          <div class="side-actions">
-            <div class="action-item" onclick="bukaInfo('sinopsis')">
-              <i data-lucide="info" size="28"></i>
-              <span>Info</span>
-            </div>
-            <div class="action-item" onclick="bukaInfo('rilis')">
-              <i data-lucide="calendar" size="28"></i>
-              <span>${tahun}</span>
-            </div>
-            <div class="action-item" onclick="bukaInfo('genre')">
-              <i data-lucide="clapperboard" size="28"></i>
-              <span>Genre</span>
-            </div>
-            <div class="action-item" onclick="bukaInfo('negara')">
-              <i data-lucide="globe" size="28"></i>
-              <span>Negara</span>
-            </div>
+  document.getElementById('feedContainer').innerHTML = `
+    <div class="movie-card" style="background-image: url('${poster}');">
+      <div class="overlay"></div>
+      <div class="top-title">${film.title}</div>
+      <div class="play-btn-container">
+        <div class="play-circle"><i data-lucide="play" fill="#fff" size="32"></i></div>
+      </div>
+      <div class="main-content">
+        <div class="side-actions">
+          <div class="action-item" onclick="bukaInfo('sinopsis')">
+            <i data-lucide="info" size="28"></i>
+            <span>Info</span>
+          </div>
+          <div class="action-item" onclick="bukaInfo('rilis')">
+            <i data-lucide="calendar" size="28"></i>
+            <span>${tahun}</span>
+          </div>
+          <div class="action-item" onclick="bukaInfo('genre')">
+            <i data-lucide="clapperboard" size="28"></i>
+            <span>Genre</span>
+          </div>
+          <div class="action-item" onclick="bukaInfo('negara')">
+            <i data-lucide="globe" size="28"></i>
+            <span>Negara</span>
           </div>
         </div>
-      `;
-      feedContainer.appendChild(card);
-      lucide.createIcons();
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+// Fungsi putar video
+function putarVideo(sumber) {
+  if (!sumber) {
+    document.getElementById('playerArea').innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">Sumber video tidak tersedia</p>';
+    return;
+  }
+  document.getElementById('playerArea').innerHTML = `<iframe src="${sumber}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="width:100%; height:100%; border:none;"></iframe>`;
+  document.getElementById('videoPlayerContainer').classList.add('active');
+}
+
+// Buka panel info
+function bukaInfo(jenis) {
+  const panel = document.getElementById('infoPanel');
+  const konten = document.getElementById('panelContentArea');
+  panel.classList.add('show');
+  let teks = '';
+
+  if (currentMovie.sinopsis) {
+    // Data dari JSON
+    switch(jenis) {
+      case 'sinopsis': teks = currentMovie.sinopsis; break;
+      case 'rilis': teks = `Tanggal Rilis: ${currentMovie.release_date}`; break;
+      case 'genre': teks = `Genre: ${currentMovie.genre.join(', ')}`; break;
+      case 'negara': teks = `Negara: ${currentMovie.country}`; break;
     }
-
-    // Tampilkan info
-    function bukaInfo(jenis) {
-      if (!currentMovie) return;
-      infoPanel.classList.add('show');
-      let isi = '';
-
-      if (currentMovie.adaDiJson) {
-        const d = currentMovie.data;
-        switch (jenis) {
-          case 'sinopsis': isi = `<p>${d.sinopsis || 'Tidak ada sinopsis'}</p>`; break;
-          case 'rilis': isi = `<p>Tanggal Rilis:<br>${d.release_date || '-'}</p>`; break;
-          case 'genre': isi = `<p>Genre:<br>${Array.isArray(d.genre) ? d.genre.join(', ') : '-'}</p>`; break;
-          case 'negara': isi = `<p>Negara:<br>${d.country || '-'}</p>`; break;
-        }
-      } else {
-        const d = currentMovie.data;
-        switch (jenis) {
-          case 'sinopsis': isi = `<p>${d.overview || 'Tidak ada sinopsis'}</p>`; break;
-          case 'rilis': isi = `<p>Tanggal Rilis:<br>${d.release_date || '-'}</p>`; break;
-          case 'genre': isi = `<p>Genre:<br>${d.genres?.map(g => g.name).join(', ') || '-'}</p>`; break;
-          case 'negara': isi = `<p>Negara:<br>${d.production_countries?.map(c => c.name).join(', ') || '-'}</p>`; break;
-        }
-      }
-      panelContentArea.innerHTML = isi;
+  } else {
+    // Data dari TMDB
+    switch(jenis) {
+      case 'sinopsis': teks = currentMovie.overview || 'Tidak ada sinopsis'; break;
+      case 'rilis': teks = `Tanggal Rilis: ${currentMovie.release_date || '-'}`; break;
+      case 'genre': teks = `Genre: ${currentMovie.genres?.map(g => g.name).join(', ') || '-'}`; break;
+      case 'negara': teks = `Negara: ${currentMovie.production_countries?.map(c => c.name).join(', ') || '-'}`; break;
     }
+  }
+  konten.innerHTML = `<p style="color:#fff; padding:15px;">${teks}</p>`;
+}
 
-    // ✅ ATURAN UTAMA PEMUTAR
-    function mainkanFilm() {
-      if (!currentMovie) return;
-      let src = '';
+// Tutup pemutar
+document.getElementById('closePlayerBtn').addEventListener('click', () => {
+  document.getElementById('videoPlayerContainer').classList.remove('active');
+  document.getElementById('playerArea').innerHTML = '';
+});
 
-      if (currentMovie.adaDiJson) {
-        // ✅ ADA DI JSON → PAKAI PLAYCINEMATIC
-        src = currentMovie.data.iframe || '';
-        console.log('Sumber: Playcinematic', src);
-      } else {
-        // ❌ TIDAK ADA → BARU PAKAI VSEMBED
-        const id = getTmdbId();
-        src = `https://vsembed.ru/embed/${id}`;
-        console.log('Sumber: Vsembed', src);
-      }
+// Tutup notifikasi
+function closeNotifier() {
+  document.getElementById('desktopNotifier').style.display = 'none';
+}
 
-      if (!src) {
-        playerArea.innerHTML = `<p style="color:#fff; text-align:center; padding:2rem;">Sumber video tidak tersedia</p>`;
-        return;
-      }
-
-      playerArea.innerHTML = `
-        <iframe 
-          src="${src}" 
-          frameborder="0" 
-          allowfullscreen 
-          allow="autoplay; fullscreen; picture-in-picture"
-          style="width:100%; height:100%; border:none; display:block;"
-        ></iframe>
-      `;
-      playerContainer.classList.add('active');
-    }
-
-    // Tutup pemutar
-    document.getElementById('closePlayerBtn').addEventListener('click', () => {
-      playerContainer.classList.remove('active');
-      playerArea.innerHTML = '';
-    });
-
-    // Jalankan semua
-    async function mulai() {
-      const id = getTmdbId();
-      if (!id) {
-        feedContainer.innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">ID film tidak ditemukan</p>';
-        return;
-      }
-
-      const cek = await cekDataFilm(id);
-      if (cek.ada) {
-        currentMovie = { adaDiJson: true, data: cek.data };
-      } else {
-        const dataTMDB = await ambilDariTMDB(id);
-        if (!dataTMDB) {
-          feedContainer.innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">Data film tidak ditemukan</p>';
-          return;
-        }
-        currentMovie = { adaDiJson: false, data: dataTMDB };
-      }
-
-      tampilkanTampilanFilm(currentMovie.data);
-      mainkanFilm(); // ✅ LANGSUNG MAIN TANPA KLIK
-    }
-
-    window.addEventListener('load', mulai);
-
-    function closeNotifier() {
-      document.getElementById('desktopNotifier').style.display = 'none';
-    }
-  </script>
+// Jalankan semuanya saat halaman siap
+window.addEventListener('load', cekDanMuatFilm);
+</script>
 
 </body>
 </html>
