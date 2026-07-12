@@ -46,9 +46,14 @@
       <i data-lucide="x" size="24" color="#fff"></i>
     </div>
     <div id="playerArea" style="width:100%; height:100%;"></div>
+    <!-- Tombol Ganti Pemutar (jika ada sumber manual) -->
+    <div id="playerSwitch" style="position:absolute; top:15px; left:50%; transform:translateX(-50%); z-index:10; display:none; gap:10px;">
+      <button onclick="gantiPemutar('playcinematic')" style="padding:6px 12px; background:#222; color:#fff; border:none; border-radius:4px;">Playcinematic</button>
+      <button onclick="gantiPemutar('abyssplayer')" style="padding:6px 12px; background:#222; color:#fff; border:none; border-radius:4px;">Abyssplayer</button>
+    </div>
   </div>
 
-  <!-- Tampilan Film (Sama persis dengan index) -->
+  <!-- Tampilan Film Sama Persis Seperti Index -->
   <div class="feed-container" id="feedContainer"></div>
 
   <!-- Panel Info -->
@@ -73,8 +78,8 @@
   </div>
 
   <!-- Notifikasi Desktop -->
-  <div class="desktop-notifier1" id="desktopNotifier">
-    <div class="notifier-content1">
+  <div class="desktop-notifier" id="desktopNotifier">
+    <div class="notifier-content">
       <i data-lucide="smartphone" size="40"></i>
       <h3>Tampilan Lebih Asyik di HP!</h3>
       <p>Situs ini didesain khusus untuk kenyamanan layar mobile.</p>
@@ -94,8 +99,10 @@
     const playerArea = document.getElementById('playerArea');
     const infoPanel = document.getElementById('infoPanel');
     const panelContentArea = document.getElementById('panelContentArea');
+    const playerSwitch = document.getElementById('playerSwitch');
 
     let currentMovie = null;
+    let sumberManual = null;
 
     // Ambil ID dari URL
     function getTmdbId() {
@@ -110,10 +117,10 @@
         if (!res.ok) throw new Error('File tidak ditemukan');
         const data = await res.json();
         const ketemu = data.movies?.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        return { sumber: ketemu ? 'manual' : 'tmdb', data: ketemu };
+        return { ada: !!ketemu, data: ketemu || null };
       } catch (err) {
         console.warn('Gagal baca movies.json:', err);
-        return { sumber: 'tmdb', data: null };
+        return { ada: false, data: null };
       }
     }
 
@@ -169,13 +176,13 @@
       lucide.createIcons();
     }
 
-    // Buka panel info sesuai sumber data
+    // Buka panel info
     function bukaInfo(jenis) {
       if (!currentMovie) return;
       infoPanel.classList.add('show');
       let isi = '';
 
-      if (currentMovie.sumber === 'manual') {
+      if (currentMovie.adaDiJson) {
         const d = currentMovie.data;
         switch (jenis) {
           case 'sinopsis': isi = `<p>${d.sinopsis || 'Tidak ada sinopsis'}</p>`; break;
@@ -195,32 +202,42 @@
       panelContentArea.innerHTML = isi;
     }
 
-    // Mainkan film sesuai sumber
+    // Ganti pemutar jika ada 2 pilihan
+    function gantiPemutar(jenis) {
+      if (!sumberManual) return;
+      let src = jenis === 'playcinematic' ? sumberManual.playcinematic : sumberManual.abyssplayer;
+      if (!src) return;
+      playerArea.innerHTML = `<iframe src="${src}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="width:100%; height:100%; border:none;"></iframe>`;
+    }
+
+    // Mainkan film OTOMATIS saat halaman terbuka
     function mainkanFilm() {
       if (!currentMovie) return;
       let src = '';
 
-      if (currentMovie.sumber === 'manual') {
-        src = currentMovie.data.iframe || '';
+      if (currentMovie.adaDiJson) {
+        // Ambil sumber dari movies.json
+        const d = currentMovie.data;
+        sumberManual = {
+          playcinematic: d.iframe || '',
+          abyssplayer: d.iframe2 || '' // Tambahkan iframe2 di movies.json jika ada sumber kedua
+        };
+        src = sumberManual.playcinematic || sumberManual.abyssplayer;
+        // Tampilkan tombol ganti jika ada 2 sumber
+        playerSwitch.style.display = (sumberManual.playcinematic && sumberManual.abyssplayer) ? 'flex' : 'none';
       } else {
+        // Tidak ada di JSON → pakai vsembed
         const id = getTmdbId();
         src = `https://vsembed.ru/embed/${id}`;
+        playerSwitch.style.display = 'none';
       }
 
       if (!src) {
-        alert('Tidak ada sumber pemutar!');
+        alert('Sumber video tidak tersedia');
         return;
       }
 
-      playerArea.innerHTML = `
-        <iframe 
-          src="${src}" 
-          frameborder="0" 
-          allowfullscreen 
-          allow="autoplay; fullscreen; picture-in-picture"
-          style="width:100%; height:100%; border:none;"
-        ></iframe>
-      `;
+      playerArea.innerHTML = `<iframe src="${src}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="width:100%; height:100%; border:none;"></iframe>`;
       playerContainer.classList.add('active');
     }
 
@@ -228,9 +245,10 @@
     document.getElementById('closePlayerBtn').addEventListener('click', () => {
       playerContainer.classList.remove('active');
       playerArea.innerHTML = '';
+      playerSwitch.style.display = 'none';
     });
 
-    // Mulai jalankan
+    // Jalankan semua proses
     async function mulai() {
       const id = getTmdbId();
       if (!id) {
@@ -239,18 +257,19 @@
       }
 
       const cek = await cekDataFilm(id);
-      if (cek.sumber === 'manual') {
-        currentMovie = { sumber: 'manual', data: cek.data };
+      if (cek.ada) {
+        currentMovie = { adaDiJson: true, data: cek.data };
       } else {
         const dataTMDB = await ambilDariTMDB(id);
         if (!dataTMDB) {
           feedContainer.innerHTML = '<p style="color:#fff; text-align:center; padding:2rem;">Data film tidak ditemukan</p>';
           return;
         }
-        currentMovie = { sumber: 'tmdb', data: dataTMDB };
+        currentMovie = { adaDiJson: false, data: dataTMDB };
       }
 
       tampilkanTampilanFilm(currentMovie.data);
+      mainkanFilm(); // ✅ LANGSUNG MAIN TANPA KLIK LAGI
     }
 
     window.addEventListener('load', mulai);
