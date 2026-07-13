@@ -204,45 +204,48 @@
     }
 
     /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
-    .subtitle-layer {
+  /* Navigasi situs kamu — tetap bisa diklik penuh */
+.subtitle-layer {
   position: fixed;
   bottom: 0;
   left: max(12px, env(safe-area-inset-left));
   right: 0;
-  width: 100%;
-  height: 60px; /* Sesuaikan tinggi bilah kontrol */
   z-index: 999999;
-  background: yellow;
-  pointer-events: none !important; /* Semua bisa tembus klik secara dasar */
+  background: transparent;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1 !important;
+  pointer-events: auto !important; /* Nav situs bisa diklik */
 }
 
-/* Bagian penutup (kuning hanya untuk uji, nanti bisa dihapus) */
+/* Lapisan penutup — blokir semua klik ke video KECUALI area subtitle */
 .subtitle-layer::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: #ffeb3b; /* Warna kuning uji, ganti ke transparent nanti */
-  opacity: 0.7;
-  /* Potong hanya area ikon subtitle di ujung kanan */
+  background: transparent;
+  /* Potong lubang hanya di posisi ikon subtitle */
   clip-path: polygon(
     0 0,
-    calc(100% - 60px) 0, /* Sisakan 60px dari kanan = lobang */
-    calc(100% - 60px) 100%,
+    calc(100% - 55px) 0,
+    calc(100% - 55px) 100%,
     0 100%
   );
-  pointer-events: auto; /* Area ini menutup, tidak bisa diklik */
+  pointer-events: auto; /* Bagian ini menutup, tidak tembus */
 }
 
-/* Khusus area lobang: izinkan klik tembus */
+/* Area khusus subtitle — klik tembus ke bawah */
 .subtitle-layer::after {
   content: "";
   position: absolute;
   right: 0;
   top: 0;
-  width: 60px; /* Lebar pas untuk ikon subtitle */
+  width: 55px; /* Sesuaikan lebar ikon subtitle */
   height: 100%;
-  pointer-events: auto;
-  background: transparent; /* Kosong tembus pandang */
+  pointer-events: none !important; /* Klik tembus ke ikon subtitle */
+  background: transparent;
 }
     
     
