@@ -211,14 +211,13 @@
   right: 0;
   z-index: 999999;
   
-  /* WARNA KUNING UNTUK TES (Silakan ganti/hapus jika sudah pas) */
-  /* Di bawah ini membuat background kuning, tapi memberi 'lobang' transparan di area tombol CC */
+    /* Di bawah ini membuat background kuning, tapi memberi 'lobang' transparan di area tombol CC */
   /* JIKA MAU DIGESER AGAK KE KANAN */
   background: linear-gradient(to right, 
     #ffeb3b 0%, 
-    #ffeb3b calc(100% - 130px),  /* Angka ini diperkecil (sebelumnya 160px) */
+    #ffeb3b calc(100% - 130px),  /* Angka ini diperkecil (sebelumnya 160px) | calc(100% - 60px) adalah Batas Sebelah Kanan dari lobang tersebut. Jika angka ini makin kecil, lobang akan melebar ke arah kanan.*/
     transparent calc(100% - 130px), 
-    transparent calc(100% - 40px),   /* Angka ini diperkecil (sebelumnya 110px) */
+    transparent calc(100% - 50px),   /* Angka ini diperkecil (sebelumnya 110px) | calc(100% - 60px) adalah Batas Sebelah Kanan dari lobang tersebut. Jika angka ini makin kecil, lobang akan melebar ke arah kanan.*/
     #ffeb3b calc(100% - 80px), 
     #ffeb3b 100%
   );
