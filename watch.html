@@ -203,7 +203,7 @@
       height: auto;
     }
 
-    /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
+/* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
 .subtitle-layer {
   position: fixed;
   bottom: 15px;
@@ -225,9 +225,20 @@
   pointer-events: none !important; 
 }
 
-/* Supaya tombol-tombol nav situs Anda di tengah TETAP BISA DIKLIK */
+/* Supaya tombol-tombol nav situs Anda TETAP BISA DIKLIK */
 .subtitle-layer * {
   pointer-events: auto;
+}
+
+/* ⬇️ SISIPAN BARU: Seting otomatis untuk menggeser grup kontrol situs ke kiri dari titik 0 ⬇️ */
+/* Ganti .grup-kontrol-situs dengan class wrapper/pembungkus ikon grup kontrol situs Anda */
+.grup-kontrol-situs {
+  position: absolute;
+  
+  /* PANDUAN GESER: Patokan kiri layar adalah 0 */
+  left: 35%; /* Semakin KECIL persennya (misal: 30%, 25%), grup kontrol akan semakin geser ke KIRI secara otomatis di semua perangkat */
+  
+  transform: translateX(-50%); /* Menjaga titik pusat ikon agar tetap presisi */
 }
 
 /* TAMENG KIRI: Tak terlihat tapi memblokir klik */
