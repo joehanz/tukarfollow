@@ -31,9 +31,19 @@ function detectDevice() {
 }
 
 // ==============================================
-// 🚀 Modul Selebaran Promosi (Flyer)
+// 🚀 Modul Selebaran Promosi (Flyer) - UPDATED & FORCED TO SHOW
 // ==============================================
+
 // ==============================================
+// 🚀 Jalankan dengan Aman (Bagian Paling Bawah Script)
+// ==============================================
+window.addEventListener('DOMContentLoaded', () => {
+    detectDevice();
+});
+
+window.addEventListener('load', () => {
+    fetchMovies();
+    // ==============================================
 // 🚀 Modul Selebaran Promosi (Flyer) - UPDATED & FORCED TO SHOW
 // ==============================================
 function initPromoNotifier() {
@@ -133,6 +143,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('load', () => {
     fetchMovies();
+    
+    // Berikan jeda 300ms agar rendering grid utama selesai dulu, baru flyer dimunculkan
+    setTimeout(() => {
+        initPromoNotifier();
+    }, 300);
+});
+
+window.addEventListener('resize', detectDevice);
     
     // Berikan jeda 300ms agar rendering grid utama selesai dulu, baru flyer dimunculkan
     setTimeout(() => {
