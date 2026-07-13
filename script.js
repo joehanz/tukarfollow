@@ -19,6 +19,108 @@ let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
 
+//===============================================
+// bla bla bla
+//===============================================
+function initPromoNotifier() {
+  const notifier = document.getElementById('desktopNotifier');
+  if (!notifier) return;
+
+  // 1. Cek apakah data sudah ada di memori lokal biar tidak usah fetch ulang-ulang
+  const cachedData = sessionStorage.getItem('tf_latest_promo');
+  
+  if (cachedData) {
+    renderPromoData(JSON.parse(cachedData));
+  } else {
+    // Jika belum ada di memori, baru ambil dari server (Gunakan konstanta PATH milikmu jika ada, misal MOVIES_JSON_PATH atau string langsung)
+    const jsonPath = typeof MOVIES_JSON_PATH !== 'undefined' ? MOVIES_JSON_PATH : 'movies.json';
+    fetch(jsonPath)
+      .then(response => response.json())
+      .then(movies => {
+        if (Array.isArray(movies) && movies.length > 0) {
+          const latestMovie = movies[0];
+          // Simpan ke memori sesi browser
+          sessionStorage.setItem('tf_latest_promo', JSON.stringify(latestMovie));
+          renderPromoData(latestMovie);
+        }
+      })
+      .catch(err => console.error("Gagal memuat selebaran promosi:", err));
+  }
+}
+
+// Fungsi khusus untuk nempel data dan handling loading gambar biar super cepat
+function renderPromoData(latestMovie) {
+  const promoCard = document.getElementById('promoCard');
+  const promoTitle = document.getElementById('promoTitle');
+  const promoCountry = document.getElementById('promoCountry');
+  const promoGenres = document.getElementById('promoGenres');
+  const promoSinopsis = document.getElementById('promoSinopsis');
+  const promoWatchBtn = document.getElementById('promoWatchBtn');
+  const notifier = document.getElementById('desktopNotifier');
+
+  // Render teks duluan biar cepat
+  promoTitle.textContent = latestMovie.title || 'Judul Film';
+  promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
+  promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+  
+  // Render tags genre
+  promoGenres.innerHTML = '';
+  if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+    latestMovie.genre.forEach(g => {
+      const span = document.createElement('span');
+      span.textContent = g;
+      promoGenres.appendChild(span);
+    });
+  }
+
+  // ✅ FIX: Aksi tombol Nonton diarahkan ke fungsi cek & navigasi watch.html milikmu
+  promoWatchBtn.onclick = function() {
+    closeNotifier();
+    if (latestMovie.tmdb_id) {
+       playMovie(latestMovie.tmdb_id); // Mengirim id film terbaru (cth: 726888) ke aturan main kamu
+    } else {
+       console.error("ID TMDB tidak ditemukan pada data film terbaru.");
+    }
+  };
+
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+
+  // Trik Inti: Preload gambar di background, pas sudah terunduh penuh baru tampilkan selebarannya!
+  if (latestMovie.image) {
+    const imgPreloader = new Image();
+    imgPreloader.src = latestMovie.image;
+    imgPreloader.onload = function() {
+      promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+      notifier.style.display = 'flex'; // Muncul instan saat gambar sudah siap kencang
+    };
+    imgPreloader.onerror = function() {
+      // Jika gambar gagal dimuat/error, tetap munculkan selebaran dengan fallback
+      notifier.style.display = 'flex';
+    };
+  } else {
+    notifier.style.display = 'flex';
+  }
+}
+
+function closeNotifier() {
+  const notifier = document.getElementById('desktopNotifier');
+  if (notifier) {
+    notifier.style.opacity = '0';
+    notifier.style.transition = 'opacity 0.2s ease';
+    setTimeout(() => {
+      notifier.style.display = 'none';
+      notifier.style.opacity = '1'; // Reset opacity untuk pemanggilan berikutnya
+    }, 200);
+  }
+}
+
+// Jalankan otomatis saat DOM siap
+document.addEventListener('DOMContentLoaded', () => {
+  initPromoNotifier();
+});
+
 
 // ==============================================
 // 🎯 Fungsi Gulir Daftar Film
