@@ -219,32 +219,7 @@
       pointer-events: auto !important;
     }
 
-    /* Buat lapisan penutup KECUALI area ikon subtitle */
-.subtitle-layer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Potong area kanan sebesar lebar ikon subtitle */
-  clip-path: polygon(
-    0 0, 
-    calc(100% - 50px) 0, /* Mulai potong 50px dari kanan */
-    calc(100% - 50px) 100%, 
-    0 100%
-  );
-  background: transparent;
-  pointer-events: auto; /* Area ini tertutup & tidak bisa diklik */
-}
-
-/* Khusus area lobang: izinkan klik */
-.subtitle-layer::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50px; /* Lebar area ikon subtitle */
-  height: 100%;
-  pointer-events: auto; /* Bisa diklik tembus ke bawah */
-}
+    
     
     .subtitle-controls {
       display: flex;
