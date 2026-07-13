@@ -609,13 +609,14 @@
   </div>
 
 <script>
-    // Konfigurasi sumber data (tetap pakai TMDB, tanpa file movies.json)
+    // Konfigurasi
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-    
-    // ✅ Sumber embed manual tanpa file JSON
+    const MOVIES_JSON_PATH = './movies.json'; // Jalur file json kamu
+
+    // Sumber cadangan jika tidak ada di movies.json
     const SUMBER_EMBED = {
       utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
       cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
@@ -636,33 +637,38 @@
 
     let currentMovieId = null;
 
-    // Izinkan orientasi otomatis
     if (screen.orientation && screen.orientation.lock) {
       screen.orientation.unlock();
     }
 
-    // Ambil ID film dari parameter URL
     function ambilIdDariUrl() {
       const param = new URLSearchParams(window.location.search);
       return param.get('id');
     }
 
-    // ✅ Fungsi muat film: langsung pakai sumber embed manual, tanpa cek movies.json
-    function muatFilmLangsung(tmdbId) {
+    // ✅ Logika baru: Cek movies.json DULU baru TMDB
+    async function cekDanMuatFilm(tmdbId) {
       try {
-        // Gunakan sumber utama terlebih dahulu
-        filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-        // Bisa tambahkan pengecekan jika gagal, ganti ke cadangan
+        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+        if (res.ok) {
+          const daftar = await res.json();
+          const ketemu = daftar.find(f => String(f.tmdb_id) === String(tmdbId));
+          // Kalau ketemu dan ada kolom iframe sesuai skema kamu
+          if (ketemu && ketemu.iframe) {
+            filmIframe.src = ketemu.iframe;
+            return; // Selesai, tidak lanjut ke TMDB
+          }
+        }
+      } catch (err) { /* Abaikan error, lanjut ke cadangan */ }
+
+      // Kalau tidak ketemu / gagal baca json → pakai sumber TMDB
+      filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+      filmIframe.onerror = () => {
+        filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
         filmIframe.onerror = () => {
-          filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-          filmIframe.onerror = () => {
-            filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-          };
+          filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
         };
-      } catch (err) {
-        console.error("Gagal memuat sumber film:", err);
-        videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Gagal memuat film. Silakan coba lagi nanti.</div>`;
-      }
+      };
     }
 
     // Kontrol layar penuh
@@ -780,8 +786,8 @@
         videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
         return;
       }
-      // ✅ Panggil fungsi baru tanpa file JSON
-      muatFilmLangsung(currentMovieId);
+      // Panggil fungsi cek urutan baru
+      cekDanMuatFilm(currentMovieId);
     });
 </script>
 </body>
