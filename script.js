@@ -33,35 +33,54 @@ function detectDevice() {
 // ==============================================
 // 🚀 Modul Selebaran Promosi (Flyer)
 // ==============================================
+// ==============================================
+// 🚀 Modul Selebaran Promosi (Flyer) - UPDATED & FORCED TO SHOW
+// ==============================================
 function initPromoNotifier() {
   fetch(MOVIES_JSON_PATH)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error('movies.json tidak ditemukan');
+      return response.json();
+    })
     .then(movies => {
-      if (Array.isArray(movies) && movies.length > 0) {
-        const latestMovie = movies[0]; // Ambil data paling atas (terbaru)
-        
-        const promoCard = document.getElementById('promoCard');
-        const promoTitle = document.getElementById('promoTitle');
-        const promoCountry = document.getElementById('promoCountry');
-        const promoGenres = document.getElementById('promoGenres');
-        const promoSinopsis = document.getElementById('promoSinopsis');
-        const promoWatchBtn = document.getElementById('promoWatchBtn');
-        const notifier = document.getElementById('desktopNotifier');
+      // Menyiapkan data: Ambil dari JSON, jika kosong gunakan data default agar flyer TETAP MUNCUL
+      let latestMovie = (Array.isArray(movies) && movies.length > 0) ? movies[0] : null;
+      
+      if (!latestMovie) {
+        console.warn("movies.json kosong, menggunakan data contoh untuk flyer.");
+        latestMovie = {
+          title: "Film Rekomendasi Hari Ini",
+          country: "Indonesia",
+          release_date: "2026-01-01",
+          sinopsis: "Nonton streaming film pilihan terbaik subtitle Indonesia gratis hanya di Tukarfollow.",
+          genre: ["Aksi", "Petualangan"],
+          image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1000",
+          tmdb_id: 157336
+        };
+      }
 
-        // Pengaman: Jika elemen HTML belum termuat, lewati agar tidak crash
-        if (!promoCard || !notifier || !promoTitle || !promoWatchBtn) return;
+      const promoCard = document.getElementById('promoCard');
+      const promoTitle = document.getElementById('promoTitle');
+      const promoCountry = document.getElementById('promoCountry');
+      const promoGenres = document.getElementById('promoGenres');
+      const promoSinopsis = document.getElementById('promoSinopsis');
+      const promoWatchBtn = document.getElementById('promoWatchBtn');
+      const notifier = document.getElementById('desktopNotifier');
 
-        // Ganti gambar latar belakang selebaran
-        if (latestMovie.image) {
-          promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
-        }
-        
-        // Render data teks
-        promoTitle.textContent = latestMovie.title || 'Judul Film';
-        promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
-        promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
-        
-        // Render tags genre
+      if (!promoCard || !notifier) return;
+
+      // Ganti gambar latar belakang selebaran
+      if (latestMovie.image) {
+        promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+      }
+      
+      // Render data teks
+      if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
+      if (promoCountry) promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
+      if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+      
+      // Render tags genre
+      if (promoGenres) {
         promoGenres.innerHTML = '';
         if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
           latestMovie.genre.forEach(g => {
@@ -70,8 +89,10 @@ function initPromoNotifier() {
             promoGenres.appendChild(span);
           });
         }
+      }
 
-        // Aksi tombol Nonton
+      // Aksi tombol Nonton
+      if (promoWatchBtn) {
         promoWatchBtn.onclick = function() {
           closeNotifier();
           const targetedId = latestMovie.tmdb_id || latestMovie.id;
@@ -84,26 +105,42 @@ function initPromoNotifier() {
              }
           }
         };
-
-        // Tampilkan selebaran
-        notifier.style.display = 'flex';
-        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
+
+      // MEMAKSA FLYER MUNCUL SECARA HALUS
+      notifier.style.display = 'flex';
+      notifier.style.opacity = '0';
+      notifier.style.transition = 'opacity 0.5s ease';
+      
+      // Memicu efek fade-in setelah display diubah menjadi flex
+      setTimeout(() => {
+        notifier.style.opacity = '1';
+      }, 50);
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     })
-    .catch(err => console.warn("Gagal/Belum ada data selebaran promosi:", err));
+    .catch(err => {
+      console.error("Gagal memuat selebaran promosi:", err);
+    });
 }
 
-function closeNotifier() {
-  const notifier = document.getElementById('desktopNotifier');
-  if (notifier) {
-    notifier.style.opacity = '0';
-    notifier.style.transition = 'opacity 0.3s ease';
+// ==============================================
+// 🚀 Jalankan dengan Aman (Bagian Paling Bawah Script)
+// ==============================================
+window.addEventListener('DOMContentLoaded', () => {
+    detectDevice();
+});
+
+window.addEventListener('load', () => {
+    fetchMovies();
+    
+    // Berikan jeda 300ms agar rendering grid utama selesai dulu, baru flyer dimunculkan
     setTimeout(() => {
-      notifier.style.display = 'none';
-      notifier.style.opacity = '1';
+        initPromoNotifier();
     }, 300);
-  }
-}
+});
+
+window.addEventListener('resize', detectDevice);
 
 // ==============================================
 // 🎯 Fungsi Gulir Daftar Film
