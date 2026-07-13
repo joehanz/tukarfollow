@@ -32,9 +32,8 @@ function initPromoNotifier() {
   if (cachedData) {
     renderPromoData(JSON.parse(cachedData));
   } else {
-    // Jika belum ada di memori, baru ambil dari server (Gunakan konstanta PATH milikmu jika ada, misal MOVIES_JSON_PATH atau string langsung)
-    const jsonPath = typeof MOVIES_JSON_PATH !== 'undefined' ? MOVIES_JSON_PATH : 'movies.json';
-    fetch(jsonPath)
+    // Jika belum ada di memori, baru ambil dari server
+    fetch('movies.json')
       .then(response => response.json())
       .then(movies => {
         if (Array.isArray(movies) && movies.length > 0) {
@@ -73,13 +72,18 @@ function renderPromoData(latestMovie) {
     });
   }
 
-  // ✅ FIX: Aksi tombol Nonton diarahkan ke fungsi cek & navigasi watch.html milikmu
+  // Aksi tombol Nonton
   promoWatchBtn.onclick = function() {
     closeNotifier();
-    if (latestMovie.tmdb_id) {
-       playMovie(latestMovie.tmdb_id); // Mengirim id film terbaru (cth: 726888) ke aturan main kamu
+    if (typeof playMovie === "function") {
+       playMovie(latestMovie); 
     } else {
-       console.error("ID TMDB tidak ditemukan pada data film terbaru.");
+       const playerContainer = document.getElementById('videoPlayerContainer');
+       const playerArea = document.getElementById('playerArea');
+       if (playerContainer && playerArea) {
+          playerContainer.style.display = 'block';
+          playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+       }
     }
   };
 
@@ -120,7 +124,6 @@ function closeNotifier() {
 document.addEventListener('DOMContentLoaded', () => {
   initPromoNotifier();
 });
-
 
 // ==============================================
 // 🎯 Fungsi Gulir Daftar Film
