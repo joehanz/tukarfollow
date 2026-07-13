@@ -20,11 +20,10 @@ let currentActiveSection = null;
 let isDesktop = false;
 
 // ==============================================
-// 📱 Fungsi Deteksi Perangkat (FIXED: Menghindari Crash)
+// 📱 Fungsi Deteksi Perangkat
 // ==============================================
 function detectDevice() {
     isDesktop = window.innerWidth >= 1024;
-    // Update tampilan tombol panah jika feed sudah ter-render
     const arrows = document.querySelectorAll('.arrow-actions-container');
     arrows.forEach(arrow => {
         arrow.style.display = isDesktop ? 'flex' : 'none';
@@ -128,7 +127,6 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
         const loadMoreDiv = document.createElement('div');
@@ -203,25 +201,37 @@ async function toggleSection(event, index, section) {
 }
 
 // ==============================================
-// 🔍 Fungsi Cek & Arahkan ke watch.html (Sesuai Aturan)
+// 🔍 Fungsi Cek & Arahkan ke watch.html (FIXED & AGRESIF)
 // ==============================================
 async function playMovie(tmdbId) {
+    if (!tmdbId) {
+        console.error("ID Film kosong.");
+        return;
+    }
+
     try {
         const res = await fetch(MOVIES_JSON_PATH);
-        if (!res.ok) throw new Error('File tidak ditemukan');
+        if (!res.ok) throw new Error('File movies.json tidak ditemukan atau gagal diakses');
         
         const daftarFilm = await res.json();
-        const ketemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        
+        // Perbaikan Validasi: Mengamankan perbandingan tipe data Teks dan Angka murni
+        const ketemu = daftarFilm.find(f => {
+            if (!f.tmdb_id) return false;
+            return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
+        });
 
         if (ketemu) {
-            window.location.href = `watch.html?id=${tmdbId}&sumber=manual`;
+            console.log(`Film ditemukan di JSON (${tmdbId}), meneruskan ke sumber manual.`);
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=manual`;
         } else {
-            window.location.href = `watch.html?id=${tmdbId}&sumber=tmdb`;
+            console.log(`Film tidak ada di JSON (${tmdbId}), dialihkan ke pihak ketiga (TMDB).`);
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
         }
 
     } catch (err) {
-        console.warn('Cek data gagal, gunakan vsembed:', err);
-        window.location.href = `watch.html?id=${tmdbId}&sumber=tmdb`;
+        console.warn('Gagal membaca data JSON, otomatis dialihkan ke TMDB:', err);
+        window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
     }
 }
 
@@ -305,6 +315,7 @@ if (navHome) {
     navHome.addEventListener('click', () => {
         searchInput.value = '';
         tutupPencarian();
+        searchContainer.classList.remove('remove');
         searchContainer.classList.remove('show');
         if (feedContainer) feedContainer.scrollTop = 0;
     });
@@ -322,7 +333,7 @@ if (feedContainer) {
 }
 
 // ==============================================
-// 🚀 MODUL SELEBARAN PROMOSI FAST-LOADING (SINKRON)
+// 🚀 MODUL SELEBARAN PROMOSI FAST-LOADING
 // ==============================================
 function initPromoNotifier() {
     const notifier = document.getElementById('desktopNotifier');
@@ -371,8 +382,11 @@ function renderPromoData(latestMovie) {
 
     promoWatchBtn.onclick = function() {
         closeNotifier();
-        if (latestMovie.tmdb_id) {
-            playMovie(latestMovie.tmdb_id);
+        const targetedId = latestMovie.tmdb_id || latestMovie.id;
+        if (targetedId) {
+            playMovie(targetedId);
+        } else {
+            console.error("ID Film terbaru tidak ditemukan.");
         }
     };
 
@@ -411,7 +425,7 @@ function closeNotifier() {
 window.addEventListener('load', () => {
     detectDevice();
     fetchMovies();
-    initPromoNotifier(); // Jalankan selebaran promosi secara aman
+    initPromoNotifier();
     if (window.lucide) lucide.createIcons();
 });
 
