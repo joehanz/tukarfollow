@@ -646,30 +646,29 @@
       return param.get('id');
     }
 
-    // ✅ Logika baru: Cek movies.json DULU baru TMDB
-    async function cekDanMuatFilm(tmdbId) {
-      try {
-        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-        if (res.ok) {
-          const daftar = await res.json();
-          const ketemu = daftar.find(f => String(f.tmdb_id) === String(tmdbId));
-          // Kalau ketemu dan ada kolom iframe sesuai skema kamu
-          if (ketemu && ketemu.iframe) {
-            filmIframe.src = ketemu.iframe;
-            return; // Selesai, tidak lanjut ke TMDB
-          }
-        }
-      } catch (err) { /* Abaikan error, lanjut ke cadangan */ }
-
-      // Kalau tidak ketemu / gagal baca json → pakai sumber TMDB
-      filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-      filmIframe.onerror = () => {
-        filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-        filmIframe.onerror = () => {
-          filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-        };
-      };
+// ✅ Logika baru: Cek movies.json DULU baru TMDB
+async function cekDanMuatFilm(tmdbId) {
+  try {
+    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+    if (res.ok) {
+      const daftar = await res.json();
+      const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+      if (ketemu && ketemu.iframe) {
+        filmIframe.src = ketemu.iframe;
+        return;
+      }
     }
+  } catch {}
+
+  // Hanya kalau tidak ketemu, baru pakai TMDB
+  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+  filmIframe.onerror = () => {
+    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+    filmIframe.onerror = () => {
+      filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+    };
+  };
+}
 
     // Kontrol layar penuh
     btnFullscreen.addEventListener('click', () => {
