@@ -22,7 +22,7 @@ let isDesktop = false;
 //===============================================
 // bla bla bla
 //===============================================
-waduh pakai mana ini? banyak banget. replace ini saja bro function initPromoNotifier() {
+function initPromoNotifier() {
   fetch('movies.json')
     .then(response => response.json())
     .then(movies => {
