@@ -209,30 +209,51 @@
   bottom: 0px;
   left: 0;
   right: 0;
+  height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
   z-index: 999999;
   
-    /* Di bawah ini membuat background kuning, tapi memberi 'lobang' transparan di area tombol CC */
-  /* JIKA MAU DIGESER AGAK KE KANAN */
-  background: linear-gradient(to right, 
-    #ffeb3b 0%, 
-    #ffeb3b calc(100% - 130px),  /* Angka ini diperkecil (sebelumnya 160px) | calc(100% - 60px) adalah Batas Sebelah Kanan dari lobang tersebut. Jika angka ini makin kecil, lobang akan melebar ke arah kanan.*/
-    transparent calc(100% - 130px), 
-    transparent calc(100% - 50px),   /* Angka ini diperkecil (sebelumnya 110px) | calc(100% - 60px) adalah Batas Sebelah Kanan dari lobang tersebut. Jika angka ini makin kecil, lobang akan melebar ke arah kanan.*/
-    #ffeb3b calc(100% - 80px), 
-    #ffeb3b 100%
-  );
+  /* Hilangkan gradient di induk, kita buat transparan total */
+  background: transparent;
 
   padding: 12px 16px;
   display: flex;
-  justify-content: left; /* Memastikan isi nav situs kamu mepet ke kanan seperti di gambar */
+  justify-content: center;
   align-items: center;
   opacity: 1 !important;
-  pointer-events: none; /* Supaya klik bisa tembus ke video di area yang kosong */
+
+  /* INDUK HARUS NONE: Supaya area kosong/lobang otomatis tembus klik ke video */
+  pointer-events: none !important; 
 }
 
-/* Supaya tombol-tombol di dalam nav situs kamu tetap bisa diklik */
+/* 1. Supaya tombol-tombol nav situs Anda di tengah TETAP BISA DIKLIK */
 .subtitle-layer * {
   pointer-events: auto;
+}
+
+/* 2. TAMENG KIRI: Menutupi dari ujung kiri sampai batas kiri lobang */
+.subtitle-layer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 150px; /* Batas kiri lobang Anda (sebelumnya calc(100% - 150px)) */
+  background: #ffeb3b; /* Warna kuning penutup */
+  z-index: -1;
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK agar tidak tembus ke video */
+}
+
+/* 3. TAMENG KANAN: Menutupi dari batas kanan lobang sampai ujung kanan layar */
+.subtitle-layer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(100% - 60px); /* Batas kanan lobang Anda */
+  right: 0;
+  background: #ffeb3b; /* Warna kuning penutup */
+  z-index: -1;
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK agar tidak tembus ke video */
 }
     
     
