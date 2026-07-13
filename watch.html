@@ -209,41 +209,45 @@
   bottom: 0px;
   left: 0;
   right: 0;
-  height: 0; /* Sesuaikan dengan tinggi nav control situs Anda */
+  height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
   z-index: 999999;
   
-  /* Hilangkan gradient di induk, kita buat transparan total */
+  /* Hapus background di induk */
   background: transparent;
 
   padding: 12px 16px;
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
   opacity: 1 !important;
 
-  /* INDUK HARUS NONE: Supaya area kosong/lobang otomatis tembus klik ke video */
+  /* Induk none agar area lobang di kanan bisa tembus klik ke subtitle asli */
   pointer-events: none !important; 
 }
 
-/* 1. Supaya tombol-tombol nav situs Anda di tengah TETAP BISA DIKLIK */
+/* Supaya tombol-tombol nav situs Anda di tengah TETAP BISA DIKLIK */
 .subtitle-layer * {
   pointer-events: auto;
 }
 
-/* 2. TAMENG KIRI: Menutupi dari ujung kiri sampai batas kiri lobang */
+/* TAMENG KIRI: Tak terlihat tapi memblokir klik */
 .subtitle-layer::before {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  right: 150px; /* Batas kiri lobang Anda (sebelumnya calc(100% - 150px)) */
-  background: transparent; /* Warna kuning penutup */
+  right: 150px; /* Batas kiri lobang Anda */
+  
+  /* TRIK: Menggunakan rgba dengan alpha 0. Visualnya 100% transparan (tidak norak), 
+     tapi browser tetap menganggapnya ada wujud untuk memblokir klik! */
+  background: rgba(0, 0, 0, 0); 
+  
   z-index: -1;
-  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK agar tidak tembus ke video */
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
 }
 
-/* 3. TAMENG KANAN: Menutupi dari batas kanan lobang sampai ujung kanan layar */
+/* TAMENG KANAN: Tak terlihat tapi memblokir klik */
 .subtitle-layer::after {
   content: "";
   position: absolute;
@@ -251,9 +255,12 @@
   bottom: 0;
   left: calc(100% - 60px); /* Batas kanan lobang Anda */
   right: 0;
-  background: transparent; /* Warna kuning penutup */
+  
+  /* TRIK yang sama: Transparan tapi tetap berwujud menahan klik */
+  background: rgba(0, 0, 0, 0); 
+  
   z-index: -1;
-  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK agar tidak tembus ke video */
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
 }
     
     
