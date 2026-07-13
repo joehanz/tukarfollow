@@ -20,7 +20,7 @@ let currentActiveSection = null;
 let isDesktop = false;
 
 // ==============================================
-// 📱 Fungsi Deteksi Perangkat (FIXED: Mengatasi Grid Macet)
+// 📱 Fungsi Deteksi Perangkat
 // ==============================================
 function detectDevice() {
     isDesktop = window.innerWidth >= 1024;
@@ -48,7 +48,8 @@ function initPromoNotifier() {
         const promoWatchBtn = document.getElementById('promoWatchBtn');
         const notifier = document.getElementById('desktopNotifier');
 
-        if (!promoCard || !notifier) return;
+        // Pengaman: Jika elemen HTML belum termuat, lewati agar tidak crash
+        if (!promoCard || !notifier || !promoTitle || !promoWatchBtn) return;
 
         // Ganti gambar latar belakang selebaran
         if (latestMovie.image) {
@@ -70,14 +71,13 @@ function initPromoNotifier() {
           });
         }
 
-        // Aksi tombol Nonton pada Flyer (FIXED & AMAN)
+        // Aksi tombol Nonton
         promoWatchBtn.onclick = function() {
           closeNotifier();
           const targetedId = latestMovie.tmdb_id || latestMovie.id;
           if (targetedId) {
              playMovie(targetedId); 
           } else if (latestMovie.iframe) {
-             // Fallback jika tidak ada id tetapi ada iframe langsung
              if (videoPlayerContainer && playerArea) {
                 videoPlayerContainer.style.display = 'block';
                 playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
@@ -85,13 +85,12 @@ function initPromoNotifier() {
           }
         };
 
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-
         // Tampilkan selebaran
         notifier.style.display = 'flex';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
     })
-    .catch(err => console.error("Gagal memuat selebaran promosi:", err));
+    .catch(err => console.warn("Gagal/Belum ada data selebaran promosi:", err));
 }
 
 function closeNotifier() {
@@ -154,7 +153,7 @@ function loadFallbackData() {
 }
 
 // ==============================================
-// 🖼️ Tampilkan Daftar Film ke Halaman (Grid Kembali Normal)
+// 🖼️ Tampilkan Daftar Film ke Halaman
 // ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
@@ -209,7 +208,8 @@ function renderFeed(movies) {
         const loadMoreDiv = document.createElement('div');
         loadMoreDiv.className = 'inline-load-more';
         loadMoreDiv.innerHTML = `<button class="load-more-btn-inline" onclick="loadNextPage()"><i data-lucide="plus" size="16"></i> Muat Lebih Banyak (Halaman ${currentPage + 1})</button>`;
-        lastCard.querySelector('.main-content').appendChild(loadMoreDiv);
+        const mainContent = lastCard.querySelector('.main-content');
+        if (mainContent) mainContent.appendChild(loadMoreDiv);
     }
 
     if (window.lucide) lucide.createIcons();
@@ -278,7 +278,7 @@ async function toggleSection(event, index, section) {
 }
 
 // ==============================================
-// 🔍 Fungsi Cek & Arahkan ke watch.html (FIXED & STRIP-CHECK)
+// 🔍 Fungsi Cek & Arahkan ke watch.html
 // ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
@@ -287,8 +287,6 @@ async function playMovie(tmdbId) {
         if (!res.ok) throw new Error('File tidak ditemukan');
         
         const daftarFilm = await res.json();
-        
-        // Pembersihan validasi agar string/angka whitespace tercocokkan dengan sempurna
         const ketemu = daftarFilm.find(f => {
             if (!f.tmdb_id) return false;
             return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
@@ -301,7 +299,6 @@ async function playMovie(tmdbId) {
         }
 
     } catch (err) {
-        console.warn('Cek data gagal, gunakan vsembed:', err);
         window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
     }
 }
@@ -326,12 +323,13 @@ if (!searchResultsLayer) {
 
 function tutupPencarian() {
     searchResultsLayer.classList.remove('active');
-    searchInput.value = '';
+    if (searchInput) searchInput.value = '';
 }
 
 async function cariFilm(kata) {
     if (!kata || kata.trim().length < 2) return;
-    document.getElementById('searchContent').innerHTML = `<div style="padding:30px; color:#fff; text-align:center;">Mencari...</div>`;
+    const searchContent = document.getElementById('searchContent');
+    if (searchContent) searchContent.innerHTML = `<div style="padding:30px; color:#fff; text-align:center;">Mencari...</div>`;
     searchResultsLayer.classList.add('active');
 
     try {
@@ -348,10 +346,10 @@ async function cariFilm(kata) {
             </div>
         `).join('') || `<div style="padding:40px; color:#aaa; text-align:center;">Tidak ada hasil ditemukan</div>`;
 
-        document.getElementById('searchContent').innerHTML = hasilHTML;
+        if (searchContent) searchContent.innerHTML = hasilHTML;
         if (window.lucide) lucide.createIcons();
     } catch (err) {
-        document.getElementById('searchContent').innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
+        if (searchContent) searchContent.innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
     }
 }
 
@@ -373,8 +371,9 @@ const navHome = document.getElementById('navHome');
 if (navSearch) {
     navSearch.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (!searchContainer) return;
         searchContainer.classList.toggle('show');
-        if (searchContainer.classList.contains('show')) {
+        if (searchContainer.classList.contains('show') && searchInput) {
             setTimeout(() => searchInput.focus(), 100);
         } else {
             tutupPencarian();
@@ -384,9 +383,9 @@ if (navSearch) {
 
 if (navHome) {
     navHome.addEventListener('click', () => {
-        searchInput.value = '';
+        if (searchInput) searchInput.value = '';
         tutupPencarian();
-        searchContainer.classList.remove('show');
+        if (searchContainer) searchContainer.classList.remove('show');
         if (feedContainer) feedContainer.scrollTop = 0;
     });
 }
@@ -396,20 +395,36 @@ if (feedContainer) {
         const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
         if (idx !== activeMovieIndex) {
             activeMovieIndex = idx;
-            infoPanel.classList.remove('show');
+            if (infoPanel) infoPanel.classList.remove('show');
             currentActiveSection = null;
         }
     });
 }
 
+// Tombol close player bawaan HTML
+const closePlayerBtn = document.getElementById('closePlayerBtn');
+if (closePlayerBtn) {
+    closePlayerBtn.addEventListener('click', () => {
+        if (videoPlayerContainer) videoPlayerContainer.style.display = 'none';
+        if (playerArea) playerArea.innerHTML = '';
+    });
+}
+
 // ==============================================
-// 🚀 Jalankan Semua Saat Halaman Selesai Dimuat (Pembersihan Event)
+// 🚀 Jalankan dengan Aman (Tunggu DOM & Window Siap)
 // ==============================================
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
+});
+
+window.addEventListener('load', () => {
     fetchMovies();
     initPromoNotifier();
-    if (window.lucide) lucide.createIcons();
+    
+    // Penanganan delay agar library Lucide selesai memproses seluruh elemen
+    setTimeout(() => {
+        if (window.lucide) lucide.createIcons();
+    }, 150);
 });
 
 window.addEventListener('resize', detectDevice);
