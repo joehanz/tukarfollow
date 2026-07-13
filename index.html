@@ -108,13 +108,36 @@
     <!-- CALL EXTERNAL JAVASCRIPT -->
     <script src="script.js"></script>
 
-<!-- Masukkan ini di index.html (di dalam body paling bawah) -->
-<div class="desktop-notifier" id="desktopNotifier">
-    <div class="notifier-content">
-        <i data-lucide="smartphone" size="40"></i>
-        <h3>Tampilan Lebih Asyik di HP!</h3>
-        <p>Situs ini didesain khusus untuk kenyamanan layar mobile. Rekomendasi terbaik gunakan smartphone kamu ya, bro!</p>
-        <button onclick="closeNotifier()">Siap, Paham!</button>
+<!-- UPDATE: Selebaran Promosi Film Terbaru Tanpa Frame -->
+<div class="desktop-notifier" id="desktopNotifier" style="display: none;">
+    <div class="notifier-promo-card" id="promoCard">
+        <!-- Overlay Gelap -->
+        <div class="promo-overlay"></div>
+        
+        <!-- Konten Utama Selebaran -->
+        <div class="promo-content">
+            <!-- LOGO SITUS DARI HEAD -->
+            <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="Logo Tukarfollow" class="promo-site-logo" />
+            
+            <span class="promo-badge">UPDATE TERBARU!</span>
+            <h2 class="promo-title" id="promoTitle">Loading...</h2>
+            
+            <div class="promo-meta">
+                <span class="promo-country" id="promoCountry">-</span>
+                <div class="promo-genres" id="promoGenres"></div>
+            </div>
+            
+            <p class="promo-sinopsis" id="promoSinopsis">Memuat sinopsis film...</p>
+            
+            <div class="promo-actions">
+                <button class="btn-watch-now" id="promoWatchBtn">
+                    <i data-lucide="play" size="18"></i> NONTON SEKARANG
+                </button>
+                <button class="btn-close-promo" onclick="closeNotifier()">Nanti Saja</button>
+            </div>
+            
+            <div class="promo-footer-brand">tukarfollow.web.id</div>
+        </div>
     </div>
 </div>
     
