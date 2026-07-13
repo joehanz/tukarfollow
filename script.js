@@ -19,6 +19,17 @@ let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
 
+// ==============================================
+// 📱 Fungsi Deteksi Perangkat (FIXED: Menghindari Crash)
+// ==============================================
+function detectDevice() {
+    isDesktop = window.innerWidth >= 1024;
+    // Update tampilan tombol panah jika feed sudah ter-render
+    const arrows = document.querySelectorAll('.arrow-actions-container');
+    arrows.forEach(arrow => {
+        arrow.style.display = isDesktop ? 'flex' : 'none';
+    });
+}
 
 // ==============================================
 // 🎯 Fungsi Gulir Daftar Film
@@ -68,7 +79,7 @@ function loadFallbackData() {
 }
 
 // ==============================================
-// 🖼️ Tampilkan Daftar Film ke Halaman (Grid/Tampilan Kembali Normal)
+// 🖼️ Tampilkan Daftar Film ke Halaman
 // ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
@@ -196,19 +207,15 @@ async function toggleSection(event, index, section) {
 // ==============================================
 async function playMovie(tmdbId) {
     try {
-        // Cek ke movies.json sesuai format kamu
         const res = await fetch(MOVIES_JSON_PATH);
         if (!res.ok) throw new Error('File tidak ditemukan');
         
         const daftarFilm = await res.json();
         const ketemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
 
-        // Arahkan ke watch.html dengan keterangan sumber
         if (ketemu) {
-            // Ada di JSON → baca data & pakai playcinematic
             window.location.href = `watch.html?id=${tmdbId}&sumber=manual`;
         } else {
-            // Tidak ada → baca dari TMDB & pakai vsembed
             window.location.href = `watch.html?id=${tmdbId}&sumber=tmdb`;
         }
 
@@ -303,7 +310,6 @@ if (navHome) {
     });
 }
 
-// Tutup info saat gulir ke film lain
 if (feedContainer) {
     feedContainer.addEventListener('scroll', () => {
         const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
@@ -316,11 +322,96 @@ if (feedContainer) {
 }
 
 // ==============================================
+// 🚀 MODUL SELEBARAN PROMOSI FAST-LOADING (SINKRON)
+// ==============================================
+function initPromoNotifier() {
+    const notifier = document.getElementById('desktopNotifier');
+    if (!notifier) return;
+
+    const cachedData = sessionStorage.getItem('tf_latest_promo');
+    if (cachedData) {
+        renderPromoData(JSON.parse(cachedData));
+    } else {
+        fetch(MOVIES_JSON_PATH)
+            .then(response => response.json())
+            .then(movies => {
+                if (Array.isArray(movies) && movies.length > 0) {
+                    const latestMovie = movies[0];
+                    sessionStorage.setItem('tf_latest_promo', JSON.stringify(latestMovie));
+                    renderPromoData(latestMovie);
+                }
+            })
+            .catch(err => console.error("Gagal memuat selebaran promosi:", err));
+    }
+}
+
+function renderPromoData(latestMovie) {
+    const promoCard = document.getElementById('promoCard');
+    const promoTitle = document.getElementById('promoTitle');
+    const promoCountry = document.getElementById('promoCountry');
+    const promoGenres = document.getElementById('promoGenres');
+    const promoSinopsis = document.getElementById('promoSinopsis');
+    const promoWatchBtn = document.getElementById('promoWatchBtn');
+    const notifier = document.getElementById('desktopNotifier');
+
+    if (!promoCard || !notifier) return;
+
+    promoTitle.textContent = latestMovie.title || 'Judul Film';
+    promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
+    promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+    
+    promoGenres.innerHTML = '';
+    if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+        latestMovie.genre.forEach(g => {
+            const span = document.createElement('span');
+            span.textContent = g;
+            promoGenres.appendChild(span);
+        });
+    }
+
+    promoWatchBtn.onclick = function() {
+        closeNotifier();
+        if (latestMovie.tmdb_id) {
+            playMovie(latestMovie.tmdb_id);
+        }
+    };
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    if (latestMovie.image) {
+        const imgPreloader = new Image();
+        imgPreloader.src = latestMovie.image;
+        imgPreloader.onload = function() {
+            promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+            notifier.style.display = 'flex';
+        };
+        imgPreloader.onerror = function() {
+            notifier.style.display = 'flex';
+        };
+    } else {
+        notifier.style.display = 'flex';
+    }
+}
+
+function closeNotifier() {
+    const notifier = document.getElementById('desktopNotifier');
+    if (notifier) {
+        notifier.style.opacity = '0';
+        notifier.style.transition = 'opacity 0.2s ease';
+        setTimeout(() => {
+            notifier.style.display = 'none';
+            notifier.style.opacity = '1';
+        }, 200);
+    }
+}
+
+// ==============================================
 // 🚀 Jalankan Semua Saat Halaman Selesai Dimuat
 // ==============================================
 window.addEventListener('load', () => {
     detectDevice();
     fetchMovies();
+    initPromoNotifier(); // Jalankan selebaran promosi secara aman
     if (window.lucide) lucide.createIcons();
 });
 
