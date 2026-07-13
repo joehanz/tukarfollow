@@ -639,20 +639,29 @@
       return param.get('id');
     }
 
-    async function cekDanMuatFilm(tmdbId) {
+async function cekDanMuatFilm(tmdbId) {
       try {
+        // Ambil parameter jenis player yang dikirim dari script.js
+        const param = new URLSearchParams(window.location.search);
+        const playerType = param.get('player');
+
         const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
         if (!res.ok) throw new Error("File tidak ditemukan");
         const daftarFilm = await res.json();
         const filmKetemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
 
-        if (filmKetemu) {
+        // Jika dipaksa premium oleh Flyer ATAU filmnya memang terdaftar di JSON
+        if (playerType === 'premium' && filmKetemu) {
           filmIframe.src = filmKetemu.iframe;
+        } else if (playerType === 'premium' && !filmKetemu && daftarFilm.length > 0) {
+          // Kasus khusus: diklik dari flyer, tapi TMDB ID-nya ditulis manual/beda tipe data di JSON teratas
+          filmIframe.src = daftarFilm[0].iframe;
         } else {
-          filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+          // Sisanya auto-lempar ke vsembed alternatif
+          filmIframe.src = `https://vsembed.su/movie/${tmdbId}`;
         }
       } catch (err) {
-        filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+        filmIframe.src = `https://vsembed.su/movie/${tmdbId}`;
       }
     }
 
