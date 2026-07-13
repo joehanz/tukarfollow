@@ -1,3 +1,178 @@
+script watch.html
+
+  <script>
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
+    const MOVIES_JSON_PATH = './movies.json';
+
+    const videoWrapper = document.getElementById('videoWrapper');
+    const filmIframe = document.getElementById('filmIframe');
+    const btnHomeBack = document.getElementById('btnHomeBack');
+    const btnAddComment = document.getElementById('btnAddComment');
+    const btnViewComments = document.getElementById('btnViewComments');
+    const btnFullscreen = document.getElementById('btnFullscreen');
+    const commentsPanel = document.getElementById('commentsPanel');
+    const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+    const commentListEl = document.getElementById('commentList');
+    const infoPanel = document.getElementById('infoPanel');
+    const panelBackdrop = document.getElementById('panelBackdrop');
+
+    let currentMovieId = null;
+
+    // ✅ Izinkan orientasi otomatis
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.unlock();
+    }
+
+    function ambilIdDariUrl() {
+      const param = new URLSearchParams(window.location.search);
+      return param.get('id');
+    }
+
+    async function cekDanMuatFilm(tmdbId) {
+      try {
+        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+        if (!res.ok) throw new Error("File tidak ditemukan");
+        const daftarFilm = await res.json();
+        const filmKetemu = daftarFilm.find(f => Number(f.tmdb_id) === Number(tmdbId));
+
+        if (filmKetemu) {
+          filmIframe.src = filmKetemu.iframe;
+        } else {
+          filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+        }
+      } catch (err) {
+        filmIframe.src = `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`;
+      }
+    }
+
+    // ✅ Kontrol layar penuh yang berfungsi sempurna
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+        // ✅ Otomatis putar ke horizontal saat masuk layar penuh
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        // ✅ Kembali ke orientasi normal saat keluar
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+      }
+      lucide.createIcons();
+    });
+
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+    document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+    document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+
+    function updateFullscreenIcon() {
+      const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
+      lucide.createIcons();
+    }
+
+    btnHomeBack.addEventListener('click', () => {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = 'index.html';
+    });
+
+    btnAddComment.addEventListener('click', bukaFormKomen);
+    panelBackdrop.addEventListener('click', tutupFormKomen);
+
+    function bukaFormKomen() {
+      infoPanel.classList.add('show');
+      panelBackdrop.classList.add('active');
+    }
+
+    function tutupFormKomen() {
+      infoPanel.classList.remove('show');
+      panelBackdrop.classList.remove('active');
+    }
+
+    async function kirimKomentar() {
+      const nama = document.getElementById('commentName').value.trim();
+      const teks = document.getElementById('commentText').value.trim();
+      if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+      try {
+        await fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
+        });
+        alert("Komentar berhasil dikirim!");
+        tutupFormKomen();
+        setTimeout(muatKomentar, 800);
+      } catch {
+        alert("Gagal mengirim komentar. Coba lagi.");
+      }
+    }
+
+    btnViewComments.addEventListener('click', () => {
+      const buka = commentsPanel.classList.toggle('open');
+      if (buka) muatKomentar();
+    });
+
+    closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
+
+    async function muatKomentar() {
+      if (!currentMovieId) return;
+      commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+      try {
+        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
+        const hasil = await res.json();
+        if (hasil.status !== "success" || !hasil.data.length) {
+          commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
+          return;
+        }
+        commentListEl.innerHTML = hasil.data.map(item => `
+          <div class="comment-item">
+            <div class="comment-name">${item.nama || 'Anonim'}</div>
+            <div class="comment-text">${item.komentar || ''}</div>
+            <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
+          </div>
+        `).join('');
+      } catch {
+        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      currentMovieId = ambilIdDariUrl();
+      if (!currentMovieId) {
+        videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+        return;
+      }
+      cekDanMuatFilm(currentMovieId);
+    });
+  </script>
+
+
+
+
+
 const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
