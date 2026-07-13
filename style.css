@@ -721,66 +721,187 @@ body {
 /* ======================================
    FITUR TAMBAHAN
 ====================================== */
+/* --- OVERLAY UTAMA --- */
 .desktop-notifier {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-    display: none;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 10vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999999;
+  padding: 20px;
+  backdrop-filter: blur(8px);
 }
 
-.notifier-content {
-    background: #1c1c1e;
-    border: 1px solid #2c2c2e;
-    padding: 30px;
-    width: 90%;
-    max-width: 420px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: bounceDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+/* --- KARTU SELEBARAN (BERBENTUK KERTAS FLYER BERSIH) --- */
+.notifier-promo-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px; /* Membuat sudut kertas melengkung natural */
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); /* Efek bayangan kertas */
+  animation: scaleUpPromo 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.notifier-content i {
-    color: #34c759;
-    margin-bottom: 15px;
+@keyframes scaleUpPromo {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-.notifier-content h3 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    font-weight: 600;
+.promo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 40%, rgba(0, 0, 0, 0.6) 100%);
+  z-index: 1;
 }
 
-.notifier-content p {
-    font-size: 0.9rem;
-    color: #aaa;
-    line-height: 1.5;
-    margin-bottom: 20px;
+.promo-content {
+  position: relative;
+  z-index: 2;
+  padding: 35px 24px 25px 24px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
 }
 
-.notifier-content button {
-    background: #fff;
-    color: #000;
-    border: none;
-    padding: 12px 30px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    width: 100%;
+/* --- LOGO SITUS DI ATAS --- */
+.promo-site-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5));
 }
 
-.notifier-content button:active {
-    transform: scale(0.95);
+/* --- ELEMEN TEKS --- */
+.promo-badge {
+  background: #ff4757;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 4px; /* Kotak flat style selebaran */
+  letter-spacing: 2px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.promo-title {
+  font-size: 26px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.promo-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.promo-country {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffeb3b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.promo-genres {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.promo-genres span {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.promo-sinopsis {
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.5;
+  margin: 0 0 25px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: justify;
+}
+
+/* --- TOMBOL --- */
+.promo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-watch-now {
+  background: #ff4757; /* Flat red color */
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.btn-watch-now:hover {
+  background: #e03747;
+}
+
+.btn-close-promo {
+  background: transparent;
+  color: #bbb;
+  border: none;
+  padding: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-close-promo:hover {
+  color: #fff;
+}
+
+/* --- FOOTER SELEBARAN --- */
+.promo-footer-brand {
+  margin-top: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffeb3b;
+  letter-spacing: 1px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 12px;
+  text-transform: uppercase;
 }
 
 @keyframes bounceDown {
