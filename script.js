@@ -42,7 +42,6 @@ function initPromoNotifier() {
   const promoSinopsis = document.getElementById('promoSinopsis');
   const promoWatchBtn = document.getElementById('promoWatchBtn');
 
-  // Jika elemen pembungkus utama tidak ada di HTML, hentikan script agar tidak error
   if (!notifier || !promoCard) return;
 
   // 1. Siapkan data default (Fallback) supaya jika JSON kamu kosong/error, flyer tetap dipaksa muncul
@@ -76,12 +75,10 @@ function initPromoNotifier() {
 
   // Fungsi internal untuk merender dan memaksa tampilan flyer menyala
   function tampilkanFlyer() {
-    // Render Background Gambar
     if (latestMovie.image) {
       promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
     }
     
-    // Render Teks dengan pengaman (agar tidak crash jika data null/undefined)
     if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
     
     if (promoCountry) {
@@ -91,7 +88,6 @@ function initPromoNotifier() {
     
     if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
     
-    // Render Tag Genre
     if (promoGenres) {
       promoGenres.innerHTML = '';
       if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
@@ -103,29 +99,23 @@ function initPromoNotifier() {
       }
     }
 
-    // Aksi Tombol Nonton
+    // Aksi Tombol Nonton Khusus Flyer (Wajib premium)
     if (promoWatchBtn) {
       promoWatchBtn.onclick = function() {
         closeNotifier();
         const targetedId = latestMovie.tmdb_id || latestMovie.id;
         if (targetedId) {
-           playMovie(targetedId); 
-        } else if (latestMovie.iframe) {
-           if (videoPlayerContainer && playerArea) {
-              videoPlayerContainer.style.display = 'block';
-              playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-           }
+           playFlyerMovie(targetedId); 
         }
       };
     }
 
-    // PAKSA FLYER MUNCUL DAN BERADA DI PALING DEPAN (Bypass CSS)
+    // PAKSA FLYER MUNCUL DAN BERADA DI PALING DEPAN
     notifier.style.setProperty('display', 'flex', 'important');
     notifier.style.setProperty('position', 'fixed', 'important');
     notifier.style.setProperty('z-index', '99999', 'important');
     notifier.style.opacity = '1';
     
-    // Render ulang ikon Lucide khusus di dalam flyer
     if (window.lucide) lucide.createIcons();
   }
 }
@@ -239,7 +229,6 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
         const loadMoreDiv = document.createElement('div');
@@ -315,7 +304,7 @@ async function toggleSection(event, index, section) {
 }
 
 // ==============================================
-// 🔍 Fungsi Cek & Arahkan ke watch.html
+// 🔍 Fungsi Cek Grid & Arahkan ke watch.html
 // ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
@@ -324,20 +313,32 @@ async function playMovie(tmdbId) {
         if (!res.ok) throw new Error('File tidak ditemukan');
         
         const daftarFilm = await res.json();
+        
+        // Cari apa ID Grid ini ada di dalam movies.json kamu
         const ketemu = daftarFilm.find(f => {
             if (!f.tmdb_id) return false;
             return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
         });
 
         if (ketemu) {
-            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=manual`;
+            // JIKA MATCH: Minta watch.html gunakan player premium bawaan JSON
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&player=premium`;
         } else {
-            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
+            // JIKA TIDAK MATCH: Minta watch.html gunakan player vsembed alternatif
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&player=vsembed`;
         }
 
     } catch (err) {
-        window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
+        window.location.href = `watch.html?id=${String(tmdbId).trim()}&player=vsembed`;
     }
+}
+
+// ==============================================
+// 🚀 Fungsi Khusus Nonton Lewat Tombol Flyer
+// ==============================================
+function playFlyerMovie(tmdbId) {
+    if (!tmdbId) return;
+    window.location.href = `watch.html?id=${String(tmdbId).trim()}&player=premium`;
 }
 
 // ==============================================
@@ -438,7 +439,6 @@ if (feedContainer) {
     });
 }
 
-// Tombol close player bawaan HTML
 const closePlayerBtn = document.getElementById('closePlayerBtn');
 if (closePlayerBtn) {
     closePlayerBtn.addEventListener('click', () => {
@@ -447,18 +447,12 @@ if (closePlayerBtn) {
     });
 }
 
-// ==============================================
-// 🚀 Jalankan dengan Aman (Gabungan Event)
-// ==============================================
 window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
 });
 
 window.addEventListener('load', () => {
-    // 1. Render Grid Film dari API TMDB
     fetchMovies();
-    
-    // 2. Beri jeda 400ms memastikan DOM selesai dibuat, lalu paksa flyer muncul
     setTimeout(() => {
         initPromoNotifier();
     }, 400);
