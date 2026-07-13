@@ -204,47 +204,20 @@
     }
 
     /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
- .subtitle-layer {
-  position: fixed;
-  bottom: 0px;
-  left: max(12px, env(safe-area-inset-left));
-  right: 0;
-  z-index: 999999;
-  background: #ffeb3b; /* ⬅️ Kuning agar terlihat jelas */
-  padding: 12px 16px;
-  display: flex;
-  justify-content: center;
-  opacity: 1 !important;
-  pointer-events: auto !important; /* Nav situs BISA diklik */
-}
-
-/* Buat lobang di kanan saja */
-.subtitle-layer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: inherit;
-  /* Potong area kanan = lobang */
-  clip-path: polygon(
-    0 0,
-    calc(100% - 55px) 0,
-    calc(100% - 55px) 100%,
-    0 100%
-  );
-  pointer-events: auto; /* Bagian kuning = TIDAK tembus */
-}
-
-/* Area lobang khusus subtitle */
-.subtitle-layer::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 55px; /* ⬅️ Lebar lobang, sesuaikan kalau perlu */
-  height: 100%;
-  background: transparent; /* ⬅️ Ini lobangnya */
-  pointer-events: none !important; /* ⬅️ Di sini klik BISA tembus ke bawah */
-}
+ kita konsultasi jawab singkat dan dengan bahasa yang mudah. bs ceritakan ini apa  /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
+    .subtitle-layer {
+      position: fixed;
+      bottom: 0px;
+      left: max(12px, env(safe-area-inset-left));
+      right: 25%;
+      z-index: 999999;
+      background: transparent);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: center;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
     
     
     .subtitle-controls {
