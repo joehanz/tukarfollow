@@ -22,107 +22,81 @@ let isDesktop = false;
 //===============================================
 // bla bla bla
 //===============================================
-function initPromoNotifier() {
-  const notifier = document.getElementById('desktopNotifier');
-  if (!notifier) return;
+waduh pakai mana ini? banyak banget. replace ini saja bro function initPromoNotifier() {
+  fetch('movies.json')
+    .then(response => response.json())
+    .then(movies => {
+      if (Array.isArray(movies) && movies.length > 0) {
+        const latestMovie = movies[0]; // Ambil data paling atas (terbaru)
+        
+        const promoCard = document.getElementById('promoCard');
+        const promoTitle = document.getElementById('promoTitle');
+        const promoCountry = document.getElementById('promoCountry');
+        const promoGenres = document.getElementById('promoGenres');
+        const promoSinopsis = document.getElementById('promoSinopsis');
+        const promoWatchBtn = document.getElementById('promoWatchBtn');
+        const notifier = document.getElementById('desktopNotifier');
 
-  // 1. Cek apakah data sudah ada di memori lokal biar tidak usah fetch ulang-ulang
-  const cachedData = sessionStorage.getItem('tf_latest_promo');
-  
-  if (cachedData) {
-    renderPromoData(JSON.parse(cachedData));
-  } else {
-    // Jika belum ada di memori, baru ambil dari server
-    fetch('movies.json')
-      .then(response => response.json())
-      .then(movies => {
-        if (Array.isArray(movies) && movies.length > 0) {
-          const latestMovie = movies[0];
-          // Simpan ke memori sesi browser
-          sessionStorage.setItem('tf_latest_promo', JSON.stringify(latestMovie));
-          renderPromoData(latestMovie);
-        }
-      })
-      .catch(err => console.error("Gagal memuat selebaran promosi:", err));
-  }
-}
+        // Ganti gambar latar belakang selebaran
+        if (latestMovie.image) {
+          promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+        }
+        
+        // Render data teks
+        promoTitle.textContent = latestMovie.title || 'Judul Film';
+        promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
+        promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+        
+        // Render tags genre
+        promoGenres.innerHTML = '';
+        if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+          latestMovie.genre.forEach(g => {
+            const span = document.createElement('span');
+            span.textContent = g;
+            promoGenres.appendChild(span);
+          });
+        }
 
-// Fungsi khusus untuk nempel data dan handling loading gambar biar super cepat
-function renderPromoData(latestMovie) {
-  const promoCard = document.getElementById('promoCard');
-  const promoTitle = document.getElementById('promoTitle');
-  const promoCountry = document.getElementById('promoCountry');
-  const promoGenres = document.getElementById('promoGenres');
-  const promoSinopsis = document.getElementById('promoSinopsis');
-  const promoWatchBtn = document.getElementById('promoWatchBtn');
-  const notifier = document.getElementById('desktopNotifier');
+        // Aksi tombol Nonton
+        promoWatchBtn.onclick = function() {
+          closeNotifier();
+          if (typeof playMovie === "function") {
+             playMovie(latestMovie); 
+          } else {
+             const playerContainer = document.getElementById('videoPlayerContainer');
+             const playerArea = document.getElementById('playerArea');
+             if (playerContainer && playerArea) {
+                playerContainer.style.display = 'block';
+                playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+             }
+          }
+        };
 
-  // Render teks duluan biar cepat
-  promoTitle.textContent = latestMovie.title || 'Judul Film';
-  promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${latestMovie.release_date ? latestMovie.release_date.split('-')[0] : ''}`;
-  promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
-  
-  // Render tags genre
-  promoGenres.innerHTML = '';
-  if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
-    latestMovie.genre.forEach(g => {
-      const span = document.createElement('span');
-      span.textContent = g;
-      promoGenres.appendChild(span);
-    });
-  }
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
 
-  // Aksi tombol Nonton
-  promoWatchBtn.onclick = function() {
-    closeNotifier();
-    if (typeof playMovie === "function") {
-       playMovie(latestMovie); 
-    } else {
-       const playerContainer = document.getElementById('videoPlayerContainer');
-       const playerArea = document.getElementById('playerArea');
-       if (playerContainer && playerArea) {
-          playerContainer.style.display = 'block';
-          playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-       }
-    }
-  };
-
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-  }
-
-  // Trik Inti: Preload gambar di background, pas sudah terunduh penuh baru tampilkan selebarannya!
-  if (latestMovie.image) {
-    const imgPreloader = new Image();
-    imgPreloader.src = latestMovie.image;
-    imgPreloader.onload = function() {
-      promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
-      notifier.style.display = 'flex'; // Muncul instan saat gambar sudah siap kencang
-    };
-    imgPreloader.onerror = function() {
-      // Jika gambar gagal dimuat/error, tetap munculkan selebaran dengan fallback
-      notifier.style.display = 'flex';
-    };
-  } else {
-    notifier.style.display = 'flex';
-  }
+        // Tampilkan selebaran
+        notifier.style.display = 'flex';
+      }
+    })
+    .catch(err => console.error("Gagal memuat selebaran promosi:", err));
 }
 
 function closeNotifier() {
-  const notifier = document.getElementById('desktopNotifier');
-  if (notifier) {
-    notifier.style.opacity = '0';
-    notifier.style.transition = 'opacity 0.2s ease';
-    setTimeout(() => {
-      notifier.style.display = 'none';
-      notifier.style.opacity = '1'; // Reset opacity untuk pemanggilan berikutnya
-    }, 200);
-  }
+  const notifier = document.getElementById('desktopNotifier');
+  if (notifier) {
+    notifier.style.opacity = '0';
+    notifier.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      notifier.style.display = 'none';
+    }, 300);
+  }
 }
 
-// Jalankan otomatis saat DOM siap
+// Jalankan otomatis
 document.addEventListener('DOMContentLoaded', () => {
-  initPromoNotifier();
+  initPromoNotifier();
 });
 
 // ==============================================
