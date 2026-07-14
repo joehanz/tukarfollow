@@ -465,3 +465,44 @@ window.addEventListener('load', () => {
 });
 
 window.addEventListener('resize', detectDevice);
+
+
+let deferredPrompt;
+const installBtn = document.getElementById('installPwaBtn');
+
+// Tangkap peristiwa siap instalasi PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Tampilkan tombol Add
+    installBtn.style.display = 'flex';
+});
+
+// Klik tombol = munculkan popup instalasi
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        console.log('PWA diinstal pengguna');
+    } else {
+        console.log('Pengguna membatalkan instalasi');
+    }
+    
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+});
+
+// Sembunyikan tombol jika sudah terinstal
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+    console.log('Aplikasi TukarFollow sudah terpasang');
+});
+
+// Pastikan ikon Lucide tetap berjalan
+if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+}
