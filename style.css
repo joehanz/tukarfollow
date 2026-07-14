@@ -328,6 +328,16 @@ body {
     margin-top: 4px;
 }
 
+/* Khusus untuk tombol instalasi PWA - tidak bentrok dengan navigasi lain */
+#installPwaBtn {
+    display: none; /* Sembunyikan dulu sampai siap instalasi */
+}
+
+/* Sesuaikan warna ikon agar selaras dengan navigasi */
+#installPwaBtn i {
+    color: inherit !important;
+}
+
 /* ======================================
    PANEL INFO & FORM
 ====================================== */
