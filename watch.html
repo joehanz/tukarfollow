@@ -43,6 +43,7 @@
       overflow: hidden;
       width: 100vw;
       height: 100vh;
+      font-size: 30px !important;
       /* ✅ Izinkan perubahan orientasi */
       orientation: portrait;
       orientation: landscape;
@@ -542,36 +543,7 @@
       }
     }
 
-    /* === PERBESAR UKURAN SUBTITLE VIDEO === */
-/* Khusus subtitle HTML5 / pengaya situs */
-video::cue {
-  font-size: 28px !important;
-  line-height: 1.4 !important;
-  font-weight: 700 !important;
-  color: #ffffff !important;
-  background: rgba(0,0,0,0.75) !important;
-  padding: 4px 10px !important;
-  border-radius: 4px !important;
-}
 
-/* Khusus subtitle di dalam iframe/pemutar eksternal */
-#filmIframe::cue {
-  font-size: 30px !important;
-  font-weight: bold !important;
-}
-
-/* Jika pakai subtitle kustom situs */
-.video-subtitle, .subtitle-text {
-  font-size: 26px !important;
-  font-weight: 700 !important;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.9) !important;
-  transform: scale(1.1) !important;
-}
-
-/* Perbesar jarak dari bawah agar tidak tertutup tombol */
-.video-main-wrapper {
-  padding-bottom: 80px !important;
-}
   </style>
 </head>
 <body>
