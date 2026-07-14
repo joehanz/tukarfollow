@@ -11,12 +11,14 @@
     {
       "src": "banner/logo%20tukar%20follow.webp",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
     },
     {
       "src": "banner/logo%20tukar%20follow.webp",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
     }
   ]
 }
