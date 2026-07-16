@@ -2,8 +2,8 @@ const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
+// 📁 Alamat file data film kamu
 const MOVIES_JSON_PATH = 'movies.json';
-const VSEMBED_URL = 'https://vsembed.ru/player.html'; // Link diperbaiki
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -18,12 +18,9 @@ let activeMovieIndex = 0;
 let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
-let playerTerbuka = false;
-let idFilmAktif = null;
-let playerAltBtn = null;
 
 // ==============================================
-// 📱 Deteksi Perangkat
+// 📱 Fungsi Deteksi Perangkat
 // ==============================================
 function detectDevice() {
     isDesktop = window.innerWidth >= 1024;
@@ -34,7 +31,7 @@ function detectDevice() {
 }
 
 // ==============================================
-// 🚀 Selebaran Promosi
+// 🚀 Modul Selebaran Promosi (Bypass Kuat - Hanya di script.js)
 // ==============================================
 function initPromoNotifier() {
   const notifier = document.getElementById('desktopNotifier');
@@ -45,50 +42,90 @@ function initPromoNotifier() {
   const promoSinopsis = document.getElementById('promoSinopsis');
   const promoWatchBtn = document.getElementById('promoWatchBtn');
 
+  // Jika elemen pembungkus utama tidak ada di HTML, hentikan script agar tidak error
   if (!notifier || !promoCard) return;
 
+  // 1. Siapkan data default (Fallback) supaya jika JSON kamu kosong/error, flyer tetap dipaksa muncul
   let latestMovie = {
     title: "Avatar: The Way of Water",
     country: "US",
     release_date: "2022-12-16",
-    sinopsis: "Jake Sully tinggal bersama keluarga barunya di planet Pandora...",
+    sinopsis: "Jake Sully tinggal bersama keluarga barunya di planet Pandora. Setelah ancaman kembali untuk menyelesaikan apa yang dimulai sebelumnya, Jake harus bekerja sama dengan Neytiri...",
     genre: ["Aksi", "Fiksi Ilmiah"],
     image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1000",
     tmdb_id: 76600
   };
 
+  // 2. Ambil data dari movies.json
   fetch(MOVIES_JSON_PATH)
-    .then(res => res.ok ? res.json() : Promise.reject())
+    .then(response => {
+      if (!response.ok) throw new Error('movies.json tidak merespon');
+      return response.json();
+    })
     .then(movies => {
-      if (Array.isArray(movies) && movies.length > 0) latestMovie = movies[0];
+      if (Array.isArray(movies) && movies.length > 0) {
+        // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
+        latestMovie = movies[0];
+      }
       tampilkanFlyer();
     })
-    .catch(() => tampilkanFlyer());
+    .catch(err => {
+      console.warn("Membaca movies.json gagal/kosong, menggunakan data default agar flyer tetap tampil.");
+      tampilkanFlyer();
+    });
 
+  // Fungsi internal untuk merender dan memaksa tampilan flyer menyala
   function tampilkanFlyer() {
-    if (latestMovie.image) promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+    // Render Background Gambar
+    if (latestMovie.image) {
+      promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+    }
+    
+    // Render Teks dengan pengaman (agar tidak crash jika data null/undefined)
     if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
+    
     if (promoCountry) {
       const tahun = latestMovie.release_date ? latestMovie.release_date.split('-')[0] : '';
       promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${tahun}`;
     }
+    
     if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
-    if (promoGenres && latestMovie.genre) {
+    
+    // Render Tag Genre
+    if (promoGenres) {
       promoGenres.innerHTML = '';
-      latestMovie.genre.forEach(g => {
-        const span = document.createElement('span');
-        span.textContent = g;
-        promoGenres.appendChild(span);
-      });
+      if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+        latestMovie.genre.forEach(g => {
+          const span = document.createElement('span');
+          span.textContent = g;
+          promoGenres.appendChild(span);
+        });
+      }
     }
+
+    // Aksi Tombol Nonton
     if (promoWatchBtn) {
-      promoWatchBtn.onclick = () => {
+      promoWatchBtn.onclick = function() {
         closeNotifier();
-        const id = latestMovie.tmdb_id || latestMovie.id;
-        id ? playMovie(id) : (latestMovie.iframe && (videoPlayerContainer.style.display = 'block', playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`));
+        const targetedId = latestMovie.tmdb_id || latestMovie.id;
+        if (targetedId) {
+           playMovie(targetedId); 
+        } else if (latestMovie.iframe) {
+           if (videoPlayerContainer && playerArea) {
+              videoPlayerContainer.style.display = 'block';
+              playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+           }
+        }
       };
     }
-    notifier.style.cssText = 'display:flex !important; position:fixed !important; z-index:99999 !important; opacity:1;';
+
+    // PAKSA FLYER MUNCUL DAN BERADA DI PALING DEPAN (Bypass CSS)
+    notifier.style.setProperty('display', 'flex', 'important');
+    notifier.style.setProperty('position', 'fixed', 'important');
+    notifier.style.setProperty('z-index', '99999', 'important');
+    notifier.style.opacity = '1';
+    
+    // Render ulang ikon Lucide khusus di dalam flyer
     if (window.lucide) lucide.createIcons();
   }
 }
@@ -97,51 +134,74 @@ function closeNotifier() {
   const notifier = document.getElementById('desktopNotifier');
   if (notifier) {
     notifier.style.opacity = '0';
-    setTimeout(() => notifier.style.display = 'none', 300);
+    notifier.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      notifier.style.display = 'none';
+      notifier.style.opacity = '1';
+    }, 300);
   }
 }
 
 // ==============================================
-// 🎯 Gulir Daftar Film
+// 🎯 Fungsi Gulir Daftar Film
 // ==============================================
 function scrollFeed(direction) {
     if (!feedContainer) return;
-    feedContainer.scrollBy({ top: direction === 'down' ? window.innerHeight : -window.innerHeight, behavior: 'smooth' });
+    const cardHeight = window.innerHeight;
+    feedContainer.scrollBy({ 
+        top: direction === 'down' ? cardHeight : -cardHeight, 
+        behavior: 'smooth' 
+    });
 }
 
 // ==============================================
-// 🎬 Ambil Data TMDB
+// 🎬 Ambil Data Film Populer dari TMDB
 // ==============================================
 async function fetchMovies(page = 1) {
     try {
-        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        moviesData = page === 1 ? data.results : [...moviesData, ...data.results];
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
+        if (!response.ok) throw new Error('Gagal memuat data');
+        const data = await response.json();
+        
+        if (page === 1) {
+            moviesData = data.results;
+        } else {
+            moviesData = [...moviesData, ...data.results];
+        }
+
         renderFeed(moviesData);
-    } catch {
+    } catch (error) {
+        console.warn('Gagal terhubung ke TMDB, gunakan data cadangan:', error);
         loadFallbackData();
     }
 }
 
+// ==============================================
+// 📂 Data Cadangan Jika Server Sibuk
+// ==============================================
 function loadFallbackData() {
     const fallback = [
-        { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
-        { id: 157336, title: 'Interstellar', overview: 'Sekelompok penjelajah melintasi lubang cacing...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', origin_country: ['US'] }
+        { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia, jatuh cinta pada Sofia...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
+        { id: 157336, title: 'Interstellar', overview: 'Sekelompok penjelajah melintasi lubang cacing di luar angkasa...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', origin_country: ['US'] }
     ];
-    moviesData = moviesData.length ? [...moviesData, ...fallback] : fallback;
+    if (moviesData.length === 0) moviesData = fallback;
+    else moviesData = [...moviesData, ...fallback];
     renderFeed(moviesData);
 }
 
 // ==============================================
-// 🖼️ Tampilkan Daftar Film
+// 🖼️ Tampilkan Daftar Film ke Halaman (Grid)
 // ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
     feedContainer.innerHTML = '';
+
     movies.forEach((movie, index) => {
-        const posterUrl = movie.poster_path ? `${IMAGE_URL}${movie.poster_path}` : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500';
+        const posterUrl = movie.poster_path 
+            ? `${IMAGE_URL}${movie.poster_path}` 
+            : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500';
         const year = movie.release_date ? movie.release_date.split('-')[0] : '-';
+
         const card = document.createElement('div');
         card.className = 'movie-card';
         card.style.backgroundImage = `url('${posterUrl}')`;
@@ -157,22 +217,38 @@ function renderFeed(movies) {
                         <div class="inline-scroll-arrow" onclick="scrollFeed('up')"><i data-lucide="chevron-up" size="22"></i></div>
                         <div class="inline-scroll-arrow" onclick="scrollFeed('down')"><i data-lucide="chevron-down" size="22"></i></div>
                     </div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'info')"><i data-lucide="info" size="28"></i><span>Info</span></div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'release')"><i data-lucide="calendar" size="28"></i><span>${year}</span></div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')"><i data-lucide="clapperboard" size="28"></i><span>Genre</span></div>
-                    <div class="action-item" onclick="toggleSection(event, ${index}, 'country')"><i data-lucide="globe" size="28"></i><span>Negara</span></div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
+                        <i data-lucide="info" size="28"></i>
+                        <span>Info</span>
+                    </div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
+                        <i data-lucide="calendar" size="28"></i>
+                        <span>${year}</span>
+                    </div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
+                        <i data-lucide="clapperboard" size="28"></i>
+                        <span>Genre</span>
+                    </div>
+                    <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
+                        <i data-lucide="globe" size="28"></i>
+                        <span>Negara</span>
+                    </div>
                 </div>
             </div>
         `;
         feedContainer.appendChild(card);
     });
+
+    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
-        const loadMore = document.createElement('div');
-        loadMore.className = 'inline-load-more';
-        loadMore.innerHTML = `<button class="load-more-btn-inline" onclick="loadNextPage()"><i data-lucide="plus" size="16"></i> Muat Lebih Banyak</button>`;
-        lastCard.querySelector('.main-content')?.appendChild(loadMore);
+        const loadMoreDiv = document.createElement('div');
+        loadMoreDiv.className = 'inline-load-more';
+        loadMoreDiv.innerHTML = `<button class="load-more-btn-inline" onclick="loadNextPage()"><i data-lucide="plus" size="16"></i> Muat Lebih Banyak (Halaman ${currentPage + 1})</button>`;
+        const mainContent = lastCard.querySelector('.main-content');
+        if (mainContent) mainContent.appendChild(loadMoreDiv);
     }
+
     if (window.lucide) lucide.createIcons();
 }
 
@@ -182,227 +258,258 @@ function loadNextPage() {
 }
 
 // ==============================================
-// ℹ️ Panel Info
+// ℹ️ Panel Info Samping
 // ==============================================
 async function toggleSection(event, index, section) {
     event.stopPropagation();
     if (!infoPanel || !panelContentArea) return;
+
     const movie = moviesData[index];
     if (!movie) return;
+
     if (infoPanel.classList.contains('show') && currentActiveSection === section) {
         infoPanel.classList.remove('show');
         currentActiveSection = null;
         return;
     }
+
     currentActiveSection = section;
-    panelContentArea.innerHTML = '<div style="padding:20px; color:#fff;">Memuat...</div>';
+    panelContentArea.innerHTML = `<div style="padding:20px; color:#fff;">Memuat...</div>`;
     infoPanel.classList.add('show');
+
     try {
-        const res = await fetch(`${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=id-ID`);
-        const detail = await res.json();
-        const genreMap = {28:'Aksi',12:'Petualangan',16:'Animasi',35:'Komedi',80:'Kejahatan',99:'Dokumenter',18:'Drama',10751:'Keluarga',14:'Fantasi',36:'Sejarah',27:'Horor',10402:'Musik',9648:'Misteri',10749:'Romantis',878:'Fiksi Ilmiah',53:'Thriller',10752:'Perang',37:'Barat'};
-        const negaraMap = {'US':'Amerika Serikat','FI':'Finlandia','KR':'Korea Selatan','JP':'Jepang','ID':'Indonesia','GB':'Inggris','FR':'Prancis','CN':'Cina','HK':'Hong Kong','TH':'Thailand','IN':'India'};
+        const resDetail = await fetch(`${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=id-ID`);
+        const detailData = await resDetail.json();
         let html = '';
-        switch(section) {
-            case 'info': html = `<p style="line-height:1.7; color:#fff;">${detail.overview || movie.overview || 'Tidak ada sinopsis.'}</p>`; break;
-            case 'release': html = `<p style="color:#fff;"><strong>Tanggal Rilis:</strong><br>${detail.release_date || movie.release_date || 'Tidak diketahui'}</p>`; break;
-            case 'genre': const genres = detail.genres?.map(g=>g.name) || movie.genre_ids?.map(id=>genreMap[id]||'Lainnya'); html = `<p style="color:#fff;"><strong>Genre:</strong><br>${genres.join(', ')||'Tidak ditentukan'}</p>`; break;
-            case 'country': const countries = detail.production_countries?.map(c=>c.name) || movie.origin_country?.map(c=>negaraMap[c]||c); html = `<p style="color:#fff;"><strong>Negara:</strong><br>${countries.join(', ')||'Tidak ditentukan'}</p>`; break;
+
+        switch (section) {
+            case 'info':
+                html = `<p style="line-height:1.7; color:#fff; margin:0;">${detailData.overview || movie.overview || 'Sinopsis tidak tersedia.'}</p>`;
+                break;
+            case 'release':
+                html = `<p style="color:#fff; margin:0;"><strong>Tanggal Rilis:</strong><br>${detailData.release_date || movie.release_date || 'Tidak diketahui'}</p>`;
+                break;
+            case 'genre':
+                const genreMap = {
+                    28: 'Aksi', 12: 'Petualangan', 16: 'Animasi', 35: 'Komedi', 80: 'Kejahatan', 99: 'Dokumenter',
+                    18: 'Drama', 10751: 'Keluarga', 14: 'Fantasi', 36: 'Sejarah', 27: 'Horor', 10402: 'Musik',
+                    9648: 'Misteri', 10749: 'Romantis', 878: 'Fiksi Ilmiah', 10770: 'Film TV', 53: 'Thriller', 10752: 'Perang', 37: 'Barat'
+                };
+                const genres = detailData.genres?.map(g => g.name) || movie.genre_ids?.map(id => genreMap[id] || 'Lainnya');
+                html = `<p style="color:#fff; margin:0;"><strong>Genre:</strong><br>${genres.join(', ') || 'Tidak ditentukan'}</p>`;
+                break;
+            case 'country':
+                const countries = detailData.production_countries?.map(c => c.name) || movie.origin_country?.map(c => {
+                    const map = { 'US': 'Amerika Serikat', 'FI': 'Finlandia', 'KR': 'Korea Selatan', 'JP': 'Jepang', 'ID': 'Indonesia', 'GB': 'Inggris', 'FR': 'Prancis', 'CN': 'Cina', 'HK': 'Hong Kong', 'TH': 'Thailand', 'IN': 'India' };
+                    return map[c] || c;
+                });
+                html = `<p style="color:#fff; margin:0;"><strong>Negara:</strong><br>${countries.join(', ') || 'Tidak ditentukan'}</p>`;
+                break;
         }
+
         panelContentArea.innerHTML = html;
         if (window.lucide) lucide.createIcons();
-    } catch {
-        panelContentArea.innerHTML = '<p style="color:#ff6b6b;">Gagal memuat detail.</p>';
+    } catch (err) {
+        panelContentArea.innerHTML = `<p style="color:#ff6b6b;">Gagal memuat detail.</p>`;
     }
 }
 
 // ==============================================
-// 🔍 Cek Film & Kontrol Tombol
+// 🔍 Fungsi Cek & Arahkan ke watch.html
 // ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
-    idFilmAktif = tmdbId;
     try {
         const res = await fetch(MOVIES_JSON_PATH);
-        if (!res.ok) throw new Error();
-        const daftar = await res.json();
-        const ketemu = daftar.find(f => f.tmdb_id && (String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId)));
+        if (!res.ok) throw new Error('File tidak ditemukan');
+        
+        const daftarFilm = await res.json();
+        const ketemu = daftarFilm.find(f => {
+            if (!f.tmdb_id) return false;
+            return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
+        });
+
         if (ketemu) {
-            if (playerAltBtn) playerAltBtn.style.display = 'flex';
-            const judul = encodeURIComponent((ketemu.title || ketemu.judul || 'film').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''));
-            window.location.href = `watch.html?id=${tmdbId}&title=${judul}`;
+            // Ambil judul film, jika tidak ada pakai judul default
+            const judulFilm = ketemu.title || ketemu.judul || 'film-tidak-diketahui';
+            // Ubah spasi jadi tanda hubung, hapus karakter khusus biar URL aman
+            const judulUrl = encodeURIComponent(judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
+            // Redirect dengan parameter title baru
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=${judulUrl}`;
         } else {
-            if (playerAltBtn) playerAltBtn.style.display = 'none';
-            window.location.href = `watch.html?id=${tmdbId}&title=mdmax`;
+            // Jika tidak ditemukan di daftar, pakai judul default seperti contoh kamu
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
         }
-    } catch {
-        if (playerAltBtn) playerAltBtn.style.display = 'none';
-        window.location.href = `watch.html?id=${tmdbId}&title=mdmax`;
+
+    } catch (err) {
+        // Jika ada error, pakai judul default juga
+        window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
     }
 }
 
 // ==============================================
-// 🎬 Buka/Tutup Pemutar (Perbaiki ID & Tanpa Tombol X)
+// ⌨️ Bagian Pencarian Film
 // ==============================================
-function bukaVsEmbed(id) {
-    if (!videoPlayerContainer || !playerArea || !id) return;
-    videoPlayerContainer.style.display = 'block';
-    videoPlayerContainer.style.position = 'relative';
-    videoPlayerContainer.style.zIndex = '10';
-    // Pastikan ID terbaca benar di vsembed.ru
-    const linkPemutar = `${VSEMBED_URL}?tmdb=${encodeURIComponent(id)}`;
-    playerArea.innerHTML = `<iframe src="${linkPemutar}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-    playerTerbuka = true;
-}
-function tutupPemutar() {
-    if (!videoPlayerContainer || !playerArea) return;
-    videoPlayerContainer.style.display = 'none';
-    playerArea.innerHTML = '';
-    playerTerbuka = false;
+let searchResultsLayer = document.getElementById('searchResultsLayer');
+if (!searchResultsLayer) {
+    searchResultsLayer = document.createElement('div');
+    searchResultsLayer.id = 'searchResultsLayer';
+    searchResultsLayer.className = 'search-results-layer';
+    searchResultsLayer.innerHTML = `
+        <div class="search-header">
+            <h4>Hasil Pencarian</h4>
+            <button class="close-search" onclick="tutupPencarian()"><i data-lucide="x" size="20"></i></button>
+        </div>
+        <div class="search-content" id="searchContent"></div>
+    `;
+    document.body.appendChild(searchResultsLayer);
 }
 
-// ==============================================
-// ⌨️ Pencarian
-// ==============================================
-let searchLayer = document.getElementById('searchResultsLayer');
-if (!searchLayer) {
-    searchLayer = document.createElement('div');
-    searchLayer.id = 'searchResultsLayer';
-    searchLayer.className = 'search-results-layer';
-    searchLayer.innerHTML = `<div class="search-header"><h4>Hasil Pencarian</h4><button class="close-search" onclick="tutupCari()"><i data-lucide="x" size="20"></i></button></div><div class="search-content" id="searchContent"></div>`;
-    document.body.appendChild(searchLayer);
+function tutupPencarian() {
+    searchResultsLayer.classList.remove('active');
+    if (searchInput) searchInput.value = '';
 }
-function tutupCari() { searchLayer.classList.remove('active'); searchInput && (searchInput.value = ''); }
+
 async function cariFilm(kata) {
-    if (!kata || kata.length < 2) return;
-    const konten = document.getElementById('searchContent');
-    konten.innerHTML = '<div style="padding:30px; color:#fff; text-align:center;">Mencari...</div>';
-    searchLayer.classList.add('active');
+    if (!kata || kata.trim().length < 2) return;
+    const searchContent = document.getElementById('searchContent');
+    if (searchContent) searchContent.innerHTML = `<div style="padding:30px; color:#fff; text-align:center;">Mencari...</div>`;
+    searchResultsLayer.classList.add('active');
+
     try {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=id-ID&query=${encodeURIComponent(kata)}&page=1&include_adult=false`);
         const data = await res.json();
-        konten.innerHTML = data.results?.map(m => `
-            <div class="search-item-row" onclick="playMovie(${m.id})">
-                <div class="search-item-thumb" style="background:url('${m.poster_path?IMAGE_URL+m.poster_path:'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}') center/cover"></div>
-                <div class="search-item-info"><h4>${m.title}</h4><p>${m.release_date?.split('-')[0]||'-'}</p><p style="font-size:12px; opacity:0.7;">${m.overview?.substring(0,80)+'...'||'Tidak ada sinopsis'}</p></div>
+        const hasilHTML = data.results?.map(movie => `
+            <div class="search-item-row" onclick="playMovie(${movie.id})">
+                <div class="search-item-thumb" style="background-image:url('${movie.poster_path ? IMAGE_URL + movie.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}')"></div>
+                <div class="search-item-info">
+                    <h4>${movie.title}</h4>
+                    <p>${movie.release_date ? movie.release_date.split('-')[0] : '-'}</p>
+                    <p style="font-size:12px; opacity:0.7;">${movie.overview ? movie.overview.substring(0, 80) + '...' : 'Tidak ada sinopsis'}</p>
+                </div>
             </div>
-        `).join('') || '<div style="padding:40px; color:#aaa; text-align:center;">Tidak ada hasil</div>';
+        `).join('') || `<div style="padding:40px; color:#aaa; text-align:center;">Tidak ada hasil ditemukan</div>`;
+
+        if (searchContent) searchContent.innerHTML = hasilHTML;
         if (window.lucide) lucide.createIcons();
-    } catch {
-        konten.innerHTML = '<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>';
+    } catch (err) {
+        if (searchContent) searchContent.innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
     }
 }
-searchInput?.addEventListener('keydown', e => e.key==='Enter' && (e.preventDefault(), cariFilm(searchInput.value.trim())));
+
+if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            cariFilm(searchInput.value.trim());
+        }
+    });
+}
 
 // ==============================================
-// 🧭 Navigasi BAWAH & Tombol Player Alternative (Pasti Muncul)
+// 🧭 Navigasi & Pengaturan Lainnya
 // ==============================================
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
-let playerAltBtn = null;
-let playerTerbuka = false;
-let idFilmAktif = null;
-const VSEMBED_URL = 'https://vsembed.ru/player.html';
 
-function buatTombolPlayerAlt() {
-    // Cari navigasi bawah yang ada di HTML
-    const navBawah = document.querySelector('nav.bottom-nav, nav.footer-nav, nav');
-    if (!navBawah) return console.warn('Navigasi bawah tidak ditemukan!');
-    
-    navBawah.style.position = 'relative';
-    playerAltBtn = document.getElementById('playerAltBtn');
-    
-    if (!playerAltBtn) {
-        // Wadah di tengah navigasi
-        const wadahTengah = document.createElement('div');
-        wadahTengah.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; z-index:9999;';
-        
-        // Buat tombol baru
-        playerAltBtn = document.createElement('button');
-        playerAltBtn.id = 'playerAltBtn';
-        playerAltBtn.style.cssText = 'background:transparent; border:none; color:inherit; cursor:pointer; display:none; flex-direction:column; align-items:center; padding:8px;';
-        playerAltBtn.innerHTML = `<i data-lucide="film" size="24"></i><span style="font-size:11px; opacity:0.9; white-space:nowrap;">Player Alternative</span>`;
-        
-        // Fungsi klik: buka/tutup tanpa tombol X
-        playerAltBtn.onclick = () => {
-            if (!idFilmAktif) return;
-            playerTerbuka ? tutupPemutar() : bukaVsEmbed(idFilmAktif);
-        };
-
-        wadahTengah.appendChild(playerAltBtn);
-        navBawah.appendChild(wadahTengah);
-    }
-    if (window.lucide) lucide.createIcons();
+if (navSearch) {
+    navSearch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!searchContainer) return;
+        searchContainer.classList.toggle('show');
+        if (searchContainer.classList.contains('show') && searchInput) {
+            setTimeout(() => searchInput.focus(), 100);
+        } else {
+            tutupPencarian();
+        }
+    });
 }
 
-// Fungsi buka/tutup pemutar vsembed.ru
-function bukaVsEmbed(id) {
-    if (!videoPlayerContainer || !playerArea || !id) return;
-    videoPlayerContainer.style.display = 'block';
-    videoPlayerContainer.style.position = 'relative';
-    videoPlayerContainer.style.zIndex = '10';
-    const link = `${VSEMBED_URL}?tmdb=${encodeURIComponent(id)}`;
-    playerArea.innerHTML = `<iframe src="${link}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-    playerTerbuka = true;
-}
-function tutupPemutar() {
-    if (!videoPlayerContainer || !playerArea) return;
-    videoPlayerContainer.style.display = 'none';
-    playerArea.innerHTML = '';
-    playerTerbuka = false;
+if (navHome) {
+    navHome.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        tutupPencarian();
+        if (searchContainer) searchContainer.classList.remove('show');
+        if (feedContainer) feedContainer.scrollTop = 0;
+    });
 }
 
-// Event navigasi
-navSearch?.addEventListener('click', e => {
-    e.stopPropagation();
-    if (!searchContainer) return;
-    searchContainer.classList.toggle('show');
-    searchContainer.classList.contains('show') ? setTimeout(()=>searchInput?.focus(),100) : tutupCari();
-});
-navHome?.addEventListener('click', () => {
-    searchInput && (searchInput.value = ''); tutupCari(); searchContainer?.classList.remove('show'); feedContainer && (feedContainer.scrollTop = 0);
-});
-feedContainer?.addEventListener('scroll', () => {
-    const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
-    idx !== activeMovieIndex && (activeMovieIndex = idx, infoPanel?.classList.remove('show'), currentActiveSection = null);
-});
+if (feedContainer) {
+    feedContainer.addEventListener('scroll', () => {
+        const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
+        if (idx !== activeMovieIndex) {
+            activeMovieIndex = idx;
+            if (infoPanel) infoPanel.classList.remove('show');
+            currentActiveSection = null;
+        }
+    });
+}
+
+// Tombol close player bawaan HTML
+const closePlayerBtn = document.getElementById('closePlayerBtn');
+if (closePlayerBtn) {
+    closePlayerBtn.addEventListener('click', () => {
+        if (videoPlayerContainer) videoPlayerContainer.style.display = 'none';
+        if (playerArea) playerArea.innerHTML = '';
+    });
+}
 
 // ==============================================
-// 📦 Logika Instal PWA & Ganti Tombol
-// ==============================================
-let deferredPrompt;
-const installBtn = document.getElementById('installPwaBtn');
-
-window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault(); deferredPrompt = e;
-    if (installBtn) installBtn.style.display = 'flex';
-    if (playerAltBtn) playerAltBtn.style.display = 'none';
-});
-installBtn?.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    outcome === 'accepted' && console.log('PWA diinstal');
-    deferredPrompt = null;
-});
-window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    if (installBtn) installBtn.style.display = 'none';
-    if (playerAltBtn) playerAltBtn.style.display = 'flex';
-    console.log('Tombol berubah ke Player Alternative');
-    if (window.lucide) lucide.createIcons();
-});
-
-// ==============================================
-// 🚀 Jalankan Semua
+// 🚀 Jalankan dengan Aman (Gabungan Event)
 // ==============================================
 window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
-    buatTombolPlayerAlt();
 });
+
 window.addEventListener('load', () => {
+    // 1. Render Grid Film dari API TMDB
     fetchMovies();
-    setTimeout(initPromoNotifier, 400);
+    
+    // 2. Beri jeda 400ms memastikan DOM selesai dibuat, lalu paksa flyer muncul
+    setTimeout(() => {
+        initPromoNotifier();
+    }, 400);
 });
+
 window.addEventListener('resize', detectDevice);
-typeof lucide !== 'undefined' && lucide.createIcons();
+
+
+let deferredPrompt;
+const installBtn = document.getElementById('installPwaBtn');
+
+// Tangkap peristiwa siap instalasi PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Tampilkan tombol Add
+    installBtn.style.display = 'flex';
+});
+
+// Klik tombol = munculkan popup instalasi
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        console.log('PWA diinstal pengguna');
+    } else {
+        console.log('Pengguna membatalkan instalasi');
+    }
+    
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+});
+
+// Sembunyikan tombol jika sudah terinstal
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+    console.log('Aplikasi TukarFollow sudah terpasang');
+});
+
+// Pastikan ikon Lucide tetap berjalan
+if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+}
