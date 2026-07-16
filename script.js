@@ -5,7 +5,7 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 // 📁 Alamat file data film kamu
 const MOVIES_JSON_PATH = 'movies.json';
 // 🔗 Link pemutar alternatif vsembed
-const VSEMBED_URL = 'https://vsembed.com/player.html'; // Sesuaikan link ini kalau beda ya bro
+const VSEMBED_URL = 'https://vsembed.com/player.html';
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -20,6 +20,9 @@ let activeMovieIndex = 0;
 let currentPage = 1;
 let currentActiveSection = null; 
 let isDesktop = false;
+let playerTerbuka = false;
+let idFilmAktif = null;
+let playerAltBtn = null;
 
 // ==============================================
 // 📱 Fungsi Deteksi Perangkat
@@ -305,10 +308,12 @@ async function toggleSection(event, index, section) {
 }
 
 // ==============================================
-// 🔍 Fungsi Cek & Arahkan ke watch.html
+// 🔍 Fungsi Cek & Arahkan + Kontrol Tombol Player Alt
 // ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
+    idFilmAktif = tmdbId;
+    
     try {
         const res = await fetch(MOVIES_JSON_PATH);
         if (!res.ok) throw new Error('File tidak ditemukan');
@@ -320,27 +325,41 @@ async function playMovie(tmdbId) {
         });
 
         if (ketemu) {
+            // Tampilkan tombol hanya jika cocok
+            if (playerAltBtn) playerAltBtn.style.display = 'flex';
             const judulFilm = ketemu.title || ketemu.judul || 'film-tidak-diketahui';
             const judulUrl = encodeURIComponent(judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
             window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=${judulUrl}`;
         } else {
+            // Sembunyikan jika tidak cocok
+            if (playerAltBtn) playerAltBtn.style.display = 'none';
             window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
         }
 
     } catch (err) {
+        if (playerAltBtn) playerAltBtn.style.display = 'none';
         window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
     }
 }
 
 // ==============================================
-// 🎬 Fungsi Buka Pemutar Alternatif VsEmbed
+// 🎬 Fungsi Buka/Tutup Pemutar Natural
 // ==============================================
-function bukaVsEmbed(tmdbId = null) {
+function bukaVsEmbed(tmdbId) {
     if (!videoPlayerContainer || !playerArea) return;
     videoPlayerContainer.style.display = 'block';
-    // Masukkan ID film ke link vsembed jika dibutuhkan
-    const linkPemutar = tmdbId ? `${VSEMBED_URL}?tmdb=${tmdbId}` : VSEMBED_URL;
+    videoPlayerContainer.style.position = 'relative';
+    videoPlayerContainer.style.zIndex = '1';
+    const linkPemutar = `${VSEMBED_URL}?tmdb=${tmdbId}`;
     playerArea.innerHTML = `<iframe src="${linkPemutar}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    playerTerbuka = true;
+}
+
+function tutupPemutarNatural() {
+    if (!videoPlayerContainer || !playerArea) return;
+    videoPlayerContainer.style.display = 'none';
+    playerArea.innerHTML = '';
+    playerTerbuka = false;
 }
 
 // ==============================================
@@ -403,10 +422,41 @@ if (searchInput) {
 }
 
 // ==============================================
-// 🧭 Navigasi & Pengaturan Lainnya
+// 🧭 Navigasi & Buat Tombol Player Alt di Tengah
 // ==============================================
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
+
+// Buat tombol Player Alt otomatis di tengah navigasi
+function initPlayerAltButton() {
+    const nav = navSearch?.closest('nav') || document.querySelector('nav');
+    if (!nav) return;
+
+    nav.style.position = 'relative';
+    playerAltBtn = document.getElementById('playerAltBtn');
+
+    if (!playerAltBtn) {
+        const navCenter = document.createElement('div');
+        navCenter.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px;';
+        
+        playerAltBtn = document.createElement('button');
+        playerAltBtn.id = 'playerAltBtn';
+        playerAltBtn.style.cssText = 'background:transparent; border:none; color:inherit; cursor:pointer; display:none; flex-direction:column; align-items:center; padding:4px;';
+        playerAltBtn.innerHTML = `
+            <i data-lucide="camera" size="22"></i>
+            <span style="font-size:10px; opacity:0.8;">Player Alt</span>
+        `;
+        // Klik sekali buka, klik lagi tutup
+        playerAltBtn.onclick = () => {
+            if (!idFilmAktif) return;
+            playerTerbuka ? tutupPemutarNatural() : bukaVsEmbed(idFilmAktif);
+        };
+
+        navCenter.appendChild(playerAltBtn);
+        nav.appendChild(navCenter);
+    }
+    if (window.lucide) lucide.createIcons();
+}
 
 if (navSearch) {
     navSearch.addEventListener('click', (e) => {
@@ -441,34 +491,12 @@ if (feedContainer) {
     });
 }
 
-const closePlayerBtn = document.getElementById('closePlayerBtn');
-if (closePlayerBtn) {
-    closePlayerBtn.addEventListener('click', () => {
-        if (videoPlayerContainer) videoPlayerContainer.style.display = 'none';
-        if (playerArea) playerArea.innerHTML = '';
-    });
-}
-
 // ==============================================
-// 📦 Logika Tombol Instal & Ganti Ikon Setelah Terinstal
+// 📦 Logika Tombol Instal PWA
 // ==============================================
 let deferredPrompt;
 const installBtn = document.getElementById('installPwaBtn');
 
-// Tombol pemutar alternatif (akan muncul setelah instalasi)
-let playerAltBtn = document.getElementById('playerAltBtn');
-// Jika belum ada di HTML, buat otomatis
-if (!playerAltBtn && installBtn?.parentNode) {
-    playerAltBtn = document.createElement('button');
-    playerAltBtn.id = 'playerAltBtn';
-    playerAltBtn.style.display = 'none';
-    playerAltBtn.innerHTML = `<i data-lucide="video" size="20"></i>`;
-    playerAltBtn.title = 'Pemutar Alternatif';
-    playerAltBtn.onclick = () => bukaVsEmbed();
-    installBtn.parentNode.appendChild(playerAltBtn);
-}
-
-// Tampilkan tombol instal jika belum terinstal
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -476,45 +504,37 @@ window.addEventListener('beforeinstallprompt', (e) => {
     if (playerAltBtn) playerAltBtn.style.display = 'none';
 });
 
-// Proses klik tombol instal
 if (installBtn) {
     installBtn.addEventListener('click', async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') console.log('PWA diinstal pengguna');
-        else console.log('Pengguna membatalkan instalasi');
         deferredPrompt = null;
     });
 }
 
-// ✅ GANTI TOMBOL SETELAH SELESAI DIINSTAL
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    // Sembunyikan tombol Plus/Instal
     if (installBtn) installBtn.style.display = 'none';
-    // Munculkan tombol Pemutar Alternatif
     if (playerAltBtn) playerAltBtn.style.display = 'flex';
-    console.log('Aplikasi sudah terpasang, tombol diganti ke pemutar alternatif');
+    console.log('Aplikasi terpasang, tombol diganti');
     if (window.lucide) lucide.createIcons();
 });
 
 // ==============================================
-// 🚀 Jalankan dengan Aman
+// 🚀 Jalankan Semua
 // ==============================================
 window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
+    initPlayerAltButton();
 });
 
 window.addEventListener('load', () => {
     fetchMovies();
-    setTimeout(() => {
-        initPromoNotifier();
-    }, 400);
+    setTimeout(() => initPromoNotifier(), 400);
 });
 
 window.addEventListener('resize', detectDevice);
 
-if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-}
+if (typeof lucide !== 'undefined') lucide.createIcons();
