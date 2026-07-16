@@ -579,13 +579,9 @@
   </div>
 
 <script>
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-    const MOVIES_JSON_PATH = './movies.json';
 
-    // ✅ KHUSUS VSEMBED SAJA
+    // ✅ KHUSUS VSEMBED SAJA, TANPA CEK FILE LAIN
     const SUMBER_EMBED = {
       utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
       cadangan: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
@@ -614,20 +610,8 @@
       return param.get('id');
     }
 
+    // ✅ LANGSUNG PAKAI VSEMBED, TIDAK CEK movies.json LAGI
     async function cekDanMuatFilm(tmdbId) {
-      try {
-        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-        if (res.ok) {
-          const daftar = await res.json();
-          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-          if (ketemu && ketemu.iframe) {
-            filmIframe.src = ketemu.iframe;
-            return;
-          }
-        }
-      } catch {}
-
-      // Hanya vsembed
       filmIframe.src = SUMBER_EMBED.utama(tmdbId);
       filmIframe.onerror = () => {
         filmIframe.src = SUMBER_EMBED.cadangan(tmdbId);
