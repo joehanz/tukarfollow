@@ -3,7 +3,7 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
 const MOVIES_JSON_PATH = 'movies.json';
-const VSEMBED_URL = 'https://vsembed.com/player.html';
+const VSEMBED_URL = 'https://vsembed.ru/player.html'; // Link diperbaiki
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -242,13 +242,16 @@ async function playMovie(tmdbId) {
 }
 
 // ==============================================
-// 🎬 Buka/Tutup Pemutar
+// 🎬 Buka/Tutup Pemutar (Perbaiki ID & Tanpa Tombol X)
 // ==============================================
 function bukaVsEmbed(id) {
-    if (!videoPlayerContainer || !playerArea) return;
+    if (!videoPlayerContainer || !playerArea || !id) return;
     videoPlayerContainer.style.display = 'block';
     videoPlayerContainer.style.position = 'relative';
-    playerArea.innerHTML = `<iframe src="${VSEMBED_URL}?tmdb=${id}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    videoPlayerContainer.style.zIndex = '10';
+    // Pastikan ID terbaca benar di vsembed.ru
+    const linkPemutar = `${VSEMBED_URL}?tmdb=${encodeURIComponent(id)}`;
+    playerArea.innerHTML = `<iframe src="${linkPemutar}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
     playerTerbuka = true;
 }
 function tutupPemutar() {
@@ -292,26 +295,37 @@ async function cariFilm(kata) {
 searchInput?.addEventListener('keydown', e => e.key==='Enter' && (e.preventDefault(), cariFilm(searchInput.value.trim())));
 
 // ==============================================
-// 🧭 Navigasi & Buat Tombol Player Alt PASTI TAMPIL
+// 🧭 Navigasi BAWAH & Tombol Player Alternative
 // ==============================================
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
 
 function buatTombolPlayerAlt() {
-    const nav = document.querySelector('nav') || navSearch?.parentNode;
-    if (!nav) return console.warn('Navigasi tidak ditemukan!');
-    nav.style.position = 'relative';
+    // Cari navigasi bawah yang sudah ada di HTML
+    const navBawah = document.querySelector('nav.bottom-nav, nav.footer-nav, nav');
+    if (!navBawah) return console.warn('Navigasi bawah tidak ditemukan!');
+    
+    navBawah.style.position = 'relative';
     playerAltBtn = document.getElementById('playerAltBtn');
+    
     if (!playerAltBtn) {
+        // Wadah tombol di tengah navigasi bawah
         const wadahTengah = document.createElement('div');
         wadahTengah.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; z-index:999;';
+        
         playerAltBtn = document.createElement('button');
         playerAltBtn.id = 'playerAltBtn';
         playerAltBtn.style.cssText = 'background:transparent; border:none; color:inherit; cursor:pointer; display:none; flex-direction:column; align-items:center; padding:6px;';
-        playerAltBtn.innerHTML = `<i data-lucide="camera" size="24"></i><span style="font-size:11px; opacity:0.9; white-space:nowrap;">Player Alt</span>`;
-        playerAltBtn.onclick = () => idFilmAktif && (playerTerbuka ? tutupPemutar() : bukaVsEmbed(idFilmAktif));
+        // Ikon pemutar film + tulisan sesuai permintaan
+        playerAltBtn.innerHTML = `<i data-lucide="film" size="24"></i><span style="font-size:11px; opacity:0.9; white-space:nowrap;">Player Alternative</span>`;
+        // Klik sekali buka, klik lagi tutup
+        playerAltBtn.onclick = () => {
+            if (!idFilmAktif) return;
+            playerTerbuka ? tutupPemutar() : bukaVsEmbed(idFilmAktif);
+        };
+
         wadahTengah.appendChild(playerAltBtn);
-        nav.appendChild(wadahTengah);
+        navBawah.appendChild(wadahTengah);
     }
     if (window.lucide) lucide.createIcons();
 }
@@ -361,7 +375,7 @@ window.addEventListener('appinstalled', () => {
 // ==============================================
 window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
-    buatTombolPlayerAlt(); // Pasti dibuat duluan
+    buatTombolPlayerAlt();
 });
 window.addEventListener('load', () => {
     fetchMovies();
