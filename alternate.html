@@ -3,16 +3,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- ✅ Tambahan untuk dukungan PWA & orientasi layar -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="screen-orientation" content="any" />
   <meta name="fullscreen" content="yes" />
 
-  <title>TUKARFOLLOW - Nonton Film</title>
-  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
-  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, bioskop online" />
+  <title>TUKARFOLLOW - Pemutar Alternatif</title>
+  <meta name="description" content="Nonton streaming film dan serial TV dengan pemutar alternatif stabil." />
+  <meta name="keywords" content="nonton film gratis, vsembed, bioskop online" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="id" />
 
@@ -20,9 +19,9 @@
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
   <meta property="og:type" content="video.movie" />
-  <meta property="og:title" content="TUKARFOLLOW" />
-  <meta property="og:description" content="Nonton film dan serial TV terbaru sub Indonesia." />
-  <meta property="og:url" content="https://tukarfollow.web.id/watch.html" />
+  <meta property="og:title" content="TUKARFOLLOW - Alternatif" />
+  <meta property="og:description" content="Pemutar alternatif vsembed stabil." />
+  <meta property="og:url" content="https://tukarfollow.web.id/alternate.html" />
   <meta property="og:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
   <meta property="og:site_name" content="TUKARFOLLOW" />
 
@@ -44,7 +43,6 @@
       width: 100vw;
       height: 100vh;
       font-size: 30px !important;
-      /* ✅ Izinkan perubahan orientasi */
       orientation: portrait;
       orientation: landscape;
     }
@@ -151,7 +149,6 @@
     .video-main-wrapper {
       position: relative;
       width: 100%;
-      /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
       height: calc(100vh - 40px);
       max-width: 115vw;
       margin: 0 auto;
@@ -160,7 +157,6 @@
       background: #000;
     }
 
-    /* ✅ Penutup kontrol bawaan video */
     .video-overlay {
       position: absolute;
       top: 0;
@@ -170,7 +166,6 @@
       z-index: 5;
       pointer-events: none;
     }
-    /* ✅ Area khusus tetap bisa diklik untuk subtitle/terjemah */
     .clickable-subtitle-area {
       position: absolute;
       bottom: 60px;
@@ -189,7 +184,6 @@
       background: #000;
     }
 
-    /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
     .watermark-logo {
       position: fixed;
       top: max(16px, env(safe-area-inset-top));
@@ -204,77 +198,55 @@
       height: auto;
     }
 
-/* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
-.subtitle-layer {
-  position: fixed;
-  bottom: 15px;
-  left: 0;
-  right: 0;
-  height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
-  z-index: 999999;
-  
-  /* Hapus background di induk */
-  background: transparent;
+    .subtitle-layer {
+      position: fixed;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      height: 48px;
+      z-index: 999999;
+      background: transparent;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 1 !important;
+      pointer-events: none !important; 
+    }
 
-  padding: 12px 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1 !important;
+    .subtitle-layer * {
+      pointer-events: auto;
+    }
 
-  /* Induk none agar area lobang di kanan bisa tembus klik ke subtitle asli */
-  pointer-events: none !important; 
-}
+    .grup-kontrol-situs {
+      position: absolute;
+      left: 35%;
+      transform: translateX(-50%);
+    }
 
-/* Supaya tombol-tombol nav situs Anda TETAP BISA DIKLIK */
-.subtitle-layer * {
-  pointer-events: auto;
-}
+    .subtitle-layer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 150px;
+      background: rgba(0, 0, 0, 0); 
+      z-index: -1;
+      pointer-events: auto;
+    }
 
-/* ⬇️ SISIPAN BARU: Seting otomatis untuk menggeser grup kontrol situs ke kiri dari titik 0 ⬇️ */
-/* Ganti .grup-kontrol-situs dengan class wrapper/pembungkus ikon grup kontrol situs Anda */
-.grup-kontrol-situs {
-  position: absolute;
-  
-  /* PANDUAN GESER: Patokan kiri layar adalah 0 */
-  left: 35%; /* Semakin KECIL persennya (misal: 30%, 25%), grup kontrol akan semakin geser ke KIRI secara otomatis di semua perangkat */
-  
-  transform: translateX(-50%); /* Menjaga titik pusat ikon agar tetap presisi */
-}
-
-/* TAMENG KIRI: Tak terlihat tapi memblokir klik */
-.subtitle-layer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 150px; /* Batas kiri lobang Anda */
-  
-  /* TRIK: Menggunakan rgba dengan alpha 0. Visualnya 100% transparan (tidak norak), 
-     tapi browser tetap menganggapnya ada wujud untuk memblokir klik! */
-  background: rgba(0, 0, 0, 0); 
-  
-  z-index: -1;
-  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
-}
-
-/* TAMENG KANAN: Tak terlihat tapi memblokir klik */
-.subtitle-layer::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(100% - 60px); /* Batas kanan lobang Anda */
-  right: 0;
-  
-  /* TRIK yang sama: Transparan tapi tetap berwujud menahan klik */
-  background: rgba(0, 0, 0, 0); 
-  
-  z-index: -1;
-  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
-}
-    
+    .subtitle-layer::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(100% - 60px);
+      right: 0;
+      background: rgba(0, 0, 0, 0); 
+      z-index: -1;
+      pointer-events: auto;
+    }
     
     .subtitle-controls {
       display: flex;
@@ -487,7 +459,6 @@
       background: #1d4ed8;
     }
 
-    /* ✅ PENTING: Semua elemen TETAP terlihat saat layar penuh & orientasi berubah */
     :fullscreen,
     :-webkit-full-screen,
     :-moz-full-screen,
@@ -510,7 +481,6 @@
       z-index: 999999 !important;
     }
 
-    /* ✅ Khusus tampilan HP & PWA */
     @media (max-width: 768px) {
       .video-main-wrapper {
         width: 100vw;
@@ -527,7 +497,6 @@
       }
     }
 
-    /* ✅ Saat mode horizontal, pastikan lebar penuh */
     @media screen and (orientation: landscape) {
       .video-main-wrapper {
         width: 100vw;
@@ -542,8 +511,6 @@
         height: 36px;
       }
     }
-
-
   </style>
 </head>
 <body>
@@ -612,18 +579,16 @@
   </div>
 
 <script>
-    // Konfigurasi
     const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-    const MOVIES_JSON_PATH = './movies.json'; // Jalur file json kamu
+    const MOVIES_JSON_PATH = './movies.json';
 
-    // Sumber cadangan jika tidak ada di movies.json
+    // ✅ KHUSUS VSEMBED SAJA
     const SUMBER_EMBED = {
       utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-      cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
-      cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
+      cadangan: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
     };
 
     const videoWrapper = document.getElementById('videoWrapper');
@@ -649,31 +614,26 @@
       return param.get('id');
     }
 
-// ✅ Logika baru: Cek movies.json DULU baru TMDB
-async function cekDanMuatFilm(tmdbId) {
-  try {
-    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-    if (res.ok) {
-      const daftar = await res.json();
-      const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-      if (ketemu && ketemu.iframe) {
-        filmIframe.src = ketemu.iframe;
-        return;
-      }
+    async function cekDanMuatFilm(tmdbId) {
+      try {
+        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+        if (res.ok) {
+          const daftar = await res.json();
+          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+          if (ketemu && ketemu.iframe) {
+            filmIframe.src = ketemu.iframe;
+            return;
+          }
+        }
+      } catch {}
+
+      // Hanya vsembed
+      filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+      filmIframe.onerror = () => {
+        filmIframe.src = SUMBER_EMBED.cadangan(tmdbId);
+      };
     }
-  } catch {}
 
-  // Hanya kalau tidak ketemu, baru pakai TMDB
-  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-  filmIframe.onerror = () => {
-    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-    filmIframe.onerror = () => {
-      filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-    };
-  };
-}
-
-    // Kontrol layar penuh
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
         if (document.documentElement.requestFullscreen) {
@@ -788,7 +748,6 @@ async function cekDanMuatFilm(tmdbId) {
         videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
         return;
       }
-      // Panggil fungsi cek urutan baru
       cekDanMuatFilm(currentMovieId);
     });
 </script>
