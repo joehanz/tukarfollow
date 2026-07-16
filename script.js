@@ -330,13 +330,20 @@ async function playMovie(tmdbId) {
         });
 
         if (ketemu) {
-            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=manual`;
+            // Ambil judul film, jika tidak ada pakai judul default
+            const judulFilm = ketemu.title || ketemu.judul || 'film-tidak-diketahui';
+            // Ubah spasi jadi tanda hubung, hapus karakter khusus biar URL aman
+            const judulUrl = encodeURIComponent(judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
+            // Redirect dengan parameter title baru
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=${judulUrl}`;
         } else {
-            window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
+            // Jika tidak ditemukan di daftar, pakai judul default seperti contoh kamu
+            window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
         }
 
     } catch (err) {
-        window.location.href = `watch.html?id=${String(tmdbId).trim()}&sumber=tmdb`;
+        // Jika ada error, pakai judul default juga
+        window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
     }
 }
 
