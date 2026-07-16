@@ -4,6 +4,8 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
 // 📁 Alamat file data film kamu
 const MOVIES_JSON_PATH = 'movies.json';
+// 🔗 Link pemutar alternatif vsembed
+const VSEMBED_URL = 'https://vsembed.com/player.html'; // Sesuaikan link ini kalau beda ya bro
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -31,7 +33,7 @@ function detectDevice() {
 }
 
 // ==============================================
-// 🚀 Modul Selebaran Promosi (Bypass Kuat - Hanya di script.js)
+// 🚀 Modul Selebaran Promosi
 // ==============================================
 function initPromoNotifier() {
   const notifier = document.getElementById('desktopNotifier');
@@ -42,10 +44,8 @@ function initPromoNotifier() {
   const promoSinopsis = document.getElementById('promoSinopsis');
   const promoWatchBtn = document.getElementById('promoWatchBtn');
 
-  // Jika elemen pembungkus utama tidak ada di HTML, hentikan script agar tidak error
   if (!notifier || !promoCard) return;
 
-  // 1. Siapkan data default (Fallback) supaya jika JSON kamu kosong/error, flyer tetap dipaksa muncul
   let latestMovie = {
     title: "Avatar: The Way of Water",
     country: "US",
@@ -56,7 +56,6 @@ function initPromoNotifier() {
     tmdb_id: 76600
   };
 
-  // 2. Ambil data dari movies.json
   fetch(MOVIES_JSON_PATH)
     .then(response => {
       if (!response.ok) throw new Error('movies.json tidak merespon');
@@ -64,7 +63,6 @@ function initPromoNotifier() {
     })
     .then(movies => {
       if (Array.isArray(movies) && movies.length > 0) {
-        // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
         latestMovie = movies[0];
       }
       tampilkanFlyer();
@@ -74,14 +72,11 @@ function initPromoNotifier() {
       tampilkanFlyer();
     });
 
-  // Fungsi internal untuk merender dan memaksa tampilan flyer menyala
   function tampilkanFlyer() {
-    // Render Background Gambar
     if (latestMovie.image) {
       promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
     }
     
-    // Render Teks dengan pengaman (agar tidak crash jika data null/undefined)
     if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
     
     if (promoCountry) {
@@ -91,7 +86,6 @@ function initPromoNotifier() {
     
     if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
     
-    // Render Tag Genre
     if (promoGenres) {
       promoGenres.innerHTML = '';
       if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
@@ -103,7 +97,6 @@ function initPromoNotifier() {
       }
     }
 
-    // Aksi Tombol Nonton
     if (promoWatchBtn) {
       promoWatchBtn.onclick = function() {
         closeNotifier();
@@ -119,13 +112,11 @@ function initPromoNotifier() {
       };
     }
 
-    // PAKSA FLYER MUNCUL DAN BERADA DI PALING DEPAN (Bypass CSS)
     notifier.style.setProperty('display', 'flex', 'important');
     notifier.style.setProperty('position', 'fixed', 'important');
     notifier.style.setProperty('z-index', '99999', 'important');
     notifier.style.opacity = '1';
     
-    // Render ulang ikon Lucide khusus di dalam flyer
     if (window.lucide) lucide.createIcons();
   }
 }
@@ -190,7 +181,7 @@ function loadFallbackData() {
 }
 
 // ==============================================
-// 🖼️ Tampilkan Daftar Film ke Halaman (Grid)
+// 🖼️ Tampilkan Daftar Film ke Halaman
 // ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
@@ -239,7 +230,6 @@ function renderFeed(movies) {
         feedContainer.appendChild(card);
     });
 
-    // Tombol Muat Lebih Banyak
     const lastCard = feedContainer.lastChild;
     if (lastCard) {
         const loadMoreDiv = document.createElement('div');
@@ -330,21 +320,27 @@ async function playMovie(tmdbId) {
         });
 
         if (ketemu) {
-            // Ambil judul film, jika tidak ada pakai judul default
             const judulFilm = ketemu.title || ketemu.judul || 'film-tidak-diketahui';
-            // Ubah spasi jadi tanda hubung, hapus karakter khusus biar URL aman
             const judulUrl = encodeURIComponent(judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
-            // Redirect dengan parameter title baru
             window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=${judulUrl}`;
         } else {
-            // Jika tidak ditemukan di daftar, pakai judul default seperti contoh kamu
             window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
         }
 
     } catch (err) {
-        // Jika ada error, pakai judul default juga
         window.location.href = `watch.html?id=${String(tmdbId).trim()}&title=mdmax`;
     }
+}
+
+// ==============================================
+// 🎬 Fungsi Buka Pemutar Alternatif VsEmbed
+// ==============================================
+function bukaVsEmbed(tmdbId = null) {
+    if (!videoPlayerContainer || !playerArea) return;
+    videoPlayerContainer.style.display = 'block';
+    // Masukkan ID film ke link vsembed jika dibutuhkan
+    const linkPemutar = tmdbId ? `${VSEMBED_URL}?tmdb=${tmdbId}` : VSEMBED_URL;
+    playerArea.innerHTML = `<iframe src="${linkPemutar}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
 }
 
 // ==============================================
@@ -445,7 +441,6 @@ if (feedContainer) {
     });
 }
 
-// Tombol close player bawaan HTML
 const closePlayerBtn = document.getElementById('closePlayerBtn');
 if (closePlayerBtn) {
     closePlayerBtn.addEventListener('click', () => {
@@ -455,17 +450,64 @@ if (closePlayerBtn) {
 }
 
 // ==============================================
-// 🚀 Jalankan dengan Aman (Gabungan Event)
+// 📦 Logika Tombol Instal & Ganti Ikon Setelah Terinstal
+// ==============================================
+let deferredPrompt;
+const installBtn = document.getElementById('installPwaBtn');
+
+// Tombol pemutar alternatif (akan muncul setelah instalasi)
+let playerAltBtn = document.getElementById('playerAltBtn');
+// Jika belum ada di HTML, buat otomatis
+if (!playerAltBtn && installBtn?.parentNode) {
+    playerAltBtn = document.createElement('button');
+    playerAltBtn.id = 'playerAltBtn';
+    playerAltBtn.style.display = 'none';
+    playerAltBtn.innerHTML = `<i data-lucide="video" size="20"></i>`;
+    playerAltBtn.title = 'Pemutar Alternatif';
+    playerAltBtn.onclick = () => bukaVsEmbed();
+    installBtn.parentNode.appendChild(playerAltBtn);
+}
+
+// Tampilkan tombol instal jika belum terinstal
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.style.display = 'flex';
+    if (playerAltBtn) playerAltBtn.style.display = 'none';
+});
+
+// Proses klik tombol instal
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') console.log('PWA diinstal pengguna');
+        else console.log('Pengguna membatalkan instalasi');
+        deferredPrompt = null;
+    });
+}
+
+// ✅ GANTI TOMBOL SETELAH SELESAI DIINSTAL
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    // Sembunyikan tombol Plus/Instal
+    if (installBtn) installBtn.style.display = 'none';
+    // Munculkan tombol Pemutar Alternatif
+    if (playerAltBtn) playerAltBtn.style.display = 'flex';
+    console.log('Aplikasi sudah terpasang, tombol diganti ke pemutar alternatif');
+    if (window.lucide) lucide.createIcons();
+});
+
+// ==============================================
+// 🚀 Jalankan dengan Aman
 // ==============================================
 window.addEventListener('DOMContentLoaded', () => {
     detectDevice();
 });
 
 window.addEventListener('load', () => {
-    // 1. Render Grid Film dari API TMDB
     fetchMovies();
-    
-    // 2. Beri jeda 400ms memastikan DOM selesai dibuat, lalu paksa flyer muncul
     setTimeout(() => {
         initPromoNotifier();
     }, 400);
@@ -473,43 +515,6 @@ window.addEventListener('load', () => {
 
 window.addEventListener('resize', detectDevice);
 
-
-let deferredPrompt;
-const installBtn = document.getElementById('installPwaBtn');
-
-// Tangkap peristiwa siap instalasi PWA
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    // Tampilkan tombol Add
-    installBtn.style.display = 'flex';
-});
-
-// Klik tombol = munculkan popup instalasi
-installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-        console.log('PWA diinstal pengguna');
-    } else {
-        console.log('Pengguna membatalkan instalasi');
-    }
-    
-    deferredPrompt = null;
-    installBtn.style.display = 'none';
-});
-
-// Sembunyikan tombol jika sudah terinstal
-window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    installBtn.style.display = 'none';
-    console.log('Aplikasi TukarFollow sudah terpasang');
-});
-
-// Pastikan ikon Lucide tetap berjalan
 if (typeof lucide !== 'undefined') {
     lucide.createIcons();
 }
