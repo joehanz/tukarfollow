@@ -295,13 +295,17 @@ async function cariFilm(kata) {
 searchInput?.addEventListener('keydown', e => e.key==='Enter' && (e.preventDefault(), cariFilm(searchInput.value.trim())));
 
 // ==============================================
-// 🧭 Navigasi BAWAH & Tombol Player Alternative
+// 🧭 Navigasi BAWAH & Tombol Player Alternative (Pasti Muncul)
 // ==============================================
 const navSearch = document.getElementById('navSearch');
 const navHome = document.getElementById('navHome');
+let playerAltBtn = null;
+let playerTerbuka = false;
+let idFilmAktif = null;
+const VSEMBED_URL = 'https://vsembed.ru/player.html';
 
 function buatTombolPlayerAlt() {
-    // Cari navigasi bawah yang sudah ada di HTML
+    // Cari navigasi bawah yang ada di HTML
     const navBawah = document.querySelector('nav.bottom-nav, nav.footer-nav, nav');
     if (!navBawah) return console.warn('Navigasi bawah tidak ditemukan!');
     
@@ -309,16 +313,17 @@ function buatTombolPlayerAlt() {
     playerAltBtn = document.getElementById('playerAltBtn');
     
     if (!playerAltBtn) {
-        // Wadah tombol di tengah navigasi bawah
+        // Wadah di tengah navigasi
         const wadahTengah = document.createElement('div');
-        wadahTengah.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; z-index:999;';
+        wadahTengah.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; z-index:9999;';
         
+        // Buat tombol baru
         playerAltBtn = document.createElement('button');
         playerAltBtn.id = 'playerAltBtn';
-        playerAltBtn.style.cssText = 'background:transparent; border:none; color:inherit; cursor:pointer; display:none; flex-direction:column; align-items:center; padding:6px;';
-        // Ikon pemutar film + tulisan sesuai permintaan
+        playerAltBtn.style.cssText = 'background:transparent; border:none; color:inherit; cursor:pointer; display:none; flex-direction:column; align-items:center; padding:8px;';
         playerAltBtn.innerHTML = `<i data-lucide="film" size="24"></i><span style="font-size:11px; opacity:0.9; white-space:nowrap;">Player Alternative</span>`;
-        // Klik sekali buka, klik lagi tutup
+        
+        // Fungsi klik: buka/tutup tanpa tombol X
         playerAltBtn.onclick = () => {
             if (!idFilmAktif) return;
             playerTerbuka ? tutupPemutar() : bukaVsEmbed(idFilmAktif);
@@ -330,6 +335,24 @@ function buatTombolPlayerAlt() {
     if (window.lucide) lucide.createIcons();
 }
 
+// Fungsi buka/tutup pemutar vsembed.ru
+function bukaVsEmbed(id) {
+    if (!videoPlayerContainer || !playerArea || !id) return;
+    videoPlayerContainer.style.display = 'block';
+    videoPlayerContainer.style.position = 'relative';
+    videoPlayerContainer.style.zIndex = '10';
+    const link = `${VSEMBED_URL}?tmdb=${encodeURIComponent(id)}`;
+    playerArea.innerHTML = `<iframe src="${link}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    playerTerbuka = true;
+}
+function tutupPemutar() {
+    if (!videoPlayerContainer || !playerArea) return;
+    videoPlayerContainer.style.display = 'none';
+    playerArea.innerHTML = '';
+    playerTerbuka = false;
+}
+
+// Event navigasi
 navSearch?.addEventListener('click', e => {
     e.stopPropagation();
     if (!searchContainer) return;
@@ -345,7 +368,7 @@ feedContainer?.addEventListener('scroll', () => {
 });
 
 // ==============================================
-// 📦 Logika Instal PWA
+// 📦 Logika Instal PWA & Ganti Tombol
 // ==============================================
 let deferredPrompt;
 const installBtn = document.getElementById('installPwaBtn');
@@ -366,7 +389,7 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     if (installBtn) installBtn.style.display = 'none';
     if (playerAltBtn) playerAltBtn.style.display = 'flex';
-    console.log('Aplikasi terpasang, tombol diganti');
+    console.log('Tombol berubah ke Player Alternative');
     if (window.lucide) lucide.createIcons();
 });
 
