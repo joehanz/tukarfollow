@@ -658,9 +658,17 @@
     }
 
     function ambilIdDariUrl() {
-      const param = new URLSearchParams(window.location.search);
-      return param.get('id');
-    }
+  const param = new URLSearchParams(window.location.search);
+  let id = param.get('id');
+
+  // Tangkap juga format ?id=123/judul-film
+  if (!id || id.includes('/')) {
+    const bagian = window.location.search.replace('?id=', '').split('/');
+    id = bagian[0];
+  }
+
+  return id;
+}
 
 // ✅ Logika baru: Cek movies.json DULU baru TMDB
 async function cekDanMuatFilm(tmdbId) {
