@@ -153,7 +153,7 @@
       width: 100%;
       /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
       height: calc(100vh - 40px);
-      max-width: 115vw;
+      max-width: 125vw;
       margin: 0 auto;
       border-radius: 0;
       overflow: hidden;
@@ -813,6 +813,66 @@ async function cekDanMuatFilm(tmdbId) {
       // Panggil fungsi cek urutan baru
       cekDanMuatFilm(currentMovieId);
     });
+</script>
+
+<script>
+// Ambil elemen wadah kontrol
+const subtitleLayer = document.getElementById('subLayer');
+const controls = subtitleLayer?.querySelector('.subtitle-controls');
+if (!controls) console.warn('Elemen kontrol tidak ditemukan');
+
+let hideTimer = null;
+// Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
+const HIDE_DELAY = 3000;
+
+// Fungsi: Tampilkan kontrol
+function showControls() {
+  if (!controls) return;
+  // Tampilkan dengan cara aman tanpa ubah gaya lain
+  controls.style.opacity = '1';
+  controls.style.pointerEvents = 'auto';
+  controls.style.visibility = 'visible';
+  // Ulangi hitung waktu sembunyi
+  resetHideTimer();
+}
+
+// Fungsi: Sembunyikan kontrol
+function hideControls() {
+  if (!controls) return;
+  controls.style.opacity = '0';
+  controls.style.pointerEvents = 'none';
+  controls.style.visibility = 'hidden';
+}
+
+// Fungsi: Atur ulang penghitung waktu
+function resetHideTimer() {
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(hideControls, HIDE_DELAY);
+}
+
+// Daftar peristiwa yang sangat sensitif untuk mobile
+const ACTIVITY_EVENTS = [
+  'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
+  'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
+  'scroll', 'wheel', 'keydown' // Geser/ketik
+];
+
+// Pasang pendengar ke seluruh layar + pastikan tertangkap
+ACTIVITY_EVENTS.forEach(event => {
+  document.addEventListener(event, showControls, {
+    passive: true, // Agar tidak mengganggu geser layar
+    capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
+  });
+});
+
+// Juga tangkap ketukan langsung pada tombol kontrol
+controls?.addEventListener('click', showControls);
+controls?.addEventListener('touchstart', showControls);
+
+// Mulai berjalan saat halaman siap
+document.addEventListener('DOMContentLoaded', () => {
+  showControls();
+});
 </script>
 </body>
 </html>
