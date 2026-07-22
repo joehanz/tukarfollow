@@ -815,57 +815,62 @@ async function cekDanMuatFilm(tmdbId) {
     });
 </script>
   <script>
-const subtitleControls = document.querySelector('.subtitle-controls');
-let hideTimer = null;
+// Ambil elemen wadah kontrol
+const subtitleLayer = document.getElementById('subLayer');
+const controls = subtitleLayer?.querySelector('.subtitle-controls');
+if (!controls) console.warn('Elemen kontrol tidak ditemukan');
 
-// Sesuaikan waktu diam sesuai keinginan (3000 = 3 detik)
+let hideTimer = null;
+// Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
 const HIDE_DELAY = 3000;
 
-// Pastikan kontrol terlihat saat halaman baru dimuat
-subtitleControls.style.opacity = '1';
-subtitleControls.style.pointerEvents = 'auto';
-subtitleControls.style.transition = 'opacity 0.2s ease';
-
+// Fungsi: Tampilkan kontrol
 function showControls() {
-  // Paksa tampilkan jika sedang tersembunyi
-  subtitleControls.style.opacity = '1';
-  subtitleControls.style.pointerEvents = 'auto';
-  // Hapus timer lama dan buat baru
+  if (!controls) return;
+  // Tampilkan dengan cara aman tanpa ubah gaya lain
+  controls.style.opacity = '1';
+  controls.style.pointerEvents = 'auto';
+  controls.style.visibility = 'visible';
+  // Ulangi hitung waktu sembunyi
+  resetHideTimer();
+}
+
+// Fungsi: Sembunyikan kontrol
+function hideControls() {
+  if (!controls) return;
+  controls.style.opacity = '0';
+  controls.style.pointerEvents = 'none';
+  controls.style.visibility = 'hidden';
+}
+
+// Fungsi: Atur ulang penghitung waktu
+function resetHideTimer() {
   clearTimeout(hideTimer);
   hideTimer = setTimeout(hideControls, HIDE_DELAY);
 }
 
-function hideControls() {
-  subtitleControls.style.opacity = '0';
-  subtitleControls.style.pointerEvents = 'none';
-}
-
-// Event khusus mobile + umum, sangat sensitif
-const activeEvents = [
-  'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua jenis sentuhan
-  'mousemove', 'mousedown', 'mouseup', 'click', 'contextmenu',
-  'scroll', 'wheel', 'keydown'
+// Daftar peristiwa yang sangat sensitif untuk mobile
+const ACTIVITY_EVENTS = [
+  'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
+  'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
+  'scroll', 'wheel', 'keydown' // Geser/ketik
 ];
 
-// Pasang ke seluruh dokumen, tangkap gerakan sekecil apa pun
-activeEvents.forEach(event => {
+// Pasang pendengar ke seluruh layar + pastikan tertangkap
+ACTIVITY_EVENTS.forEach(event => {
   document.addEventListener(event, showControls, {
-    passive: true,
-    capture: true // Pastikan event tertangkap duluan
+    passive: true, // Agar tidak mengganggu geser layar
+    capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
   });
 });
 
-// Mulai hitung waktu segera setelah halaman siap
-document.addEventListener('DOMContentLoaded', () => {
-  clearTimeout(hideTimer);
-  hideTimer = setTimeout(hideControls, HIDE_DELAY);
-});
+// Juga tangkap ketukan langsung pada tombol kontrol
+controls?.addEventListener('click', showControls);
+controls?.addEventListener('touchstart', showControls);
 
-// Jaga-jaga jika ada transisi CSS yang mengganggu
-subtitleControls.addEventListener('transitionend', () => {
-  if (parseFloat(subtitleControls.style.opacity) === 0) {
-    subtitleControls.style.pointerEvents = 'none';
-  }
+// Mulai berjalan saat halaman siap
+document.addEventListener('DOMContentLoaded', () => {
+  showControls();
 });
   </script>
 </body>
