@@ -547,7 +547,7 @@
 
   </style>
 </head>
-  jjjjjjjjjjj
+  aaaaa
 <body>
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header" id="commentsHeader">
@@ -817,54 +817,63 @@ async function cekDanMuatFilm(tmdbId) {
 </script>
 
 <script>
-  const subLayer = document.getElementById("subLayer");
-  let touchStartY = 0;
-  let autoHideTimer;
+// Ambil elemen wadah kontrol
+const subtitleLayer = document.getElementById('subLayer');
+const controls = subtitleLayer?.querySelector('.subtitle-controls');
+if (!controls) console.warn('Elemen kontrol tidak ditemukan');
 
-  // Fungsi untuk sembunyikan
-  function hideControls() {
-    subLayer.style.transition = "opacity 0.3s ease";
-    subLayer.style.opacity = "0";
-    subLayer.style.pointerEvents = "none";
-  }
+let hideTimer = null;
+// Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
+const HIDE_DELAY = 3000;
 
-  // Fungsi untuk tampilkan
-  function showControls() {
-    subLayer.style.transition = "opacity 0.3s ease";
-    subLayer.style.opacity = "1";
-    subLayer.style.pointerEvents = "auto";
-    resetAutoHide();
-  }
+// Fungsi: Tampilkan kontrol
+function showControls() {
+  if (!controls) return;
+  // Tampilkan dengan cara aman tanpa ubah gaya lain
+  controls.style.opacity = '1';
+  controls.style.pointerEvents = 'auto';
+  controls.style.visibility = 'visible';
+  // Ulangi hitung waktu sembunyi
+  resetHideTimer();
+}
 
-  // Reset timer auto hide
-  function resetAutoHide() {
-    clearTimeout(autoHideTimer);
-    autoHideTimer = setTimeout(() => {
-      hideControls();
-    }, 4000); // 4 detik tanpa interaksi
-  }
+// Fungsi: Sembunyikan kontrol
+function hideControls() {
+  if (!controls) return;
+  controls.style.opacity = '0';
+  controls.style.pointerEvents = 'none';
+  controls.style.visibility = 'hidden';
+}
 
-  // Event sentuhan awal
-  document.addEventListener("touchstart", (e) => {
-    touchStartY = e.touches[0].clientY;
+// Fungsi: Atur ulang penghitung waktu
+function resetHideTimer() {
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(hideControls, HIDE_DELAY);
+}
+
+// Daftar peristiwa yang sangat sensitif untuk mobile
+const ACTIVITY_EVENTS = [
+  'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
+  'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
+  'scroll', 'wheel', 'keydown' // Geser/ketik
+];
+
+// Pasang pendengar ke seluruh layar + pastikan tertangkap
+ACTIVITY_EVENTS.forEach(event => {
+  document.addEventListener(event, showControls, {
+    passive: true, // Agar tidak mengganggu geser layar
+    capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
   });
+});
 
-  // Event gerakan swipe
-  document.addEventListener("touchmove", (e) => {
-    const touchEndY = e.touches[0].clientY;
-    const deltaY = touchEndY - touchStartY;
+// Juga tangkap ketukan langsung pada tombol kontrol
+controls?.addEventListener('click', showControls);
+controls?.addEventListener('touchstart', showControls);
 
-    if (deltaY > 50) {
-      // Swipe ke bawah → tampilkan
-      showControls();
-    } else if (deltaY < -50) {
-      // Swipe ke atas → sembunyikan
-      hideControls();
-    }
-  });
-
-  // Awal: tampilkan lalu auto hide
+// Mulai berjalan saat halaman siap
+document.addEventListener('DOMContentLoaded', () => {
   showControls();
+});
 </script>
 </body>
 </html>
