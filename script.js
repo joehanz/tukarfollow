@@ -319,28 +319,37 @@ async function toggleSection(event, index, section) {
 // ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
+
+    let judulUrl = 'film'; // Nilai paling bawah jika semua gagal
+
     try {
-        const res = await fetch(MOVIES_JSON_PATH);
-        if (!res.ok) throw new Error('File tidak ditemukan');
-        
-        const daftarFilm = await res.json();
-        const ketemu = daftarFilm.find(f => {
-            if (!f.tmdb_id) return false;
-            return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
-        });
+        // Cek dulu di movies.json
+        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+        if (res.ok) {
+            const daftarFilm = await res.json();
+            const ketemu = daftarFilm.find(f => {
+                if (!f.tmdb_id) return false;
+                return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
+            });
 
-        // Ambil judul dan ubah jadi format aman
-        const judulFilm = ketemu ? (ketemu.title || ketemu.judul || 'film') : 'film';
-        const judulUrl = judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
-        // ✅ BARU: Format pakai garis miring, hapus &title= sepenuhnya
-        window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
-
+            if (ketemu) {
+                const judulAsli = ketemu.title || ketemu.judul;
+                if (judulAsli) {
+                    judulUrl = judulAsli.toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^a-z0-9-]/g, '')
+                        .substring(0, 50); // Batasi panjang agar URL rapi
+                }
+            }
+        }
     } catch (err) {
-        // Jika error tetap pakai format garis miring
-        window.location.href = `watch.html?id=${String(tmdbId).trim()}/film`;
+        console.warn('Gagal baca movies.json, pakai nama umum:', err);
     }
+
+    // ✅ Pasti berjalan: Format pakai garis miring, judul tidak kosong
+    window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 }
+
 // ==============================================
 // ⌨️ Bagian Pencarian Film
 // ==============================================
