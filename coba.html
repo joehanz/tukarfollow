@@ -807,7 +807,7 @@ async function cekDanMuatFilm(tmdbId) {
       lucide.createIcons();
       currentMovieId = ambilIdDariUrl();
       if (!currentMovieId) {
-        videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+        videoWrapper.innerHTML = `<div style="padding:10px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
         return;
       }
       // Panggil fungsi cek urutan baru
