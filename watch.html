@@ -657,13 +657,12 @@
       screen.orientation.unlock();
     }
 
-    function ambilIdDariUrl() {
+   function ambilIdDariUrl() {
   const query = window.location.search;
   if (!query) return null;
 
-  // Ambil bagian setelah ?id=, lalu ambil angka saja sebelum garis miring
+  // Ambil hanya angka ID sebelum garis miring
   const bagian = query.replace('?id=', '').split('/')[0];
-  // Pastikan hanya ambil angka
   const idBersih = bagian.replace(/\D/g, '');
 
   return idBersih || null;
