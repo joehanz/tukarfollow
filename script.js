@@ -329,19 +329,18 @@ async function playMovie(tmdbId) {
             return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
         });
 
-        // Ambil judul, ubah jadi format aman
+        // Ambil judul dan ubah jadi format aman
         const judulFilm = ketemu ? (ketemu.title || ketemu.judul || 'film') : 'film';
         const judulUrl = judulFilm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
-        // ✅ FORMAT BARU: ?id=ANGKA/JUDUL (HAPUS &title= SEPENUHNYA)
+        // ✅ BARU: Format pakai garis miring, hapus &title= sepenuhnya
         window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 
     } catch (err) {
-        // Jika error tetap pakai format garis miring, bukan &title
+        // Jika error tetap pakai format garis miring
         window.location.href = `watch.html?id=${String(tmdbId).trim()}/film`;
     }
 }
-
 // ==============================================
 // ⌨️ Bagian Pencarian Film
 // ==============================================
