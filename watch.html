@@ -658,15 +658,15 @@
     }
 
     function ambilIdDariUrl() {
-  const param = new URLSearchParams(window.location.search);
-  let id = param.get('id');
+  const query = window.location.search;
+  if (!query) return null;
 
-  // Ambil hanya angka ID sebelum garis miring
-  if (!id || id.includes('/')) {
-    id = window.location.search.replace('?id=', '').split('/')[0];
-  }
+  // Ambil bagian setelah ?id=, lalu ambil angka saja sebelum garis miring
+  const bagian = query.replace('?id=', '').split('/')[0];
+  // Pastikan hanya ambil angka
+  const idBersih = bagian.replace(/\D/g, '');
 
-  return id;
+  return idBersih || null;
 }
 
 // ✅ Logika baru: Cek movies.json DULU baru TMDB
