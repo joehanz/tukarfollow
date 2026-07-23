@@ -881,5 +881,37 @@ document.addEventListener('DOMContentLoaded', () => {
   showControls();
 });
 </script>
+  <script>
+    // FUNGSI PEMBERSIH LINK - KHUSUS HTML+JS SAJA
+function bersihkanLink(linkKotor) {
+  if (!linkKotor) return linkKotor;
+
+  // 1. Ubah semua kode terenkripsi (%2F, %20 dll) jadi teks asli
+  let link = decodeURIComponent(linkKotor);
+
+  try {
+    // 2. Pisahkan bagian link agar aman diproses
+    const u = new URL(link);
+
+    // 3. Daftar SEMUA pelacak dari SEMUA situs yang akan dibuang
+    const buang = [
+      'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
+      'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
+      'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
+    ];
+
+    // 4. Hapus semua pelacak satu per satu
+    buang.forEach(p => u.searchParams.delete(p));
+
+    // 5. Kembalikan link yang sudah bersih
+    return u.toString();
+
+  } catch {
+    // Kalau format link aneh, pakai cara cadangan
+    link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
+    return link.replace(/&+$/, '').replace(/\?&/, '?');
+  }
+}
+  </script>
 </body>
 </html>
