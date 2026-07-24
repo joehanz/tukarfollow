@@ -549,7 +549,6 @@
 </head>
   
 <body>
-  jjjjj
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header" id="commentsHeader">
       <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
@@ -669,6 +668,20 @@
 
   return idBersih || null;
 }
+
+// ✅ Logika baru: Cek movies.json DULU baru TMDB
+async function cekDanMuatFilm(tmdbId) {
+  try {
+    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+    if (res.ok) {
+      const daftar = await res.json();
+      const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+      if (ketemu && ketemu.iframe) {
+        filmIframe.src = ketemu.iframe;
+        return;
+      }
+    }
+  } catch {}
 
   // Hanya kalau tidak ketemu, baru pakai TMDB
   filmIframe.src = SUMBER_EMBED.utama(tmdbId);
