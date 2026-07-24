@@ -3,15 +3,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- ✅ Tambahan untuk dukungan PWA & orientasi layar -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="screen-orientation" content="any" />
   <meta name="fullscreen" content="yes" />
 
-  <title>TUKARFOLLOW - Pemutar Alternatif</title>
-  <meta name="description" content="Nonton streaming film dan serial TV dengan pemutar alternatif stabil." />
-  <meta name="keywords" content="nonton film gratis, vsembed, bioskop online" />
+  <title>TUKARFOLLOW - Nonton Film</title>
+  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta name="keywords" content="nonton film gratis, streaming movie sub indo, bioskop online" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="id" />
 
@@ -19,9 +20,9 @@
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
 
   <meta property="og:type" content="video.movie" />
-  <meta property="og:title" content="TUKARFOLLOW - Alternatif" />
-  <meta property="og:description" content="Pemutar alternatif vsembed stabil." />
-  <meta property="og:url" content="https://tukarfollow.web.id/alternate.html" />
+  <meta property="og:title" content="TUKARFOLLOW" />
+  <meta property="og:description" content="Nonton film dan serial TV terbaru sub Indonesia." />
+  <meta property="og:url" content="https://tukarfollow.web.id/watch.html" />
   <meta property="og:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
   <meta property="og:site_name" content="TUKARFOLLOW" />
 
@@ -43,6 +44,7 @@
       width: 100vw;
       height: 100vh;
       font-size: 30px !important;
+      /* ✅ Izinkan perubahan orientasi */
       orientation: portrait;
       orientation: landscape;
     }
@@ -135,7 +137,7 @@
     }
 
     .watch-layout {
-      width: 100vw;
+      width: 100%;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -149,14 +151,16 @@
     .video-main-wrapper {
       position: relative;
       width: 100%;
+      /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
       height: calc(100vh - 40px);
-      max-width: 115vw;
+      max-width: 125vw;
       margin: 0 auto;
       border-radius: 0;
       overflow: hidden;
       background: #000;
     }
 
+    /* ✅ Penutup kontrol bawaan video */
     .video-overlay {
       position: absolute;
       top: 0;
@@ -166,6 +170,7 @@
       z-index: 5;
       pointer-events: none;
     }
+    /* ✅ Area khusus tetap bisa diklik untuk subtitle/terjemah */
     .clickable-subtitle-area {
       position: absolute;
       bottom: 60px;
@@ -184,9 +189,10 @@
       background: #000;
     }
 
+    /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
     .watermark-logo {
       position: fixed;
-      top: max(16px, env(safe-area-inset-top));
+      top: max(20px, env(safe-area-inset-top));
       right: max(16px, env(safe-area-inset-right));
       z-index: 999999;
       opacity: 0.6;
@@ -194,59 +200,81 @@
     }
 
     .watermark-logo img {
-      width: 60px;
+      width: 80px;
       height: auto;
     }
 
-    .subtitle-layer {
-      position: fixed;
-      bottom: 15px;
-      left: 0;
-      right: 0;
-      height: 48px;
-      z-index: 999999;
-      background: transparent;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 1 !important;
-      pointer-events: none !important; 
-    }
+/* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
+.subtitle-layer {
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
+  z-index: 999999;
+  
+  /* Hapus background di induk */
+  background: transparent;
 
-    .subtitle-layer * {
-      pointer-events: auto;
-    }
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1 !important;
 
-    .grup-kontrol-situs {
-      position: absolute;
-      left: 35%;
-      transform: translateX(-50%);
-    }
+  /* Induk none agar area lobang di kanan bisa tembus klik ke subtitle asli */
+  pointer-events: none !important; 
+}
 
-    .subtitle-layer::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 150px;
-      background: rgba(0, 0, 0, 0); 
-      z-index: -1;
-      pointer-events: auto;
-    }
+/* Supaya tombol-tombol nav situs Anda TETAP BISA DIKLIK */
+.subtitle-layer * {
+  pointer-events: auto;
+}
 
-    .subtitle-layer::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: calc(100% - 60px);
-      right: 0;
-      background: rgba(0, 0, 0, 0); 
-      z-index: -1;
-      pointer-events: auto;
-    }
+/* ⬇️ SISIPAN BARU: Seting otomatis untuk menggeser grup kontrol situs ke kiri dari titik 0 ⬇️ */
+/* Ganti .grup-kontrol-situs dengan class wrapper/pembungkus ikon grup kontrol situs Anda */
+.grup-kontrol-situs {
+  position: absolute;
+  
+  /* PANDUAN GESER: Patokan kiri layar adalah 0 */
+  left: 35%; /* Semakin KECIL persennya (misal: 30%, 25%), grup kontrol akan semakin geser ke KIRI secara otomatis di semua perangkat */
+  
+  transform: translateX(-50%); /* Menjaga titik pusat ikon agar tetap presisi */
+}
+
+/* TAMENG KIRI: Tak terlihat tapi memblokir klik */
+.subtitle-layer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 150px; /* Batas kiri lobang Anda */
+  
+  /* TRIK: Menggunakan rgba dengan alpha 0. Visualnya 100% transparan (tidak norak), 
+     tapi browser tetap menganggapnya ada wujud untuk memblokir klik! */
+  background: rgba(0, 0, 0, 0); 
+  
+  z-index: -1;
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+}
+
+/* TAMENG KANAN: Tak terlihat tapi memblokir klik */
+.subtitle-layer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(100% - 60px); /* Batas kanan lobang Anda */
+  right: 0;
+  
+  /* TRIK yang sama: Transparan tapi tetap berwujud menahan klik */
+  background: rgba(0, 0, 0, 0); 
+  
+  z-index: -1;
+  pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+}
+    
     
     .subtitle-controls {
       display: flex;
@@ -279,7 +307,8 @@
       transform: scale(1.05);
     }
 
-    .ctrl-btn svg {
+    .ctrl-btn svg,
+    .ctrl-btn .custom-icon {
       width: 20px;
       height: 20px;
     }
@@ -459,6 +488,7 @@
       background: #1d4ed8;
     }
 
+    /* ✅ PENTING: Semua elemen TETAP terlihat saat layar penuh & orientasi berubah */
     :fullscreen,
     :-webkit-full-screen,
     :-moz-full-screen,
@@ -481,6 +511,7 @@
       z-index: 999999 !important;
     }
 
+    /* ✅ Khusus tampilan HP & PWA */
     @media (max-width: 768px) {
       .video-main-wrapper {
         width: 100vw;
@@ -497,6 +528,7 @@
       }
     }
 
+    /* ✅ Saat mode horizontal, pastikan lebar penuh */
     @media screen and (orientation: landscape) {
       .video-main-wrapper {
         width: 100vw;
@@ -511,9 +543,13 @@
         height: 36px;
       }
     }
+
+
   </style>
 </head>
+  
 <body>
+  jjjjj
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header" id="commentsHeader">
       <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
@@ -528,7 +564,7 @@
 
   <div class="watch-layout" id="watchLayout">
     <div class="video-main-wrapper" id="videoWrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <iframe id="filmIframe" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       
       <div class="video-overlay"></div>
       <div class="clickable-subtitle-area"></div>
@@ -549,6 +585,17 @@
       </button>
       <button class="ctrl-btn" id="btnViewComments" title="Lihat Daftar Komentar">
         <i data-lucide="message-square"></i>
+      </button>
+      <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
+      <button class="ctrl-btn" id="btnPlayer2" title="Pemutar Alternatif (Player 2)">
+        <svg class="custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16v16H4z" />
+          <path d="M8 8h8v8H8z" />
+          <circle cx="6" cy="6" r="2" />
+          <circle cx="18" cy="6" r="2" />
+          <circle cx="6" cy="18" r="2" />
+          <circle cx="18" cy="18" r="2" />
+        </svg>
       </button>
       <button class="ctrl-btn" id="btnFullscreen" title="Masuk/Keluar Layar Penuh">
         <i data-lucide="maximize"></i>
@@ -579,12 +626,18 @@
   </div>
 
 <script>
+    // Konfigurasi
+    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
+    const MOVIES_JSON_PATH = './movies.json'; // Jalur file json kamu
 
-    // ✅ KHUSUS VSEMBED SAJA, TANPA CEK FILE LAIN
+    // Sumber cadangan jika tidak ada di movies.json
     const SUMBER_EMBED = {
       utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-      cadangan: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
+      cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+      cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
     };
 
     const videoWrapper = document.getElementById('videoWrapper');
@@ -592,6 +645,7 @@
     const btnHomeBack = document.getElementById('btnHomeBack');
     const btnAddComment = document.getElementById('btnAddComment');
     const btnViewComments = document.getElementById('btnViewComments');
+    const btnPlayer2 = document.getElementById('btnPlayer2');
     const btnFullscreen = document.getElementById('btnFullscreen');
     const commentsPanel = document.getElementById('commentsPanel');
     const closeCommentsBtn = document.getElementById('closeCommentsBtn');
@@ -605,19 +659,37 @@
       screen.orientation.unlock();
     }
 
-    function ambilIdDariUrl() {
-      const param = new URLSearchParams(window.location.search);
-      return param.get('id');
-    }
+   function ambilIdDariUrl() {
+  const query = window.location.search;
+  if (!query) return null;
 
-    // ✅ LANGSUNG PAKAI VSEMBED, TIDAK CEK movies.json LAGI
-    async function cekDanMuatFilm(tmdbId) {
-      filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-      filmIframe.onerror = () => {
-        filmIframe.src = SUMBER_EMBED.cadangan(tmdbId);
-      };
-    }
+  // Ambil hanya angka ID sebelum garis miring
+  const bagian = query.replace('?id=', '').split('/')[0];
+  const idBersih = bagian.replace(/\D/g, '');
 
+  return idBersih || null;
+}
+
+  // Hanya kalau tidak ketemu, baru pakai TMDB
+  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+  filmIframe.onerror = () => {
+    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+    filmIframe.onerror = () => {
+      filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+    };
+  };
+}
+
+    // ✅ Fungsi tombol Player 2: Buka alternate.html dengan parameter id yang sama
+    btnPlayer2.addEventListener('click', () => {
+      if (currentMovieId) {
+        window.location.href = `alternate.html?id=${currentMovieId}`;
+      } else {
+        alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
+      }
+    });
+
+    // Kontrol layar penuh
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
         if (document.documentElement.requestFullscreen) {
@@ -732,9 +804,102 @@
         videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
         return;
       }
+      // Panggil fungsi cek urutan baru
       cekDanMuatFilm(currentMovieId);
     });
 </script>
+
+<script>
+// Ambil elemen wadah kontrol
+const subtitleLayer = document.getElementById('subLayer');
+const controls = subtitleLayer?.querySelector('.subtitle-controls');
+if (!controls) console.warn('Elemen kontrol tidak ditemukan');
+
+let hideTimer = null;
+// Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
+const HIDE_DELAY = 3000;
+
+// Fungsi: Tampilkan kontrol
+function showControls() {
+  if (!controls) return;
+  // Tampilkan dengan cara aman tanpa ubah gaya lain
+  controls.style.opacity = '1';
+  controls.style.pointerEvents = 'auto';
+  controls.style.visibility = 'visible';
+  // Ulangi hitung waktu sembunyi
+  resetHideTimer();
+}
+
+// Fungsi: Sembunyikan kontrol
+function hideControls() {
+  if (!controls) return;
+  controls.style.opacity = '0';
+  controls.style.pointerEvents = 'none';
+  controls.style.visibility = 'hidden';
+}
+
+// Fungsi: Atur ulang penghitung waktu
+function resetHideTimer() {
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(hideControls, HIDE_DELAY);
+}
+
+// Daftar peristiwa yang sangat sensitif untuk mobile
+const ACTIVITY_EVENTS = [
+  'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
+  'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
+  'scroll', 'wheel', 'keydown' // Geser/ketik
+];
+
+// Pasang pendengar ke seluruh layar + pastikan tertangkap
+ACTIVITY_EVENTS.forEach(event => {
+  document.addEventListener(event, showControls, {
+    passive: true, // Agar tidak mengganggu geser layar
+    capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
+  });
+});
+
+// Juga tangkap ketukan langsung pada tombol kontrol
+controls?.addEventListener('click', showControls);
+controls?.addEventListener('touchstart', showControls);
+
+// Mulai berjalan saat halaman siap
+document.addEventListener('DOMContentLoaded', () => {
+  showControls();
+});
+</script>
+  <script>
+    // FUNGSI PEMBERSIH LINK - KHUSUS HTML+JS SAJA
+function bersihkanLink(linkKotor) {
+  if (!linkKotor) return linkKotor;
+
+  // 1. Ubah semua kode terenkripsi (%2F, %20 dll) jadi teks asli
+  let link = decodeURIComponent(linkKotor);
+
+  try {
+    // 2. Pisahkan bagian link agar aman diproses
+    const u = new URL(link);
+
+    // 3. Daftar SEMUA pelacak dari SEMUA situs yang akan dibuang
+    const buang = [
+      'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
+      'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
+      'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
+    ];
+
+    // 4. Hapus semua pelacak satu per satu
+    buang.forEach(p => u.searchParams.delete(p));
+
+    // 5. Kembalikan link yang sudah bersih
+    return u.toString();
+
+  } catch {
+    // Kalau format link aneh, pakai cara cadangan
+    link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
+    return link.replace(/&+$/, '').replace(/\?&/, '?');
+  }
+}
+  </script>
   <script type='text/javascript'>
     //<![CDATA[
     (function () {
