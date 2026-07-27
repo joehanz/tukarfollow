@@ -1,5 +1,16 @@
 [
 	{
+    "tmdb_id": 284054,
+    "title": "Black Panther 2018",
+    "image": "/banner/the-devil-wears-prada-2.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/4izmEY5O19FNjAa",
+    "sinopsis": "T’Challa kembali ke Wakanda, jadi Black Panther, hadapi perebutan takhta dan ancaman perang.",
+    "genre": ["Action", "Sci-Fi", "Adventure"],
+    "release_date": "2018-02-13",
+    "country": "Amerika Serikat"
+  },
+	{
     "tmdb_id": 1314481,
     "title": "The Devil Wears Prada 2 2026",
     "image": "/banner/the-devil-wears-prada-2.webp",
