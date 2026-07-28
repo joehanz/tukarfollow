@@ -654,15 +654,15 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
     ];
     let sudahDibuka = false;
 
-    function bukaLinkAcakSekaliSaja() {
+    function bukaLinkAcakSekaliSaja(e) {
       if (sudahDibuka) return;
       sudahDibuka = true;
       const linkPilih = LINK_IKLAN_ACAK[Math.floor(Math.random() * LINK_IKLAN_ACAK.length)];
       window.open(linkPilih, '_blank');
+      if (e) e.stopPropagation();
     }
     // =======================
 
-    // === DEKLARASI ELEMEN DULU ===
     const videoWrapper = document.getElementById('videoWrapper');
     const filmIframe = document.getElementById('filmIframe');
     const btnHomeBack = document.getElementById('btnHomeBack');
@@ -836,10 +836,12 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
       }
       cekDanMuatFilm(currentMovieId);
 
-      // === PASANG KLIK SETELAH ELEMEN PASTI ADA ===
+      // === PASANG KLIK YANG PASTI TERDETEKSI ===
       const overlay = document.querySelector('.video-overlay');
-      if (overlay) overlay.addEventListener('click', bukaLinkAcakSekaliSaja);
-      if (videoWrapper) videoWrapper.addEventListener('click', bukaLinkAcakSekaliSaja);
+      if (overlay) overlay.style.pointerEvents = 'none';
+      if (videoWrapper) {
+        videoWrapper.addEventListener('click', bukaLinkAcakSekaliSaja, true);
+      }
     });
 </script>
 
