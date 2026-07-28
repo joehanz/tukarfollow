@@ -320,7 +320,7 @@ async function toggleSection(event, index, section) {
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
 
-    let judulUrl = 'film'; // Nilai paling bawah jika semua gagal
+    let judulUrl = ''; // default kosong
 
     try {
         // Cek dulu di movies.json
@@ -332,21 +332,22 @@ async function playMovie(tmdbId) {
                 return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
             });
 
-            if (ketemu) {
-                const judulAsli = ketemu.title || ketemu.judul;
-                if (judulAsli) {
-                    judulUrl = judulAsli.toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^a-z0-9-]/g, '')
-                        .substring(0, 50); // Batasi panjang agar URL rapi
-                }
+            if (ketemu && ketemu.title) {
+                judulUrl = ketemu.title
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')        // spasi jadi strip
+                    .replace(/[^a-z0-9-]/g, '')  // buang karakter aneh
+                    .substring(0, 50);           // batasi panjang agar URL rapi
             }
         }
     } catch (err) {
-        console.warn('Gagal baca movies.json, pakai nama umum:', err);
+        console.warn('Gagal baca movies.json:', err);
     }
 
-    // ✅ Pasti berjalan: Format pakai garis miring, judul tidak kosong
+    // fallback terakhir kalau slug kosong
+    if (!judulUrl) judulUrl = 'film';
+
     window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 }
 
