@@ -647,6 +647,26 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
       cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
     };
 
+   // === TAMBAHKAN DI BAGIAN ATAS SCRIPT UTAMA ===
+const LINK_IKLAN_ACAK = [
+  'https://rajarayap.com',
+  'https://caturbangunsentosa.blogspot.com',
+  'https://ptdwiprima.blogspot.com'
+];
+let sudahDibuka = false;
+
+function bukaLinkAcakSekaliSaja() {
+  if (sudahDibuka) return;
+  sudahDibuka = true;
+  const linkPilih = LINK_IKLAN_ACAK[Math.floor(Math.random() * LINK_IKLAN_ACAK.length)];
+  window.open(linkPilih, '_blank');
+}
+
+// === TAMBAHKAN DI DALAM BAGIAN DOMContentLoaded ===
+const overlay = document.querySelector('.video-overlay');
+if (overlay) overlay.addEventListener('click', bukaLinkAcakSekaliSaja);
+videoWrapper.addEventListener('click', bukaLinkAcakSekaliSaja);
+
     const videoWrapper = document.getElementById('videoWrapper');
     const filmIframe = document.getElementById('filmIframe');
     const btnHomeBack = document.getElementById('btnHomeBack');
