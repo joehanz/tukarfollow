@@ -44,17 +44,6 @@
     "country": "Amerika Serikat"
   },
 	{
-    "tmdb_id": 1226834,
-    "title": "This Tempting Madness",
-    "image": "/banner/this-tempting-madness.webp",
-    "video": "",
-    "iframe": "https://playcinematic.com/video/ROii0vSNX1eUC6Z",
-    "sinopsis": "Wanita bangun dari koma, ingatan retak, mulai curiga pada dirinya dan realitas.",
-    "genre": ["Thriller", "Drama"],
-    "release_date": "2025-06-12",
-    "country": "Amerika Serikat"
-  },
-	{
     "tmdb_id": 1020047,
     "title": "In The Hand Of Dante",
     "image": "/banner/in-the-hand-of-dante.webp",
