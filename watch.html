@@ -684,8 +684,18 @@ async function cekDanMuatFilm(tmdbId) {
       if (res.ok) {
         const daftar = await res.json();
         const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        if (ketemu && ketemu.iframe) {
-          filmIframe.src = ketemu.iframe;
+        if (ketemu) {
+          // kalau ada iframe di JSON, pakai langsung
+          if (ketemu.iframe) {
+            filmIframe.src = ketemu.iframe;
+            return;
+          }
+          // kalau tidak ada iframe, buat link watch.html sesuai format JSON
+          const slug = ketemu.title
+            .toLowerCase()
+            .replace(/\s+/g, '-')        // spasi jadi strip
+            .replace(/[^a-z0-9\-]/g, ''); // buang karakter aneh
+          filmIframe.src = `https://tukarfollow.web.id/watch.html?id=${ketemu.tmdb_id}/${slug}`;
           return;
         }
       }
@@ -805,6 +815,7 @@ window.addEventListener('DOMContentLoaded', () => {
   cekDanMuatFilm(currentMovieId);
 });
 </script>
+
 
 <script>
 // Ambil elemen wadah kontrol
