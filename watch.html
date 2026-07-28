@@ -556,7 +556,7 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
   </script>
 </head>
   
-<body>hhhhhhh
+<body>1234
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header" id="commentsHeader">
       <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
@@ -572,44 +572,25 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
   <div class="watch-layout" id="watchLayout">
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe id="filmIframe" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-      
-      <div class="video-overlay"></div>
-      <div class="clickable-subtitle-area"></div>
     </div>
 </div>
 
 <script>
-// Daftar link tujuan
-const LINK_TUJUAN = [
+const LINK = [
   'https://domain.com',
   'https://domain-b.com',
   'https://domain-c.com'
 ];
-let sudahTerbuka = false;
+let sudah = false;
 
-function bukaSatuKaliSaja() {
-  if (sudahTerbuka) return;
-  sudahTerbuka = true;
-  const acak = LINK_TUJUAN[Math.floor(Math.random() * LINK_TUJUAN.length)];
-  window.open(acak, '_blank');
-}
-
-// Jalankan saat halaman siap
-document.addEventListener('DOMContentLoaded', () => {
-  const wadah = document.getElementById('videoWrapper');
-  const overlay = document.querySelector('.video-overlay');
-
-  // Agar klik tembus ke tombol play tapi tetap tertangkap
-  if (overlay) overlay.style.pointerEvents = 'none';
-
-  // Pasang penangkap klik dengan prioritas tertinggi
-  if (wadah) {
-    wadah.addEventListener('click', bukaSatuKaliSaja, true);
-    wadah.addEventListener('touchstart', bukaSatuKaliSaja, true);
-  }
-});
+document.getElementById('videoWrapper').addEventListener('click', function() {
+  if(sudah) return;
+  sudah = true;
+  const pilih = LINK[Math.floor(Math.random() * LINK.length)];
+  window.open(pilih, '_blank');
+}, true);
 </script>
-
+  
   <div class="watermark-logo">
     <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
   </div>
