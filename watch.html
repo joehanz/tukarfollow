@@ -638,30 +638,14 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-    const MOVIES_JSON_PATH = './movies.json';
+    const MOVIES_JSON_PATH = './movies.json'; // Jalur file json kamu
 
+    // Sumber cadangan jika tidak ada di movies.json
     const SUMBER_EMBED = {
       utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
       cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
       cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
     };
-
-    // === FITUR LINK ACAK ===
-    const LINK_IKLAN_ACAK = [
-      'https://rajarayap.com',
-      'https://caturbangunsentosa.blogspot.com',
-      'https://ptdwiprima.blogspot.com'
-    ];
-    let sudahDibuka = false;
-
-    function bukaLinkAcakSekaliSaja(e) {
-      if (sudahDibuka) return;
-      sudahDibuka = true;
-      const linkPilih = LINK_IKLAN_ACAK[Math.floor(Math.random() * LINK_IKLAN_ACAK.length)];
-      window.open(linkPilih, '_blank');
-      if (e) e.stopPropagation();
-    }
-    // =======================
 
     const videoWrapper = document.getElementById('videoWrapper');
     const filmIframe = document.getElementById('filmIframe');
@@ -682,36 +666,42 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
       screen.orientation.unlock();
     }
 
-    function ambilIdDariUrl() {
-      const query = window.location.search;
-      if (!query) return null;
-      const bagian = query.replace('?id=', '').split('/')[0];
-      const idBersih = bagian.replace(/\D/g, '');
-      return idBersih || null;
+   function ambilIdDariUrl() {
+  const query = window.location.search;
+  if (!query) return null;
+
+  // Ambil hanya angka ID sebelum garis miring
+  const bagian = query.replace('?id=', '').split('/')[0];
+  const idBersih = bagian.replace(/\D/g, '');
+
+  return idBersih || null;
+}
+
+// ✅ Logika baru: Cek movies.json DULU baru TMDB
+async function cekDanMuatFilm(tmdbId) {
+  try {
+    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
+    if (res.ok) {
+      const daftar = await res.json();
+      const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+      if (ketemu && ketemu.iframe) {
+        filmIframe.src = ketemu.iframe;
+        return;
+      }
     }
+  } catch {}
 
-    async function cekDanMuatFilm(tmdbId) {
-      try {
-        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-        if (res.ok) {
-          const daftar = await res.json();
-          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-          if (ketemu && ketemu.iframe) {
-            filmIframe.src = ketemu.iframe;
-            return;
-          }
-        }
-      } catch {}
+  // Hanya kalau tidak ketemu, baru pakai TMDB
+  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+  filmIframe.onerror = () => {
+    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+    filmIframe.onerror = () => {
+      filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+    };
+  };
+}
 
-      filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-      filmIframe.onerror = () => {
-        filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-        filmIframe.onerror = () => {
-          filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-        };
-      };
-    }
-
+    // ✅ Fungsi tombol Player 2: Buka alternate.html dengan parameter id yang sama
     btnPlayer2.addEventListener('click', () => {
       if (currentMovieId) {
         window.location.href = `alternate.html?id=${currentMovieId}`;
@@ -720,6 +710,7 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
       }
     });
 
+    // Kontrol layar penuh
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
         if (document.documentElement.requestFullscreen) {
@@ -834,14 +825,8 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
         videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
         return;
       }
+      // Panggil fungsi cek urutan baru
       cekDanMuatFilm(currentMovieId);
-
-      // === PASANG KLIK YANG PASTI TERDETEKSI ===
-      const overlay = document.querySelector('.video-overlay');
-      if (overlay) overlay.style.pointerEvents = 'none';
-      if (videoWrapper) {
-        videoWrapper.addEventListener('click', bukaLinkAcakSekaliSaja, true);
-      }
     });
 </script>
 
