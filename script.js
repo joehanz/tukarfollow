@@ -3,7 +3,7 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
 // 📁 Alamat file data film kamu
-const MOVIES_JSON_PATH = 'movies.json', 'movies2025.json', 'movies2024.json', 'moviesclassic.json';
+const MOVIES_JSON_PATHS = ['movies.json', 'movies2025.json', 'movies2024.json', 'moviesclassic.json'];
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
