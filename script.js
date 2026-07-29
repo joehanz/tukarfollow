@@ -321,7 +321,7 @@ async function playMovie(tmdbId) {
     if (!tmdbId) return;
 
     let judulUrl = ''; // default kosong
-    const files = ['movies.json', 'movies2025.json', 'movies2024.json', 'classicmovies.json];
+    const files = ['movies.json', 'movies2025.json', 'movies2024.json', 'moviesclassic.json];
 
     try {
         for (const file of files) {
