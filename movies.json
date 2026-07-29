@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1727780,
+   "title":"Borderline",
+   "image":"/banner/summerween.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/vaWBNLl1sajkfZs",
+   "sinopsis":""Agen AS culik geng Meksiko, chaos politik memicu ancaman demokrasi.",
+   "genre": ["Thriller"],
+   "release_date":"2026-07-17",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1711175,
    "title":"Summerween",
    "image":"/banner/summerween.webp",
