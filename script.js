@@ -56,91 +56,80 @@ function initPromoNotifier() {
     tmdb_id: 76600
   };
 
-  // 2. Ambil data dari movies.json
-  fetch(MOVIES_JSON_PATH)
-    .then(response => {
-      if (!response.ok) throw new Error('movies.json tidak merespon');
-      return response.json();
-    })
-    .then(movies => {
-      if (Array.isArray(movies) && movies.length > 0) {
-        // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
-        latestMovie = movies[0];
-      }
-      tampilkanFlyer();
-    })
-    .catch(err => {
-      console.warn("Membaca movies.json gagal/kosong, menggunakan data default agar flyer tetap tampil.");
-      tampilkanFlyer();
-    });
-
-  // Fungsi internal untuk merender dan memaksa tampilan flyer menyala
-  function tampilkanFlyer() {
-    // Render Background Gambar
-    if (latestMovie.image) {
-      promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
-    }
-    
-    // Render Teks dengan pengaman (agar tidak crash jika data null/undefined)
-    if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
-    
-    if (promoCountry) {
-      const tahun = latestMovie.release_date ? latestMovie.release_date.split('-')[0] : '';
-      promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${tahun}`;
-    }
-    
-    if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
-    
-    // Render Tag Genre
-    if (promoGenres) {
-      promoGenres.innerHTML = '';
-      if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
-        latestMovie.genre.forEach(g => {
-          const span = document.createElement('span');
-          span.textContent = g;
-          promoGenres.appendChild(span);
-        });
-      }
-    }
-
-    // Aksi Tombol Nonton
-    if (promoWatchBtn) {
-      promoWatchBtn.onclick = function() {
-        closeNotifier();
-        const targetedId = latestMovie.tmdb_id || latestMovie.id;
-        if (targetedId) {
-           playMovie(targetedId); 
-        } else if (latestMovie.iframe) {
-           if (videoPlayerContainer && playerArea) {
-              videoPlayerContainer.style.display = 'block';
-              playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-           }
+  // 2. Ambil data dari semua file JSON
+(async () => {
+  for (const file of MOVIES_JSON_PATHS) {
+    try {
+      const response = await fetch(file);
+      if (response.ok) {
+        const movies = await response.json();
+        if (Array.isArray(movies) && movies.length > 0) {
+          // Jika file JSON valid dan ada isinya, pakai data dari film teratas
+          latestMovie = movies[0];
+          break; // stop loop kalau sudah ketemu
         }
-      };
+      }
+    } catch (err) {
+      console.warn(`Gagal baca ${file}`, err);
     }
-
-    // PAKSA FLYER MUNCUL DAN BERADA DI PALING DEPAN (Bypass CSS)
-    notifier.style.setProperty('display', 'flex', 'important');
-    notifier.style.setProperty('position', 'fixed', 'important');
-    notifier.style.setProperty('z-index', '99999', 'important');
-    notifier.style.opacity = '1';
-    
-    // Render ulang ikon Lucide khusus di dalam flyer
-    if (window.lucide) lucide.createIcons();
   }
+  tampilkanFlyer();
+})();
+
+// Fungsi internal untuk merender dan memaksa tampilan flyer menyala
+function tampilkanFlyer() {
+  // Render Background Gambar
+  if (latestMovie.image) {
+    promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+  }
+  
+  // Render Teks dengan pengaman
+  if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
+  
+  if (promoCountry) {
+    const tahun = latestMovie.release_date ? latestMovie.release_date.split('-')[0] : '';
+    promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${tahun}`;
+  }
+  
+  if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+  
+  // Render Tag Genre
+  if (promoGenres) {
+    promoGenres.innerHTML = '';
+    if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+      latestMovie.genre.forEach(g => {
+        const span = document.createElement('span');
+        span.textContent = g;
+        promoGenres.appendChild(span);
+      });
+    }
+  }
+
+  // Aksi Tombol Nonton
+  if (promoWatchBtn) {
+    promoWatchBtn.onclick = function() {
+      closeNotifier();
+      const targetedId = latestMovie.tmdb_id || latestMovie.id;
+      if (targetedId) {
+         playMovie(targetedId); 
+      } else if (latestMovie.iframe) {
+         if (videoPlayerContainer && playerArea) {
+            videoPlayerContainer.style.display = 'block';
+            playerArea.innerHTML = `<iframe src="${latestMovie.iframe}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+         }
+      }
+    };
+  }
+
+  // Paksa flyer muncul
+  notifier.style.setProperty('display', 'flex', 'important');
+  notifier.style.setProperty('position', 'fixed', 'important');
+  notifier.style.setProperty('z-index', '99999', 'important');
+  notifier.style.opacity = '1';
+  
+  if (window.lucide) lucide.createIcons();
 }
 
-function closeNotifier() {
-  const notifier = document.getElementById('desktopNotifier');
-  if (notifier) {
-    notifier.style.opacity = '0';
-    notifier.style.transition = 'opacity 0.3s ease';
-    setTimeout(() => {
-      notifier.style.display = 'none';
-      notifier.style.opacity = '1';
-    }, 300);
-  }
-}
 
 // ==============================================
 // 🎯 Fungsi Gulir Daftar Film
