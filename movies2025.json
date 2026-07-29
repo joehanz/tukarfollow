@@ -1,5 +1,82 @@
 [
   {
+    "tmdb_id": 1340206,
+    "title": "Tuner",
+    "image": "/banner/tuner-2025.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/9OCD7aRRjA96kus",
+    "sinopsis": "Seorang penyetel piano berbakat menemukan bakat mengejutkan membuka brankas, mengubah hidupnya secara tak terduga.",
+    "genre": ["Crime", "Drama", "Thriller"],
+    "release_date": "2025-05-21",
+    "country": "Canada"
+  },
+  {
+    "tmdb_id": 650524,
+    "title": "Back to the Past",
+    "image": "/banner/back-to-the-past.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/5lik976GxEF1x00",
+    "sinopsis": "Hong Siu-lung dan Kaisar Qin kembali bertemu, masa depan bergantung pada konflik lama mereka.",
+    "genre": ["Sci-Fi", "Comedy", "Action"],
+    "release_date": "2025-12-31",
+    "country": "Hongkong"
+  },
+  {
+    "tmdb_id": 1234422,
+    "title": "Trigger Happy",
+    "image": "/banner/trigger-happy.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/mRvUedt8deHXKn9",
+    "sinopsis": "Suami tertekan berencana membunuh istrinya demi polis asuransi dalam satire ala 1950-an.",
+    "genre": ["Comedy", "Thriller"],
+    "release_date": "2025-01-14",
+    "country": "Amerika Serikat"
+  },
+  {
+    "tmdb_id": 83533,
+    "title": "Avatar Fire And Ash",
+    "image": "/banner/avatar-fire-and-ash.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/GEjAGvk19F7gdFj",
+    "sinopsis": "Jake dan Neytiri hadapi suku Ash demi masa depan Pandora, melawan Varang yang haus kuasa.",
+    "genre": ["Adventure", "Fantasy", "Sci-Fi"],
+    "release_date": "2025-12-17",
+    "country": "Amerika Serikat, Kanada"
+  },
+  {
+    "tmdb_id": 1013482,
+    "title": "Borderline",
+    "image": "/banner/borderline.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/n9zvlawQ13EYPkQ",
+    "sinopsis": "Sosiopat romantis kabur dari institusi, mengincar rumah bintang pop ’90-an demi cinta.",
+    "genre": ["Comedy", "Horor", "Thriller"],
+    "release_date": "2025-03-14",
+    "country": "Amerika Serikat"
+  },
+  {
+    "tmdb_id": 1285951,
+    "title": "Chapter 51",
+    "image": "/banner/chapter-51.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/CEjYmXpLoLIhmzt",
+    "sinopsis": "Kasus Hollywood Killer, 3 aktris tewas; mantan agen FBI buka kembali misteri kelam.",
+    "genre": ["Comedy", "Crime", "Mystery"],
+    "release_date": "2025-06-23",
+    "country": "Amerika Serikat"
+  },
+  {
+    "tmdb_id": 1020047,
+    "title": "In The Hand Of Dante",
+    "image": "/banner/in-the-hand-of-dante.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/7rfrIdftfjF0yl9",
+    "sinopsis": "Pastor Vatikan temukan naskah asli Dante, penulis mencuri, kisah paralel lahirnya mahakarya.",
+    "genre": ["Crime", "Drama"],
+    "release_date": "2025-06-12",
+    "country": "Amerika Serikat"
+  },
+  {
     "tmdb_id": 1226834,
     "title": "This Tempting Madness",
     "image": "/banner/this-tempting-madness.webp",
