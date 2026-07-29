@@ -1,5 +1,115 @@
 [
   {
+	"tmdb_id": 1243741,
+    "title": "Ballistic",
+    "image": "/banner/ballistic-2025.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/Pv7b7cWEiqzbYZT",
+    "sinopsis": "Ibu tentara tahu peluru pembunuh anaknya dibuat di pabriknya bekerja, ia pun menuntut balas.",
+    "genre": ["Drama", "Thriller"],
+    "release_date": "2026-04-17",
+    "country": "Australia, Kanada, Amerika Serikat"
+  },
+  {
+	"tmdb_id": 1398050,
+    "title": "Driver’s Ed",
+    "image": "/banner/film-drivers-ed-2025.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/rV27dmVj4XOOSDF",
+    "sinopsis": "Sekelompok remaja mencuri mobil kursus mengemudi, lalu petualangan liar, cinta, dan kejaran polisi mengubah hidup mereka.",
+    "genre": ["Comedy"],
+    "release_date": "2026-05-14",
+    "country": "Amerika Serikat"
+  },
+  {
+	"tmdb_id": 1189885,
+    "title": "The Morrigan",
+    "image": "/banner/film-morrigan-2025.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/9b0NwffhUQVupSe",
+    "sinopsis": "Arkeolog berjuang menyelamatkan putrinya dari rasukan Dewi Perang Pagan setelah makam kuno Irlandia terbuka.",
+    "genre": ["Horor"],
+    "release_date": "2025-04-09",
+    "country": "Inggris"
+  },
+  {
+    "tmdb_id": 1317288,
+    "title": "Marty Supreme",
+    "image": "/banner/marty-supreme.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/BuxBZtte9yJxoZI",
+    "sinopsis": "Marty Mauser, pemuda dengan impian yang diremehkan, rela menderita demi raih keagungan.",
+    "genre": ["Drama"],
+    "release_date": "2025-12-19",
+    "country": "Amerika Serikat, Indonesia, Finlandia"
+  },
+  {
+    "tmdb_id": 1137179,
+    "title": "Yadang: The Snitch",
+    "image": "/banner/yadang-the-snitch.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/JQ3jxCgrKnlt9Fr",
+    "sinopsis": "Informan narkoba terjebak konspirasi maut jetset, kini ia harus bertahan hidup dan menang.",
+    "genre": ["Action", "Crime"],
+    "release_date": "2025-04-16",
+    "country": "Korea Selatan, Indonesia"
+  },
+  {
+    "tmdb_id": 1368166,
+    "title": "The Housemaid",
+    "image": "/banner/the-housemaid.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/q6ZkdRvKatciHQ5",
+    "sinopsis": "Kabur dari masa lalu, pelayan Millie terjebak skandal, rahasia, dan kuasa di rumah majikan kaya.",
+    "genre": ["Mystery", "Thriller"],
+    "release_date": "2025-12-18",
+    "country": "Indonesia, Amerika Serikat"
+  },
+  {
+    "tmdb_id": 1614837,
+    "title": "Cuba Coocuyo Remix",
+    "image": "/banner/cuba-coocuyo-remix.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/PqA31zZoIyQxv2X",
+    "sinopsis": "Kisah nyata para DJ Kuba bagai kunang-kunang, hidupkan musik elektronik malam hari di tengah realita",
+    "genre": ["Comedy"],
+    "release_date": "2025-01-01",
+    "country": "Mexico"
+  },
+  {
+    "tmdb_id": 1317149,
+    "title": "I Swear",
+    "image": "/banner/I%20Swear.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/HtbjZSTbdoe1UV1",
+    "sinopsis": "Didiagnosis Tourette usia 15, John Davidson berjuang lewati masa sulit demi temukan tujuan hidup.",
+    "genre": ["Drama", "History"],
+    "release_date": "2025-09-22",
+    "country": "Featured, Inggris"
+  },
+  {
+    "tmdb_id": 1245532,
+    "title": "Someone Like Me",
+    "image": "/banner/Someone%20Like%20Me.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/oahLZzBBjAu5Od8",
+    "sinopsis": "Wanita cerebral palsy temukan mandiri dan jati diri lewat lembaga seksualitas disabilitas.",
+    "genre": ["Drama", "Romance"],
+    "release_date": "2025-11-27",
+    "country": "Hongkong"
+  },
+  {
+    "tmdb_id": 967941,
+    "title": "Wicked For Good",
+    "image": "/banner/wicked-for-good-by-caturbangunsentosa.blogspot.com.webp",
+    "video": "",
+    "iframe": "https://playcinematic.com/video/KP7qcppqnlAjZI7",
+    "sinopsis": "Massa mengamuk. Glinda & Elphaba harus bersatu dengan empati demi mengubah masa depan Oz selamanya.",
+    "genre": ["Adventure", "Fantasy", "Romance"],
+    "release_date": "2025-11-19",
+    "country": "Australia, Canada, Featured, Amerika Serikat"
+  },
+  {
     "tmdb_id": 1340206,
     "title": "Tuner",
     "image": "/banner/tuner-2025.webp",
