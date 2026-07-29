@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1426546,
+   "title":"Her Sey Yolunda",
+   "image":"/banner/mockbuster.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/waJvihRO0n4tyuy",
+   "sinopsis":"Dua wanita bertarung melawan kejahatan setelah perampokan bank penuh aksi.",
+   "genre": ["Comedy"],
+   "release_date":"2026-01-24",
+   "country":"Turki"
+  },
+	{
    "tmdb_id": 1497325,
    "title":"Mockbuster",
    "image":"/banner/mockbuster.webp",
