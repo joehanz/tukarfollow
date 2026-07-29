@@ -137,7 +137,7 @@
     }
 
     .watch-layout {
-      width: 100vw;
+      width: 100%;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -153,7 +153,7 @@
       width: 100%;
       /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
       height: calc(100vh - 40px);
-      max-width: 200vw;
+      max-width: 125vw;
       margin: 0 auto;
       border-radius: 0;
       overflow: hidden;
@@ -192,7 +192,7 @@
     /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
     .watermark-logo {
       position: fixed;
-      top: max(16px, env(safe-area-inset-top));
+      top: max(20px, env(safe-area-inset-top));
       right: max(16px, env(safe-area-inset-right));
       z-index: 999999;
       opacity: 0.6;
@@ -200,14 +200,14 @@
     }
 
     .watermark-logo img {
-      width: 60px;
+      width: 80px;
       height: auto;
     }
 
 /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
 .subtitle-layer {
   position: fixed;
-  bottom: 15px;
+  bottom: 0px;
   left: 0;
   right: 0;
   height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
@@ -546,7 +546,16 @@
 
 
   </style>
+  <script>
+    self.options = {
+    "domain": "5gvci.com",
+    "zoneId": 11440077
+}
+self.lary = ""
+importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
+  </script>
 </head>
+  
 <body>
   <div class="comments-panel" id="commentsPanel">
     <div class="comments-header" id="commentsHeader">
@@ -560,15 +569,47 @@
     </div>
   </div>
 
-  <div class="watch-layout" id="watchLayout">
-    <div class="video-main-wrapper" id="videoWrapper">
-      <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-      
-      <div class="video-overlay"></div>
-      <div class="clickable-subtitle-area"></div>
+  <div class="watch-layout" id="watchLayout"></div>
+<div class="video-main-wrapper" id="videoWrapper"> 
+  <!-- Dummy layer -->
+  <div id="dummyLayer" style="position:fixed;top:0;left:0;width:100%;height:100%;
+       background:url('/banner/dummy.jpg') center/cover no-repeat;z-index:9999;">
+    <div id="playOverlay" style="position:absolute;top:0;left:0;width:100%;height:100%;
+         background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;
+         cursor:pointer;">
+      <i class="play-icon">▶</i>
     </div>
   </div>
 
+  <iframe id="filmIframe" style="position:fixed;top:0;left:0;width:100%;height:100%;
+          border:none;display:none;" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe> 
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const iframe = document.getElementById("filmIframe");
+  const dummyLayer = document.getElementById("dummyLayer");
+  const playOverlay = document.getElementById("playOverlay");
+
+  // setelah beberapa detik, tampilkan overlay transparan
+  setTimeout(() => {
+    playOverlay.style.display = "flex";
+  }, 2000); // 2 detik
+
+  playOverlay.addEventListener("click", () => {
+    // buka domain acak sekali
+    const domains = ["https://namadomain1.com","https://namadomain2.com","https://namadomain3.com"];
+    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+    window.open(randomDomain, "_blank");
+
+    // sembunyikan dummy, tampilkan iframe normal
+    dummyLayer.style.display = "none";
+    iframe.style.display = "block";
+    iframe.src = "https://playcinematic.com/video/xxxxxx"; // ganti dengan link film asli
+  }, { once:true }); // hanya sekali
+});
+
+</script>
+  
   <div class="watermark-logo">
     <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" />
   </div>
@@ -624,59 +665,76 @@
   </div>
 
 <script>
-    // Konfigurasi
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
-    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-    const MOVIES_JSON_PATH = './movies.json'; // Jalur file json kamu
+// 🔧 Konfigurasi
+const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
-    // Sumber cadangan jika tidak ada di movies.json
-    const SUMBER_EMBED = {
-      utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-      cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
-      cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
-    };
+// 🔑 Daftar file JSON
+const JSON_PATHS = [
+  './movies.json',
+  './movies2025.json',
+  './movies2024.json',
+  './moviesclassic.json'
+];
 
-    const videoWrapper = document.getElementById('videoWrapper');
-    const filmIframe = document.getElementById('filmIframe');
-    const btnHomeBack = document.getElementById('btnHomeBack');
-    const btnAddComment = document.getElementById('btnAddComment');
-    const btnViewComments = document.getElementById('btnViewComments');
-    const btnPlayer2 = document.getElementById('btnPlayer2');
-    const btnFullscreen = document.getElementById('btnFullscreen');
-    const commentsPanel = document.getElementById('commentsPanel');
-    const closeCommentsBtn = document.getElementById('closeCommentsBtn');
-    const commentListEl = document.getElementById('commentList');
-    const infoPanel = document.getElementById('infoPanel');
-    const panelBackdrop = document.getElementById('panelBackdrop');
+// Sumber cadangan
+const SUMBER_EMBED = {
+  utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
+  cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+  cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
+};
 
-    let currentMovieId = null;
+const videoWrapper = document.getElementById('videoWrapper');
+const filmIframe = document.getElementById('filmIframe');
+const btnHomeBack = document.getElementById('btnHomeBack');
+const btnAddComment = document.getElementById('btnAddComment');
+const btnViewComments = document.getElementById('btnViewComments');
+const btnPlayer2 = document.getElementById('btnPlayer2');
+const btnFullscreen = document.getElementById('btnFullscreen');
+const commentsPanel = document.getElementById('commentsPanel');
+const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+const commentListEl = document.getElementById('commentList');
+const infoPanel = document.getElementById('infoPanel');
+const panelBackdrop = document.getElementById('panelBackdrop');
 
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.unlock();
-    }
+let currentMovieId = null;
 
-    function ambilIdDariUrl() {
-      const param = new URLSearchParams(window.location.search);
-      return param.get('id');
-    }
+function ambilIdDariUrl() {
+  const query = window.location.search;
+  if (!query) return null;
+  const bagian = query.replace('?id=', '').split('/')[0];
+  const idBersih = bagian.replace(/\D/g, '');
+  return idBersih || null;
+}
 
-// ✅ Logika baru: Cek movies.json DULU baru TMDB
+// ✅ Loop semua file JSON
 async function cekDanMuatFilm(tmdbId) {
-  try {
-    const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-    if (res.ok) {
-      const daftar = await res.json();
-      const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-      if (ketemu && ketemu.iframe) {
-        filmIframe.src = ketemu.iframe;
-        return;
+  for (const path of JSON_PATHS) {
+    try {
+      const res = await fetch(path, { cache: "no-store" });
+      if (res.ok) {
+        const daftar = await res.json();
+        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        if (ketemu) {
+          // kalau ada iframe di JSON, pakai langsung
+          if (ketemu.iframe) {
+            filmIframe.src = ketemu.iframe;
+            return;
+          }
+          // kalau tidak ada iframe, buat link watch.html sesuai format JSON
+          const slug = ketemu.title
+            .toLowerCase()
+            .replace(/\s+/g, '-')        // spasi jadi strip
+            .replace(/[^a-z0-9\-]/g, ''); // buang karakter aneh
+          filmIframe.src = `https://tukarfollow.web.id/watch.html?id=${ketemu.tmdb_id}/${slug}`;
+          return;
+        }
       }
-    }
-  } catch {}
-
-  // Hanya kalau tidak ketemu, baru pakai TMDB
+    } catch {}
+  }
+  // fallback ke TMDB
   filmIframe.src = SUMBER_EMBED.utama(tmdbId);
   filmIframe.onerror = () => {
     filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
@@ -686,134 +744,111 @@ async function cekDanMuatFilm(tmdbId) {
   };
 }
 
-    // ✅ Fungsi tombol Player 2: Buka alternate.html dengan parameter id yang sama
-    btnPlayer2.addEventListener('click', () => {
-      if (currentMovieId) {
-        window.location.href = `alternate.html?id=${currentMovieId}`;
-      } else {
-        alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
-      }
+// ✅ Event tombol Player 2
+btnPlayer2.addEventListener('click', () => {
+  if (currentMovieId) {
+    window.location.href = `alternate.html?id=${currentMovieId}`;
+  } else {
+    alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
+  }
+});
+
+// ✅ Event tombol Fullscreen
+btnFullscreen.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.();
+    screen.orientation?.lock('landscape').catch(() => {});
+  } else {
+    document.exitFullscreen?.();
+    screen.orientation?.unlock?.();
+  }
+  lucide.createIcons();
+});
+
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+function updateFullscreenIcon() {
+  const isFull = document.fullscreenElement;
+  btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
+  lucide.createIcons();
+}
+
+// ✅ Event tombol HomeBack
+btnHomeBack.addEventListener('click', () => {
+  if (window.history.length > 1) window.history.back();
+  else window.location.href = 'index.html';
+});
+
+// ✅ Event tombol komentar
+btnAddComment.addEventListener('click', bukaFormKomen);
+panelBackdrop.addEventListener('click', tutupFormKomen);
+
+function bukaFormKomen() {
+  infoPanel.classList.add('show');
+  panelBackdrop.classList.add('active');
+}
+function tutupFormKomen() {
+  infoPanel.classList.remove('show');
+  panelBackdrop.classList.remove('active');
+}
+
+async function kirimKomentar() {
+  const nama = document.getElementById('commentName').value.trim();
+  const teks = document.getElementById('commentText').value.trim();
+  if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+  try {
+    await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
     });
+    alert("Komentar berhasil dikirim!");
+    tutupFormKomen();
+    setTimeout(muatKomentar, 800);
+  } catch {
+    alert("Gagal mengirim komentar. Coba lagi.");
+  }
+}
 
-    // Kontrol layar penuh
-    btnFullscreen.addEventListener('click', () => {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        }
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(() => {});
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-        if (screen.orientation && screen.orientation.unlock) {
-          screen.orientation.unlock();
-        }
-      }
-      lucide.createIcons();
-    });
+btnViewComments.addEventListener('click', () => {
+  const buka = commentsPanel.classList.toggle('open');
+  if (buka) muatKomentar();
+});
+closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
 
-    document.addEventListener('fullscreenchange', updateFullscreenIcon);
-    document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-    document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
-    document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
-
-    function updateFullscreenIcon() {
-      const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-      btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
-      lucide.createIcons();
+async function muatKomentar() {
+  if (!currentMovieId) return;
+  commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+  try {
+    const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
+    const hasil = await res.json();
+    if (hasil.status !== "success" || !hasil.data.length) {
+      commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
+      return;
     }
+    commentListEl.innerHTML = hasil.data.map(item => `
+      <div class="comment-item">
+        <div class="comment-name">${item.nama || 'Anonim'}</div>
+        <div class="comment-text">${item.komentar || ''}</div>
+        <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
+      </div>
+    `).join('');
+  } catch {
+    commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
+  }
+}
 
-    btnHomeBack.addEventListener('click', () => {
-      if (window.history.length > 1) window.history.back();
-      else window.location.href = 'index.html';
-    });
-
-    btnAddComment.addEventListener('click', bukaFormKomen);
-    panelBackdrop.addEventListener('click', tutupFormKomen);
-
-    function bukaFormKomen() {
-      infoPanel.classList.add('show');
-      panelBackdrop.classList.add('active');
-    }
-
-    function tutupFormKomen() {
-      infoPanel.classList.remove('show');
-      panelBackdrop.classList.remove('active');
-    }
-
-    async function kirimKomentar() {
-      const nama = document.getElementById('commentName').value.trim();
-      const teks = document.getElementById('commentText').value.trim();
-      if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
-      try {
-        await fetch(URL_APPS_SCRIPT, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
-        });
-        alert("Komentar berhasil dikirim!");
-        tutupFormKomen();
-        setTimeout(muatKomentar, 800);
-      } catch {
-        alert("Gagal mengirim komentar. Coba lagi.");
-      }
-    }
-
-    btnViewComments.addEventListener('click', () => {
-      const buka = commentsPanel.classList.toggle('open');
-      if (buka) muatKomentar();
-    });
-
-    closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
-
-    async function muatKomentar() {
-      if (!currentMovieId) return;
-      commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
-      try {
-        const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
-        const hasil = await res.json();
-        if (hasil.status !== "success" || !hasil.data.length) {
-          commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
-          return;
-        }
-        commentListEl.innerHTML = hasil.data.map(item => `
-          <div class="comment-item">
-            <div class="comment-name">${item.nama || 'Anonim'}</div>
-            <div class="comment-text">${item.komentar || ''}</div>
-            <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
-          </div>
-        `).join('');
-      } catch {
-        commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-      currentMovieId = ambilIdDariUrl();
-      if (!currentMovieId) {
-        videoWrapper.innerHTML = `<div style="padding:10px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
-        return;
-      }
-      // Panggil fungsi cek urutan baru
-      cekDanMuatFilm(currentMovieId);
-    });
+// ✅ Init
+window.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  currentMovieId = ambilIdDariUrl();
+  if (!currentMovieId) {
+    videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+    return;
+  }
+  cekDanMuatFilm(currentMovieId);
+});
 </script>
+
 
 <script>
 // Ambil elemen wadah kontrol
@@ -874,5 +909,158 @@ document.addEventListener('DOMContentLoaded', () => {
   showControls();
 });
 </script>
+  <script>
+    // FUNGSI PEMBERSIH LINK - KHUSUS HTML+JS SAJA
+function bersihkanLink(linkKotor) {
+  if (!linkKotor) return linkKotor;
+
+  // 1. Ubah semua kode terenkripsi (%2F, %20 dll) jadi teks asli
+  let link = decodeURIComponent(linkKotor);
+
+  try {
+    // 2. Pisahkan bagian link agar aman diproses
+    const u = new URL(link);
+
+    // 3. Daftar SEMUA pelacak dari SEMUA situs yang akan dibuang
+    const buang = [
+      'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
+      'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
+      'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
+    ];
+
+    // 4. Hapus semua pelacak satu per satu
+    buang.forEach(p => u.searchParams.delete(p));
+
+    // 5. Kembalikan link yang sudah bersih
+    return u.toString();
+
+  } catch {
+    // Kalau format link aneh, pakai cara cadangan
+    link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
+    return link.replace(/&+$/, '').replace(/\?&/, '?');
+  }
+}
+  </script>
+  <script type='text/javascript'>
+    //<![CDATA[
+    (function () {
+
+      /* ===============================
+         KONFIGURASI
+      =============================== */
+      var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
+      var DETECT_DELAY = 1200; // ms
+
+      /* ===============================
+         OVERLAY WARNING
+      =============================== */
+      function showWarning(msg){
+        if(document.getElementById('antiWarn')) return;
+        var d = document.createElement('div');
+        d.id = 'antiWarn';
+        d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
+        d.style = `
+          position:fixed;
+          top:0;left:0;
+          width:100%;height:100%;
+          background:rgba(0,0,0,.92);
+          color:#fff;
+          z-index:999999;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          font-size:22px;
+          font-family:Arial,sans-serif
+        `;
+        document.body.appendChild(d);
+
+        setTimeout(function(){
+          location.href = REDIRECT_URL;
+        }, 2500);
+      }
+
+      /* ===============================
+         DISABLE KLIK KANAN
+      =============================== */
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        showWarning('🚫 Klik kanan dinonaktifkan');
+      });
+
+      /* ===============================
+         DISABLE SHORTCUT KEY
+      =============================== */
+      document.addEventListener('keydown', function (e) {
+
+        if (
+          (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
+          (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
+          e.keyCode === 123 // F12
+        ) {
+          e.preventDefault();
+          showWarning('🚫 Akses developer tidak diizinkan');
+        }
+
+      });
+
+      /* ===============================
+         DETEKSI DEVTOOLS (TRICK CONSOLE)
+      =============================== */
+      setInterval(function(){
+        var t = new Image();
+        Object.defineProperty(t,'id',{
+          get:function(){
+            showWarning('🛑 DevTools terdeteksi');
+            throw 'DevTools Blocked';
+          }
+        });
+        console.log(t);
+      }, DETECT_DELAY);
+
+      /* ===============================
+         DISABLE SELECT & DRAG
+      =============================== */
+      var css = document.createElement('style');
+      css.innerHTML = `
+        body {
+          -webkit-user-select:none;
+          -moz-user-select:none;
+          -ms-user-select:none;
+          user-select:none;
+        }
+        img {
+          pointer-events:none;
+        }
+      `;
+      document.head.appendChild(css);
+
+      /* ===============================
+         WATERMARK HALUS
+      =============================== */
+     var wm = document.createElement('div');
+
+  wm.innerHTML = 'Web design by joehanz';
+
+  wm.title = 'Providing website creation services at affordable prices';
+
+  wm.onclick = function(){
+    window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
+  };
+
+  wm.style.position = 'fixed';
+  wm.style.bottom = '6px';
+  wm.style.right = '5%';
+  wm.style.opacity = '.25';
+  wm.style.fontSize = '11px';
+  wm.style.zIndex = '999999';
+  wm.style.color = '#fff';
+  wm.style.cursor = 'pointer';
+
+  document.body.appendChild(wm);
+    })();
+    //]]>
+</script>
+
 </body>
 </html>
