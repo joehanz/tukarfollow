@@ -253,17 +253,6 @@
    "country":"Amerika Serikat, Kanada, Inggris"
   },
 	{
-   "tmdb_id": 1365049,
-   "title":"Joachim And The Apocalypse",
-   "image":"/banner/joachim-and-the-apocalypse.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/Efqpv7DDjmC1gdF",
-   "sinopsis":"Dalam era Perang Salib, Joachim menerima penglihatan mistis dan nubuat ilahi, berjuang melawan kiamat lewat cinta dan pencarian akan Tuhan.",
-   "genre": ["Drama","History"],
-   "release_date":"2024-12-05",
-   "country":"Italia, Amerika Serikat"
-  },
-	{
    "tmdb_id": 1473878,
    "title":"Speed Demon",
    "image":"/banner/speed-demon.webp",
@@ -284,28 +273,6 @@
    "genre": ["Comedy","Romance"],
    "release_date":"2026-06-20",
    "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 726888,
-   "title":"Heartbeast",
-   "image":"/banner/heartbeast.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/oQp4DbVfKfTrVsP",
-   "sinopsis":"Elina, rapper Finlandia, jatuh cinta pada Sofia, saudari tiri balerina di Prancis.",
-   "genre": ["Drama","Thriller"],
-   "release_date":"2022-11-04",
-   "country":"Finlandia"
-  },
-	{
-   "tmdb_id": 458576,
-   "title":"Monster Hunter",
-   "image":"/banner/monster-hunter-by-caturbangunsentosa.blogspot.com.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/dzu8ZZdbTSoMyfT",
-   "sinopsis":"Kapten Artemis dan tim masuk dunia monster, hadapi bahaya bersama pemburu misterius.",
-   "genre": ["Action","Adventure","Fantasy"],
-   "release_date":"2020-12-03",
-   "country":"China"
   },
 	{
    "tmdb_id": 1325614,
@@ -330,39 +297,6 @@
    "country":"Korea Utara"
   },
 	{
-   "tmdb_id": 292011,
-   "title":"Richard Jewell",
-   "image":"/banner/Richard%20Jewell.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/KceDJju9WsQdKdB",
-   "sinopsis":"Richard Jewell menjadi pahlawan yang dituduh teroris setelah menyelamatkan ribuan nyawa dari bom.",
-   "genre": ["Drama"],
-   "release_date":"2019-12-13",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 560057,
-   "title":"The Sea Beast",
-   "image":"/banner/The%20Sea%20Beast.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/2IG9Z85pgRXIPzz",
-   "sinopsis":"Era monster laut, pemburu dipuji. Jacob Holland terkejut saat anak yatim Maisie menyelinap ke kapal.",
-   "genre": ["Adventure","Fantasy","Family","Animation"],
-   "release_date":"2022-06-24",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 463364,
-   "title":"The Isle",
-   "image":"/banner/The%20Isle%202019.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/V7F50XOlO7ZWhuk",
-   "sinopsis":"1840: Kapal karam di pulau Skotlandia. 3 pelaut selamat & ditolong warga, lalu kuak misteri pulau.",
-   "genre": ["Adventure","Fantasy","Horor","Thriller"],
-   "release_date":"2019-02-08",
-   "country":"Inggris"
-  },
-	{
    "tmdb_id": 1688157,
    "title":"Scissors",
    "image":"/banner/Scissors.webp",
@@ -384,17 +318,6 @@
    "release_date":"2026-05-01",
    "country":"Philipina"
   },
-	{
-   "tmdb_id": 763285,
-   "title":"Ambulance",
-   "image":"/banner/ambulance.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/TLQFuwfgWPuahWP",
-   "sinopsis":"Will Sharp, veteran perang yang butuh biaya medis istri, diajak saudaranya merampok bank $32 juta.",
-   "genre": ["Action","Drama","Thriller"],
-   "release_date":"2022-03-16",
-   "country":"Amerika Serikat"
-  },
   {
    "tmdb_id": 1083381,
    "title":"Backrooms",
@@ -407,17 +330,6 @@
    "country":"Amerika Serikat"
   },
 	{
-   "tmdb_id": 207021,
-   "title":"Generation Iron",
-   "image":"/banner/generation-iron.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/36h1g78uI7lDUQB",
-   "sinopsis":"Kisah 7 binaraga top dunia berlatih demi panggung Mr. Olympia. Intip kompetisi otot paling bergengsi.",
-   "genre": ["Documentary"],
-   "release_date":"2013-09-20",
-   "country":"Amerika Serikat"
-  },
-	{
    "tmdb_id": 980431,
    "title":"Avatar Aang: The Last Airbender",
    "image":"/banner/avatar-aang-the-last-airbender.webp",
@@ -426,28 +338,6 @@
    "sinopsis":"Aang dewasa dan kawan-kawan menjelajah dunia demi menemukan kekuatan kuno sebelum direbut musuh.",
    "genre": ["Action","Adventure","Animation","Fantasy"],
    "release_date":"2026-09-09",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 814889,
-   "title":"Never Let Go",
-   "image":"/banner/never-let-go.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/ahsGRZFiTde2HAH",
-   "sinopsis":"Saat kejahatan melanda, seorang ibu dan putra kembarnya harus bersatu demi bertahan hidup.",
-   "genre": ["Drama","Horor"],
-   "release_date":"2024-09-18",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 629176,
-   "title":"Samaritan",
-   "image":"/banner/samaritan.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/jZoVrAk8VX6mtya",
-   "sinopsis":"Sam (13) curiga tetangganya adalah Samaritan, pahlawan yang dikira sudah tewas, demi selamatkan kota.",
-   "genre": ["Action","Sci-fi","Crime"],
-   "release_date":"2022-08-25",
    "country":"Amerika Serikat"
   },
 	{
@@ -558,39 +448,6 @@
    "sinopsis":"Rekaman video tim investigator ungkap teror kerasukan dan pembunuhan sadis di sebuah rumah berhantu.",
    "genre": ["Horor"],
    "release_date":"2026-01-01",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 816949,
-   "title":"Daemon Mind",
-   "image":"/banner/daemon-mind.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/8JwqOCFqlH96C61",
-   "sinopsis":"Ilmuwan saraf ciptakan alat pelepas iblis dalam dirinya demi balas dendam kejam pada musuh.",
-   "genre": ["Horor","Thriller"],
-   "release_date":"2024-10-29",
-   "country":"Inggris, Indonesia, Amerika Serikat"
-  },
-	{
-   "tmdb_id": 715931,
-   "title":"Emancipation",
-   "image":"/banner/emancipation.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/85u8h43qtPNO2QY",
-   "sinopsis":"Kisah nyata budak bernama Peter yang pertaruhkan nyawa demi kabur dan kembali pada keluarganya.",
-   "genre": ["Drama","History","War"],
-   "release_date":"2022-12-02",
-   "country":"Amerika Serikat"
-  },
-	{
-   "tmdb_id": 76600,
-   "title":"Avatar: The Way of Water",
-   "image":"/banner/avatar-the-way-of-water.webp",
-   "video":"",
-   "iframe":"https://playcinematic.com/video/CLeCYk9EQtiLK9R",
-   "sinopsis":"Satu dekade setelah film pertama, keluarga Sully berjuang demi keselamatan dari tragedi.",
-   "genre": ["Action","Sci-fi","Adventure"],
-   "release_date":"2022-12-14",
    "country":"Amerika Serikat"
   },
 	{
