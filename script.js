@@ -345,11 +345,12 @@ async function playMovie(tmdbId) {
         console.warn('Gagal baca movies.json:', err);
     }
 
-    // fallback terakhir kalau slug kosong → pakai tmdbId
-if (!judulUrl) judulUrl = String(tmdbId).trim();
+    // fallback terakhir kalau slug kosong → pakai string aman
+if (!judulUrl) judulUrl = 'unknown';
 
 window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 }
+
 
 // ==============================================
 // ⌨️ Bagian Pencarian Film
