@@ -346,7 +346,7 @@ async function playMovie(tmdbId) {
     }
 
     // fallback terakhir kalau slug kosong → pakai string aman
-if (!judulUrl) judulUrl = 'unknown';
+if (!judulUrl) judulUrl = '${judulUrl}';
 
 window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 }
