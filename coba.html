@@ -569,43 +569,50 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
     </div>
   </div>
 
-  <div class="watch-layout" id="watchLayout"></div>
+<div class="watch-layout" id="watchLayout"></div>
 <div class="video-main-wrapper" id="videoWrapper"> 
-  <!-- Dummy layer -->
-  <div id="dummyLayer" style="position:fixed;top:0;left:0;width:100%;height:100%;
-       background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;z-index:9999;">
-    <div id="playOverlay" style="position:absolute;top:0;left:0;width:100%;height:100%;
-         background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;
-         cursor:pointer;">
-     
-    </div>
-  </div>
-
-  <iframe id="filmIframe" style="position:fixed;top:0;left:0;width:100%;height:100%;
-          border:none;display:none;" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe> 
+  <iframe id="filmIframe" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe> 
+  <div class="video-overlay"></div> 
+  <div class="clickable-subtitle-area"></div> 
+</div> 
 </div>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const iframe = document.getElementById("filmIframe");
-  const dummyLayer = document.getElementById("dummyLayer");
-  const playOverlay = document.getElementById("playOverlay");
+  const videoWrapper = document.getElementById("videoWrapper");
 
-  // setelah beberapa detik, tampilkan overlay transparan
+  // Buat layer dummy gambar
+  const dummyLayer = document.createElement("div");
+  dummyLayer.style.cssText = `
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
+    z-index:9999;
+  `;
+  videoWrapper.appendChild(dummyLayer);
+
+  // Setelah 3 detik, tampilkan overlay transparan
   setTimeout(() => {
-    playOverlay.style.display = "flex";
-  }, 2000); // 2 detik
-
-  playOverlay.addEventListener("click", () => {
-    // buka domain acak sekali
-    const domains = ["https://namadomain1.com","https://namadomain2.com","https://namadomain3.com"];
-    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-    window.open(randomDomain, "_blank");
-
-    // sembunyikan dummy, tampilkan iframe normal
     dummyLayer.style.display = "none";
-    iframe.style.display = "block";
-    iframe.src = "https://playcinematic.com/video/xxxxxx"; // ganti dengan link film asli
-  }, { once:true }); // hanya sekali
+
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
+    `;
+    videoWrapper.appendChild(overlay);
+
+    overlay.addEventListener("click", () => {
+      // buka domain acak sekali
+      const domains = ["https://domain1.com","https://domain2.com","https://domain3.com"];
+      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+      window.open(randomDomain, "_blank");
+
+      // hilangkan overlay, iframe normal
+      overlay.remove();
+      iframe.style.display = "block";
+      // src iframe sudah diisi sebelumnya oleh playMovie
+    }, { once:true });
+  }, 3000); // 3 detik
 });
 
 </script>
