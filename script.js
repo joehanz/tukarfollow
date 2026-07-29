@@ -321,34 +321,37 @@ async function playMovie(tmdbId) {
     if (!tmdbId) return;
 
     let judulUrl = ''; // default kosong
+    const files = ['movies.json', 'movies2025.json', 'movies2024.json', 'classicmovies.json];
 
     try {
-        // Cek dulu di movies.json
-        const res = await fetch(MOVIES_JSON_PATH, { cache: "no-store" });
-        if (res.ok) {
-            const daftarFilm = await res.json();
-            const ketemu = daftarFilm.find(f => {
-                if (!f.tmdb_id) return false;
-                return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
-            });
+        for (const file of files) {
+            const res = await fetch(file, { cache: "no-store" });
+            if (res.ok) {
+                const daftarFilm = await res.json();
+                const ketemu = daftarFilm.find(f => {
+                    if (!f.tmdb_id) return false;
+                    return String(f.tmdb_id).trim() === String(tmdbId).trim() || Number(f.tmdb_id) === Number(tmdbId);
+                });
 
-            if (ketemu && ketemu.title) {
-                judulUrl = ketemu.title
-                    .trim()
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')        // spasi jadi strip
-                    .replace(/[^a-z0-9-]/g, '')  // buang karakter aneh
-                    .substring(0, 50);           // batasi panjang agar URL rapi
+                if (ketemu && ketemu.title) {
+                    judulUrl = ketemu.title
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\s+/g, '-')        // spasi jadi strip
+                        .replace(/[^a-z0-9-]/g, '')  // buang karakter aneh
+                        .substring(0, 50);           // batasi panjang agar URL rapi
+                    break; // stop loop kalau sudah ketemu
+                }
             }
         }
     } catch (err) {
-        console.warn('Gagal baca movies.json:', err);
+        console.warn('Gagal baca file JSON:', err);
     }
 
-    // fallback terakhir kalau slug kosong → pakai string aman
-if (!judulUrl) judulUrl = '${judulUrl}';
+    // fallback terakhir kalau slug kosong → string aman
+    if (!judulUrl) judulUrl = 'unknown';
 
-window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
+    window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
 }
 
 
