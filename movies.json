@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1320756,
+   "title":"Doctor Plague",
+   "image":"/banner/the-dutchman.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/ryfW0SZ2BC2fNuk",
+   "sinopsis":"Detektif Verney memburu kultus Dokter Wabah, rahasia berdarah yang mengancam keluarganya.",
+   "genre": ["Crime", "Horor", "Thriller"],
+   "release_date":"2026-01-12",
+   "country":"Inggris"
+  },
+	{
    "tmdb_id": 1180417,
    "title":"The Dutchman",
    "image":"/banner/the-dutchman.webp",
