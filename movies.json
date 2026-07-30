@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1593151,
+   "title":"Stepfather",
+   "image":"/banner/doctor-plague.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/q8XODnxt4orokYh",
+   "sinopsis":"Darnell memburu keluarga sempurna, rahasia mematikan terungkap saat Asia dan putrinya melawan.",
+   "genre": ["Drama", "Thriller"],
+   "release_date":"2026-06-19",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1320756,
    "title":"Doctor Plague",
    "image":"/banner/doctor-plague.webp",
