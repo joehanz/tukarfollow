@@ -63,16 +63,20 @@ function initPromoNotifier() {
 
 // 2. Ambil data dari movies.json
   fetch(MOVIES_JSON_PATH)
-    .then(response => {
-      if (!response.ok) throw new Error('movies.json tidak merespon');
-      return response.json();
-    })
-    .then(movies => {
-      if (Array.isArray(movies) && movies.length > 0) {
-  // Ambil SATU data secara ACAK dari seluruh isi movies.json
-  const indeksAcak = Math.floor(Math.random() * movies.length);
-  latestMovie = movies[indeksAcak];
-}
+  .then(res => res.json())
+  .then(movies => {
+    // ✅ SIMPAN SEMUA DATA UNTUK GRID/DAFTAR
+    semuaFilm = movies; // <-- WAJIB ADA, biar grid tetap muncul semua
+
+    // ✅ KHUSUS FLYER: ambil acak saja 1 data
+    if (Array.isArray(movies) && movies.length > 0) {
+      const indeksAcak = Math.floor(Math.random() * movies.length);
+      latestMovie = movies[indeksAcak];
+    }
+
+    tampilkanFlyer();
+    tampilkanSemuaFilmKeGrid(); // <-- Panggil fungsi tampilkan daftar/grid
+  })
         // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
         latestMovie = movies[0];
       }
