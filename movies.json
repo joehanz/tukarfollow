@@ -1,5 +1,27 @@
 [
 	{
+   "tmdb_id": 1430698,
+   "title":"The Bay",
+   "image":"/banner/the-bay.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/pAlq9fvtn2z5ZR8",
+   "sinopsis":"Emma dan Lani terjebak di kapal tenggelam, dikelilingi hiu ganas Thailand.",
+   "genre": ["Horor", "Thriller"],
+   "release_date":"2026-07-02",
+   "country":"Amerika Serikat"
+  },
+{
+   "tmdb_id": 1656220,
+   "title":"23 000 Leben",
+   "image":"/banner/23-000-lives.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/LJJNFMC2Tg2fLCw",
+   "sinopsis":"Sekelompok pemuda berlayar ke Mediterania, menyelamatkan pengungsi dan menguji keadilan.",
+   "genre": ["Drama"],
+   "release_date":"2026-07-02",
+   "country":"Jerman"
+  },
+	{
    "tmdb_id": 1726557,
    "title":"The Hoodoos",
    "image":"/banner/the-hoodoos.webp",
