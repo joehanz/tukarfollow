@@ -1,5 +1,27 @@
 [
 	{
+   "tmdb_id": 1726557,
+   "title":"The Hoodoos",
+   "image":"/banner/the-hoodoos.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/7TwVzCmsrhhnfVK",
+   "sinopsis":"Kru kriminal memburu emas terkutuk, menghadapi voodoo dan boneka hidup di perkebunan.",
+   "genre": ["Horor"],
+   "release_date":"2026-07-07",
+   "country":"Amerika Serikat"
+  },
+{
+   "tmdb_id": 1715492,
+   "title":"Shipwrecked: Nightmare at Sea",
+   "image":"/banner/nightmare-at-sea.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/UAtoREbv7xJ7xfI",
+   "sinopsis":"Rekaman dan kisah korban menyingkap karam kapal pesiar mewah 2012 dalam dokumenter imersif.",
+   "genre": ["Documentary"],
+   "release_date":"2026-07-10",
+   "country":"Inggris"
+  },
+	{
    "tmdb_id": 1468683,
    "title":"Heartstopper Forever",
    "image":"/banner/heartstopper-forever.webp",
