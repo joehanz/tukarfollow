@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1715560,
+   "title":"Backwoods Blood Feud",
+   "image":"/banner/the-bay.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/Zlfg2KdA9orf56a",
+   "sinopsis":"Fugitive bersembunyi di hutan musim dingin, terjebak perang dua monster dan jadi mangsa.",
+   "genre": ["Horor"],
+   "release_date":"2026-06-22",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1430698,
    "title":"The Bay",
    "image":"/banner/the-bay.webp",
