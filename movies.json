@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1703103,
+   "title":"Addicted To Change",
+   "image":"/banner/the-death-of-robin-hood.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/EItBNq8jQeUeVcC",
+   "sinopsis":"Tiga pekerja magang menciptakan obat pintar dan menjadi buruan pemerintah di Inggris masa depan.",
+   "genre": ["Action", "Sci-Fi", "Drama"],
+   "release_date":"2026-07-30",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1284465,
    "title":"The Death Of Robin Hood",
    "image":"/banner/the-death-of-robin-hood.webp",
