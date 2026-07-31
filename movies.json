@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1720113,
+   "title":"Crimson Cove",
+   "image":"/banner/backwoods-blood-feud.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/h9tuakOl7bJhPD5",
+   "sinopsis":"Tamu pesta bujang terjebak di kota pantai, trauma tersembunyi meledak jadi spiral kegilaan.",
+   "genre": ["thriller"],
+   "release_date":"2026-06-22",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1715560,
    "title":"Backwoods Blood Feud",
    "image":"/banner/backwoods-blood-feud.webp",
