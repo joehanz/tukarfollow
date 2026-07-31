@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1468683,
+   "title":"Heartstopper Forever",
+   "image":"/banner/addicted-to-change.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/Jmu7YGZ4GVpWAGz",
+   "sinopsis":"Tahun ajaran baru, Nick dan Charlie hadapi cinta dan masa depan bersama Truham-Higgs.",
+   "genre": ["Romance", "Drama"],
+   "release_date":"2026-07-14",
+   "country":"Inggris"
+  },
+	{
    "tmdb_id": 1703103,
    "title":"Addicted To Change",
    "image":"/banner/addicted-to-change.webp",
