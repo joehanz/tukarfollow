@@ -10,6 +10,17 @@
    "release_date":"2026-07-02",
    "country":"Amerika Serikat"
   },
+	{
+   "tmdb_id": 1701611,
+   "title":"Farm House",
+   "image":"/banner/the-bay.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/YX2rkmNoSaCsowB",
+   "sinopsis":"Menjaga rumah berubah teror, kasus pembunuhan berantai Warren County ungkap tragedi Amerika.",
+   "genre": ["Horor"],
+   "release_date":"2026-07-07",
+   "country":"Amerika Serikat"
+  },
 {
    "tmdb_id": 1656220,
    "title":"23 000 Leben",
