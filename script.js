@@ -62,11 +62,14 @@ function initPromoNotifier() {
   };
 
 // 2. Ambil data dari movies.json
-  fetch(MOVIES_JSON_PATH)
-  .then(res => res.json())
+fetch(MOVIES_JSON_PATH)
+  .then(response => {
+    if (!response.ok) throw new Error('movies.json tidak merespon');
+    return response.json();
+  })
   .then(movies => {
     // ✅ SIMPAN SEMUA DATA UNTUK GRID/DAFTAR
-    semuaFilm = movies; // <-- WAJIB ADA, biar grid tetap muncul semua
+    semuaFilm = movies;
 
     // ✅ KHUSUS FLYER: ambil acak saja 1 data
     if (Array.isArray(movies) && movies.length > 0) {
@@ -74,47 +77,44 @@ function initPromoNotifier() {
       latestMovie = movies[indeksAcak];
     }
 
+    // ✅ TAMPILKAN KEDUANYA: Flyer + Semua Film di Grid
     tampilkanFlyer();
-    tampilkanSemuaFilmKeGrid(); // <-- Panggil fungsi tampilkan daftar/grid
+    tampilkanSemuaFilmKeGrid(); // <-- PENTING: Jangan hilangkan ini
   })
-        // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
-        latestMovie = movies[0];
-      }
-      tampilkanFlyer();
-    })
-    .catch(err => {
-      console.warn("Membaca movies.json gagal/kosong, menggunakan data default agar flyer tetap tampil.");
-      tampilkanFlyer();
-    });
+  .catch(err => {
+    console.warn("Membaca movies.json gagal/kosong, menggunakan data default agar flyer tetap tampil.");
+    tampilkanFlyer();
+  });
 
-  // Fungsi internal untuk merender dan memaksa tampilan flyer menyala
-  function tampilkanFlyer() {
-    // Render Background Gambar
-    if (latestMovie.image) {
-      promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+// Fungsi tampilkan Flyer (biarkan seperti ini saja)
+function tampilkanFlyer() {
+  // Render Background Gambar
+  if (latestMovie.image) {
+    promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
+  }
+  
+  // Render Teks dengan pengaman
+  if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
+  
+  if (promoCountry) {
+    const tahun = latestMovie.release_date ? latestMovie.release_date.split('-')[0] : '';
+    promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${tahun}`;
+  }
+  
+  if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
+  
+  // Render Tag Genre
+  if (promoGenres) {
+    promoGenres.innerHTML = '';
+    if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
+      latestMovie.genre.forEach(g => {
+        const span = document.createElement('span');
+        span.textContent = g;
+        promoGenres.appendChild(span);
+      });
     }
-    
-    // Render Teks dengan pengaman (agar tidak crash jika data null/undefined)
-    if (promoTitle) promoTitle.textContent = latestMovie.title || 'Judul Film';
-    
-    if (promoCountry) {
-      const tahun = latestMovie.release_date ? latestMovie.release_date.split('-')[0] : '';
-      promoCountry.textContent = `${latestMovie.country || 'Unknown'} • ${tahun}`;
-    }
-    
-    if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis || 'Tidak ada sinopsis.';
-    
-    // Render Tag Genre
-    if (promoGenres) {
-      promoGenres.innerHTML = '';
-      if (latestMovie.genre && Array.isArray(latestMovie.genre)) {
-        latestMovie.genre.forEach(g => {
-          const span = document.createElement('span');
-          span.textContent = g;
-          promoGenres.appendChild(span);
-        });
-      }
-    }
+  }
+
 
     // Aksi Tombol Nonton
     if (promoWatchBtn) {
