@@ -69,6 +69,10 @@ function initPromoNotifier() {
     })
     .then(movies => {
       if (Array.isArray(movies) && movies.length > 0) {
+  // Ambil SATU data secara ACAK dari seluruh isi movies.json
+  const indeksAcak = Math.floor(Math.random() * movies.length);
+  latestMovie = movies[indeksAcak];
+}
         // Jika file JSON valid dan ada isinya, pakai data dari film teratas kamu
         latestMovie = movies[0];
       }
