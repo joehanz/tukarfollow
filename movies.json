@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1275779,
+   "title":"Disclosure Day",
+   "image":"/banner/crimson-cove.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/VYVe1ZMbB6yRBm4",
+   "sinopsis":"Ahli siber jadi pelapor rahasia alien, bersekutu dengan meteorolog demi bukti kehidupan.",
+   "genre": ["Sci-Fi", "thriller"],
+   "release_date":"2026-06-10",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1720113,
    "title":"Crimson Cove",
    "image":"/banner/crimson-cove.webp",
