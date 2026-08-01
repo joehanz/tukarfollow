@@ -680,10 +680,9 @@
         <button
   class="ctrl-btn"
   id="btnSubIndo"
-  title="Film ini sudah ada Subtitle Indonesia"
-  style="display: none;" <!-- Awalnya disembunyikan dulu -->
+  title="Pemutar Alternatif (Subtitle Indonesia)"
+  style="display: none;"
 >
-  <!-- Ikon Bendera Indonesia Merah Putih -->
   <svg viewBox="0 0 24 24" width="20" height="20">
     <rect width="24" height="12" fill="#FF0000"/>
     <rect y="12" width="24" height="12" fill="#FFFFFF"/>
@@ -891,11 +890,20 @@ async function cekDanMuatFilm(tmdbId) {
         }
       }
 
-     // ✅ Init
+// ✅ Init
 window.addEventListener('DOMContentLoaded', async () => {
   lucide.createIcons();
   currentMovieId = ambilIdDariUrl();
   const btnSubIndo = document.getElementById('btnSubIndo');
+
+  // Pasang fungsi klik tombol bendera ke alternate.html
+  btnSubIndo.addEventListener('click', () => {
+    if (currentMovieId) {
+      window.location.href = `alternate.html?id=${currentMovieId}`;
+    } else {
+      alert("ID film tidak ditemukan.");
+    }
+  });
 
   if (!currentMovieId) {
     videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
@@ -912,9 +920,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     btnSubIndo.style.display = 'none';
   }
 });
-
-  // Jalankan cek, lalu terima hasilnya (ketemu atau tidak)
-  const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
 
   // ✅ ATURAN UTAMA:
   // Kalau ketemu di movies.json/dst → TAMPILKAN tombol bendera
