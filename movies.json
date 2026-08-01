@@ -1,8 +1,19 @@
 [
 	{
+   "tmdb_id": 1625328,
+   "title":"Mammoth Hunters",
+   "image":"/banner/underland.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/gP7mIbnRms8Qh6E",
+   "sinopsis":"Penemuan bayi mammoth utuh di Yukon 2022 bangkitkan kembali rasa ingin tahu ilmiah.",
+   "genre": ["Documentary"],
+   "release_date":"2025-08-01",
+   "country":"Kanada"
+  },
+	{
    "tmdb_id": 1465717,
    "title":"Underland",
-   "image":"/banner/the-butcher-s-blade.webp",
+   "image":"/banner/underland.webp",
    "video":"",
    "iframe":"https://playcinematic.com/video/8gbiXg4EpSIvHwR",
    "sinopsis":"Perjalanan sinematis menyingkap dunia tersembunyi di bawah permukaan bumi.",
