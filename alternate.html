@@ -1,3 +1,5 @@
+template ori watch.html
+
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -747,7 +749,6 @@
       const btnHomeBack = document.getElementById('btnHomeBack');
       const btnAddComment = document.getElementById('btnAddComment');
       const btnViewComments = document.getElementById('btnViewComments');
-      const btnPlayer2 = document.getElementById('btnPlayer2');
       const btnFullscreen = document.getElementById('btnFullscreen');
       const commentsPanel = document.getElementById('commentsPanel');
       const closeCommentsBtn = document.getElementById('closeCommentsBtn');
@@ -800,15 +801,7 @@
         };
       }
 
-      // ✅ Event tombol Player 2
-      btnPlayer2.addEventListener('click', () => {
-        if (currentMovieId) {
-          window.location.href = `alternate.html?id=${currentMovieId}`;
-        } else {
-          alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
-        }
-      });
-
+      
       // ✅ Event tombol Fullscreen
       btnFullscreen.addEventListener('click', () => {
         if (!document.fullscreenElement) {
