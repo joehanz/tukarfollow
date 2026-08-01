@@ -572,14 +572,6 @@
             }
           }
     </style>
-    <script>
-          self.options = {
-          "domain": "5gvci.com",
-          "zoneId": 11440077
-      }
-      self.lary = ""
-      importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
-    </script>
   </head>
 
   <body>
@@ -732,7 +724,7 @@
     </div>
 
     <script>
-      // 🔧 Konfigurasi
+           // 🔧 Konfigurasi
       const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
       const BASE_URL = 'https://api.themoviedb.org/3';
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
@@ -748,16 +740,16 @@
 
       // Sumber cadangan
       const SUMBER_EMBED = {
-  utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-  cadangan1: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
-};
+        utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
+        cadangan1: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
+      };
 
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
       const btnHomeBack = document.getElementById('btnHomeBack');
       const btnAddComment = document.getElementById('btnAddComment');
       const btnViewComments = document.getElementById('btnViewComments');
-      const btnPlayer2 = document.getElementById('btnPlayer2');
+      const btnSubIndo = document.getElementById('btnSubIndo');
       const btnFullscreen = document.getElementById('btnFullscreen');
       const commentsPanel = document.getElementById('commentsPanel');
       const closeCommentsBtn = document.getElementById('closeCommentsBtn');
@@ -775,37 +767,36 @@
         return idBersih || null;
       }
 
-// ✅ Loop semua file JSON
-async function cekDanMuatFilm(tmdbId) {
-  let ketemuDiJson = false; // Penanda: data ada di file JSON kita atau tidak
+      // ✅ Loop semua file JSON
+      async function cekDanMuatFilm(tmdbId) {
+        let ketemuDiJson = false;
 
-  for (const path of JSON_PATHS) {
-    try {
-      const res = await fetch(path, { cache: "no-store" });
-      if (res.ok) {
-        const daftar = await res.json();
-        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        if (ketemu) {
-          ketemuDiJson = true; // Tandai film ini ada di daftar kita
-          // Langsung pakai vsembed, abaikan semua link iframe lama
-          filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-          filmIframe.onerror = () => {
-            filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-          };
-          return ketemuDiJson; // Kembalikan status ketemu
+        for (const path of JSON_PATHS) {
+          try {
+            const res = await fetch(path, { cache: "no-store" });
+            if (res.ok) {
+              const daftar = await res.json();
+              const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+              if (ketemu) {
+                ketemuDiJson = true;
+                filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+                filmIframe.onerror = () => {
+                  filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+                };
+                return ketemuDiJson;
+              }
+            }
+          } catch {}
         }
-      }
-    } catch {}
-  }
 
-  // Kalau tidak ketemu di semua JSON, pakai fallback & tandai tidak ketemu
-  ketemuDiJson = false;
-  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-  filmIframe.onerror = () => {
-    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-  };
-  return ketemuDiJson;
-}
+        ketemuDiJson = false;
+        filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+        filmIframe.onerror = () => {
+          filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+        };
+        return ketemuDiJson;
+      }
+
       // ✅ Event tombol Fullscreen
       btnFullscreen.addEventListener('click', () => {
         if (!document.fullscreenElement) {
@@ -829,6 +820,15 @@ async function cekDanMuatFilm(tmdbId) {
       btnHomeBack.addEventListener('click', () => {
         if (window.history.length > 1) window.history.back();
         else window.location.href = 'index.html';
+      });
+
+      // ✅ Event Tombol Bendera
+      btnSubIndo.addEventListener('click', () => {
+        if (currentMovieId) {
+          window.location.href = `alternate.html?id=${currentMovieId}`;
+        } else {
+          alert("ID film tidak ditemukan.");
+        }
       });
 
       // ✅ Event tombol komentar
@@ -890,46 +890,26 @@ async function cekDanMuatFilm(tmdbId) {
         }
       }
 
-// ✅ Init
-window.addEventListener('DOMContentLoaded', async () => {
-  lucide.createIcons();
-  currentMovieId = ambilIdDariUrl();
-  const btnSubIndo = document.getElementById('btnSubIndo');
+      // ✅ Init - RAPI & TIDAK GANDA
+      window.addEventListener('DOMContentLoaded', async () => {
+        lucide.createIcons();
+        currentMovieId = ambilIdDariUrl();
 
-  // Pasang fungsi klik tombol bendera ke alternate.html
-  btnSubIndo.addEventListener('click', () => {
-    if (currentMovieId) {
-      window.location.href = `alternate.html?id=${currentMovieId}`;
-    } else {
-      alert("ID film tidak ditemukan.");
-    }
-  });
+        if (!currentMovieId) {
+          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+          return;
+        }
 
-  if (!currentMovieId) {
-    videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
-    return;
-  }
+        // Jalankan cek
+        const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
 
-  // Jalankan pengecekan & terima status apakah ada di file JSON kita
-  const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
-
-  // Tampilkan tombol bendera hanya jika film ditemukan di daftar kita
-  if (adaDiDaftarKita) {
-    btnSubIndo.style.display = 'flex';
-  } else {
-    btnSubIndo.style.display = 'none';
-  }
-});
-
-  // ✅ ATURAN UTAMA:
-  // Kalau ketemu di movies.json/dst → TAMPILKAN tombol bendera
-  // Kalau tidak ketemu (langsung fallback TMDB) → TETAP SEMBUNYIKAN
-  if (adaDiDaftarKita) {
-    btnSubIndo.style.display = 'flex';
-  } else {
-    btnSubIndo.style.display = 'none';
-  }
-});
+        // Atur tampilan tombol bendera
+        if (adaDiDaftarKita) {
+          btnSubIndo.style.display = 'flex';
+        } else {
+          btnSubIndo.style.display = 'none';
+        }
+      }); 
     </script>
 
     <script>
