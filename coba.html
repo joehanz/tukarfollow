@@ -894,16 +894,27 @@ async function cekDanMuatFilm(tmdbId) {
         }
       }
 
-      // ✅ Init
-     window.addEventListener('DOMContentLoaded', async () => { // Tambah async
+     // ✅ Init
+window.addEventListener('DOMContentLoaded', async () => {
   lucide.createIcons();
   currentMovieId = ambilIdDariUrl();
-  const btnSubIndo = document.getElementById('btnSubIndo'); // Ambil elemen tombol bendera
+  const btnSubIndo = document.getElementById('btnSubIndo');
 
   if (!currentMovieId) {
     videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
     return;
   }
+
+  // Jalankan pengecekan & terima status apakah ada di file JSON kita
+  const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
+
+  // Tampilkan tombol bendera hanya jika film ditemukan di daftar kita
+  if (adaDiDaftarKita) {
+    btnSubIndo.style.display = 'flex';
+  } else {
+    btnSubIndo.style.display = 'none';
+  }
+});
 
   // Jalankan cek, lalu terima hasilnya (ketemu atau tidak)
   const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
