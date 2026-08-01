@@ -572,14 +572,6 @@
             }
           }
     </style>
-    <script>
-          self.options = {
-          "domain": "5gvci.com",
-          "zoneId": 11440077
-      }
-      self.lary = ""
-      importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
-    </script>
   </head>
 
   <body>
@@ -678,27 +670,16 @@
         </button>
         <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
         <button
-          class="ctrl-btn"
-          id="btnPlayer2"
-          title="Pemutar Alternatif (Player 2)"
-        >
-          <svg
-            class="custom-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M4 4h16v16H4z" />
-            <path d="M8 8h8v8H8z" />
-            <circle cx="6" cy="6" r="2" />
-            <circle cx="18" cy="6" r="2" />
-            <circle cx="6" cy="18" r="2" />
-            <circle cx="18" cy="18" r="2" />
-          </svg>
-        </button>
+  class="ctrl-btn"
+  id="btnSubIndo"
+  title="Pemutar Alternatif (Subtitle Indonesia)"
+  style="display: none;"
+>
+  <svg viewBox="0 0 24 24" width="20" height="20">
+    <rect width="24" height="12" fill="#FF0000"/>
+    <rect y="12" width="24" height="12" fill="#FFFFFF"/>
+  </svg>
+</button>
         <button
           class="ctrl-btn"
           id="btnFullscreen"
@@ -743,7 +724,7 @@
     </div>
 
     <script>
-      // 🔧 Konfigurasi
+           // 🔧 Konfigurasi
       const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
       const BASE_URL = 'https://api.themoviedb.org/3';
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
@@ -760,8 +741,7 @@
       // Sumber cadangan
       const SUMBER_EMBED = {
         utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-        cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
-        cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
+        cadangan1: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
       };
 
       const videoWrapper = document.getElementById('videoWrapper');
@@ -769,7 +749,7 @@
       const btnHomeBack = document.getElementById('btnHomeBack');
       const btnAddComment = document.getElementById('btnAddComment');
       const btnViewComments = document.getElementById('btnViewComments');
-      const btnPlayer2 = document.getElementById('btnPlayer2');
+      const btnSubIndo = document.getElementById('btnSubIndo');
       const btnFullscreen = document.getElementById('btnFullscreen');
       const commentsPanel = document.getElementById('commentsPanel');
       const closeCommentsBtn = document.getElementById('closeCommentsBtn');
@@ -789,6 +769,8 @@
 
       // ✅ Loop semua file JSON
       async function cekDanMuatFilm(tmdbId) {
+        let ketemuDiJson = false;
+
         for (const path of JSON_PATHS) {
           try {
             const res = await fetch(path, { cache: "no-store" });
@@ -796,40 +778,24 @@
               const daftar = await res.json();
               const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
               if (ketemu) {
-                // kalau ada iframe di JSON, pakai langsung
-                if (ketemu.iframe) {
-                  filmIframe.src = ketemu.iframe;
-                  return;
-                }
-                // kalau tidak ada iframe, buat link watch.html sesuai format JSON
-                const slug = ketemu.title
-                  .toLowerCase()
-                  .replace(/\s+/g, '-')        // spasi jadi strip
-                  .replace(/[^a-z0-9\-]/g, ''); // buang karakter aneh
-                filmIframe.src = `https://tukarfollow.web.id/watch.html?id=${ketemu.tmdb_id}/${slug}`;
-                return;
+                ketemuDiJson = true;
+                filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+                filmIframe.onerror = () => {
+                  filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+                };
+                return ketemuDiJson;
               }
             }
           } catch {}
         }
-        // fallback ke TMDB
+
+        ketemuDiJson = false;
         filmIframe.src = SUMBER_EMBED.utama(tmdbId);
         filmIframe.onerror = () => {
           filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-          filmIframe.onerror = () => {
-            filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-          };
         };
+        return ketemuDiJson;
       }
-
-      // ✅ Event tombol Player 2
-      btnPlayer2.addEventListener('click', () => {
-        if (currentMovieId) {
-          window.location.href = `alternate.html?id=${currentMovieId}`;
-        } else {
-          alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
-        }
-      });
 
       // ✅ Event tombol Fullscreen
       btnFullscreen.addEventListener('click', () => {
@@ -854,6 +820,15 @@
       btnHomeBack.addEventListener('click', () => {
         if (window.history.length > 1) window.history.back();
         else window.location.href = 'index.html';
+      });
+
+      // ✅ Event Tombol Bendera
+      btnSubIndo.addEventListener('click', () => {
+        if (currentMovieId) {
+          window.location.href = `alternate.html?id=${currentMovieId}`;
+        } else {
+          alert("ID film tidak ditemukan.");
+        }
       });
 
       // ✅ Event tombol komentar
@@ -915,16 +890,26 @@
         }
       }
 
-      // ✅ Init
-      window.addEventListener('DOMContentLoaded', () => {
+      // ✅ Init - RAPI & TIDAK GANDA
+      window.addEventListener('DOMContentLoaded', async () => {
         lucide.createIcons();
         currentMovieId = ambilIdDariUrl();
+
         if (!currentMovieId) {
           videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
           return;
         }
-        cekDanMuatFilm(currentMovieId);
-      });
+
+        // Jalankan cek
+        const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
+
+        // Atur tampilan tombol bendera
+        if (adaDiDaftarKita) {
+          btnSubIndo.style.display = 'flex';
+        } else {
+          btnSubIndo.style.display = 'none';
+        }
+      }); 
     </script>
 
     <script>
