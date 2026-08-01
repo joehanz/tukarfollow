@@ -678,27 +678,17 @@
         </button>
         <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
         <button
-          class="ctrl-btn"
-          id="btnPlayer2"
-          title="Pemutar Alternatif (Player 2)"
-        >
-          <svg
-            class="custom-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M4 4h16v16H4z" />
-            <path d="M8 8h8v8H8z" />
-            <circle cx="6" cy="6" r="2" />
-            <circle cx="18" cy="6" r="2" />
-            <circle cx="6" cy="18" r="2" />
-            <circle cx="18" cy="18" r="2" />
-          </svg>
-        </button>
+  class="ctrl-btn"
+  id="btnSubIndo"
+  title="Film ini sudah ada Subtitle Indonesia"
+  style="display: none;" <!-- Awalnya disembunyikan dulu -->
+>
+  <!-- Ikon Bendera Indonesia Merah Putih -->
+  <svg viewBox="0 0 24 24" width="20" height="20">
+    <rect width="24" height="12" fill="#FF0000"/>
+    <rect y="12" width="24" height="12" fill="#FFFFFF"/>
+  </svg>
+</button>
         <button
           class="ctrl-btn"
           id="btnFullscreen"
@@ -818,14 +808,7 @@ async function cekDanMuatFilm(tmdbId) {
   return ketemuDiJson;
 }
 
-      // ✅ Event tombol Player 2
-      btnPlayer2.addEventListener('click', () => {
-        if (currentMovieId) {
-          window.location.href = `alternate.html?id=${currentMovieId}`;
-        } else {
-          alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
-        }
-      });
+      
 
       // ✅ Event tombol Fullscreen
       btnFullscreen.addEventListener('click', () => {
@@ -912,15 +895,28 @@ async function cekDanMuatFilm(tmdbId) {
       }
 
       // ✅ Init
-      window.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-        currentMovieId = ambilIdDariUrl();
-        if (!currentMovieId) {
-          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
-          return;
-        }
-        cekDanMuatFilm(currentMovieId);
-      });
+     window.addEventListener('DOMContentLoaded', async () => { // Tambah async
+  lucide.createIcons();
+  currentMovieId = ambilIdDariUrl();
+  const btnSubIndo = document.getElementById('btnSubIndo'); // Ambil elemen tombol bendera
+
+  if (!currentMovieId) {
+    videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+    return;
+  }
+
+  // Jalankan cek, lalu terima hasilnya (ketemu atau tidak)
+  const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
+
+  // ✅ ATURAN UTAMA:
+  // Kalau ketemu di movies.json/dst → TAMPILKAN tombol bendera
+  // Kalau tidak ketemu (langsung fallback TMDB) → TETAP SEMBUNYIKAN
+  if (adaDiDaftarKita) {
+    btnSubIndo.style.display = 'flex';
+  } else {
+    btnSubIndo.style.display = 'none';
+  }
+});
     </script>
 
     <script>
