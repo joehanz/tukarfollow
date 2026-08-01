@@ -626,10 +626,10 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
     const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
     const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
-    // Hanya vsembed.ru dan vsembed.su saja
+    // ✅ SUDAH DIUBAH: HANYA PLAYCINEMATIC + ABYSSPLAYER
     const SUMBER_EMBED = {
-      utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-      cadangan: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
+      utama: (id) => `https://playcinematic.com/video/${id}`,
+      cadangan: (id) => `https://abyssplayer.com/embed/movie/${id}`
     };
 
     const videoWrapper = document.getElementById('videoWrapper');
@@ -658,15 +658,13 @@ importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
       return idBersih || null;
     }
 
-    // Muat film: utama vsembed.ru, jika gagal ganti ke vsembed.su
+    // ✅ MUAT FILM: Playcinematic dulu, gagal baru Abyssplayer
     function muatFilm(tmdbId) {
       filmIframe.src = SUMBER_EMBED.utama(tmdbId);
       filmIframe.onerror = () => {
         filmIframe.src = SUMBER_EMBED.cadangan(tmdbId);
       };
     }
-
-   
 
     btnFullscreen.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
