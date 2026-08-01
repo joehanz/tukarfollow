@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1468380,
+   "title":"Pickleball",
+   "image":"/banner/mammoth-hunters.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/JXrHeoyWLW5EZVv",
+   "sinopsis":"Pastor Joseph bentuk tim pickleball underdog demi selamatkan pusat komunitas dari legenda tenis.",
+   "genre": ["Comedy", "Family"],
+   "release_date":"2026-06-19",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1625328,
    "title":"Mammoth Hunters",
    "image":"/banner/mammoth-hunters.webp",
