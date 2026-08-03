@@ -1,5 +1,38 @@
 [
 	{
+   "tmdb_id": 1528499,
+   "title":"Transfer Trimurthulu",
+   "image":"/banner/transfer-trimurthulu.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/oSUfEeZiYb7obhX",
+   "sinopsis":"Trimurthulu polisi berani, terjebak konspirasi dan melawan musuh berkuasa demi keadilan.",
+   "genre": ["Action", "Thriller"],
+   "release_date":"2026-06-19",
+   "country":"Amerika Serikat"
+  },
+{
+   "tmdb_id": 1397485,
+   "title":"Girls Like Girls",
+   "image":"/banner/girls-like-girls.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/EFREaNuM1dM0s5f",
+   "sinopsis":"Coley remaja Oregon belajar cinta dan keraguan bersama Sonya setelah kehilangan ibunya.",
+   "genre": ["Drama", "Romance"],
+   "release_date":"2026-06-18",
+   "country":"Amerika Serikat"
+  },
+{
+   "tmdb_id": 1431804,
+   "title":"40 Dates And 40 Nights",
+   "image":"/banner/40-dates-and-40-nights.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/e45qUjjX9hS89f1",
+   "sinopsis":"Leah jalani 40 kencan demi sewa setahun, temukan cinta terbesar ada dalam dirinya.",
+   "genre": ["Comedy", "Romance"],
+   "release_date":"2026-06-16",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1468380,
    "title":"Pickleball",
    "image":"/banner/pickleball.webp",
