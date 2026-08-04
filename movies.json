@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1273221,
+   "title":"Scary Movie",
+   "image":"/banner/ancora-piu-sexy.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/C52MSDIbfZOq4Fv",
+   "sinopsis":"26 tahun kemudian, Core Four kembali diburu pembunuh bertopeng, horor jadi taruhan.",
+   "genre": ["Comedy"],
+   "release_date":"2026-06-03",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 1511549,
    "title":"Ancora Piu Sexy",
    "image":"/banner/ancora-piu-sexy.webp",
