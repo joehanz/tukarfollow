@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1228710,
+   "title":"The Mandalorian And Grogu",
+   "image":"/banner/project-hail-mary.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/o1IZ227605fvYSS",
+   "sinopsis":"Din Djarin dan Grogu bantu Republik Baru hadapi sisa warlord Kekaisaran.",
+   "genre": ["Action", "Adventure", "Sci-Fi"],
+   "release_date":"2026-05-20",
+   "country":"Amerika Serikat"
+  },
+	{
    "tmdb_id": 687163,
    "title":"Project Hail Mary",
    "image":"/banner/project-hail-mary.webp",
