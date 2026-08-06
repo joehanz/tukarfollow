@@ -162,7 +162,7 @@
    "sinopsis":"Lucero terjebak hubungan terlarang dengan pelatih muda, rahasia mengguncang keluarga.",
    "genre": ["Drama", "Mystery"],
    "release_date":"2026-05-07",
-   "country":"MX"
+   "country":"Meksiko"
   },
 	{
    "tmdb_id": 1710011,
@@ -182,7 +182,7 @@
    "video":"",
    "iframe":"https://playcinematic.com/video/VYVe1ZMbB6yRBm4",
    "sinopsis":"Ahli siber jadi pelapor rahasia alien, bersekutu dengan meteorolog demi bukti kehidupan.",
-   "genre": ["Sci-Fi", "thriller"],
+   "genre": ["Sci-Fi", "Thriller"],
    "release_date":"2026-06-10",
    "country":"USA"
   },
@@ -193,7 +193,7 @@
    "video":"",
    "iframe":"https://playcinematic.com/video/h9tuakOl7bJhPD5",
    "sinopsis":"Tamu pesta bujang terjebak di kota pantai, trauma tersembunyi meledak jadi spiral kegilaan.",
-   "genre": ["thriller"],
+   "genre": ["Thriller"],
    "release_date":"2026-06-22",
    "country":"USA"
   },
@@ -1038,7 +1038,7 @@
    "title":"Pasakalye",
    "image":"/banner/pasakalye.webp",
    "video":"",
-   "iframe":"https://playcinematic.com/video/VQRs4zzMXc1pZZW",
+   "iframe":"https://playcinematic.com/video/VQRs4zzMeksikoc1pZZW",
    "sinopsis":"Persaudaraan versus Kewajiban. Dua sahabat masa kecil akan mengalami petualangan terhebat saat mereka saling berhadapan.",
    "genre": ["Action","Drama","Vivamax"],
    "release_date":"2026-05-05",
