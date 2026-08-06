@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1625328,
+   "title":"Mammoth Hunters",
+   "image":"/banner/mammoth-hunters.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/gP7mIbnRms8Qh6E",
+   "sinopsis":"Penemuan bayi mammoth utuh di Yukon 2022 bangkitkan kembali rasa ingin tahu ilmiah.",
+   "genre": ["Documentary"],
+   "release_date":"2025-08-01",
+   "country":"Kanada"
+  },
+	{
 	"tmdb_id": 755898,
    "title":"War Of The Worlds Revival",
    "image":"/banner/war-of-the-worlds.webp",
