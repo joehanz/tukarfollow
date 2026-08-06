@@ -8,7 +8,7 @@
    "sinopsis":"Ilmuwan temukan cara pindah kesadaran ke hewan robot; Mabel ungkap misteri dunia hewan.",
    "genre": ["Adventure", "Animation", "Comedy", "Family", "Sci-Fi"],
    "release_date":"2026-03-04",
-   "country":"Indonesia, Amerika Serikat"
+   "country":"Indonesia", "Amerika Serikat"
   },
 	{
    "tmdb_id": 1523145,
@@ -41,7 +41,7 @@
    "sinopsis":"Guru sains terbangun di kapal luar angkasa, harus selamatkan Bumi dari matahari yang sekarat.",
    "genre": ["Adventure", "Sci-Fi"],
    "release_date":"2026-05-15",
-   "country":"Amerika Serikat, Indonesia"
+   "country":"Amerika Serikat", "Indonesia"
   },
 	{
    "tmdb_id": 1273221,
@@ -481,7 +481,7 @@
    "sinopsis":"James ke Silent Hill mencari Mary, hadapi monster dan rahasia yang menguji kewarasannya.",
    "genre": ["Drama","Horor","Mystery"],
    "release_date":"2026-01-21",
-   "country":"Jerman, Serbia, Inggris"
+   "country":"Jerman", "Serbia", "Inggris"
   },
 	{
    "tmdb_id": 1484913,
@@ -503,7 +503,7 @@
    "sinopsis":"Dr. Kelson terjebak hubungan berbahaya, Spike dihantui mimpi buruk bersama Jimmy Crystal.",
    "genre": ["Sci-Fi","Horor","Thriller"],
    "release_date":"2026-01-14",
-   "country":"Kanada, Amerika Serikat, Inggris"
+   "country":"Kanada", "Amerika Serikat", "Inggris"
   },
 	{
    "tmdb_id": 1631208,
@@ -536,7 +536,7 @@
    "sinopsis":"Pemilik klub malam terjebak kartel, pengkhianatan, dan ancaman maut saat mencoba pensiun.",
    "genre": ["Action","Thriller"],
    "release_date":"2026-06-18",
-   "country":"Amerika Srerikat"
+   "country":"Amerika Serikat"
   },
 	{
    "tmdb_id": 1628071,
@@ -613,7 +613,7 @@
    "sinopsis":"Seorang pria di pulau terpencil menyelamatkan gadis kecil dari badai, memicu ancaman masa lalunya.",
    "genre": ["Action","Crime","Thriller"],
    "release_date":"2026-01-28",
-   "country":"Amerika Serikat, Kanada, Inggris"
+   "country":"Amerika Serikat", "Kanada", "Inggris"
   },
 	{
    "tmdb_id": 1473878,
@@ -723,7 +723,7 @@
    "sinopsis":"Selamat dari komet Clarke, keluarga Garrity nekat seberangi Eropa yang hancur demi rumah baru.",
    "genre": ["Adventure","Sci-fi","Thriller"],
    "release_date":"2026-01-07",
-   "country":"Inggris, Amerika Serikat"
+   "country":"Inggris", "Amerika Serikat"
   },
 	{
    "tmdb_id": 1034716,
@@ -767,7 +767,7 @@
    "sinopsis":"Tur kuliner Gwen dan Moira di Cile berujung petaka saat terjebak sekte kanibal di resort terpencil.",
    "genre": ["Horor","Thriller"],
    "release_date":"2026-01-03",
-   "country":"Austria, Filipina"
+   "country":"Austria", "Filipina"
   },
 	{
    "tmdb_id": 1609104,
@@ -844,7 +844,7 @@
    "sinopsis":"Moderator konten web temukan video kekerasan nyata yang meniru adegan kematian dari sebuah film.",
    "genre": ["Horor"],
    "release_date":"2026-04-16",
-   "country":"Kanada, Amerika Serikat"
+   "country":"Kanada", "Amerika Serikat"
   },
 	{
    "tmdb_id": 1576369,
@@ -877,7 +877,7 @@
    "sinopsis":"Luka lama terkoyak saat popstar Mother Mary reuni dengan desainer kostum lamanya jelang konser.",
    "genre": ["Drama","Music","Thriller"],
    "release_date":"2026-04-16",
-   "country":"Finlandia, Jerman, Inggris, Amerika Serikat"
+   "country":"Finlandia", "Jerman", "Inggris", "Amerika Serikat"
   },
   {
    "tmdb_id": 1623125,
@@ -899,7 +899,7 @@
    "sinopsis":"Nicole dan Sebastian kelola pertanian terpencil usai kehilangan putri mereka, tak tahu ada teror gaib.",
    "genre": ["Horor","Mystery","Thriller"],
    "release_date":"2026-04-17",
-   "country":"Kolombia, Amerika Serikat, Venezuela"
+   "country":"Kolombia", "Amerika Serikat", "Venezuela"
   },
   {
 	"tmdb_id": 1678192,
@@ -1163,7 +1163,7 @@
    "sinopsis":"Empat sahabat nekat road trip liar lintas kota, tapi rahasia dan kekacauan bikin liburan berubah kacau.",
    "genre": ["Comedy","Drama"],
    "release_date":"2026-05-08",
-   "country":"Kanada, Amerika Serikat"
+   "country":"Kanada", "Amerika Serikat"
   },
   {
 	"tmdb_id": 1630423,
@@ -1196,7 +1196,7 @@
    "sinopsis":"Seorang anak perempuan yang hilang 8 tahun kembali membawa teror kutukan mumi kuno ke rumah keluarganya.",
    "genre": ["Horor","Mystery"],
    "release_date":"2026-04-17",
-   "country":"Irlandia, Amerika Serikat, Spanyol, Kanada, Indonesia"
+   "country":"Irlandia", "Amerika Serikat", "Spanyol", "Kanada", "Indonesia"
   },
   {
 	"tmdb_id": 1421552,
@@ -1262,7 +1262,7 @@
    "sinopsis":"Pendaki berduka diburu pembunuh sadis di hutan Australia, bertahan hidup jadi taruhan.",
    "genre": ["Action","Thriller"],
    "release_date":"2026-04-24",
-   "country":"Kanada, Australia, Amerika Serikat"
+   "country":"Kanada", "Australia", "Amerika Serikat"
   },
   {
 	"tmdb_id": 1364137,
@@ -1339,7 +1339,7 @@
    "sinopsis":"Dua saudara terpisah perang harus bersatu demi bertahan hidup dan menyelamatkan keluarga.",
    "genre": ["Action","Mystery","Drama","Thriller"],
    "release_date":"2026-04-23",
-   "country":"Kolombia, Amerika Serikat"
+   "country":"Kolombia", "Amerika Serikat"
   },
   {
 	"tmdb_id": 587196,
@@ -1372,7 +1372,7 @@
    "sinopsis":"Mario menjelajah galaksi demi menghentikan ancaman kosmik yang membahayakan seluruh dunia.",
    "genre": ["Adventure","Animation","Comedy","Family","Fantasy"],
    "release_date":"2026-04-18",
-   "country":"Jepang, Amerika Serikat"
+   "country":"Jepang", "Amerika Serikat"
   },
   {
 	"tmdb_id": 949536,
@@ -1438,7 +1438,7 @@
    "sinopsis":"Pria yang terjebak di kekacauan kota saat ancaman brutal tak dikenal mulai memangsa manusia tanpa ampun.",
    "genre": ["Action","Drama"],
    "release_date":"2026-04-10",
-   "country":"Amerika Serikat, Australia"
+   "country":"Amerika Serikat", "Australia"
   },
   {
 	"tmdb_id": 1472951,
@@ -1460,7 +1460,7 @@
    "sinopsis":"Topan dahsyat membawa hiu ke kota banjir, memaksa para korban bertarung demi selamat.",
    "genre": ["Horor","Thriller"],
    "release_date":"2026-04-10",
-   "country":"Australia, Amerika Serikat"
+   "country":"Australia", "Amerika Serikat"
   },
   {
 	"tmdb_id": 1573375,
