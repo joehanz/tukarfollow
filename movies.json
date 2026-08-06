@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1193501,
+   "title":"Whistle",
+   "image":"/banner/kraken.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/UyNjb9Csoall897",
+   "sinopsis":"Siswa SMA menemukan peluit Aztec terkutuk yang memanggil kematian masa depan memburu mereka.",
+   "genre": ["Horor", "Mystery"],
+   "release_date":"2026-01-20",
+   "country":"Kanada, Irlandia, Indonesia"
+  },
+	{
    "tmdb_id": 1110034,
    "title":"Kraken",
    "image":"/banner/kraken.webp",
