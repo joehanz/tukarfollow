@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1523145,
+   "title":"Tvoyo Serdtse Budet Razbito",
+   "image":"/banner/the-mandalorian-and-grogu.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/7xPfOMWz2lmtPT4",
+   "sinopsis":"Polina buat kesepakatan dengan Bars, pura-pura pacaran hingga tumbuh cinta terlarang.",
+   "genre": ["Romance"],
+   "release_date":"2026-05-26",
+   "country":"Rusia"
+  },
+	{
    "tmdb_id": 1228710,
    "title":"The Mandalorian And Grogu",
    "image":"/banner/the-mandalorian-and-grogu.webp",
