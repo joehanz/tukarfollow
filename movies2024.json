@@ -8,7 +8,7 @@
    "sinopsis":"Hubungan kelam Kraven dengan ayah gangster mendorongnya jadi pemburu paling ditakuti.",
    "genre": ["Action", "Adventure", "Thriller"],
    "release_date":"2024-12-11",
-   "country":"Kanada, Inggris, Amerika Serikat, Islandia"
+   "country":"Kanada, Inggris, USA, Islandia"
   },
   {
    "tmdb_id": 816949,
@@ -19,7 +19,7 @@
    "sinopsis":"Ilmuwan saraf ciptakan alat pelepas iblis dalam dirinya demi balas dendam kejam pada musuh.",
    "genre": ["Horor","Thriller"],
    "release_date":"2024-10-29",
-   "country":"Inggris, Indonesia, Amerika Serikat"
+   "country":"Inggris, Indonesia, USA"
   },
   {
    "tmdb_id": 814889,
@@ -30,7 +30,7 @@
    "sinopsis":"Saat kejahatan melanda, seorang ibu dan putra kembarnya harus bersatu demi bertahan hidup.",
    "genre": ["Drama","Horor"],
    "release_date":"2024-09-18",
-   "country":"Amerika Serikat"
+   "country":"USA"
   },
   {
    "tmdb_id": 1365049,
@@ -41,6 +41,6 @@
    "sinopsis":"Dalam era Perang Salib, Joachim menerima penglihatan mistis dan nubuat ilahi, berjuang melawan kiamat lewat cinta dan pencarian akan Tuhan.",
    "genre": ["Drama","History"],
    "release_date":"2024-12-05",
-   "country":"Italia, Amerika Serikat"
+   "country":"Italia, USA"
   }
 ]
