@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1110034,
+   "title":"Kraken",
+   "image":"/banner/hoppers.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/SGNlTVUwkxD8Mgx",
+   "sinopsis":"Ahli biologi laut selidiki fjord; kematian remaja ungkap misteri kedalaman.",
+   "genre": ["Action", "Horor", "Thriller"],
+   "release_date":"2026-03-04",
+   "country":"Norwegia", "Swedia"
+  },
+	{
    "tmdb_id": 1327819,
    "title":"Hoppers",
    "image":"/banner/hoppers.webp",
@@ -7,7 +18,7 @@
    "iframe":"https://playcinematic.com/video/12Z1AKkWPXK610s",
    "sinopsis":"Ilmuwan temukan cara pindah kesadaran ke hewan robot; Mabel ungkap misteri dunia hewan.",
    "genre": ["Adventure", "Animation", "Comedy", "Family", "Sci-Fi"],
-   "release_date":"2026-03-04",
+   "release_date":"2026-02-06",
    "country":"Indonesia", "Amerika Serikat"
   },
 	{
