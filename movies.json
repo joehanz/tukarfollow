@@ -1,5 +1,49 @@
 [
 	{
+   "tmdb_id": 1615895,
+   "title":"The Kids",
+   "image":"/banner/the-kids.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/Ug4INnX7oMZv1hE",
+   "sinopsis":"Usai bebas dari penjara, Enzo terjebak dalam kriminalitas dan pilihan yang menentukan nasibnya.",
+   "genre": ["Action", "Crime", "Drama"],
+   "release_date":"2026-01-01",
+   "country":"USA"
+  },
+{
+   "tmdb_id": 1498047,
+   "title":"Abuela Tremenda",
+   "image":"/banner/abuela-tremenda.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/sUbbSQVU97gjsdq",
+   "sinopsis":"Nenek eksentrik dan putrinya yang ambisius harus menghadapi konflik keluarga yang rumit.",
+   "genre": ["Comedy", "Family"],
+   "release_date":"2026-01-01",
+   "country":"Spanyol"
+  },
+{
+   "tmdb_id": 936075,
+   "title":"Michael",
+   "image":"/banner/michael.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/8zeachyAZ71DETv",
+   "sinopsis":"Perjalanan Michael Jackson dari Jackson Five hingga menjadi ikon musik dan penghibur dunia.",
+   "genre": ["Drama", "Music"],
+   "release_date":"2026-04-22",
+   "country":"USA"
+  },
+{
+   "tmdb_id": 1412598,
+   "title":"Killer Whale",
+   "image":"/banner/killer-whale.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/MzsOT04VLGSK9mO",
+   "sinopsis":"Maddie dan Trish terjebak di laguna terpencil, berjuang selamat dari paus pembunuh Ceto.",
+   "genre": ["Action", "Horror", "Mystery", Sci-Fi", "Thriller"],
+   "release_date":"2026-01-16",
+   "country":"Australia, Russia, United Kingdom, USA"
+  },
+	{
    "tmdb_id": 1193501,
    "title":"Whistle",
    "image":"/banner/wisther.webp",
