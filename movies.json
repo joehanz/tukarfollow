@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1591654,
+   "title":"A Gangsters Life",
+   "image":"/banner/ketenpere-dalavere.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/7oL21z1P8HQb4px",
+   "sinopsis":"Dua penipu kecil kabur ke Yunani setelah menipu mafia London, namun masalah terus memburu mereka.",
+   "genre": ["Comedy", "Crime"],
+   "release_date":"2026-01-09",
+   "country":"Australia, Inggris"
+  },	
+	{
    "tmdb_id": 1075797,
    "title":"Ketenpere: Dalavere",
    "image":"/banner/ketenpere-dalavere.webp",
