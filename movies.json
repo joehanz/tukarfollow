@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1212461,
+   "title":"Obex",
+   "image":"/banner/ketenpere-dalavere.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/7br7D9CC0f1prjX",
+   "sinopsis":"Saat anjingnya hilang, Conor memasuki dunia gim misterius yang mulai menyatu dengan kenyataan.",
+   "genre": ["Adventure", "Fantasy", "Horor"],
+   "release_date":"2026-01-09",
+   "country":"Inggris, USA"
+  },	
+	{
    "tmdb_id": 1559628,
    "title":"Anaconda Blood Coil",
    "image":"/banner/anaconda-blood-coil.webp",
