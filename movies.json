@@ -1,5 +1,16 @@
 [
-{
+	{
+   "tmdb_id": 1634301,
+   "title":"Vanaveera",
+   "image":"/banner/vibeland-chronicles.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/7oJzcYCuSk4QD7Z",
+   "sinopsis":"Seorang pemuda berjuang mempertahankan harga dirinya setelah motornya dirampas demi politik.",
+   "genre": ["Action", "Drama"],
+   "release_date":"2026-01-02",
+   "country":"India"
+  },	
+	{
    "tmdb_id": 1699820,
    "title":"Vibeland Chronicles",
    "image":"/banner/vibeland-chronicles.webp",
