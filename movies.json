@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1618569,
+   "title":"Hands",
+   "image":"/banner/trial-period.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/ScZrTeAz9rU0eON",
+   "sinopsis":"Pasangan petarung bawah tanah harus memilih antara meraih kemenangan atau membalas dendam.",
+   "genre": ["Action"],
+   "release_date":"2026-01-08",
+   "country":"USA"
+  },	
+	{
    "tmdb_id": 1541434,
    "title":"Vyprobuvalnyi Termin",
    "image":"/banner/trial-period.webp",
