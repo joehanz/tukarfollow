@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1508779,
+   "title":"Dolphin Summer",
+   "image":"/banner/hands.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/dMtJjGG9083u64G",
+   "sinopsis":"Sarah dan teman-temannya membuat siaran lumba-lumba demi menyelamatkan suaka laut di pulau mereka.",
+   "genre": ["Adventure", "Family"],
+   "release_date":"2026-01-08",
+   "country":"USA"
+  },	
+	{
    "tmdb_id": 1618569,
    "title":"Hands",
    "image":"/banner/hands.webp",
