@@ -1,5 +1,27 @@
 [
 	{
+   "tmdb_id": 1555331,
+   "title":"D.I.S.C.O",
+   "image":"/banner/d-i-s-c-o.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/8WP4csZbfYNJymn",
+   "sinopsis":"Agen yang diskors harus menyelesaikan misi rahasia bersama pria biasa demi menggagalkan musuh.",
+   "genre": ["Action", "Comedy"],
+   "release_date":"2026-01-01",
+   "country":"Turki"
+  },
+{
+   "tmdb_id": 1573810,
+   "title":">Dream Team",
+   "image":"/banner/dream-team.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/dvNxyWzUftzjNfq",
+   "sinopsis":"Pelatih gagal merekrut atlet palsu demi mimpi putranya, hingga kebohongan mulai berbalik padanya.",
+   "genre": ["Comedy"],
+   "release_date":"2026-01-01",
+   "country":"Czech Republic, Slovakia"
+  },
+	{
    "tmdb_id": 1615895,
    "title":"The Kids",
    "image":"/banner/the-kids.webp",
