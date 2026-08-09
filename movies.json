@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1564614,
+   "title":"Leviticus",
+   "image":"/banner/supergirl.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/B5oRtQkZF2wlBfR",
+   "sinopsis":"Dua remaja diburu entitas mematikan yang menjelma menjadi orang yang paling mereka dambakan.",
+   "genre": ["Horor", "Romance"],
+   "release_date":"2026-06-17",
+   "country":"Australia"
+  },
+	{
    "tmdb_id": 1081003,
    "title":"Supergirl",
    "image":"/banner/supergirl.webp",
