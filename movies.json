@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1227241,
+   "title":"Maa Inti Bangaaram",
+   "image":"/banner/the-debt-collector.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/EtMfQ0dhIVA4ysm",
+   "sinopsis":"Seorang wanita belajar bahwa menerima kelemahan diri adalah kunci kekuatan menghadapi hidup.",
+   "genre": ["Action", "Drama", "Thriller"],
+   "release_date":"2026-07-18",
+   "country":"India"
+  },	
+	{
    "tmdb_id": 1630409,
    "title":"The Debt Collector",
    "image":"/banner/the-debt-collector.webp",
