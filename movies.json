@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1707808,
+   "title":"NASCAR vs. Navy: The San Diego Mini Movie",
+   "image":"/banner/they-fight.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/1z1V14lbiKpSJNb",
+   "sinopsis":"Pembalap NASCAR dan pilot Angkatan Laut bersaing dalam tantangan demi mewujudkan balapan unik.",
+   "genre": ["Action"],
+   "release_date":"2026-06-05",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1587964,
    "title":"They Fight",
    "image":"/banner/they-fight.webp",
