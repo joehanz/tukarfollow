@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 949838,
+   "title":"72 Hours",
+   "image":"/banner/leviticus.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/nC804tIwVcCQH6j",
+   "sinopsis":"Eksekutif iklan berusia 40 tahun ikut pesta bujangan liar demi menyelamatkan kariernya.",
+   "genre": ["Comedy", "Crime"],
+   "release_date":"2026-07-20",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1564614,
    "title":"Leviticus",
    "image":"/banner/leviticus.webp",
