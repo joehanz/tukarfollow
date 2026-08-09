@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 931285,
+   "title":"Mortal Kombat II",
+   "image":"/banner/jack-ryan.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/lHm3mylQFP1RPJF",
+   "sinopsis":"Johnny Cage dan para juara bertarung melawan Shao Kahn demi menyelamatkan Earthrealm.",
+   "genre": ["Action", "Adventure", "Fantasy"],
+   "release_date":"2026-05-06",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1380291,
    "title":"Jack Ryan Ghost War",
    "image":"/banner/jack-ryan.webp",
