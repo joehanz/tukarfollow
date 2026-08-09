@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1375646,
+   "title":"Colony",
+   "image":"/banner/masters-of-the-universe.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/ZRGFewWgak6LJoy",
+   "sinopsis":"Pangeran Adam kembali ke Eternia dan harus menjadi He-Man untuk mengalahkan Skeletor.",
+   "genre": ["Action", "Horor", "Sci-Fi"],
+   "release_date":"2026-05-21",
+   "country":"Korea"
+  },
+	{
    "tmdb_id": 454639,
    "title":"Masters Of The Universe",
    "image":"/banner/masters-of-the-universe.webp",
