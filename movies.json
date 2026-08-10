@@ -1,8 +1,19 @@
 [
 	{
+   "tmdb_id": 1127384,
+   "title":"Deep Water",
+   "image":"/banner/i%20hate%20found%20footage.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/AuyxjVxKGDwF8wJ",
+   "sinopsis":"Penumpang pesawat yang jatuh di laut penuh hiu harus bersatu untuk bertahan hidup dan melarikan diri.",
+   "genre": ["Thriller", "Horor"],
+   "release_date":"2026-04-30",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1741339,
    "title":"I Hate Found Footage",
-   "image":"/banner//i%20hate%20found%20footage.webp",
+   "image":"/banner/i%20hate%20found%20footage.webp",
    "video":"",
    "iframe":"https://playcinematic.com/video/RxzHO2DBSwlCY8M",
    "sinopsis":"Dua teman sekamar membuat film di hutan, lalu berjuang bertahan hidup setelah menemukan teror tak terduga.",
