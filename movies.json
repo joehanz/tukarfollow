@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1741339,
+   "title":"I Hate Found Footage",
+   "image":"/banner/instadocs-the-prediction-games.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/RxzHO2DBSwlCY8M",
+   "sinopsis":"Dua teman sekamar membuat film di hutan, lalu berjuang bertahan hidup setelah menemukan teror tak terduga.",
+   "genre": ["Comedy", "Horor"],
+   "release_date":"2026-07-24",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1736916,
    "title":"Instadocs The Prediction Games",
    "image":"/banner/instadocs-the-prediction-games.webp",
