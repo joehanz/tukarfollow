@@ -1,5 +1,49 @@
 [
 	{
+   "tmdb_id": 1509599,
+   "title":"gatta-kusth1 2",
+   "image":"/banner/gatta-kusthi-2.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/MiHBS96M9v1h0gP",
+   "sinopsis":"Veera dan Keerthi menjalani peran baru sebagai orang tua sambil mengejar impian dan karier gulat.",
+   "genre": ["Comedy", "Drama"],
+   "release_date":"2026-07-03",
+   "country":"India"
+  },
+{
+   "tmdb_id": 1443961,
+   "title":"Rao Bahadur",
+   "image":"/banner/rao-bahadur.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/t19DKA4gID61QP3",
+   "sinopsis":"Seorang bangsawan eksentrik menciptakan dunia khayal saat rasa bersalah mengaburkan kenyataan.",
+   "genre": ["Thriller", "Drama", "Thriller"],
+   "release_date":"2026-06-19",
+   "country":"India"
+  },
+{
+   "tmdb_id": 1722576,
+   "title":"Tales From The Shiny DIner",
+   "image":"/banner/tales-from-the-shiny-diner.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/bbj6sr71siHRW1j",
+   "sinopsis":"Antologi horor berisi kisah monster, zombie, badut, dan teror Natal karya Alan Watkins.",
+   "genre": ["Horor"],
+   "release_date":"2026-07-02",
+   "country":"USA"
+  },
+{
+   "tmdb_id": 1410937,
+   "title":"Balan The Boy",
+   "image":"/banner/balan-the-boy.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/qiD7VaGs2KOBrOH",
+   "sinopsis":"Seorang remaja mencari ibunya yang hilang sambil mengungkap kebenaran kelam tentang masa lalunya.",
+   "genre": ["Thriller", "Drama"],
+   "release_date":"2026-06-19",
+   "country":"India"
+  },
+	{
    "tmdb_id": 1127384,
    "title":"Deep Water",
    "image":"/banner/deep-water.webp",
