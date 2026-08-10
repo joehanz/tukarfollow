@@ -602,45 +602,137 @@
       <div class="clickable-subtitle-area"></div>
     </div>
 
+
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const iframe = document.getElementById("filmIframe");
-        const videoWrapper = document.getElementById("videoWrapper");
+  document.addEventListener("DOMContentLoaded", () => {
+    const iframe = document.getElementById("filmIframe");
+    const videoWrapper = document.getElementById("videoWrapper");
 
-        // Buat layer dummy gambar
-        const dummyLayer = document.createElement("div");
-        dummyLayer.style.cssText = `
-          position:fixed;top:0;left:0;width:100%;height:100%;
-          background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
-          z-index:9999;
-        `;
-        videoWrapper.appendChild(dummyLayer);
+    // Tampilkan gambar penutup saat halaman baru dibuka
+    const dummyLayer = document.createElement("div");
+    dummyLayer.style.cssText = `
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
+      z-index:9999;
+    `;
+    videoWrapper.appendChild(dummyLayer);
 
-        // Setelah 3 detik, tampilkan overlay transparan
-        setTimeout(() => {
-          dummyLayer.style.display = "none";
+    // Tunggu 3 detik → munculkan lapisan klik
+    setTimeout(() => {
+      dummyLayer.style.display = "none";
 
-          const overlay = document.createElement("div");
-          overlay.style.cssText = `
-            position:fixed;top:0;left:0;width:100%;height:100%;
-            background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
-          `;
-          videoWrapper.appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.style.cssText = `
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
+      `;
+      videoWrapper.appendChild(overlay);
 
-          overlay.addEventListener("click", () => {
-            // buka domain acak sekali
-            const domains = ["https://rajarayap.com","https://caturbangunsentosa.blogspot.com","https://ptdwiprima.blogspot.com"];
-            const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-            window.open(randomDomain, "_blank");
+      // 📋 DAFTAR SEMUA IKLAN: lama + baru
+      const daftarIklan = [
+        // === IKLAN LAMA KAMU ===
+        "https://rajarayap.com",
+        "https://caturbangunsentosa.blogspot.com",
+        "https://ptdwiprima.blogspot.com",
 
-            // hilangkan overlay, iframe normal
-            overlay.remove();
-            iframe.style.display = "block";
-            // src iframe sudah diisi sebelumnya oleh playMovie
-          }, { once:true });
-        }, 3000); // 3 detik
-      });
-    </script>
+        // === IKLAN BARU DARI SITEMAP ===
+        "https://rewangiklan.my.id/iklan.html?id=IKL000001",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000002",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000003",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000004",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000005",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000006",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000007",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000008",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000009",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000010",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000011",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000012",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000013",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000014",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000015",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000016",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000017",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000018",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000019",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000020",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000021",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000022",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000023",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000024",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000025",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000026",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000027",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000028",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000029",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000030",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000031",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000032",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000033",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000034",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000035",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000036",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000037",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000038",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000039",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000040",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000041",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000042",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000043",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000044",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000045",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000046",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000047",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000048",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000049",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000050",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000051",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000052",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000053",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000054",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000055",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000056",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000057",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000058",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000059",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000060",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000061",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000062",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000063",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000064",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000065",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000066",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000067",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000068",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000069",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000070",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000071",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000072",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000073",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000074",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000075",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000076",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000077",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000078",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000079",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000080",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000081",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000082",
+        "https://rewangiklan.my.id/iklan.html?id=IKL000083"
+      ];
+
+      // Saat diklik → pilih ACAK dari SEMUA iklan, buka tab baru
+      overlay.addEventListener("click", () => {
+        const iklanAcak = daftarIklan[Math.floor(Math.random() * daftarIklan.length)];
+        window.open(iklanAcak, "_blank");
+
+        // Hilangkan penutup → film muncul
+        overlay.remove();
+        iframe.style.display = "block";
+      }, { once:true });
+    }, 3000);
+  });
+</script>
 
     <div class="watermark-logo">
       <img
