@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1084242,
+   "title":"Zootopia 2",
+   "image":"/banner/mammoth-hunters.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/FMYX1tx9JMDSbYG",
+   "sinopsis":"Judy dan Nick menyelidiki misteri baru di Zootopia yang menguji kemitraan mereka hingga batasnya.",
+   "genre": ["Adventure", "Animation", "Comedy", "Family", "Mystery"],
+   "release_date":"2025-11-26",
+   "country":"USA, Indonesia"
+  },
+	{
    "tmdb_id": 1625328,
    "title":"Mammoth Hunters",
    "image":"/banner/mammoth-hunters.webp",
