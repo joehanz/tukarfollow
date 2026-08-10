@@ -1,5 +1,27 @@
 [
 	{
+   "tmdb_id": 1487861,
+   "title":"Elize: Shadows of a Woman ",
+   "image":"/banner/shadows-of-a-woman.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/rknFTYTSM3gwfEH",
+   "sinopsis":"Seorang wanita menghadapi pengkhianatan suaminya yang kaya, hingga pernikahan mereka di ambang kehancuran.",
+   "genre": ["Crime", "Drama", "Thriller"],
+   "release_date":"2026-07-22",
+   "country":"Brazil"
+  },
+{
+   "tmdb_id": 1737860,
+   "title":"Aria Remix",
+   "image":"/banner/aria-remix.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/FRTygw6CTsz93CU",
+   "sinopsis":"Seorang DJ dirasuki dewa kuno yang menggunakan musiknya sebagai gerbang untuk menguasai dunia.",
+   "genre": ["Comedy", "Fantasy", "Horror", "Romance"],
+   "release_date":"2026-06-17",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 1509599,
    "title":"gatta-kusth1 2",
    "image":"/banner/gatta-kusthi-2.webp",
