@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1458215,
+   "title":"The Gentleman Thief",
+   "image":"/banner/72-hours.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/nC804tIwVcCQH6j",
+   "sinopsis":"Mantan pencuri ulung harus menyelamatkan adiknya saat perampokan yacht berubah menjadi konspirasi mematikan.",
+   "genre": ["Action", "Crime", "Thriller"],
+   "release_date":"2026-07-31",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 949838,
    "title":"72 Hours",
    "image":"/banner/72-hours.webp",
