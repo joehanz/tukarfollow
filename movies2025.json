@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 938150,
+   "title":"Wardriver",
+   "image":"/banner/wardriver.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/1kjfITKoPDDJgme",
+   "sinopsis":"Peretas pencuri uang bank terjebak dalam bahaya saat uang hasil aksinya memicu kekerasan mematikan.",
+   "genre": ["Crime", "Thriller"],
+   "release_date":"2025-03-04",
+   "country":"USA, Jerman"
+  },
+	{
    "tmdb_id": 1084242,
    "title":"Zootopia 2",
    "image":"/banner/zootopia-2.webp",
