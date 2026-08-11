@@ -1,12 +1,23 @@
 [
 	{
+   "tmdb_id": 1010755,
+   "title":"The Strangers Chapter 3",
+   "image":"/banner/war-machine.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/EvK2HjJdbltRGkp",
+   "sinopsis":"Maya dan para Stranger menuju pertarungan tak terhindarkan yang menguji ikatan dan nasib mereka.",
+   "genre": ["Horror", "Thriller"],
+   "release_date":"2026-02-05",
+   "country":"Spain, USA"
+  },
+	{
    "tmdb_id": 1265609,
    "title":"War Machine",
    "image":"/banner/war-machine.webp",
    "video":"",
    "iframe":"https://playcinematic.com/video/eB9lAsGBrX8HkWZ",
    "sinopsis":"Seorang insinyur tempur memimpin pasukannya melawan mesin pembunuh raksasa dari dunia lain.",
-   "genre": ["Action", "Sci-Fi". "Thriller"],
+   "genre": ["Action", "Sci-Fi", "Thriller"],
    "release_date":"2026-02-12",
    "country":"Australia, New Zealand, United Kingdom, USA"
   },
