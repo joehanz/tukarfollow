@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1547301,
+   "title":"Prompt",
+   "image":"/banner/the-spongebob-movie-search-for-squarepants.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/fMWVMPkiAd33s9n",
+   "sinopsis":"Seorang wanita terobsesi pada AI hingga pencariannya membawanya pada kebenaran yang mengejutkan.",
+   "genre": ["Sci-Fi", "Thriller"],
+   "release_date":"2025-12-05",
+   "country":"USA"
+  },
+	{
    "tmdb_id": 991494,
    "title":"The SpongeBob Movie Search For SquarePants",
    "image":"/banner/the-spongebob-movie-search-for-squarepants.webp",
