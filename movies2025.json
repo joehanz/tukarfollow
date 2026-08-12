@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 991494,
+   "title":"The SpongeBob Movie Search For SquarePants",
+   "image":"/banner/the-hermit.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/ktGa8svVA9U9oX5",
+   "sinopsis":"SpongeBob mengikuti Flying Dutchman dalam petualangan laut demi membuktikan keberaniannya.",
+   "genre": ["Adventure", "Animation", "Comedy", "Family", "Fantasy"],
+   "release_date":"2025-12-16",
+   "country":"Indonesia, USA"
+  },
+	{
    "tmdb_id": 1026532,
    "title":"The Hermit",
    "image":"/banner/the-hermit.webp",
