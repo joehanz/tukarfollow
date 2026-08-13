@@ -1,5 +1,16 @@
 [
 	{
+   "tmdb_id": 1510795,
+   "title":"Shake Rattle Roll Evil Origins",
+   "image":"/banner/maternal-instinct.webp",
+   "video":"",
+   "iframe":"https://playcinematic.com/video/ihoFemQftPZcRpz",
+   "sinopsis":"Tiga era berbeda terhubung oleh teror supranatural yang mengancam Philipina dari masa ke masa.",
+   "genre": ["Horor"],
+   "release_date":"2026-06-05",
+   "country":"Philipina"
+  },
+	{
    "tmdb_id": 1699155,
    "title":"Maternal Instinct",
    "image":"/banner/maternal-instinct.webp",
@@ -536,7 +547,7 @@
    "sinopsis":"Dua sahabat dan seorang detektif kocak menyelidiki kasus aneh yang membuat para pria membengkak.",
    "genre": ["Comedy", "Vivamax"],
    "release_date":"2026-01-01",
-   "country":"Filipina"
+   "country":"Philipina"
   },
 {
    "tmdb_id": 1388977,
@@ -1295,7 +1306,7 @@
    "sinopsis":"Karina move on ke kapster jelita USAi diselingkuhi. Mantan pacar balik, ia pun bimbang.",
    "genre": ["Drama","Vivamax"],
    "release_date":"2026-05-08",
-   "country":"Filipina"
+   "country":"Philipina"
   },
 	{
    "tmdb_id": 1669057,
@@ -1306,7 +1317,7 @@
    "sinopsis":"Aliya Raymundo & Anya Austria jadi resepsionis motel murah. Tamu misterius memicu konflik.",
    "genre": ["Drama","Vivamax"],
    "release_date":"2026-05-01",
-   "country":"Filipina"
+   "country":"Philipina"
   },
   {
    "tmdb_id": 1083381,
@@ -1394,7 +1405,7 @@
    "sinopsis":"Tur kuliner Gwen dan Moira di Cile berujung petaka saat terjebak sekte kanibal di resort terpencil.",
    "genre": ["Horor","Thriller"],
    "release_date":"2026-01-03",
-   "country":"Austria, Filipina"
+   "country":"Austria, Philipina"
   },
 	{
    "tmdb_id": 1609104,
@@ -1460,7 +1471,7 @@
    "sinopsis":"Remaja ceria pemimpi debut ideal bersekutu dengan pendatang baru, namun rasa cinta merUSAk rencana.",
    "genre": ["Drama","Romance"],
    "release_date":"2026-04-09",
-   "country":"Filipina"
+   "country":"Philipina"
   },
 	{
    "tmdb_id": 855435,
@@ -1658,7 +1669,7 @@
    "sinopsis":"Persaudaraan versus Kewajiban. Dua sahabat masa kecil akan mengalami petualangan terhebat saat mereka saling berhadapan.",
    "genre": ["Action","Drama","Vivamax"],
    "release_date":"2026-05-05",
-   "country":"Filipina"
+   "country":"Philipina"
   },
   {
 	"tmdb_id": 1330021,
