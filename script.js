@@ -7,7 +7,7 @@ const MOVIES_JSON_PATH = 'movies.json';
 
 // Kalau mau ganti tahun nanti, tinggal ganti saja:
 // const MOVIES_JSON_PATH = 'movies2025.json';
-// const MOVIES_JSON_PATH = 'movies2024.json';
+// const MOVIES_JSON_PATH = 'movies2024.json';fff
 // const MOVIES_JSON_PATH = 'moviesclassic.json';
 
 const feedContainer = document.getElementById('feedContainer');
