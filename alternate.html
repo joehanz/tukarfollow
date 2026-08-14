@@ -715,19 +715,19 @@ template ori watch.html
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
       const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
-      // 🔑 Daftar file JSON
+      // ✅ 🔑 Alamat JSON LENGKAP dari GitHub Pages
       const JSON_PATHS = [
-        './movies.json',
-        './movies2025.json',
-        './movies2024.json',
-        './moviesclassic.json'
+        'https://midasxxi.github.io/tukarfollow/movies.json',
+        'https://midasxxi.github.io/tukarfollow/movies2025.json',
+        'https://midasxxi.github.io/tukarfollow/movies2024.json',
+        'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
       ];
 
-      // Sumber cadangan
+      // ✅ Sumber Player: 3 Tingkat Cadangan
       const SUMBER_EMBED = {
-        utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
-        cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
-        cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
+        utama: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`,     // ← Utama: vidsrc.in
+        cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,  // ← Cadangan 1: vidsrc.me
+        cadangan2: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`   // ← Cadangan 2: vsembed.ru
       };
 
       const videoWrapper = document.getElementById('videoWrapper');
@@ -744,6 +744,7 @@ template ori watch.html
 
       let currentMovieId = null;
 
+      // ✅ Ambil ID film dari URL
       function ambilIdDariUrl() {
         const query = window.location.search;
         if (!query) return null;
@@ -752,7 +753,7 @@ template ori watch.html
         return idBersih || null;
       }
 
-      // ✅ Loop semua file JSON
+      // ✅ Cek JSON → kalau ada iframe pakai langsung, kalau tidak pakai player cadangan
       async function cekDanMuatFilm(tmdbId) {
         for (const path of JSON_PATHS) {
           try {
@@ -760,36 +761,38 @@ template ori watch.html
             if (res.ok) {
               const daftar = await res.json();
               const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+              
               if (ketemu) {
-                // kalau ada iframe di JSON, pakai langsung
+                // ✅ Kalau di JSON ada kolom "iframe" → LANGSUNG PAKAI link itu
                 if (ketemu.iframe) {
                   filmIframe.src = ketemu.iframe;
                   return;
                 }
-                // kalau tidak ada iframe, buat link watch.html sesuai format JSON
-                const slug = ketemu.title
-                  .toLowerCase()
-                  .replace(/\s+/g, '-')        // spasi jadi strip
-                  .replace(/[^a-z0-9\-]/g, ''); // buang karakter aneh
-                filmIframe.src = `https://tukarfollow.web.id/watch.html?id=${ketemu.tmdb_id}/${slug}`;
-                return;
+                // ✅ Kalau TIDAK ada kolom iframe → pakai player cadangan
+                break;
               }
             }
-          } catch {}
+          } catch (err) {
+            console.warn("⚠️ Gagal baca:", path, err);
+          }
         }
-        // fallback ke TMDB
-        filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+
+        // ✅ Tidak ketemu di JSON → urutkan player: vidsrc.in → vidsrc.me → vsembed.ru
+        let percobaan = 0;
+        function cobaSumber() {
+          if (percobaan === 0) filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+          else if (percobaan === 1) filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+          else if (percobaan === 2) filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+        }
         filmIframe.onerror = () => {
-          filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-          filmIframe.onerror = () => {
-            filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
-          };
+          percobaan++;
+          if (percobaan <= 2) cobaSumber();
         };
+        cobaSumber();
       }
 
-      
-      // ✅ Event tombol Fullscreen
-      btnFullscreen.addEventListener('click', () => {
+      // ✅ Tombol Fullscreen
+      btnFullscreen?.addEventListener('click', () => {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen?.();
           screen.orientation?.lock('landscape').catch(() => {});
@@ -803,32 +806,37 @@ template ori watch.html
       document.addEventListener('fullscreenchange', updateFullscreenIcon);
       function updateFullscreenIcon() {
         const isFull = document.fullscreenElement;
-        btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
-        lucide.createIcons();
+        if (btnFullscreen) {
+          btnFullscreen.innerHTML = isFull 
+            ? '<i data-lucide="minimize"></i>' 
+            : '<i data-lucide="maximize"></i>';
+          lucide.createIcons();
+        }
       }
 
-      // ✅ Event tombol HomeBack
-      btnHomeBack.addEventListener('click', () => {
+      // ✅ Tombol Kembali
+      btnHomeBack?.addEventListener('click', () => {
         if (window.history.length > 1) window.history.back();
         else window.location.href = 'index.html';
       });
 
-      // ✅ Event tombol komentar
-      btnAddComment.addEventListener('click', bukaFormKomen);
-      panelBackdrop.addEventListener('click', tutupFormKomen);
+      // ✅ Komentar: Buka/Tutup Form
+      btnAddComment?.addEventListener('click', bukaFormKomen);
+      panelBackdrop?.addEventListener('click', tutupFormKomen);
 
       function bukaFormKomen() {
-        infoPanel.classList.add('show');
-        panelBackdrop.classList.add('active');
+        infoPanel?.classList.add('show');
+        panelBackdrop?.classList.add('active');
       }
       function tutupFormKomen() {
-        infoPanel.classList.remove('show');
-        panelBackdrop.classList.remove('active');
+        infoPanel?.classList.remove('show');
+        panelBackdrop?.classList.remove('active');
       }
 
+      // ✅ Kirim Komentar
       async function kirimKomentar() {
-        const nama = document.getElementById('commentName').value.trim();
-        const teks = document.getElementById('commentText').value.trim();
+        const nama = document.getElementById('commentName')?.value.trim();
+        const teks = document.getElementById('commentText')?.value.trim();
         if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
         try {
           await fetch(URL_APPS_SCRIPT, {
@@ -836,27 +844,29 @@ template ori watch.html
             mode: 'no-cors',
             body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
           });
-          alert("Komentar berhasil dikirim!");
+          alert("✅ Komentar berhasil dikirim!");
           tutupFormKomen();
           setTimeout(muatKomentar, 800);
         } catch {
-          alert("Gagal mengirim komentar. Coba lagi.");
+          alert("❌ Gagal mengirim komentar. Coba lagi.");
         }
       }
 
-      btnViewComments.addEventListener('click', () => {
-        const buka = commentsPanel.classList.toggle('open');
+      // ✅ Buka/Tutup Daftar Komentar
+      btnViewComments?.addEventListener('click', () => {
+        const buka = commentsPanel?.classList.toggle('open');
         if (buka) muatKomentar();
       });
-      closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
+      closeCommentsBtn?.addEventListener('click', () => commentsPanel?.classList.remove('open'));
 
+      // ✅ Muat Komentar
       async function muatKomentar() {
-        if (!currentMovieId) return;
+        if (!currentMovieId || !commentListEl) return;
         commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
         try {
           const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
           const hasil = await res.json();
-          if (hasil.status !== "success" || !hasil.data.length) {
+          if (hasil.status !== "success" || !hasil.data?.length) {
             commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
             return;
           }
@@ -872,14 +882,18 @@ template ori watch.html
         }
       }
 
-      // ✅ Init
+      // ✅ JALANKAN SEMUA
       window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
         currentMovieId = ambilIdDariUrl();
+        
         if (!currentMovieId) {
-          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+          if (videoWrapper) {
+            videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+          }
           return;
         }
+        
         cekDanMuatFilm(currentMovieId);
       });
     </script>
