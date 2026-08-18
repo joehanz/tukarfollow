@@ -753,29 +753,36 @@ template ori watch.html
         return idBersih || null;
       }
 
-      // ✅ Cek JSON → kalau ada iframe pakai langsung, kalau tidak pakai player cadangan
-      async function cekDanMuatFilm(tmdbId) {
-        for (const path of JSON_PATHS) {
-          try {
-            const res = await fetch(path, { cache: "no-store" });
-            if (res.ok) {
-              const daftar = await res.json();
-              const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-              
-              if (ketemu) {
-                // ✅ Kalau di JSON ada kolom "iframe" → LANGSUNG PAKAI link itu
-                if (ketemu.iframe) {
-                  filmIframe.src = ketemu.iframe;
-                  return;
-                }
-                // ✅ Kalau TIDAK ada kolom iframe → pakai player cadangan
-                break;
-              }
+// ✅ Cek JSON → kalau ada iframe pakai langsung, kalau tidak pakai player cadangan
+async function cekDanMuatFilm(tmdbId) {
+  for (const path of JSON_PATHS) {
+    try {
+      const res = await fetch(path, { cache: "no-store" });
+      if (res.ok) {
+        const daftar = await res.json();
+        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        
+        if (ketemu) {
+          // ✅ Kalau di JSON ada kolom "iframe" → LANGSUNG PAKAI link itu
+          if (ketemu.iframe) {
+            filmIframe.src = ketemu.iframe;
+            // ⬇️ TAMBAH INI: Sembunyikan logo kalau abyssplayer
+            const logo = document.getElementById('logoTukarFollow');
+            if (ketemu.iframe.includes('abyssplayer.com')) {
+              logo.style.opacity = '0';
+            } else {
+              logo.style.opacity = '0.6'; // Tampilkan untuk playcinematic & lainya
             }
-          } catch (err) {
-            console.warn("⚠️ Gagal baca:", path, err);
+            return;
           }
+          // ✅ Kalau TIDAK ada kolom iframe → pakai player cadangan
+          break;
         }
+      }
+    } catch (err) {
+      console.warn("⚠️ Gagal baca:", path, err);
+    }
+  }
 
         // ✅ Tidak ketemu di JSON → urutkan player: vidsrc.in → vidsrc.me → vsembed.ru
         let percobaan = 0;
