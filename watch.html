@@ -766,7 +766,7 @@
 
     <script src="sw.js"></script>
 
- <script>
+     <script>
 // 🔧 KONFIGURASI
 const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -803,6 +803,11 @@ const panelBackdrop   = document.getElementById('panelBackdrop');
 
 let currentMovieId = null;
 
+// ✅ SIMPAN POSISI GULUNGAN SEBELUM TUTUP HALAMAN
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('posisiGulunganFilm', window.scrollY);
+});
+
 // ✅ Ambil ID Film dari URL
 function ambilIdDariUrl() {
   const query = window.location.search;
@@ -815,7 +820,6 @@ function ambilIdDariUrl() {
 // ✅ Cek SEMUA JSON → cari ID, pasang iframe
 async function cekDanMuatFilm(tmdbId) {
   let ketemuDiJson = false;
-
   for (const path of JSON_PATHS) {
     try {
       const res = await fetch(path, { cache: "no-store" });
@@ -832,7 +836,6 @@ async function cekDanMuatFilm(tmdbId) {
       console.warn("⚠️ Gagal baca:", path, err);
     }
   }
-
   // ❌ Tidak ketemu → tetap pasang player
   ketemuDiJson = false;
   pasangIframeUtama(tmdbId);
@@ -868,7 +871,7 @@ function updateFullscreenIcon() {
   lucide.createIcons();
 }
 
-// ✅ Tombol Kembali ke Beranda
+// ✅ Tombol Kembali → BALIK KE POSISI TERAKHIR DI INDEX
 btnHomeBack?.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
