@@ -723,13 +723,6 @@ template ori watch.html
         'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
       ];
 
-      // ✅ Sumber Player: 3 Tingkat Cadangan
-      const SUMBER_EMBED = {
-        utama: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`,     // ← Utama: vidsrc.in
-        cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,  // ← Cadangan 1: vidsrc.me
-        cadangan2: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`   // ← Cadangan 2: vsembed.ru
-      };
-
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
       const btnHomeBack = document.getElementById('btnHomeBack');
@@ -741,7 +734,6 @@ template ori watch.html
       const commentListEl = document.getElementById('commentList');
       const infoPanel = document.getElementById('infoPanel');
       const panelBackdrop = document.getElementById('panelBackdrop');
-
       let currentMovieId = null;
 
       // ✅ Ambil ID film dari URL
@@ -753,7 +745,7 @@ template ori watch.html
         return idBersih || null;
       }
 
-      // ✅ Cek JSON → kalau ada iframe pakai langsung, kalau tidak pakai player cadangan
+      // ✅ CEK SEMUA JSON → PAKAI LINK IFRAME DARI JSON SAJA (PlayCinematic / AbyssPlayer)
       async function cekDanMuatFilm(tmdbId) {
         for (const path of JSON_PATHS) {
           try {
@@ -762,14 +754,10 @@ template ori watch.html
               const daftar = await res.json();
               const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
               
-              if (ketemu) {
-                // ✅ Kalau di JSON ada kolom "iframe" → LANGSUNG PAKAI link itu
-                if (ketemu.iframe) {
-                  filmIframe.src = ketemu.iframe;
-                  return;
-                }
-                // ✅ Kalau TIDAK ada kolom iframe → pakai player cadangan
-                break;
+              if (ketemu && ketemu.iframe) {
+                // ✅ KETEMU → LANGSUNG PAKAI LINK IFRAME DARI JSON
+                filmIframe.src = ketemu.iframe;
+                return true; // Berhasil
               }
             }
           } catch (err) {
@@ -777,18 +765,11 @@ template ori watch.html
           }
         }
 
-        // ✅ Tidak ketemu di JSON → urutkan player: vidsrc.in → vidsrc.me → vsembed.ru
-        let percobaan = 0;
-        function cobaSumber() {
-          if (percobaan === 0) filmIframe.src = SUMBER_EMBED.utama(tmdbId);
-          else if (percobaan === 1) filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
-          else if (percobaan === 2) filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+        // ❌ TIDAK KETEMU di JSON → tampilkan pesan, TIDAK pakai player lain
+        if (videoWrapper) {
+          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
         }
-        filmIframe.onerror = () => {
-          percobaan++;
-          if (percobaan <= 2) cobaSumber();
-        };
-        cobaSumber();
+        return false;
       }
 
       // ✅ Tombol Fullscreen
@@ -802,7 +783,6 @@ template ori watch.html
         }
         lucide.createIcons();
       });
-
       document.addEventListener('fullscreenchange', updateFullscreenIcon);
       function updateFullscreenIcon() {
         const isFull = document.fullscreenElement;
@@ -823,7 +803,6 @@ template ori watch.html
       // ✅ Komentar: Buka/Tutup Form
       btnAddComment?.addEventListener('click', bukaFormKomen);
       panelBackdrop?.addEventListener('click', tutupFormKomen);
-
       function bukaFormKomen() {
         infoPanel?.classList.add('show');
         panelBackdrop?.classList.add('active');
@@ -883,7 +862,7 @@ template ori watch.html
       }
 
       // ✅ JALANKAN SEMUA
-      window.addEventListener('DOMContentLoaded', () => {
+      window.addEventListener('DOMContentLoaded', async () => {
         lucide.createIcons();
         currentMovieId = ambilIdDariUrl();
         
@@ -894,10 +873,10 @@ template ori watch.html
           return;
         }
         
-        cekDanMuatFilm(currentMovieId);
+        await cekDanMuatFilm(currentMovieId);
       });
     </script>
-
+    
     <script>
       // Ambil elemen wadah kontrol
       const subtitleLayer = document.getElementById('subLayer');
