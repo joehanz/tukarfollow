@@ -869,10 +869,9 @@
       }
 
       // ✅ Tombol Kembali
-      btnHomeBack?.addEventListener('click', () => {
-        if (window.history.length > 1) window.history.back();
-        else window.location.href = 'index.html';
-      });
+btnHomeBack?.addEventListener('click', () => {
+  window.location.href = 'index.html';
+});
 
       // ✅ Tombol Bendera → buka alternate.html
       btnSubIndo?.addEventListener('click', () => {
