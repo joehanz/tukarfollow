@@ -876,10 +876,37 @@ btnHomeBack?.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
-// ✅ Tombol Bendera → Buka Alternate Player
-btnSubIndo?.addEventListener('click', () => {
+// ✅ Tombol Bendera → Buka Alternate Player + JUDUL SAMA DENGAN WATCH.HTML
+btnSubIndo?.addEventListener('click', async () => {
   if (currentMovieId) {
-    window.location.href = `alternate.html?id=${currentMovieId}`;
+    let judulUrl = 'unknown';
+    const files = [
+      'https://midasxxi.github.io/tukarfollow/movies.json',
+      'https://midasxxi.github.io/tukarfollow/movies2025.json',
+      'https://midasxxi.github.io/tukarfollow/movies2024.json',
+      'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
+    ];
+    try {
+      for (const file of files) {
+        const res = await fetch(file, { cache: "no-store" });
+        if (res.ok) {
+          const daftar = await res.json();
+          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(currentMovieId));
+          if (ketemu && ketemu.title) {
+            judulUrl = ketemu.title
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^a-z0-9-]/g, '')
+              .substring(0, 50);
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Gagal baca JSON:', err);
+    }
+    window.location.href = `alternate.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
   } else {
     alert("ID film tidak ditemukan.");
   }
