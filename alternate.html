@@ -1062,33 +1062,27 @@ template ori watch.html
           `;
           document.head.appendChild(css);
 
-               /* ===============================
-                   WATERMARK HALUS
-                =============================== */
-      var wm = document.createElement('div');
+/* ===============================
+             WATERMARK HALUS
+          =============================== */
+var wm = document.createElement('div');
+wm.innerHTML = 'Web design by joehanz';
+wm.title = 'Providing website creation services at affordable prices';
 
-      wm.innerHTML = 'Web design by joehanz';
+wm.style.cursor = 'default';
+wm.style.position = 'fixed';
+wm.style.bottom = '56px';       // ← NAIK SEDIKIT DARI TEPI BAWAH
+wm.style.left = '5%';
+wm.style.opacity = '.85';
+wm.style.fontWeight = 'bold';
+wm.style.backgroundColor = '#000';
+wm.style.color = '#fff';
+wm.style.padding = '2px 6px';
+wm.style.fontSize = '11px';
+wm.style.zIndex = '999999';
 
-      wm.title = 'Providing website creation services at affordable prices';
-
-      // Hapus fungsi onclick agar tidak bisa diklik
-      // wm.onclick = function(){
-      //   window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-      // };
-
-      // Ubah kursor jadi default (bukan tanda tangan/link)
-      wm.style.cursor = 'default';
-
-      wm.style.position = 'fixed';
-      wm.style.bottom = '6px';
-      wm.style.right = '5%';
-      wm.style.opacity = '.25';
-      wm.style.fontSize = '11px';
-      wm.style.zIndex = '999999';
-      wm.style.color = '#fff';
-
-            document.body.appendChild(wm);
-              })();
+document.body.appendChild(wm);
+})();
               //]]>
     </script>
 
