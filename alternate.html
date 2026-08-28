@@ -146,15 +146,21 @@ const btnBack = document.getElementById('btnBack');
 const btnFullscreen = document.getElementById('btnFullscreen');
 const subLayer = document.getElementById('subLayer');
 
-// Ambil ID dari URL
+// ✅ SAMA PERSIS DENGAN watch.html — Ambil ID dan bersihkan dari huruf
 function ambilIdDariUrl() {
-  const q = new URLSearchParams(window.location.search);
-  return q.get('id') || null;
+  const query = window.location.search;
+  if (!query) return null;
+  const bagian = query.replace('?id=', '').split('/')[0];
+  const idBersih = bagian.replace(/\D/g, ''); // Hapus semua selain angka
+  return idBersih || null;
 }
 
-// Muat film → LANGSUNG ambil kolom iframe
+// ✅ Muat film → ambil kolom iframe saja
 async function muatFilm(tmdbId) {
   if (!tmdbId) return tampilPesan();
+  
+  console.log('🔍 Mencari ID:', tmdbId); // Bisa dicek di konsol browser
+
   for (const path of JSON_PATHS) {
     try {
       const res = await fetch(path, { cache: 'no-store' });
@@ -163,12 +169,12 @@ async function muatFilm(tmdbId) {
       const film = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
       if (!film) continue;
 
-      // ✅ LANGSUNG ambil kolom iframe saja
+      console.log('✅ Ditemukan:', film); // Cek konsol untuk lihat isi film
       if (film.iframe) {
         filmIframe.src = film.iframe;
         return;
       }
-    } catch (e) { console.warn('Gagal baca:', path, e); }
+    } catch (e) { console.warn('⚠️ Gagal baca:', path, e); }
   }
   tampilPesan();
 }
