@@ -25,62 +25,151 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     html, body {
       background-color: #0a0a0a;
-      color: #fff;
+      color: #ffffff;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
     }
+    .comments-panel {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 360px;
+      height: 100vh;
+      background: #121212;
+      border-left: 1px solid #2a2a2a;
+      z-index: 999999;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .comments-panel.open {
+      right: 0;
+    }
+    .comments-header {
+      padding: 16px;
+      background: #1e1e1e;
+      border-bottom: 1px solid #2a2a2a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+    }
+    .close-comments {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .close-comments:hover {
+      background: #2a2a2a;
+    }
+    .comments-section {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .empty-comments {
+      text-align: center;
+      color: #888;
+      padding: 40px 20px;
+      font-size: 14px;
+    }
+    .comment-item {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #2a2a2a;
+    }
+    .comment-name {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #4facff;
+    }
+    .comment-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #ddd;
+      margin-bottom: 6px;
+    }
+    .comment-date {
+      font-size: 11px;
+      color: #777;
+    }
     .video-main-wrapper {
       position: relative;
       width: 100%;
-      height: 100vh;
+      height: calc(100vh - 40px);
+      max-width: 125vw;
+      margin: 0 auto;
+      border-radius: 0;
+      overflow: hidden;
       background: #000;
     }
     #filmIframe {
       width: 100%;
       height: 100%;
       border: none;
-      display: block;
+      object-fit: contain;
       background: #000;
     }
     .watermark-logo {
       position: fixed;
-      top: max(16px, env(safe-area-inset-top));
+      top: max(20px, env(safe-area-inset-top));
       right: max(16px, env(safe-area-inset-right));
-      z-index: 99999;
+      z-index: 999999;
       opacity: 0.6;
       pointer-events: none;
     }
-    .watermark-logo img { width: 72px; height: auto; }
+    .watermark-logo img {
+      width: 80px;
+      height: auto;
+    }
     .subtitle-layer {
       position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom));
+      bottom: 0px;
       left: 0;
       right: 0;
-      z-index: 99999;
+      height: 48px;
+      z-index: 999999;
+      background: transparent;
       padding: 12px 16px;
       display: flex;
       justify-content: center;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+      align-items: center;
+      opacity: 1 !important;
+      pointer-events: none !important;
     }
-    .subtitle-layer.auto-hide { opacity: 0; pointer-events: none; }
+    .subtitle-layer * {
+      pointer-events: auto;
+    }
     .subtitle-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 8px 16px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(20,20,20,0.75);
-      pointer-events: auto;
+      background: rgba(20,20,20,0.8);
     }
     .ctrl-btn {
       background: rgba(255,255,255,0.18);
       border: none;
       color: #fff;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
@@ -88,8 +177,88 @@
       justify-content: center;
       transition: all 0.2s ease;
     }
-    .ctrl-btn:hover { background: rgba(255,255,255,0.3); }
-    .ctrl-btn svg { width: 18px; height: 18px; }
+    .ctrl-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    .ctrl-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 999999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .panel-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .info-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      z-index: 999999;
+      width: 90%;
+      max-width: 420px;
+      background: #1a1a1a;
+      border-radius: 14px;
+      border: 1px solid #2e2e2e;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .info-panel.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .form-title {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px;
+      border-bottom: 1px solid #2e2e2e;
+    }
+    .form-group {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: #252525;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4facff;
+    }
+    .submit-btn {
+      background: #2563eb;
+      border: none;
+      color: #fff;
+      font-weight: 500;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover {
+      background: #1d4ed8;
+    }
     .msg-box {
       position: absolute;
       top: 50%; left: 50%;
@@ -98,83 +267,148 @@
       color: #ccc;
       padding: 24px;
     }
-    :fullscreen, :-webkit-full-screen, :-moz-full-screen, :-ms-fullscreen {
-      width: 100vw !important; height: 100vh !important;
+    :fullscreen,
+    :-webkit-full-screen,
+    :-moz-full-screen,
+    :-ms-fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
     }
-    :fullscreen .watermark-logo, :fullscreen .subtitle-layer,
-    :-webkit-full-screen .watermark-logo, :-webkit-full-screen .subtitle-layer {
-      position: fixed !important; opacity: 1 !important; z-index: 99999 !important;
+    :fullscreen .watermark-logo,
+    :fullscreen .subtitle-layer,
+    :-webkit-full-screen .watermark-logo,
+    :-webkit-full-screen .subtitle-layer {
+      position: fixed !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 999999 !important;
     }
     @media (max-width: 768px) {
-      .ctrl-btn { width: 38px; height: 38px; }
-      .watermark-logo img { width: 56px; }
+      .video-main-wrapper {
+        width: 100vw;
+        height: calc(100vh - 45px);
+        max-width: 100vw;
+      }
+      .comments-panel {
+        width: 90%;
+        right: -95%;
+      }
+    }
+    @media screen and (orientation: landscape) {
+      .video-main-wrapper {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        max-width: 100vw;
+      }
+      .watermark-logo img {
+        width: 50px;
+      }
     }
   </style>
 </head>
 <body>
+
+  <div class="comments-panel" id="commentsPanel">
+    <div class="comments-header" id="commentsHeader">
+      <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
+      <button class="close-comments" id="closeCommentsBtn">&times;</button>
+    </div>
+    <div class="comments-section" id="commentsSection">
+      <div class="comments-list-container" id="commentList">
+        <div class="empty-comments">Buka untuk melihat komentar...</div>
+      </div>
+    </div>
+  </div>
 
   <div class="video-main-wrapper" id="videoWrapper">
     <iframe id="filmIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     <div class="msg-box" id="msgBox" style="display:none;">ID Film tidak ditemukan atau tautan tidak tersedia</div>
   </div>
 
-  <div class="watermark-logo">
+  <div class="watermark-logo" id="logoTukarFollow">
     <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="TukarFollow" loading="lazy" />
   </div>
 
   <div class="subtitle-layer" id="subLayer">
     <div class="subtitle-controls">
-      <button class="ctrl-btn" id="btnBack" title="Kembali">
+      <button class="ctrl-btn" id="btnHomeBack" title="Kembali ke halaman sebelumnya">
         <i data-lucide="arrow-left"></i>
       </button>
-      <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh">
+      <button class="ctrl-btn" id="btnAddComment" title="Tulis Komentar">
+        <i data-lucide="plus-circle"></i>
+      </button>
+      <button class="ctrl-btn" id="btnViewComments" title="Lihat Daftar Komentar">
+        <i data-lucide="message-square"></i>
+      </button>
+      <button class="ctrl-btn" id="btnFullscreen" title="Masuk/Keluar Layar Penuh">
         <i data-lucide="maximize"></i>
       </button>
     </div>
   </div>
 
+  <div class="panel-backdrop" id="panelBackdrop"></div>
+  <div class="info-panel" id="infoPanel">
+    <div class="panel-content">
+      <div class="form-title">Tulis Komentar Kamu</div>
+      <div class="form-group">
+        <input type="text" id="commentName" placeholder="Nama samaran kamu..." />
+        <textarea id="commentText" placeholder="Tulis opini/komentar film di sini..." rows="3" maxlength="300"></textarea>
+        <button class="submit-btn" onclick="kirimKomentar()">Kirim Komentar</button>
+      </div>
+    </div>
+  </div>
+
 <script>
+const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 const JSON_PATHS = [
   'https://midasxxi.github.io/tukarfollow/movies.json',
   'https://midasxxi.github.io/tukarfollow/movies2025.json',
   'https://midasxxi.github.io/tukarfollow/movies2024.json',
   'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
 ];
+
 const filmIframe = document.getElementById('filmIframe');
 const msgBox = document.getElementById('msgBox');
-const btnBack = document.getElementById('btnBack');
+const btnHomeBack = document.getElementById('btnHomeBack');
+const btnAddComment = document.getElementById('btnAddComment');
+const btnViewComments = document.getElementById('btnViewComments');
 const btnFullscreen = document.getElementById('btnFullscreen');
-const subLayer = document.getElementById('subLayer');
+const commentsPanel = document.getElementById('commentsPanel');
+const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+const commentListEl = document.getElementById('commentList');
+const infoPanel = document.getElementById('infoPanel');
+const panelBackdrop = document.getElementById('panelBackdrop');
+let currentMovieId = null;
 
-// ✅ SAMA PERSIS DENGAN watch.html — Ambil ID dan bersihkan dari huruf
+// ✅ Ambil ID SAMA PERSIS seperti watch.html
 function ambilIdDariUrl() {
   const query = window.location.search;
   if (!query) return null;
   const bagian = query.replace('?id=', '').split('/')[0];
-  const idBersih = bagian.replace(/\D/g, ''); // Hapus semua selain angka
+  const idBersih = bagian.replace(/\D/g, '');
   return idBersih || null;
 }
 
 // ✅ Muat film → ambil kolom iframe saja
-async function muatFilm(tmdbId) {
+async function cekDanMuatFilm(tmdbId) {
   if (!tmdbId) return tampilPesan();
-  
-  console.log('🔍 Mencari ID:', tmdbId); // Bisa dicek di konsol browser
-
   for (const path of JSON_PATHS) {
     try {
-      const res = await fetch(path, { cache: 'no-store' });
-      if (!res.ok) continue;
-      const daftar = await res.json();
-      const film = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-      if (!film) continue;
-
-      console.log('✅ Ditemukan:', film); // Cek konsol untuk lihat isi film
-      if (film.iframe) {
-        filmIframe.src = film.iframe;
-        return;
+      const res = await fetch(path, { cache: "no-store" });
+      if (res.ok) {
+        const daftar = await res.json();
+        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        if (ketemu && ketemu.iframe) {
+          filmIframe.src = ketemu.iframe;
+          return;
+        }
       }
-    } catch (e) { console.warn('⚠️ Gagal baca:', path, e); }
+    } catch (err) {
+      console.warn("⚠️ Gagal baca:", path, err);
+    }
   }
   tampilPesan();
 }
@@ -184,48 +418,100 @@ function tampilPesan() {
   msgBox.style.display = 'block';
 }
 
-// Tombol Kembali
-btnBack.addEventListener('click', () => {
-  window.history.length > 1 ? history.back() : location.href = 'index.html';
-});
-
-// Tombol Layar Penuh
-btnFullscreen.addEventListener('click', async () => {
+// ✅ Tombol Fullscreen
+btnFullscreen?.addEventListener('click', () => {
   if (!document.fullscreenElement) {
-    await document.documentElement.requestFullscreen?.();
-    screen.orientation?.lock?.('landscape').catch(()=>{});
+    document.documentElement.requestFullscreen?.();
+    screen.orientation?.lock('landscape').catch(() => {});
   } else {
-    await document.exitFullscreen?.();
+    document.exitFullscreen?.();
     screen.orientation?.unlock?.();
   }
-  updateIcon();
+  lucide.createIcons();
 });
-function updateIcon() {
-  const isFull = !!document.fullscreenElement;
-  btnFullscreen.innerHTML = isFull 
-    ? '<i data-lucide="minimize"></i>' 
-    : '<i data-lucide="maximize"></i>';
-  lucide.createIcons();
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+function updateFullscreenIcon() {
+  const isFull = document.fullscreenElement;
+  if (btnFullscreen) {
+    btnFullscreen.innerHTML = isFull 
+      ? '<i data-lucide="minimize"></i>' 
+      : '<i data-lucide="maximize"></i>';
+    lucide.createIcons();
+  }
 }
-document.addEventListener('fullscreenchange', updateIcon);
 
-// Sembunyikan kontrol otomatis
-let hideTimer;
-function resetTimer() {
-  subLayer.classList.remove('auto-hide');
-  clearTimeout(hideTimer);
-  hideTimer = setTimeout(() => subLayer.classList.add('auto-hide'), 3000);
+// ✅ Tombol Kembali
+btnHomeBack?.addEventListener('click', () => {
+  if (window.history.length > 1) window.history.back();
+  else window.location.href = 'index.html';
+});
+
+// ✅ Komentar: Buka/Tutup Form
+btnAddComment?.addEventListener('click', bukaFormKomen);
+panelBackdrop?.addEventListener('click', tutupFormKomen);
+function bukaFormKomen() {
+  infoPanel?.classList.add('show');
+  panelBackdrop?.classList.add('active');
 }
-['mousemove','touchstart','click','scroll','keydown'].forEach(ev =>
-  document.addEventListener(ev, resetTimer, { passive: true })
-);
+function tutupFormKomen() {
+  infoPanel?.classList.remove('show');
+  panelBackdrop?.classList.remove('active');
+}
 
-// Jalankan
-document.addEventListener('DOMContentLoaded', () => {
+// ✅ Kirim Komentar
+async function kirimKomentar() {
+  const nama = document.getElementById('commentName')?.value.trim();
+  const teks = document.getElementById('commentText')?.value.trim();
+  if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+  try {
+    await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
+    });
+    alert("✅ Komentar berhasil dikirim!");
+    tutupFormKomen();
+    setTimeout(muatKomentar, 800);
+  } catch {
+    alert("❌ Gagal mengirim komentar. Coba lagi.");
+  }
+}
+
+// ✅ Buka/Tutup Daftar Komentar
+btnViewComments?.addEventListener('click', () => {
+  const buka = commentsPanel?.classList.toggle('open');
+  if (buka) muatKomentar();
+});
+closeCommentsBtn?.addEventListener('click', () => commentsPanel?.classList.remove('open'));
+
+// ✅ Muat Komentar
+async function muatKomentar() {
+  if (!currentMovieId || !commentListEl) return;
+  commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+  try {
+    const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
+    const hasil = await res.json();
+    if (hasil.status !== "success" || !hasil.data?.length) {
+      commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
+      return;
+    }
+    commentListEl.innerHTML = hasil.data.map(item => `
+      <div class="comment-item">
+        <div class="comment-name">${item.nama || 'Anonim'}</div>
+        <div class="comment-text">${item.komentar || ''}</div>
+        <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
+      </div>
+    `).join('');
+  } catch {
+    commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
+  }
+}
+
+// ✅ JALANKAN SEMUA
+window.addEventListener('DOMContentLoaded', async () => {
   lucide.createIcons();
-  const id = ambilIdDariUrl();
-  muatFilm(id);
-  resetTimer();
+  currentMovieId = ambilIdDariUrl();
+  await cekDanMuatFilm(currentMovieId);
 });
 </script>
 
