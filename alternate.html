@@ -708,13 +708,12 @@ template ori watch.html
       </div>
     </div>
 
-    <script>
+  <script>
       // 🔧 Konfigurasi
       const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
       const BASE_URL = 'https://api.themoviedb.org/3';
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
       const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-
       // ✅ 🔑 Alamat JSON LENGKAP dari GitHub Pages
       const JSON_PATHS = [
         'https://midasxxi.github.io/tukarfollow/movies.json',
@@ -722,7 +721,6 @@ template ori watch.html
         'https://midasxxi.github.io/tukarfollow/movies2024.json',
         'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
       ];
-
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
       const btnHomeBack = document.getElementById('btnHomeBack');
@@ -745,7 +743,7 @@ template ori watch.html
         return idBersih || null;
       }
 
-      // ✅ CEK SEMUA JSON → PAKAI LINK IFRAME DARI JSON SAJA (PlayCinematic / AbyssPlayer)
+      // ✅ CEK JSON → iframe DULU, KALAU KOSONG PAKAI iframe2
       async function cekDanMuatFilm(tmdbId) {
         for (const path of JSON_PATHS) {
           try {
@@ -754,18 +752,24 @@ template ori watch.html
               const daftar = await res.json();
               const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
               
-              if (ketemu && ketemu.iframe) {
-                // ✅ KETEMU → LANGSUNG PAKAI LINK IFRAME DARI JSON
-                filmIframe.src = ketemu.iframe;
-                return true; // Berhasil
+              if (ketemu) {
+                // 🥇 UTAMA: Cek kolom iframe dulu
+                if (ketemu.iframe) {
+                  filmIframe.src = ketemu.iframe;
+                  return true;
+                }
+                // 🥈 CADANGAN: Kalau iframe kosong → pakai iframe2
+                if (ketemu.iframe2) {
+                  filmIframe.src = ketemu.iframe2;
+                  return true;
+                }
               }
             }
           } catch (err) {
             console.warn("⚠️ Gagal baca:", path, err);
           }
         }
-
-        // ❌ TIDAK KETEMU di JSON → tampilkan pesan, TIDAK pakai player lain
+        // ❌ TIDAK KETEMU / KEDUA KOSONG
         if (videoWrapper) {
           videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
         }
@@ -878,96 +882,67 @@ template ori watch.html
     </script>
     
     <script>
-      // Ambil elemen wadah kontrol
+      // Kontrol pemutar yang sembunyi otomatis
       const subtitleLayer = document.getElementById('subLayer');
       const controls = subtitleLayer?.querySelector('.subtitle-controls');
       if (!controls) console.warn('Elemen kontrol tidak ditemukan');
-
       let hideTimer = null;
-      // Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
       const HIDE_DELAY = 3000;
 
-      // Fungsi: Tampilkan kontrol
       function showControls() {
         if (!controls) return;
-        // Tampilkan dengan cara aman tanpa ubah gaya lain
         controls.style.opacity = '1';
         controls.style.pointerEvents = 'auto';
         controls.style.visibility = 'visible';
-        // Ulangi hitung waktu sembunyi
         resetHideTimer();
       }
-
-      // Fungsi: Sembunyikan kontrol
       function hideControls() {
         if (!controls) return;
         controls.style.opacity = '0';
         controls.style.pointerEvents = 'none';
         controls.style.visibility = 'hidden';
       }
-
-      // Fungsi: Atur ulang penghitung waktu
       function resetHideTimer() {
         clearTimeout(hideTimer);
         hideTimer = setTimeout(hideControls, HIDE_DELAY);
       }
 
-      // Daftar peristiwa yang sangat sensitif untuk mobile
       const ACTIVITY_EVENTS = [
-        'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
-        'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
-        'scroll', 'wheel', 'keydown' // Geser/ketik
+        'touchstart', 'touchmove', 'touchend', 'touchcancel',
+        'mousedown', 'mousemove', 'mouseup', 'click',
+        'scroll', 'wheel', 'keydown'
       ];
-
-      // Pasang pendengar ke seluruh layar + pastikan tertangkap
       ACTIVITY_EVENTS.forEach(event => {
-        document.addEventListener(event, showControls, {
-          passive: true, // Agar tidak mengganggu geser layar
-          capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
-        });
+        document.addEventListener(event, showControls, { passive: true, capture: true });
       });
-
-      // Juga tangkap ketukan langsung pada tombol kontrol
       controls?.addEventListener('click', showControls);
       controls?.addEventListener('touchstart', showControls);
-
-      // Mulai berjalan saat halaman siap
       document.addEventListener('DOMContentLoaded', () => {
         showControls();
       });
     </script>
+    
     <script>
-          // FUNGSI PEMBERSIH LINK - KHUSUS HTML+JS SAJA
+      // FUNGSI PEMBERSIH LINK
       function bersihkanLink(linkKotor) {
         if (!linkKotor) return linkKotor;
-
-        // 1. Ubah semua kode terenkripsi (%2F, %20 dll) jadi teks asli
         let link = decodeURIComponent(linkKotor);
-
         try {
-          // 2. Pisahkan bagian link agar aman diproses
           const u = new URL(link);
-
-          // 3. Daftar SEMUA pelacak dari SEMUA situs yang akan dibuang
           const buang = [
             'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
             'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
             'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
           ];
-
-          // 4. Hapus semua pelacak satu per satu
           buang.forEach(p => u.searchParams.delete(p));
-
-          // 5. Kembalikan link yang sudah bersih
           return u.toString();
-
         } catch {
-          // Kalau format link aneh, pakai cara cadangan
           link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
           return link.replace(/&+$/, '').replace(/\?&/, '?');
         }
       }
     </script>
+    
     <script type="text/javascript">
         //<![CDATA[
         (function () {
