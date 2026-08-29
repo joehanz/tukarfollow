@@ -538,7 +538,7 @@
     </div>
 
     <script>
-      const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+           const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
       const BASE_URL = 'https://api.themoviedb.org/3';
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
       const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
@@ -550,7 +550,6 @@
       ];
       // ✅ Tambahan: Lokasi playcinematic.json
       const PLAY_CINEMATIC_JSON = 'https://midasxxi.github.io/tukarfollow/playcinematic.json';
-
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
       const btnHomeBack = document.getElementById('btnHomeBack');
@@ -563,15 +562,14 @@
       const infoPanel = document.getElementById('infoPanel');
       const panelBackdrop = document.getElementById('panelBackdrop');
       const cinematicSwitchBtn = document.getElementById('cinematicSwitchBtn');
-
       let currentMovieId = null;
 
-      // ✅ Ambil ID dari URL
+      // ✅ [DIPERBAIKI] Ambil ID dari URL — pakai cara yang akurat
       function ambilIdDariUrl() {
-        const query = window.location.search;
-        if (!query) return null;
-        const bagian = query.replace('?id=', '').split('/')[0];
-        const idBersih = bagian.replace(/\D/g, '');
+        const params = new URLSearchParams(window.location.search);
+        const idParam = params.get('id'); // baca: "1284465/the-death-of-robin-hood"
+        if (!idParam) return null;
+        const idBersih = idParam.split('/')[0].replace(/\D/g, ''); // ambil angka saja sebelum "/"
         return idBersih || null;
       }
 
@@ -592,9 +590,7 @@
             console.warn("⚠️ Gagal baca:", path, err);
           }
         }
-        if (videoWrapper) {
-          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
-        }
+        // ❌ Hapus pesan error di sini — dipindah ke bawah
         return false;
       }
 
@@ -716,7 +712,7 @@
         }
       }
 
-      // ✅ JALANKAN SEMUA
+      // ✅ [DIPERBAIKI] JALANKAN SEMUA — URUTAN DIUBAH: Cek PlayCinematic DULU
       window.addEventListener('DOMContentLoaded', async () => {
         lucide.createIcons();
         currentMovieId = ambilIdDariUrl();
@@ -726,10 +722,17 @@
           }
           return;
         }
-        // Muat player utama
-        await cekDanMuatFilm(currentMovieId);
-        // Cek tambahan PlayCinematic → tampil tombol kalau cocok
-        await cekPlayCinematic(currentMovieId);
+
+        // 🔴 CEK PLAYCINEMATIC DULU → biar bendera tetap muncul meski tidak ada player utama
+        const adaCinematic = await cekPlayCinematic(currentMovieId);
+
+        // Baru cari player utama dari movies.json
+        const adaPlayer = await cekDanMuatFilm(currentMovieId);
+
+        // Tampilkan error HANYA kalau TIDAK ada player DAN TIDAK ada tombol bendera
+        if (!adaPlayer && !adaCinematic && videoWrapper) {
+          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
+        }
       });
     </script>
 
