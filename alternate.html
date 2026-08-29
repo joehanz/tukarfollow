@@ -1,3 +1,4 @@
+isi asli alternate dot html
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -202,49 +203,6 @@
         width: 80px;
         height: auto;
       }
-
-      /* ✅ Ikon Bendera IDN + II */
-      .cinematic-switch-btn {
-        position: fixed;
-        top: max(20px, env(safe-area-inset-top));
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 999999;
-        background: linear-gradient(135deg, #ff0000, #cc0000);
-        color: #fff;
-        font-weight: 700;
-        font-size: 16px;
-        padding: 8px 16px;
-        border-radius: 30px;
-        border: 2px solid #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        cursor: pointer;
-        display: none;
-        gap: 8px;
-        align-items: center;
-        text-decoration: none;
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-      .cinematic-switch-btn.show {
-        display: flex;
-      }
-      .cinematic-switch-btn:hover {
-        transform: translateX(-50%) scale(1.05);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-      }
-      .cinematic-switch-btn .flag-icon {
-        font-size: 20px;
-      }
-      .cinematic-switch-btn .roman-ii {
-        background: #fff;
-        color: #cc0000;
-        font-size: 14px;
-        padding: 1px 6px;
-        border-radius: 50%;
-        font-weight: 900;
-        margin-left: 4px;
-      }
-
       .subtitle-layer {
         position: fixed;
         bottom: 0px;
@@ -426,10 +384,6 @@
           width: 90%;
           right: -95%;
         }
-        .cinematic-switch-btn {
-          font-size: 14px;
-          padding: 6px 12px;
-        }
       }
       @media screen and (orientation: landscape) {
         .video-main-wrapper {
@@ -449,14 +403,6 @@
     <script>(function(s){s.dataset.zone='11568792',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   </head>
   <body>
-
-    <!-- ✅ Ikon Tombol Bendera + II -->
-    <a id="cinematicSwitchBtn" href="alternate2.html" class="cinematic-switch-btn" target="_blank">
-      <span class="flag-icon">🇮🇩</span>
-      <span>Pemutar Lain</span>
-      <span class="roman-ii">II</span>
-    </a>
-
     <div class="comments-panel" id="commentsPanel">
       <div class="comments-header" id="commentsHeader">
         <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
@@ -480,6 +426,7 @@
       <div class="video-overlay"></div>
       <div class="clickable-subtitle-area"></div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const iframe = document.getElementById("filmIframe");
@@ -509,6 +456,7 @@
         }, 3000);
       });
     </script>
+
     <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-controls">
         <button class="ctrl-btn" id="btnHomeBack" title="Kembali ke halaman sebelumnya">
@@ -525,6 +473,7 @@
         </button>
       </div>
     </div>
+
     <div class="panel-backdrop" id="panelBackdrop"></div>
     <div class="info-panel" id="infoPanel">
       <div class="panel-content">
@@ -538,7 +487,7 @@
     </div>
 
     <script>
-           const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+      const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
       const BASE_URL = 'https://api.themoviedb.org/3';
       const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
       const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
@@ -548,8 +497,6 @@
         'https://midasxxi.github.io/tukarfollow/movies2024.json',
         'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
       ];
-      // ✅ Tambahan: Lokasi playcinematic.json
-      const PLAY_CINEMATIC_JSON = 'https://midasxxi.github.io/tukarfollow/playcinematic.json';
       const videoWrapper = document.getElementById('videoWrapper');
       const filmIframe = document.getElementById('filmIframe');
       const btnHomeBack = document.getElementById('btnHomeBack');
@@ -561,19 +508,18 @@
       const commentListEl = document.getElementById('commentList');
       const infoPanel = document.getElementById('infoPanel');
       const panelBackdrop = document.getElementById('panelBackdrop');
-      const cinematicSwitchBtn = document.getElementById('cinematicSwitchBtn');
       let currentMovieId = null;
 
-      // ✅ [DIPERBAIKI] Ambil ID dari URL — pakai cara yang akurat
+      // ✅ Ambil ID SAMA PERSIS seperti watch.html
       function ambilIdDariUrl() {
-        const params = new URLSearchParams(window.location.search);
-        const idParam = params.get('id'); // baca: "1284465/the-death-of-robin-hood"
-        if (!idParam) return null;
-        const idBersih = idParam.split('/')[0].replace(/\D/g, ''); // ambil angka saja sebelum "/"
+        const query = window.location.search;
+        if (!query) return null;
+        const bagian = query.replace('?id=', '').split('/')[0];
+        const idBersih = bagian.replace(/\D/g, '');
         return idBersih || null;
       }
 
-      // ✅ Cek dari movies.json → pakai abyssplayer
+      // ✅ HANYA AMBIL KOLOM iframe — iframe2 DIHAPUS
       async function cekDanMuatFilm(tmdbId) {
         for (const path of JSON_PATHS) {
           try {
@@ -590,36 +536,9 @@
             console.warn("⚠️ Gagal baca:", path, err);
           }
         }
-        // ❌ Hapus pesan error di sini — dipindah ke bawah
-        return false;
-      }
-
-      // ✅ BARU: Cek dari playcinematic.json → tampilkan tombol bendera II
-      async function cekPlayCinematic(tmdbId) {
-        try {
-          const res = await fetch(PLAY_CINEMATIC_JSON, { cache: "no-store" });
-          if (res.ok) {
-            // Bisa berupa satu objek {} atau array [{},...]
-            const data = await res.json();
-            let ketemu = null;
-            if (Array.isArray(data)) {
-              ketemu = data.find(f => Number(f.tmdb_id) === Number(tmdbId));
-            } else {
-              ketemu = Number(data.tmdb_id) === Number(tmdbId) ? data : null;
-            }
-            if (ketemu) {
-              // Cocok! Tampilkan tombol & tambahkan ID ke link
-              cinematicSwitchBtn.href = `alternate2.html?id=${tmdbId}`;
-              cinematicSwitchBtn.classList.add('show');
-              console.log("✅ Cocok dengan PlayCinematic, tombol ditampilkan");
-              return true;
-            }
-          }
-        } catch (err) {
-          console.warn("⚠️ Tidak ada di PlayCinematic atau gagal baca:", err);
+        if (videoWrapper) {
+          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
         }
-        // Tidak cocok → tombol tetap tersembunyi
-        cinematicSwitchBtn.classList.remove('show');
         return false;
       }
 
@@ -712,7 +631,7 @@
         }
       }
 
-      // ✅ [DIPERBAIKI] JALANKAN SEMUA — URUTAN DIUBAH: Cek PlayCinematic DULU
+      // ✅ JALANKAN SEMUA
       window.addEventListener('DOMContentLoaded', async () => {
         lucide.createIcons();
         currentMovieId = ambilIdDariUrl();
@@ -722,17 +641,7 @@
           }
           return;
         }
-
-        // 🔴 CEK PLAYCINEMATIC DULU → biar bendera tetap muncul meski tidak ada player utama
-        const adaCinematic = await cekPlayCinematic(currentMovieId);
-
-        // Baru cari player utama dari movies.json
-        const adaPlayer = await cekDanMuatFilm(currentMovieId);
-
-        // Tampilkan error HANYA kalau TIDAK ada player DAN TIDAK ada tombol bendera
-        if (!adaPlayer && !adaCinematic && videoWrapper) {
-          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
-        }
+        await cekDanMuatFilm(currentMovieId);
       });
     </script>
 
@@ -761,7 +670,7 @@
       }
       const ACTIVITY_EVENTS = [
         'touchstart', 'touchmove', 'touchend', 'touchcancel',
-        'mousedown', 'mousemove, 'mouseup', 'click',
+        'mousedown', 'mousemove', 'mouseup', 'click',
         'scroll', 'wheel', 'keydown'
       ];
       ACTIVITY_EVENTS.forEach(event => {
