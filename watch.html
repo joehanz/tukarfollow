@@ -15,7 +15,6 @@
     />
     <meta name="screen-orientation" content="any" />
     <meta name="fullscreen" content="yes" />
-
     <title>TUKARFOLLOW - Nonton Film</title>
     <meta
       name="description"
@@ -27,7 +26,6 @@
     />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="id" />
-
     <link
       rel="icon"
       href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
@@ -37,7 +35,6 @@
       rel="apple-touch-icon"
       href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
     />
-
     <meta property="og:type" content="video.movie" />
     <meta property="og:title" content="TUKARFOLLOW" />
     <meta
@@ -50,13 +47,11 @@
       content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp"
     />
     <meta property="og:site_name" content="TUKARFOLLOW" />
-
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
     />
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
           * {
             margin: 0;
@@ -64,7 +59,6 @@
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
           }
-
           html, body {
             background-color: #0a0a0a;
             color: #ffffff;
@@ -72,11 +66,9 @@
             width: 100vw;
             height: 100vh;
             font-size: 30px !important;
-            /* ✅ Izinkan perubahan orientasi */
             orientation: portrait;
             orientation: landscape;
           }
-
           .comments-panel {
             position: fixed;
             top: 0;
@@ -90,11 +82,9 @@
             display: flex;
             flex-direction: column;
           }
-
           .comments-panel.open {
             right: 0;
           }
-
           .comments-header {
             padding: 16px;
             background: #1e1e1e;
@@ -104,7 +94,6 @@
             align-items: center;
             font-weight: 500;
           }
-
           .close-comments {
             background: none;
             border: none;
@@ -119,24 +108,20 @@
             border-radius: 6px;
             transition: background 0.2s;
           }
-
           .close-comments:hover {
             background: #2a2a2a;
           }
-
           .comments-section {
             flex: 1;
             padding: 16px;
             overflow-y: auto;
           }
-
           .empty-comments {
             text-align: center;
             color: #888;
             padding: 40px 20px;
             font-size: 14px;
           }
-
           .comment-item {
             background: #1e1e1e;
             border-radius: 8px;
@@ -144,26 +129,22 @@
             margin-bottom: 12px;
             border: 1px solid #2a2a2a;
           }
-
           .comment-name {
             font-weight: 500;
             font-size: 14px;
             margin-bottom: 4px;
             color: #4facff;
           }
-
           .comment-text {
             font-size: 13px;
             line-height: 1.5;
             color: #ddd;
             margin-bottom: 6px;
           }
-
           .comment-date {
             font-size: 11px;
             color: #777;
           }
-
           .watch-layout {
             width: 100%;
             height: 100vh;
@@ -175,11 +156,9 @@
             position: relative;
             overflow: hidden;
           }
-
           .video-main-wrapper {
             position: relative;
             width: 100%;
-            /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
             height: calc(100vh - 40px);
             max-width: 125vw;
             margin: 0 auto;
@@ -187,8 +166,6 @@
             overflow: hidden;
             background: #000;
           }
-
-          /* ✅ Penutup kontrol bawaan video */
           .video-overlay {
             position: absolute;
             top: 0;
@@ -198,7 +175,6 @@
             z-index: 5;
             pointer-events: none;
           }
-          /* ✅ Area khusus tetap bisa diklik untuk subtitle/terjemah */
           .clickable-subtitle-area {
             position: absolute;
             bottom: 60px;
@@ -208,7 +184,6 @@
             z-index: 6;
             pointer-events: auto;
           }
-
           #filmIframe {
             width: 100%;
             height: 100%;
@@ -216,8 +191,6 @@
             object-fit: contain;
             background: #000;
           }
-
-          /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
           .watermark-logo {
             position: fixed;
             top: max(20px, env(safe-area-inset-top));
@@ -226,84 +199,55 @@
             opacity: 0.6;
             pointer-events: none;
           }
-
           .watermark-logo img {
             width: 80px;
             height: auto;
           }
-
-      /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
       .subtitle-layer {
         position: fixed;
         bottom: 0px;
         left: 0;
         right: 0;
-        height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
+        height: 48px;
         z-index: 999999;
-
-        /* Hapus background di induk */
         background: transparent;
-
         padding: 12px 16px;
         display: flex;
         justify-content: center;
         align-items: center;
         opacity: 1 !important;
-
-        /* Induk none agar area lobang di kanan bisa tembus klik ke subtitle asli */
         pointer-events: none !important;
       }
-
-      /* Supaya tombol-tombol nav situs Anda TETAP BISA DIKLIK */
       .subtitle-layer * {
         pointer-events: auto;
       }
-
-      /* ⬇️ SISIPAN BARU: Seting otomatis untuk menggeser grup kontrol situs ke kiri dari titik 0 ⬇️ */
-      /* Ganti .grup-kontrol-situs dengan class wrapper/pembungkus ikon grup kontrol situs Anda */
       .grup-kontrol-situs {
         position: absolute;
-
-        /* PANDUAN GESER: Patokan kiri layar adalah 0 */
-        left: 35%; /* Semakin KECIL persennya (misal: 30%, 25%), grup kontrol akan semakin geser ke KIRI secara otomatis di semua perangkat */
-
-        transform: translateX(-50%); /* Menjaga titik pusat ikon agar tetap presisi */
+        left: 35%;
+        transform: translateX(-50%);
       }
-
-      /* TAMENG KIRI: Tak terlihat tapi memblokir klik */
       .subtitle-layer::before {
         content: "";
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
-        right: 150px; /* Batas kiri lobang Anda */
-
-        /* TRIK: Menggunakan rgba dengan alpha 0. Visualnya 100% transparan (tidak norak),
-           tapi browser tetap menganggapnya ada wujud untuk memblokir klik! */
+        right: 150px;
         background: rgba(0, 0, 0, 0);
-
         z-index: -1;
-        pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+        pointer-events: auto;
       }
-
-      /* TAMENG KANAN: Tak terlihat tapi memblokir klik */
       .subtitle-layer::after {
         content: "";
         position: absolute;
         top: 0;
         bottom: 0;
-        left: calc(100% - 60px); /* Batas kanan lobang Anda */
+        left: calc(100% - 60px);
         right: 0;
-
-        /* TRIK yang sama: Transparan tapi tetap berwujud menahan klik */
         background: rgba(0, 0, 0, 0);
-
         z-index: -1;
-        pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+        pointer-events: auto;
       }
-
-
           .subtitle-controls {
             display: flex;
             align-items: center;
@@ -315,7 +259,6 @@
             border: 1px solid rgba(255,255,255,0.15);
             background: rgba(20,20,20,0.8);
           }
-
           .ctrl-btn {
             background: rgba(255,255,255,0.18);
             border: none;
@@ -329,18 +272,15 @@
             justify-content: center;
             transition: all 0.2s ease;
           }
-
           .ctrl-btn:hover {
             background: rgba(255,255,255,0.3);
             transform: scale(1.05);
           }
-
           .ctrl-btn svg,
           .ctrl-btn .custom-icon {
             width: 20px;
             height: 20px;
           }
-
           .search-container {
             position: fixed;
             top: max(16px, env(safe-area-inset-top));
@@ -353,12 +293,10 @@
             visibility: hidden;
             transition: all 0.3s ease;
           }
-
           .search-container.show {
             opacity: 1;
             visibility: visible;
           }
-
           .search-box {
             background: rgba(20,20,20,0.95);
             border-radius: 12px;
@@ -368,12 +306,10 @@
             border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
           }
-
           .search-box i {
             margin-right: 10px;
             color: #aaa;
           }
-
           #searchInput {
             flex: 1;
             background: transparent;
@@ -382,11 +318,9 @@
             color: #fff;
             font-size: 15px;
           }
-
           #searchInput::placeholder {
             color: #888;
           }
-
           .search-results-layer {
             margin-top: 8px;
             background: rgba(20,20,20,0.95);
@@ -396,11 +330,9 @@
             overflow-y: auto;
             display: none;
           }
-
           .search-results-layer.active {
             display: block;
           }
-
           .search-item-row {
             display: flex;
             align-items: center;
@@ -409,11 +341,9 @@
             cursor: pointer;
             transition: background 0.2s;
           }
-
           .search-item-row:hover {
             background: rgba(255,255,255,0.1);
           }
-
           .search-item-thumb {
             width: 50px;
             height: 70px;
@@ -421,17 +351,14 @@
             background-position: center;
             border-radius: 6px;
           }
-
           .search-item-info h4 {
             font-size: 14px;
             margin-bottom: 2px;
           }
-
           .search-item-info p {
             font-size: 12px;
             color: #999;
           }
-
           .panel-backdrop {
             position: fixed;
             inset: 0;
@@ -441,12 +368,10 @@
             visibility: hidden;
             transition: all 0.3s;
           }
-
           .panel-backdrop.active {
             opacity: 1;
             visibility: visible;
           }
-
           .info-panel {
             position: fixed;
             top: 50%;
@@ -463,27 +388,23 @@
             visibility: hidden;
             transition: all 0.3s ease;
           }
-
           .info-panel.show {
             opacity: 1;
             visibility: visible;
             transform: translate(-50%, -50%) scale(1);
           }
-
           .form-title {
             font-size: 16px;
             font-weight: 600;
             padding: 16px;
             border-bottom: 1px solid #2e2e2e;
           }
-
           .form-group {
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
           }
-
           .form-group input,
           .form-group textarea {
             width: 100%;
@@ -494,13 +415,11 @@
             color: #fff;
             font-size: 14px;
           }
-
           .form-group input:focus,
           .form-group textarea:focus {
             outline: none;
             border-color: #4facff;
           }
-
           .submit-btn {
             background: #2563eb;
             border: none;
@@ -511,12 +430,9 @@
             cursor: pointer;
             transition: background 0.2s;
           }
-
           .submit-btn:hover {
             background: #1d4ed8;
           }
-
-          /* ✅ PENTING: Semua elemen TETAP terlihat saat layar penuh & orientasi berubah */
           :fullscreen,
           :-webkit-full-screen,
           :-moz-full-screen,
@@ -524,7 +440,6 @@
             width: 100vw !important;
             height: 100vh !important;
           }
-
           :fullscreen .watermark-logo,
           :fullscreen .subtitle-layer,
           :-webkit-full-screen .watermark-logo,
@@ -538,8 +453,6 @@
             visibility: visible !important;
             z-index: 999999 !important;
           }
-
-          /* ✅ Khusus tampilan HP & PWA */
           @media (max-width: 768px) {
             .video-main-wrapper {
               width: 100vw;
@@ -555,8 +468,6 @@
               right: -95%;
             }
           }
-
-          /* ✅ Saat mode horizontal, pastikan lebar penuh */
           @media screen and (orientation: landscape) {
             .video-main-wrapper {
               width: 100vw;
@@ -574,7 +485,6 @@
     </style>
 <script>(function(s){s.dataset.zone='11568792',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
       </head>
-
   <body>
     <div class="comments-panel" id="commentsPanel">
       <div class="comments-header" id="commentsHeader">
@@ -589,7 +499,6 @@
         </div>
       </div>
     </div>
-
     <div class="watch-layout" id="watchLayout"></div>
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe
@@ -602,14 +511,10 @@
       <div class="video-overlay"></div>
       <div class="clickable-subtitle-area"></div>
     </div>
-
-
     <script>
   document.addEventListener("DOMContentLoaded", () => {
     const iframe = document.getElementById("filmIframe");
     const videoWrapper = document.getElementById("videoWrapper");
-
-    // Tampilkan gambar penutup saat halaman baru dibuka
     const dummyLayer = document.createElement("div");
     dummyLayer.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
@@ -617,26 +522,18 @@
       z-index:9999;
     `;
     videoWrapper.appendChild(dummyLayer);
-
-    // Tunggu 3 detik → munculkan lapisan klik
     setTimeout(() => {
       dummyLayer.style.display = "none";
-
       const overlay = document.createElement("div");
       overlay.style.cssText = `
         position:fixed;top:0;left:0;width:100%;height:100%;
         background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
       `;
       videoWrapper.appendChild(overlay);
-
-      // 📋 DAFTAR SEMUA IKLAN: lama + baru
       const daftarIklan = [
-        // === IKLAN LAMA KAMU ===
         "https://rajarayap.com",
         "https://caturbangunsentosa.blogspot.com",
         "https://ptdwiprima.blogspot.com",
-
-        // === IKLAN BARU DARI SITEMAP ===
         "https://rewangiklan.my.id/iklan.html?id=IKL000001",
         "https://rewangiklan.my.id/iklan.html?id=IKL000002",
         "https://rewangiklan.my.id/iklan.html?id=IKL000003",
@@ -674,20 +571,15 @@
         "https://rewangiklan.my.id/iklan.html?id=IKL000082",
         "https://rewangiklan.my.id/iklan.html?id=IKL000083"
       ];
-
-      // Saat diklik → pilih ACAK dari SEMUA iklan, buka tab baru
       overlay.addEventListener("click", () => {
         const iklanAcak = daftarIklan[Math.floor(Math.random() * daftarIklan.length)];
         window.open(iklanAcak, "_blank");
-
-        // Hilangkan penutup → film muncul
         overlay.remove();
         iframe.style.display = "block";
       }, { once:true });
     }, 3000);
   });
 </script>
-
     <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-controls">
         <button
@@ -707,7 +599,7 @@
         >
           <i data-lucide="message-square"></i>
         </button>
-        <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
+        <!-- ✅ TOMBOL BENDERA 1: Pemutar Alternatif Utama -->
         <button
           class="ctrl-btn"
           id="btnSubIndo"
@@ -715,11 +607,21 @@
           style="display: none;"
         >
           <svg viewBox="0 0 24 20" width="20" height="16">
-  <rect width="24" height="10" fill="#FF0000" />
-  <rect y="10" width="24" height="10" fill="#FFFFFF" />
-</svg>
-
-          
+            <rect width="24" height="10" fill="#FF0000" />
+            <rect y="10" width="24" height="10" fill="#FFFFFF" />
+          </svg>
+        </button>
+        <!-- ✅ TOMBOL BENDERA 2: Khusus PlayCinematic -->
+        <button
+          class="ctrl-btn"
+          id="btnSubIndo2"
+          title="Pemutar PlayCinematic"
+          style="display: none;"
+        >
+          <svg viewBox="0 0 24 20" width="20" height="16">
+            <rect width="24" height="10" fill="#FF0000" />
+            <rect y="10" width="24" height="10" fill="#FFFFFF" />
+          </svg>
         </button>
         <button
           class="ctrl-btn"
@@ -730,18 +632,14 @@
         </button>
       </div>
     </div>
-
     <div class="search-container" id="searchContainer">
       <div class="search-box">
         <i data-lucide="search" size="18" color="#888"></i>
         <input type="text" id="searchInput" placeholder="Cari film lain..." />
       </div>
     </div>
-
     <div class="search-results-layer" id="searchResultsLayer"></div>
-
     <div class="panel-backdrop" id="panelBackdrop"></div>
-
     <div class="info-panel" id="infoPanel">
       <div class="panel-content">
         <div class="form-title">Tulis Komentar Kamu</div>
@@ -763,30 +661,28 @@
         </div>
       </div>
     </div>
-
     <script src="sw.js"></script>
-
      <script>
 // 🔧 KONFIGURASI
 const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
 const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-
-// ✅ Alamat semua file JSON dari GitHub Pages
+// ✅ Alamat SEMUA 5 file JSON (termasuk playcinematic.json)
 const JSON_PATHS = [
   'https://midasxxi.github.io/tukarfollow/movies.json',
   'https://midasxxi.github.io/tukarfollow/movies2025.json',
   'https://midasxxi.github.io/tukarfollow/movies2024.json',
-  'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
+  'https://midasxxi.github.io/tukarfollow/moviesclassic.json',
+  'https://midasxxi.github.io/tukarfollow/playcinematic.json'
 ];
-
+// ✅ Alamat khusus pengecekan file playcinematic
+const JSON_PATH_PLAYCINEMATIC = 'https://midasxxi.github.io/tukarfollow/playcinematic.json';
 // ✅ Sumber Player: utama → cadangan
 const SUMBER_EMBED = {
   utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
   cadangan1: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
 };
-
 // 🎯 Elemen Halaman
 const videoWrapper    = document.getElementById('videoWrapper');
 const filmIframe      = document.getElementById('filmIframe');
@@ -794,13 +690,13 @@ const btnHomeBack     = document.getElementById('btnHomeBack');
 const btnAddComment   = document.getElementById('btnAddComment');
 const btnViewComments = document.getElementById('btnViewComments');
 const btnSubIndo      = document.getElementById('btnSubIndo');
+const btnSubIndo2     = document.getElementById('btnSubIndo2');
 const btnFullscreen   = document.getElementById('btnFullscreen');
 const commentsPanel   = document.getElementById('commentsPanel');
 const closeCommentsBtn= document.getElementById('closeCommentsBtn');
 const commentListEl   = document.getElementById('commentList');
 const infoPanel       = document.getElementById('infoPanel');
 const panelBackdrop   = document.getElementById('panelBackdrop');
-
 let currentMovieId = null;
 
 // ✅ SIMPAN POSISI GULUNGAN SEBELUM TUTUP HALAMAN
@@ -815,6 +711,20 @@ function ambilIdDariUrl() {
   const bagian = query.replace('?id=', '').split('/')[0];
   const idBersih = bagian.replace(/\D/g, '');
   return idBersih || null;
+}
+
+// ✅ Cek khusus: apakah ada di playcinematic.json?
+async function cekPlayCinematic(tmdbId) {
+  try {
+    const res = await fetch(JSON_PATH_PLAYCINEMATIC, { cache: "no-store" });
+    if (res.ok) {
+      const daftar = await res.json();
+      return daftar.some(f => Number(f.tmdb_id) === Number(tmdbId));
+    }
+  } catch (err) {
+    console.warn("⚠️ Gagal baca playcinematic.json:", err);
+  }
+  return false;
 }
 
 // ✅ Cek SEMUA JSON → cari ID, pasang iframe
@@ -836,7 +746,6 @@ async function cekDanMuatFilm(tmdbId) {
       console.warn("⚠️ Gagal baca:", path, err);
     }
   }
-  // ❌ Tidak ketemu → tetap pasang player
   ketemuDiJson = false;
   pasangIframeUtama(tmdbId);
   return ketemuDiJson;
@@ -861,7 +770,6 @@ btnFullscreen?.addEventListener('click', () => {
   }
   lucide.createIcons();
 });
-
 document.addEventListener('fullscreenchange', updateFullscreenIcon);
 function updateFullscreenIcon() {
   if (!btnFullscreen) return;
@@ -876,37 +784,40 @@ btnHomeBack?.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
-// ✅ Tombol Bendera → Buka Alternate Player + JUDUL SAMA DENGAN WATCH.HTML
-btnSubIndo?.addEventListener('click', async () => {
-  if (currentMovieId) {
-    let judulUrl = 'unknown';
-    const files = [
-      'https://midasxxi.github.io/tukarfollow/movies.json',
-      'https://midasxxi.github.io/tukarfollow/movies2025.json',
-      'https://midasxxi.github.io/tukarfollow/movies2024.json',
-      'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
-    ];
+// ✅ Fungsi bantu: cari judul dari semua JSON
+async function cariJudulDariSemuaJson(tmdbId) {
+  for (const file of JSON_PATHS) {
     try {
-      for (const file of files) {
-        const res = await fetch(file, { cache: "no-store" });
-        if (res.ok) {
-          const daftar = await res.json();
-          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(currentMovieId));
-          if (ketemu && ketemu.title) {
-            judulUrl = ketemu.title
-              .trim()
-              .toLowerCase()
-              .replace(/\s+/g, '-')
-              .replace(/[^a-z0-9-]/g, '')
-              .substring(0, 50);
-            break;
-          }
+      const res = await fetch(file, { cache: "no-store" });
+      if (res.ok) {
+        const daftar = await res.json();
+        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+        if (ketemu?.title) {
+          return ketemu.title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').substring(0, 50);
         }
       }
     } catch (err) {
       console.warn('⚠️ Gagal baca JSON:', err);
     }
+  }
+  return 'unknown';
+}
+
+// ✅ Tombol BENDERA 1 → Buka alternate.html
+btnSubIndo?.addEventListener('click', async () => {
+  if (currentMovieId) {
+    const judulUrl = await cariJudulDariSemuaJson(currentMovieId);
     window.location.href = `alternate.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
+  } else {
+    alert("ID film tidak ditemukan.");
+  }
+});
+
+// ✅ Tombol BENDERA 2 → Buka alternate2.html
+btnSubIndo2?.addEventListener('click', async () => {
+  if (currentMovieId) {
+    const judulUrl = await cariJudulDariSemuaJson(currentMovieId);
+    window.location.href = `alternate2.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
   } else {
     alert("ID film tidak ditemukan.");
   }
@@ -915,7 +826,6 @@ btnSubIndo?.addEventListener('click', async () => {
 // ✅ Komentar: Buka / Tutup Form
 btnAddComment?.addEventListener('click', bukaFormKomen);
 panelBackdrop?.addEventListener('click', tutupFormKomen);
-
 function bukaFormKomen() {
   infoPanel?.classList.add('show');
   panelBackdrop?.classList.add('active');
@@ -930,7 +840,6 @@ async function kirimKomentar() {
   const nama = document.getElementById('commentName')?.value.trim();
   const teks = document.getElementById('commentText')?.value.trim();
   if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
-
   try {
     await fetch(URL_APPS_SCRIPT, {
       method: 'POST',
@@ -958,7 +867,6 @@ closeCommentsBtn?.addEventListener('click', () => {
 async function muatKomentar() {
   if (!currentMovieId || !commentListEl) return;
   commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
-
   try {
     const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
     const hasil = await res.json();
@@ -982,111 +890,76 @@ async function muatKomentar() {
 window.addEventListener('DOMContentLoaded', async () => {
   lucide.createIcons();
   currentMovieId = ambilIdDariUrl();
-
   if (!currentMovieId) {
     if (videoWrapper) {
       videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
     }
     return;
   }
-
-  // Cek & pasang player
+  // Cek & pasang player utama
   const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
-
-  // Tampilkan tombol bendera HANYA kalau ada di daftar JSON
+  // Tampilkan tombol bendera 1 (dari semua JSON lama)
   if (btnSubIndo) {
     btnSubIndo.style.display = adaDiDaftarKita ? 'flex' : 'none';
   }
+  // ✅ Tampilkan tombol bendera 2 HANYA kalau ketemu di playcinematic.json
+  const adaDiPlayCinematic = await cekPlayCinematic(currentMovieId);
+  if (btnSubIndo2) {
+    btnSubIndo2.style.display = adaDiPlayCinematic ? 'flex' : 'none';
+  }
 });
 </script>
-
-
     <script>
-      // Ambil elemen wadah kontrol
       const subtitleLayer = document.getElementById('subLayer');
       const controls = subtitleLayer?.querySelector('.subtitle-controls');
       if (!controls) console.warn('Elemen kontrol tidak ditemukan');
-
       let hideTimer = null;
-      // Waktu diam sebelum sembunyi: 3 detik (bisa diubah)
       const HIDE_DELAY = 3000;
-
-      // Fungsi: Tampilkan kontrol
       function showControls() {
         if (!controls) return;
-        // Tampilkan dengan cara aman tanpa ubah gaya lain
         controls.style.opacity = '1';
         controls.style.pointerEvents = 'auto';
         controls.style.visibility = 'visible';
-        // Ulangi hitung waktu sembunyi
         resetHideTimer();
       }
-
-      // Fungsi: Sembunyikan kontrol
       function hideControls() {
         if (!controls) return;
         controls.style.opacity = '0';
         controls.style.pointerEvents = 'none';
         controls.style.visibility = 'hidden';
       }
-
-      // Fungsi: Atur ulang penghitung waktu
       function resetHideTimer() {
         clearTimeout(hideTimer);
         hideTimer = setTimeout(hideControls, HIDE_DELAY);
       }
-
-      // Daftar peristiwa yang sangat sensitif untuk mobile
       const ACTIVITY_EVENTS = [
-        'touchstart', 'touchmove', 'touchend', 'touchcancel', // Semua gerakan jari
-        'mousedown', 'mousemove', 'mouseup', 'click', // Ketukan/gerakan mouse
-        'scroll', 'wheel', 'keydown' // Geser/ketik
+        'touchstart', 'touchmove', 'touchend', 'touchcancel',
+        'mousedown', 'mousemove', 'mouseup', 'click',
+        'scroll', 'wheel', 'keydown'
       ];
-
-      // Pasang pendengar ke seluruh layar + pastikan tertangkap
       ACTIVITY_EVENTS.forEach(event => {
-        document.addEventListener(event, showControls, {
-          passive: true, // Agar tidak mengganggu geser layar
-          capture: true // Tangkap gerakan lebih dulu sebelum elemen lain
-        });
+        document.addEventListener(event, showControls, { passive: true, capture: true });
       });
-
-      // Juga tangkap ketukan langsung pada tombol kontrol
       controls?.addEventListener('click', showControls);
       controls?.addEventListener('touchstart', showControls);
-
-      // Mulai berjalan saat halaman siap
       document.addEventListener('DOMContentLoaded', () => {
         showControls();
       });
     </script>
     <script>
-          // FUNGSI PEMBERSIH LINK - KHUSUS HTML+JS SAJA
       function bersihkanLink(linkKotor) {
         if (!linkKotor) return linkKotor;
-
-        // 1. Ubah semua kode terenkripsi (%2F, %20 dll) jadi teks asli
         let link = decodeURIComponent(linkKotor);
-
         try {
-          // 2. Pisahkan bagian link agar aman diproses
           const u = new URL(link);
-
-          // 3. Daftar SEMUA pelacak dari SEMUA situs yang akan dibuang
           const buang = [
             'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
             'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
             'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
           ];
-
-          // 4. Hapus semua pelacak satu per satu
           buang.forEach(p => u.searchParams.delete(p));
-
-          // 5. Kembalikan link yang sudah bersih
           return u.toString();
-
         } catch {
-          // Kalau format link aneh, pakai cara cadangan
           link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
           return link.replace(/&+$/, '').replace(/\?&/, '?');
         }
@@ -1095,127 +968,60 @@ window.addEventListener('DOMContentLoaded', async () => {
     <script type="text/javascript">
               //<![CDATA[
               (function () {
-
-                /* ===============================
-                   KONFIGURASI
-                =============================== */
-                var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
-                var DETECT_DELAY = 1200; // ms
-
-                /* ===============================
-                   OVERLAY WARNING
-                =============================== */
+                var REDIRECT_URL = "/akses-ditolak.html";
+                var DETECT_DELAY = 1200;
                 function showWarning(msg){
                   if(document.getElementById('antiWarn')) return;
                   var d = document.createElement('div');
                   d.id = 'antiWarn';
                   d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
                   d.style = `
-                    position:fixed;
-                    top:0;left:0;
-                    width:100%;height:100%;
-                    background:rgba(0,0,0,.92);
-                    color:#fff;
-                    z-index:999999;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    text-align:center;
-                    font-size:22px;
-                    font-family:Arial,sans-serif
+                    position:fixed;top:0;left:0;width:100%;height:100%;
+                    background:rgba(0,0,0,.92);color:#fff;z-index:999999;
+                    display:flex;align-items:center;justify-content:center;
+                    text-align:center;font-size:22px;font-family:Arial,sans-serif
                   `;
                   document.body.appendChild(d);
-
-                  setTimeout(function(){
-                    location.href = REDIRECT_URL;
-                  }, 2500);
+                  setTimeout(function(){ location.href = REDIRECT_URL; }, 2500);
                 }
-
-                /* ===============================
-                   DISABLE KLIK KANAN
-                =============================== */
                 document.addEventListener('contextmenu', function (e) {
-                  e.preventDefault();
-                  showWarning('🚫 Klik kanan dinonaktifkan');
+                  e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan');
                 });
-
-                /* ===============================
-                   DISABLE SHORTCUT KEY
-                =============================== */
                 document.addEventListener('keydown', function (e) {
-
-                  if (
-                    (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
-                    (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
-                    e.keyCode === 123 // F12
-                  ) {
-                    e.preventDefault();
-                    showWarning('🚫 Akses developer tidak diizinkan');
+                  if ((e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) ||
+                      (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) ||
+                       e.keyCode === 123) {
+                    e.preventDefault(); showWarning('🚫 Akses developer tidak diizinkan');
                   }
-
                 });
-
-                /* ===============================
-                   DETEKSI DEVTOOLS (TRICK CONSOLE)
-                =============================== */
                 setInterval(function(){
                   var t = new Image();
-                  Object.defineProperty(t,'id',{
-                    get:function(){
-                      showWarning('🛑 DevTools terdeteksi');
-                      throw 'DevTools Blocked';
-                    }
-                  });
+                  Object.defineProperty(t,'id',{get:function(){
+                    showWarning('🛑 DevTools terdeteksi'); throw 'DevTools Blocked';
+                  }});
                   console.log(t);
                 }, DETECT_DELAY);
-
-                /* ===============================
-                   DISABLE SELECT & DRAG
-                =============================== */
                 var css = document.createElement('style');
                 css.innerHTML = `
-                  body {
-                    -webkit-user-select:none;
-                    -moz-user-select:none;
-                    -ms-user-select:none;
-                    user-select:none;
-                  }
-                  img {
-                    pointer-events:none;
-                  }
+                  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+                  img{pointer-events:none;}
                 `;
                 document.head.appendChild(css);
-
-               /* ===============================
-                   WATERMARK HALUS
-                =============================== */
-      var wm = document.createElement('div');
-
-      wm.innerHTML = 'Web design by joehanz';
-
-      wm.title = 'Providing website creation services at affordable prices';
-
-      // Hapus fungsi onclick agar tidak bisa diklik
-      // wm.onclick = function(){
-      //   window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-      // };
-
-      // Ubah kursor jadi default (bukan tanda tangan/link)
-      wm.style.cursor = 'default';
-
-      wm.style.position = 'fixed';
-      wm.style.bottom = '6px';
-      wm.style.right = '5%';
-      wm.style.opacity = '.25';
-      wm.style.fontSize = '11px';
-      wm.style.zIndex = '999999';
-      wm.style.color = '#fff';
-
-            document.body.appendChild(wm);
+                var wm = document.createElement('div');
+                wm.innerHTML = 'Web design by joehanz';
+                wm.title = 'Providing website creation services at affordable prices';
+                wm.style.cursor = 'default';
+                wm.style.position = 'fixed';
+                wm.style.bottom = '6px';
+                wm.style.right = '5%';
+                wm.style.opacity = '.25';
+                wm.style.fontSize = '11px';
+                wm.style.zIndex = '999999';
+                wm.style.color = '#fff';
+                document.body.appendChild(wm);
               })();
               //]]>
     </script>
-
     <div class="watermark-logo" id="logoTukarFollow">
   <img 
     src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" 
