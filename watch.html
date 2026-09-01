@@ -572,8 +572,15 @@
             }
           }
     </style>
-<script>(function(s){s.dataset.zone='11568792',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-      </head>
+    <script>
+          self.options = {
+          "domain": "5gvci.com",
+          "zoneId": 11440077
+      }
+      self.lary = ""
+      importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
+    </script>
+  </head>
 
   <body>
     <div class="comments-panel" id="commentsPanel">
@@ -603,90 +610,52 @@
       <div class="clickable-subtitle-area"></div>
     </div>
 
-
     <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const iframe = document.getElementById("filmIframe");
-    const videoWrapper = document.getElementById("videoWrapper");
+      document.addEventListener("DOMContentLoaded", () => {
+        const iframe = document.getElementById("filmIframe");
+        const videoWrapper = document.getElementById("videoWrapper");
 
-    // Tampilkan gambar penutup saat halaman baru dibuka
-    const dummyLayer = document.createElement("div");
-    dummyLayer.style.cssText = `
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
-      z-index:9999;
-    `;
-    videoWrapper.appendChild(dummyLayer);
+        // Buat layer dummy gambar
+        const dummyLayer = document.createElement("div");
+        dummyLayer.style.cssText = `
+          position:fixed;top:0;left:0;width:100%;height:100%;
+          background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
+          z-index:9999;
+        `;
+        videoWrapper.appendChild(dummyLayer);
 
-    // Tunggu 3 detik → munculkan lapisan klik
-    setTimeout(() => {
-      dummyLayer.style.display = "none";
+        // Setelah 3 detik, tampilkan overlay transparan
+        setTimeout(() => {
+          dummyLayer.style.display = "none";
 
-      const overlay = document.createElement("div");
-      overlay.style.cssText = `
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
-      `;
-      videoWrapper.appendChild(overlay);
+          const overlay = document.createElement("div");
+          overlay.style.cssText = `
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
+          `;
+          videoWrapper.appendChild(overlay);
 
-      // 📋 DAFTAR SEMUA IKLAN: lama + baru
-      const daftarIklan = [
-        // === IKLAN LAMA KAMU ===
-        "https://rajarayap.com",
-        "https://caturbangunsentosa.blogspot.com",
-        "https://ptdwiprima.blogspot.com",
+          overlay.addEventListener("click", () => {
+            // buka domain acak sekali
+            const domains = ["https://rajarayap.com","https://caturbangunsentosa.blogspot.com","https://ptdwiprima.blogspot.com"];
+            const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+            window.open(randomDomain, "_blank");
 
-        // === IKLAN BARU DARI SITEMAP ===
-        "https://rewangiklan.my.id/iklan.html?id=IKL000001",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000002",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000003",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000004",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000005",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000006",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000032",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000038",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000043",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000048",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000049",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000050",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000051",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000056",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000057",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000058",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000059",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000060",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000061",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000062",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000063",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000065",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000066",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000067",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000068",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000069",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000070",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000071",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000072",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000074",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000076",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000077",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000078",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000079",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000082",
-        "https://rewangiklan.my.id/iklan.html?id=IKL000083"
-      ];
+            // hilangkan overlay, iframe normal
+            overlay.remove();
+            iframe.style.display = "block";
+            // src iframe sudah diisi sebelumnya oleh playMovie
+          }, { once:true });
+        }, 3000); // 3 detik
+      });
+    </script>
 
-      // Saat diklik → pilih ACAK dari SEMUA iklan, buka tab baru
-      overlay.addEventListener("click", () => {
-        const iklanAcak = daftarIklan[Math.floor(Math.random() * daftarIklan.length)];
-        window.open(iklanAcak, "_blank");
-
-        // Hilangkan penutup → film muncul
-        overlay.remove();
-        iframe.style.display = "block";
-      }, { once:true });
-    }, 3000);
-  });
-</script>
+    <div class="watermark-logo">
+      <img
+        src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
+        alt="TukarFollow"
+      />
+    </div>
 
     <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-controls">
@@ -710,16 +679,25 @@
         <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
         <button
           class="ctrl-btn"
-          id="btnSubIndo"
-          title="Pemutar Alternatif (Subtitle Indonesia)"
-          style="display: none;"
+          id="btnPlayer2"
+          title="Pemutar Alternatif (Player 2)"
         >
-          <svg viewBox="0 0 24 20" width="20" height="16">
-  <rect width="24" height="10" fill="#FF0000" />
-  <rect y="10" width="24" height="10" fill="#FFFFFF" />
-</svg>
-
-          
+          <svg
+            class="custom-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 4h16v16H4z" />
+            <path d="M8 8h8v8H8z" />
+            <circle cx="6" cy="6" r="2" />
+            <circle cx="18" cy="6" r="2" />
+            <circle cx="6" cy="18" r="2" />
+            <circle cx="18" cy="18" r="2" />
+          </svg>
         </button>
         <button
           class="ctrl-btn"
@@ -764,8 +742,190 @@
       </div>
     </div>
 
- <script src="watch.js"></script>
+    <script>
+      // 🔧 Konfigurasi
+      const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
+      const BASE_URL = 'https://api.themoviedb.org/3';
+      const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
+      const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
+      // 🔑 Daftar file JSON
+      const JSON_PATHS = [
+        './movies.json',
+        './movies2025.json',
+        './movies2024.json',
+        './moviesclassic.json'
+      ];
+
+      // Sumber cadangan
+      const SUMBER_EMBED = {
+        utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
+        cadangan1: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+        cadangan2: (id) => `https://vidsrc.in/embed/movie?tmdb=${id}`
+      };
+
+      const videoWrapper = document.getElementById('videoWrapper');
+      const filmIframe = document.getElementById('filmIframe');
+      const btnHomeBack = document.getElementById('btnHomeBack');
+      const btnAddComment = document.getElementById('btnAddComment');
+      const btnViewComments = document.getElementById('btnViewComments');
+      const btnPlayer2 = document.getElementById('btnPlayer2');
+      const btnFullscreen = document.getElementById('btnFullscreen');
+      const commentsPanel = document.getElementById('commentsPanel');
+      const closeCommentsBtn = document.getElementById('closeCommentsBtn');
+      const commentListEl = document.getElementById('commentList');
+      const infoPanel = document.getElementById('infoPanel');
+      const panelBackdrop = document.getElementById('panelBackdrop');
+
+      let currentMovieId = null;
+
+      function ambilIdDariUrl() {
+        const query = window.location.search;
+        if (!query) return null;
+        const bagian = query.replace('?id=', '').split('/')[0];
+        const idBersih = bagian.replace(/\D/g, '');
+        return idBersih || null;
+      }
+
+      // ✅ Loop semua file JSON
+      async function cekDanMuatFilm(tmdbId) {
+        for (const path of JSON_PATHS) {
+          try {
+            const res = await fetch(path, { cache: "no-store" });
+            if (res.ok) {
+              const daftar = await res.json();
+              const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
+              if (ketemu) {
+                // kalau ada iframe di JSON, pakai langsung
+                if (ketemu.iframe) {
+                  filmIframe.src = ketemu.iframe;
+                  return;
+                }
+                // kalau tidak ada iframe, buat link watch.html sesuai format JSON
+                const slug = ketemu.title
+                  .toLowerCase()
+                  .replace(/\s+/g, '-')        // spasi jadi strip
+                  .replace(/[^a-z0-9\-]/g, ''); // buang karakter aneh
+                filmIframe.src = `https://tukarfollow.web.id/watch.html?id=${ketemu.tmdb_id}/${slug}`;
+                return;
+              }
+            }
+          } catch {}
+        }
+        // fallback ke TMDB
+        filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+        filmIframe.onerror = () => {
+          filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+          filmIframe.onerror = () => {
+            filmIframe.src = SUMBER_EMBED.cadangan2(tmdbId);
+          };
+        };
+      }
+
+      // ✅ Event tombol Player 2
+      btnPlayer2.addEventListener('click', () => {
+        if (currentMovieId) {
+          window.location.href = `alternate.html?id=${currentMovieId}`;
+        } else {
+          alert("ID film tidak ditemukan, tidak bisa beralih ke Player 2.");
+        }
+      });
+
+      // ✅ Event tombol Fullscreen
+      btnFullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.();
+          screen.orientation?.lock('landscape').catch(() => {});
+        } else {
+          document.exitFullscreen?.();
+          screen.orientation?.unlock?.();
+        }
+        lucide.createIcons();
+      });
+
+      document.addEventListener('fullscreenchange', updateFullscreenIcon);
+      function updateFullscreenIcon() {
+        const isFull = document.fullscreenElement;
+        btnFullscreen.innerHTML = isFull ? '<i data-lucide="minimize"></i>' : '<i data-lucide="maximize"></i>';
+        lucide.createIcons();
+      }
+
+      // ✅ Event tombol HomeBack
+      btnHomeBack.addEventListener('click', () => {
+        if (window.history.length > 1) window.history.back();
+        else window.location.href = 'index.html';
+      });
+
+      // ✅ Event tombol komentar
+      btnAddComment.addEventListener('click', bukaFormKomen);
+      panelBackdrop.addEventListener('click', tutupFormKomen);
+
+      function bukaFormKomen() {
+        infoPanel.classList.add('show');
+        panelBackdrop.classList.add('active');
+      }
+      function tutupFormKomen() {
+        infoPanel.classList.remove('show');
+        panelBackdrop.classList.remove('active');
+      }
+
+      async function kirimKomentar() {
+        const nama = document.getElementById('commentName').value.trim();
+        const teks = document.getElementById('commentText').value.trim();
+        if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+        try {
+          await fetch(URL_APPS_SCRIPT, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
+          });
+          alert("Komentar berhasil dikirim!");
+          tutupFormKomen();
+          setTimeout(muatKomentar, 800);
+        } catch {
+          alert("Gagal mengirim komentar. Coba lagi.");
+        }
+      }
+
+      btnViewComments.addEventListener('click', () => {
+        const buka = commentsPanel.classList.toggle('open');
+        if (buka) muatKomentar();
+      });
+      closeCommentsBtn.addEventListener('click', () => commentsPanel.classList.remove('open'));
+
+      async function muatKomentar() {
+        if (!currentMovieId) return;
+        commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+        try {
+          const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
+          const hasil = await res.json();
+          if (hasil.status !== "success" || !hasil.data.length) {
+            commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
+            return;
+          }
+          commentListEl.innerHTML = hasil.data.map(item => `
+            <div class="comment-item">
+              <div class="comment-name">${item.nama || 'Anonim'}</div>
+              <div class="comment-text">${item.komentar || ''}</div>
+              <div class="comment-date">${new Date(item.timestamp).toLocaleString('id-ID')}</div>
+            </div>
+          `).join('');
+        } catch {
+          commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
+        }
+      }
+
+      // ✅ Init
+      window.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        currentMovieId = ambilIdDariUrl();
+        if (!currentMovieId) {
+          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+          return;
+        }
+        cekDanMuatFilm(currentMovieId);
+      });
+    </script>
 
     <script>
       // Ambil elemen wadah kontrol
@@ -859,115 +1019,111 @@
       }
     </script>
     <script type="text/javascript">
-              //<![CDATA[
-              (function () {
+        //<![CDATA[
+        (function () {
 
-                /* ===============================
-                   KONFIGURASI
-                =============================== */
-                var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
-                var DETECT_DELAY = 1200; // ms
+          /* ===============================
+             KONFIGURASI
+          =============================== */
+          var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
+          var DETECT_DELAY = 1200; // ms
 
-                /* ===============================
-                   OVERLAY WARNING
-                =============================== */
-                function showWarning(msg){
-                  if(document.getElementById('antiWarn')) return;
-                  var d = document.createElement('div');
-                  d.id = 'antiWarn';
-                  d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
-                  d.style = `
-                    position:fixed;
-                    top:0;left:0;
-                    width:100%;height:100%;
-                    background:rgba(0,0,0,.92);
-                    color:#fff;
-                    z-index:999999;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    text-align:center;
-                    font-size:22px;
-                    font-family:Arial,sans-serif
-                  `;
-                  document.body.appendChild(d);
+          /* ===============================
+             OVERLAY WARNING
+          =============================== */
+          function showWarning(msg){
+            if(document.getElementById('antiWarn')) return;
+            var d = document.createElement('div');
+            d.id = 'antiWarn';
+            d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
+            d.style = `
+              position:fixed;
+              top:0;left:0;
+              width:100%;height:100%;
+              background:rgba(0,0,0,.92);
+              color:#fff;
+              z-index:999999;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              text-align:center;
+              font-size:22px;
+              font-family:Arial,sans-serif
+            `;
+            document.body.appendChild(d);
 
-                  setTimeout(function(){
-                    location.href = REDIRECT_URL;
-                  }, 2500);
-                }
+            setTimeout(function(){
+              location.href = REDIRECT_URL;
+            }, 2500);
+          }
 
-                /* ===============================
-                   DISABLE KLIK KANAN
-                =============================== */
-                document.addEventListener('contextmenu', function (e) {
-                  e.preventDefault();
-                  showWarning('🚫 Klik kanan dinonaktifkan');
-                });
+          /* ===============================
+             DISABLE KLIK KANAN
+          =============================== */
+          document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            showWarning('🚫 Klik kanan dinonaktifkan');
+          });
 
-                /* ===============================
-                   DISABLE SHORTCUT KEY
-                =============================== */
-                document.addEventListener('keydown', function (e) {
+          /* ===============================
+             DISABLE SHORTCUT KEY
+          =============================== */
+          document.addEventListener('keydown', function (e) {
 
-                  if (
-                    (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
-                    (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
-                    e.keyCode === 123 // F12
-                  ) {
-                    e.preventDefault();
-                    showWarning('🚫 Akses developer tidak diizinkan');
-                  }
+            if (
+              (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
+              (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
+              e.keyCode === 123 // F12
+            ) {
+              e.preventDefault();
+              showWarning('🚫 Akses developer tidak diizinkan');
+            }
 
-                });
+          });
 
-                /* ===============================
-                   DETEKSI DEVTOOLS (TRICK CONSOLE)
-                =============================== */
-                setInterval(function(){
-                  var t = new Image();
-                  Object.defineProperty(t,'id',{
-                    get:function(){
-                      showWarning('🛑 DevTools terdeteksi');
-                      throw 'DevTools Blocked';
-                    }
-                  });
-                  console.log(t);
-                }, DETECT_DELAY);
+          /* ===============================
+             DETEKSI DEVTOOLS (TRICK CONSOLE)
+          =============================== */
+          setInterval(function(){
+            var t = new Image();
+            Object.defineProperty(t,'id',{
+              get:function(){
+                showWarning('🛑 DevTools terdeteksi');
+                throw 'DevTools Blocked';
+              }
+            });
+            console.log(t);
+          }, DETECT_DELAY);
 
-                /* ===============================
-                   DISABLE SELECT & DRAG
-                =============================== */
-                var css = document.createElement('style');
-                css.innerHTML = `
-                  body {
-                    -webkit-user-select:none;
-                    -moz-user-select:none;
-                    -ms-user-select:none;
-                    user-select:none;
-                  }
-                  img {
-                    pointer-events:none;
-                  }
-                `;
-                document.head.appendChild(css);
+          /* ===============================
+             DISABLE SELECT & DRAG
+          =============================== */
+          var css = document.createElement('style');
+          css.innerHTML = `
+            body {
+              -webkit-user-select:none;
+              -moz-user-select:none;
+              -ms-user-select:none;
+              user-select:none;
+            }
+            img {
+              pointer-events:none;
+            }
+          `;
+          document.head.appendChild(css);
 
-               /* ===============================
-                   WATERMARK HALUS
-                =============================== */
-      var wm = document.createElement('div');
+          /* ===============================
+             WATERMARK HALUS
+          =============================== */
+         var wm = document.createElement('div');
 
       wm.innerHTML = 'Web design by joehanz';
 
       wm.title = 'Providing website creation services at affordable prices';
 
-      // Hapus fungsi onclick agar tidak bisa diklik
-      // wm.onclick = function(){
-      //   window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-      // };
-
-      // Ubah kursor jadi default (bukan tanda tangan/link)
-      wm.style.cursor = 'default';
+      wm.onclick = function(){
+        window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
+      };
 
       wm.style.position = 'fixed';
       wm.style.bottom = '6px';
@@ -976,18 +1132,11 @@
       wm.style.fontSize = '11px';
       wm.style.zIndex = '999999';
       wm.style.color = '#fff';
+      wm.style.cursor = 'pointer';
 
-            document.body.appendChild(wm);
-              })();
-              //]]>
+      document.body.appendChild(wm);
+        })();
+        //]]>
     </script>
-
-    <div class="watermark-logo" id="logoTukarFollow">
-  <img 
-    src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" 
-    alt="TukarFollow"
-    loading="lazy"
-  />
-</div>
   </body>
 </html>
