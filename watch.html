@@ -676,28 +676,13 @@
         >
           <i data-lucide="message-square"></i>
         </button>
-        <!-- ✅ TOMBOL BARU: Player 2 dengan ikon kamera film -->
+                <!-- ✅ TOMBOL: Subtitle Indonesia (Bendera) -->
         <button
           class="ctrl-btn"
-          id="btnPlayer2"
-          title="Pemutar Alternatif (Player 2)"
+          id="btnSubIndo"
+          title="Pemutar Alternatif + Subtitle Indonesia"
         >
-          <svg
-            class="custom-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M4 4h16v16H4z" />
-            <path d="M8 8h8v8H8z" />
-            <circle cx="6" cy="6" r="2" />
-            <circle cx="18" cy="6" r="2" />
-            <circle cx="6" cy="18" r="2" />
-            <circle cx="18" cy="18" r="2" />
-          </svg>
+          <span style="font-size:18px; line-height:1;">🇮🇩</span>
         </button>
         <button
           class="ctrl-btn"
@@ -769,7 +754,6 @@ const filmIframe      = document.getElementById('filmIframe');
 const btnHomeBack     = document.getElementById('btnHomeBack');
 const btnAddComment   = document.getElementById('btnAddComment');
 const btnViewComments = document.getElementById('btnViewComments');
-const btnSubIndo      = document.getElementById('btnSubIndo');
 const btnFullscreen   = document.getElementById('btnFullscreen');
 const commentsPanel   = document.getElementById('commentsPanel');
 const closeCommentsBtn= document.getElementById('closeCommentsBtn');
@@ -784,11 +768,11 @@ window.addEventListener('beforeunload', () => {
   localStorage.setItem('posisiGulunganFilm', window.scrollY);
 });
 
-// ✅ Ambil ID Film dari URL
+// ✅ Ambil ID Film dari URL format ?id=12345/judul-film
 function ambilIdDariUrl() {
   const query = window.location.search;
   if (!query) return null;
-  const bagian = query.replace('?id=', '').split('/')[0];
+  const bagian = query.replace('?id=', '').split('/')[0]; // ambil angka sebelum /
   const idBersih = bagian.replace(/\D/g, '');
   return idBersih || null;
 }
@@ -852,10 +836,10 @@ btnHomeBack?.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
-// ✅ Tombol Bendera → Buka Alternate Player + JUDUL SAMA DENGAN WATCH.HTML
+// ✅ Tombol Bendera → Buka Alternate Player + Sub Indo
 btnSubIndo?.addEventListener('click', async () => {
   if (currentMovieId) {
-    let judulUrl = 'unknown';
+    let judulUrl = 'film';
     const files = [
       'https://midasxxi.github.io/tukarfollow/movies.json',
       'https://midasxxi.github.io/tukarfollow/movies2025.json',
@@ -882,6 +866,7 @@ btnSubIndo?.addEventListener('click', async () => {
     } catch (err) {
       console.warn('⚠️ Gagal baca JSON:', err);
     }
+    // Buka alternate.html dengan format id/judul
     window.location.href = `alternate.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
   } else {
     alert("ID film tidak ditemukan.");
