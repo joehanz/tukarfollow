@@ -767,22 +767,24 @@
           }
         `;
         document.head.appendChild(css);
-        var wm = document.createElement('div');
-        wm.innerHTML = 'tukarfollow.web.id';
-        wm.title = 'Providing website creation services at affordable prices';
-        wm.style.cursor = 'default';
-        wm.style.position = 'fixed';
-        wm.style.bottom = '25px';
-        wm.style.left = '2%';
-        wm.style.opacity = '.50';
-        wm.style.fontWeight = 'bold';
-        wm.style.backgroundColor = '';
-        wm.style.color = '#fff';
-        wm.style.padding = '2px 6px';
-        wm.style.fontSize = '20px';
-        wm.style.zIndex = '999999';
-        document.body.appendChild(wm);
-      })();
+
+        /* ===============================
+             WATERMARK HALUS
+          =============================== */
+         var wm = document.createElement('div');
+      wm.innerHTML = 'Web design by joehanz';
+      wm.title = '';
+      // LINK DIMATIKAN — TIDAK BISA DIKLIK
+      wm.style.position = 'fixed';
+      wm.style.bottom = '6px';
+      wm.style.right = '5%';
+      wm.style.opacity = '.25';
+      wm.style.fontSize = '11px';
+      wm.style.zIndex = '999999';
+      wm.style.color = '#fff';
+      wm.style.cursor = 'default';
+      document.body.appendChild(wm);
+        })();
       //]]>
     </script>
 
