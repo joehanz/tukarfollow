@@ -1150,28 +1150,22 @@ window.addEventListener('DOMContentLoaded', async () => {
           /* ===============================
              WATERMARK HALUS
           =============================== */
-         var wm = document.createElement('div');
-
-      wm.innerHTML = 'Web design by joehanz';
-
-      wm.title = 'Providing website creation services at affordable prices';
-
-      wm.onclick = function(){
-        window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
-      };
-
-      wm.style.position = 'fixed';
-      wm.style.bottom = '6px';
-      wm.style.right = '5%';
-      wm.style.opacity = '.25';
-      wm.style.fontSize = '11px';
-      wm.style.zIndex = '999999';
-      wm.style.color = '#fff';
-      wm.style.cursor = 'pointer';
-
-      document.body.appendChild(wm);
-        })();
-        //]]>
-    </script>
-  </body>
+          var wm = document.createElement('div');
+          wm.innerHTML = 'Web design by joehanz';
+          wm.title = '';
+          
+          // LINK DIMATIKAN — TIDAK BISA DIKLIK
+          wm.style.position = 'fixed';
+          wm.style.bottom = '6px';
+          wm.style.right = '5%';
+          wm.style.opacity = '.25';
+          wm.style.fontSize = '11px';
+          wm.style.zIndex = '999999';
+          wm.style.color = '#fff';
+          wm.style.cursor = 'default';
+          document.body.appendChild(wm);
+          })();
+      //]]>
+      </script>
+    </body>
 </html>
