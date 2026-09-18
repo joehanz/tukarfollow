@@ -369,11 +369,11 @@
 
   <script>
 // ==============================================
-// ✅ ALTERNATE.HTML — Langsung Pemutar Abyss
-// Lewati baca daftar karena api.abyss.to diblokir
+// ✅ ALTERNATE.HTML — Pakai Apps Script sebagai Jembatan
+// Cocokkan TMDB ID → dapatkan KODE ABYSS → buka pemutar
 // ==============================================
 const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-const ABYSS_ENDPOINT = 'https://api.abyss.to';
+const ABYSS_PLAYER_BASE = 'https://api.abyss.to/player/';
 
 // 🎯 Elemen
 const filmIframe = document.getElementById('filmIframe');
@@ -389,6 +389,7 @@ const infoPanel = document.getElementById('infoPanel');
 const panelBackdrop = document.getElementById('panelBackdrop');
 
 let currentMovieId = null;
+let currentMovieTitle = '';
 
 // ✅ Ambil ID & Judul dari URL ?id=12345/judul
 function ambilDariUrl() {
@@ -402,9 +403,41 @@ function ambilDariUrl() {
   };
 }
 
-// ✅ LANGSUNG BUKA PEMUTAR — TANPA BACA DAFTAR
-function bukaPemutarAbyss(tmdbId) {
-  if (!tmdbId) {
+// ✅ Cocokkan lewat Apps Script → dapatkan KODE ABYSS
+async function dapatkanKodeAbyss(tmdbId, judulDariUrl = '') {
+  if (!tmdbId) return null;
+
+  try {
+    console.log('🔍 Cari kode Abyss untuk TMDB ID:', tmdbId);
+
+    // Minta Apps Script yang BACA langsung ke Abyss
+    const res = await fetch(`${URL_APPS_SCRIPT}?action=cariAbyss&tmdbId=${tmdbId}&judul=${encodeURIComponent(judulDariUrl)}`, {
+      cache: "no-store"
+    });
+
+    const hasil = await res.json();
+    console.log('📦 Hasil dari Apps Script:', hasil);
+
+    if (hasil.status === 'success' && hasil.kodeAbyss) {
+      return hasil.kodeAbyss; // ← Contoh: "JhGHsElQU"
+    }
+
+    // Fallback: buka halaman pencarian Abyss kalau tidak ketemu
+    return null;
+
+  } catch (err) {
+    console.warn('⚠️ Gagal hubung Apps Script:', err);
+    return null;
+  }
+}
+
+// ✅ Pasang Pemutar
+async function pasangPemutar() {
+  const { id, judul } = ambilDariUrl();
+  currentMovieId = id;
+  currentMovieTitle = judul;
+
+  if (!currentMovieId) {
     videoWrapper.innerHTML = `
       <div class="status-info error">
         <h3>ID Film tidak ditemukan</h3>
@@ -414,11 +447,32 @@ function bukaPemutarAbyss(tmdbId) {
     return;
   }
 
-  // Format pemutar Abyss — langsung buka tanpa cek daftar
-  const linkPemutar = `${ABYSS_ENDPOINT}/embed/${tmdbId}`;
-  console.log('▶️ Buka pemutar:', linkPemutar);
-  
-  filmIframe.src = linkPemutar;
+  // Tampilkan status memuat
+  videoWrapper.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#fff;">
+      <div>
+        <p>🔎 Mencari di Abyss...</p>
+      </div>
+    </div>
+  `;
+
+  const kodeAbyss = await dapatkanKodeAbyss(currentMovieId, currentMovieTitle);
+
+  if (kodeAbyss) {
+    // ✅ DAPAT KODE → BUKA PEMUTAR
+    console.log('✅ Kode Abyss:', kodeAbyss);
+    filmIframe.src = `${ABYSS_PLAYER_BASE}${kodeAbyss}`;
+  } else {
+    // ❌ Tidak ketemu → tampilkan info manual
+    videoWrapper.innerHTML = `
+      <div class="status-info error">
+        <h3>Film belum terdaftar di Abyss</h3>
+        <p>TMDB ID: ${currentMovieId}</p>
+        <p style="font-size:14px; color:#aaa; margin:10px 0;">Unggah file film di dashboard Abyss lalu cocokkan namanya</p>
+        <button class="submit-btn" style="margin-top:10px;" onclick="window.history.back()">Kembali</button>
+      </div>
+    `;
+  }
 }
 
 // ✅ Layar Penuh
@@ -506,7 +560,7 @@ async function muatKomentar() {
   }
 }
 
-// ✅ Kontrol otomatis sembunyi/tampil
+// ✅ Kontrol Subtitle
 const subtitleLayer = document.getElementById('subLayer');
 const controls = subtitleLayer?.querySelector('.subtitle-controls');
 let hideTimer = null;
@@ -531,15 +585,7 @@ function showControls() {
 controls?.addEventListener('click', showControls);
 
 // ✅ JALANKAN
-window.addEventListener('DOMContentLoaded', () => {
-  lucide.createIcons();
-  const { id } = ambilDariUrl();
-  currentMovieId = id;
-  
-  // Langsung buka pemutar — TIDAK cek daftar lagi
-  bukaPemutarAbyss(currentMovieId);
-  showControls();
-});
+window.addEventListener('DOMContentLoaded', pasangPemutar);
 </script>
 
     <script type="text/javascript">
