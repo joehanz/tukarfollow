@@ -2,13 +2,12 @@ const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
 
-// === ABYSS SAJA — SEMUA JSON LAMA DIHAPUS ===
+// ==============================================
+// 🔌 MURNI API ABYSS — TANPA FILE JSON LOKAL
+// ==============================================
 const ABYSS_ENDPOINT = 'https://api.abyss.to';
 const ABYSS_API_KEY = '22eef122604d349b3de00257ae5ed34b';
 const ABYSS_LIST_URL = `${ABYSS_ENDPOINT}/v1/list/all?apikey=${ABYSS_API_KEY}`;
-
-const JSON_FILES = [ABYSS_LIST_URL];
-// =============================================
 
 const feedContainer = document.getElementById('feedContainer');
 const searchContainer = document.getElementById('searchContainer');
@@ -25,6 +24,9 @@ let currentActiveSection = null;
 let isDesktop = false;
 const SCROLL_POS_KEY = 'feedScrollPosition';
 
+// ==============================================
+// 📱 Deteksi Perangkat
+// ==============================================
 function detectDevice() {
     isDesktop = window.innerWidth >= 1024;
     const arrows = document.querySelectorAll('.arrow-actions-container');
@@ -33,12 +35,14 @@ function detectDevice() {
     });
 }
 
+// ==============================================
+// 💾 Simpan & Pulihkan Posisi Gulir
+// ==============================================
 function simpanPosisiGulir() {
     if (feedContainer) {
         sessionStorage.setItem(SCROLL_POS_KEY, feedContainer.scrollTop);
     }
 }
-
 function pulihkanPosisiGulir() {
     if (feedContainer) {
         const posisi = sessionStorage.getItem(SCROLL_POS_KEY);
@@ -48,22 +52,28 @@ function pulihkanPosisiGulir() {
     }
 }
 
-// === FUNGSI BANTUAN: Baca nama file Abyss jadi judul ===
-function bersihkanNamaJadiJudul(nama) {
+// ==============================================
+// 🧩 Bantu: Bersihkan Nama File Jadi Judul
+// ==============================================
+function bersihkanJudul(nama) {
     if (!nama) return 'Film Tanpa Judul';
     return nama
-        .replace(/\.(mp4|mkv|avi|mov|flv|webm)$/i, '') // hapus ekstensi
-        .replace(/[-_]/g, ' ') // ganti garis jadi spasi
-        .replace(/\b\w/g, c => c.toUpperCase()); // huruf besar tiap awal kata
+        .replace(/\.(mp4|mkv|avi|mov|flv|webm)$/i, '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// === FUNGSI BANTUAN: Bangun link pemutar dari kode file Abyss ===
-function ambilLinkAbyss(kode) {
+// ==============================================
+// 🧩 Bantu: Bangun Link Pemutar Abyss
+// ==============================================
+function linkPemutarAbyss(kode) {
     if (!kode) return '';
-    // Sesuaikan format URL pemutar Abyss sesuai sistem kamu
     return `${ABYSS_ENDPOINT}/player/${kode}`;
 }
 
+// ==============================================
+// 🚀 Selebaran Promosi — Dari Abyss
+// ==============================================
 function initPromoNotifier() {
     const notifier = document.getElementById('desktopNotifier');
     const promoCard = document.getElementById('promoCard');
@@ -84,7 +94,7 @@ function initPromoNotifier() {
         abyss_code: null
     };
 
-    fetch(ABYSS_LIST_URL)
+    fetch(ABYSS_LIST_URL, { cache: "no-store" })
         .then(res => {
             if (!res.ok) throw new Error('Abyss tidak merespon');
             return res.json();
@@ -95,7 +105,7 @@ function initPromoNotifier() {
                 const acak = Math.floor(Math.random() * files.length);
                 const f = files[acak];
                 latestMovie = {
-                    title: bersihkanNamaJadiJudul(f.name || f.filename),
+                    title: bersihkanJudul(f.name || f.filename),
                     abyss_code: f.code || f.id,
                     country: 'Abyss',
                     release_date: f.created_at ? f.created_at.substring(0, 10) : '-',
@@ -114,7 +124,10 @@ function initPromoNotifier() {
     function tampilkanFlyer() {
         promoCard.style.backgroundImage = `url('${latestMovie.image}')`;
         if (promoTitle) promoTitle.textContent = latestMovie.title;
-        if (promoCountry) promoCountry.textContent = `${latestMovie.country} • ${latestMovie.release_date ? latestMovie.release_date.substring(0,4) : '-'}`;
+        if (promoCountry) {
+            const thn = latestMovie.release_date ? latestMovie.release_date.substring(0, 4) : '-';
+            promoCountry.textContent = `${latestMovie.country} • ${thn}`;
+        }
         if (promoSinopsis) promoSinopsis.textContent = latestMovie.sinopsis;
         if (promoGenres) {
             promoGenres.innerHTML = '';
@@ -133,14 +146,17 @@ function initPromoNotifier() {
                 }
             };
         }
-        notifier.style.setProperty('display', 'flex', 'important');
-        notifier.style.setProperty('position', 'fixed', 'important');
-        notifier.style.setProperty('z-index', '99999', 'important');
+        notifier.style.display = 'flex';
+        notifier.style.position = 'fixed';
+        notifier.style.zIndex = '99999';
         notifier.style.opacity = '1';
         if (window.lucide) lucide.createIcons();
     }
 }
 
+// ==============================================
+// ❌ TUTUP PROMO — DIPANGGIL DARI HTML
+// ==============================================
 function closeNotifier() {
     const notifier = document.getElementById('desktopNotifier');
     if (notifier) {
@@ -153,6 +169,9 @@ function closeNotifier() {
     }
 }
 
+// ==============================================
+// 🎯 Gulir Halaman
+// ==============================================
 function scrollFeed(direction) {
     if (!feedContainer) return;
     const cardHeight = window.innerHeight;
@@ -162,41 +181,46 @@ function scrollFeed(direction) {
     });
 }
 
+// ==============================================
+// 🎬 MUAT DATA — ABYSS DULU, GAGAL BARU TMDB
+// ==============================================
 async function fetchMovies(page = 1) {
+    // Coba dari Abyss duluan
     try {
         const resAbyss = await fetch(ABYSS_LIST_URL, { cache: "no-store" });
         if (resAbyss.ok) {
-            const daftarBerkas = await resAbyss.json();
-            semuaFilm = daftarBerkas;
-            // Tampilkan daftar dari Abyss langsung
-            renderDariAbyss(daftarBerkas);
+            const daftar = await resAbyss.json();
+            semuaFilm = daftar;
+            renderDariAbyss(daftar);
             return;
         }
     } catch (e) {
-        console.warn('⚠️ Gagal baca Abyss, ganti ke TMDB:', e);
+        console.warn('⚠️ Abyss gagal, ganti ke TMDB:', e);
     }
-    // Fallback ke TMDB kalau Abyss gagal
+
+    // Fallback ke TMDB
     try {
-        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
-        if (!response.ok) throw new Error('Gagal memuat data');
-        const data = await response.json();
+        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
+        if (!res.ok) throw new Error('Gagal memuat data');
+        const data = await res.json();
         if (page === 1) moviesData = data.results;
         else moviesData = [...moviesData, ...data.results];
         renderFeed(moviesData);
-    } catch (error) {
-        console.warn('⚠️ Gagal hubung TMDB juga → pakai data cadangan:', error);
+    } catch (err) {
+        console.warn('⚠️ TMDB juga gagal → data cadangan:', err);
         loadFallbackData();
     }
 }
 
-// === RENDER LANGSUNG DARI ABYSS — TANPA PERLU TMDB ID ===
-function renderDariAbyss(daftarFile) {
-    if (!feedContainer || !Array.isArray(daftarFile)) return;
+// ==============================================
+// 🖼️ TAMPILKAN DARI ABYSS — TANPA PERLU tmdb_id
+// ==============================================
+function renderDariAbyss(daftar) {
+    if (!feedContainer || !Array.isArray(daftar)) return;
     feedContainer.innerHTML = '';
-    daftarFile.forEach((file, idx) => {
-        const judul = bersihkanNamaJadiJudul(file.name || file.filename);
+    daftar.forEach(file => {
+        const judul = bersihkanJudul(file.name || file.filename);
         const kode = file.code || file.id;
-        const ukuran = file.size ? (file.size / 1024 / 1024 / 1024).toFixed(2) + ' GB' : '';
         const tanggal = file.created_at ? file.created_at.substring(0, 10) : '';
         const poster = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500";
 
@@ -215,10 +239,10 @@ function renderDariAbyss(daftarFile) {
                         <div class="inline-scroll-arrow" onclick="scrollFeed('up')"><i data-lucide="chevron-up" size="22"></i></div>
                         <div class="inline-scroll-arrow" onclick="scrollFeed('down')"><i data-lucide="chevron-down" size="22"></i></div>
                     </div>
-                    <div class="action-item" onclick="alert('${judul}\\nUkuran: ${ukuran}\\nTanggal: ${tanggal}')">
+                    <div class="action-item" onclick="alert('${judul}\\nTanggal: ${tanggal}')">
                         <i data-lucide="info" size="28"></i><span>Info</span>
                     </div>
-                    <div class="action-item" onclick="alert('${tanggal || 'Tidak diketahui'}')">
+                    <div class="action-item" onclick="alert('${tanggal ? tanggal.substring(0,4) : '-'}')">
                         <i data-lucide="calendar" size="28"></i><span>${tanggal ? tanggal.substring(0,4) : '-'}</span>
                     </div>
                     <div class="action-item" onclick="alert('Video')">
@@ -235,6 +259,9 @@ function renderDariAbyss(daftarFile) {
     if (window.lucide) lucide.createIcons();
 }
 
+// ==============================================
+// 📂 Data Cadangan
+// ==============================================
 function loadFallbackData() {
     const fallback = [
         { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
@@ -245,6 +272,9 @@ function loadFallbackData() {
     renderFeed(moviesData);
 }
 
+// ==============================================
+// 🖼️ Tampilkan dari TMDB
+// ==============================================
 function renderFeed(movies) {
     if (!feedContainer) return;
     feedContainer.innerHTML = '';
@@ -293,6 +323,9 @@ function loadNextPage() {
     fetchMovies(currentPage);
 }
 
+// ==============================================
+// ℹ️ Panel Info
+// ==============================================
 async function toggleSection(event, index, section) {
     event.stopPropagation();
     if (!infoPanel || !panelContentArea) return;
@@ -335,51 +368,51 @@ async function toggleSection(event, index, section) {
     }
 }
 
-// === PUTAR LANGSUNG DARI KODE ABYSS — TANPA PERLU TMDB ID ===
+// ==============================================
+// ▶️ PUTAR LANGSUNG ABYSS — TANPA tmdb_id TETAP BISA
+// ==============================================
 window.mainkanLangsungAbyss = function(kode, judulEncode) {
     if (!kode || !videoPlayerContainer || !playerArea) return;
-    const judul = decodeURIComponent(judulEncode || 'film');
-    const linkPemutar = `${ABYSS_ENDPOINT}/player/${kode}`;
+    const link = linkPemutarAbyss(kode);
 
-    // === JAMINAN: PLAYCINEMATIC DILARANG TOTAL ===
-    if (linkPemutar.includes('playcinematic')) {
+    // 🔒 PLAYCINEMATIC DILARANG TOTAL
+    if (link.includes('playcinematic')) {
         console.error('❌ Playcinematic dilarang!');
         return;
     }
 
     simpanPosisiGulir();
     videoPlayerContainer.style.display = 'block';
-    playerArea.innerHTML = `<iframe src="${linkPemutar}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+    playerArea.innerHTML = `<iframe src="${link}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
 };
 
-// === Cari di Abyss dulu, kalau gak ketemu ke watch.html ===
+// ==============================================
+// 🔍 Cari & Putar dari TMDB
+// ==============================================
 async function playMovie(tmdbId) {
     if (!tmdbId) return;
-    let ketemuDiAbyss = null;
-
+    // Cek dulu apakah ada pasangan di Abyss
+    let ketemu = null;
     try {
         const res = await fetch(ABYSS_LIST_URL, { cache: "no-store" });
         if (res.ok) {
             const daftar = await res.json();
-            ketemuDiAbyss = daftar.find(f => {
-                if (!f.tmdb_id) return false; // gak ada tmdb_id = dilewati, gak error
-                return String(f.tmdb_id).trim() === String(tmdbId).trim();
-            });
+            ketemu = daftar.find(f => f.tmdb_id && String(f.tmdb_id) === String(tmdbId));
         }
-    } catch (err) {
-        console.warn('⚠️ Cek Abyss gagal:', err);
-    }
+    } catch (e) {}
 
-    if (ketemuDiAbyss && ketemuDiAbyss.code) {
-        mainkanLangsungAbyss(ketemuDiAbyss.code, ketemuDiAbyss.title || '');
+    if (ketemu && ketemu.code) {
+        mainkanLangsungAbyss(ketemu.code, ketemu.title || '');
         return;
     }
 
-    // Gak ketemu di Abyss → tetap ke watch.html
-    const judulUrl = ketemuDiAbyss?.title?.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').substring(0,50) || 'unknown';
-    window.location.href = `watch.html?id=${String(tmdbId).trim()}/${judulUrl}`;
+    // Gak ketemu → ke watch.html biasa
+    window.location.href = `watch.html?id=${tmdbId}/film`;
 }
 
+// ==============================================
+// 🔍 Pencarian
+// ==============================================
 let searchResultsLayer = document.getElementById('searchResultsLayer');
 if (!searchResultsLayer) {
     searchResultsLayer = document.createElement('div');
@@ -420,11 +453,10 @@ async function cariFilm(kata) {
     } catch (e) { console.warn('Cari Abyss gagal:', e); }
 
     if (hasilAbyss.length > 0) {
-        const html = hasilAbyss.map(f => {
-            const judul = bersihkanNamaJadiJudul(f.name || f.filename);
-            const kode = f.code || f.id;
+        searchContent.innerHTML = hasilAbyss.map(f => {
+            const judul = bersihkanJudul(f.name || f.filename);
             return `
-                <div class="search-item-row" onclick="mainkanLangsungAbyss('${kode}','${encodeURIComponent(judul)}')">
+                <div class="search-item-row" onclick="mainkanLangsungAbyss('${f.code || f.id}','${encodeURIComponent(judul)}')">
                     <div class="search-item-thumb" style="background-image:url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200')"></div>
                     <div class="search-item-info">
                         <h4>${judul}</h4>
@@ -434,16 +466,15 @@ async function cariFilm(kata) {
                 </div>
             `;
         }).join('');
-        if (searchContent) searchContent.innerHTML = html;
         if (window.lucide) lucide.createIcons();
         return;
     }
 
-    // Kalau gak ada di Abyss → cari di TMDB
+    // Gak ketemu → cari di TMDB
     try {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=id-ID&query=${encodeURIComponent(kata)}&page=1&include_adult=false`);
         const data = await res.json();
-        const hasilHTML = data.results?.map(movie => `
+        searchContent.innerHTML = data.results?.map(movie => `
             <div class="search-item-row" onclick="simpanPosisiGulir(); playMovie(${movie.id})">
                 <div class="search-item-thumb" style="background-image:url('${movie.poster_path ? IMAGE_URL + movie.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}')"></div>
                 <div class="search-item-info">
@@ -453,10 +484,9 @@ async function cariFilm(kata) {
                 </div>
             </div>
         `).join('') || `<div style="padding:40px; color:#aaa; text-align:center;">Tidak ada hasil</div>`;
-        if (searchContent) searchContent.innerHTML = hasilHTML;
         if (window.lucide) lucide.createIcons();
     } catch (err) {
-        if (searchContent) searchContent.innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
+        searchContent.innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
     }
 }
 
@@ -524,16 +554,19 @@ window.addEventListener('pageshow', (e) => {
 });
 window.addEventListener('resize', detectDevice);
 
+// PWA
 let deferredPrompt;
 const installBtn = document.getElementById('installPwaBtn');
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if (installBtn) installBtn.style.display = 'flex'; });
-if (installBtn) installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(outcome === 'accepted' ? 'PWA diinstal' : 'Dibatalkan');
-    deferredPrompt = null;
-    installBtn.style.display = 'none';
-});
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(outcome === 'accepted' ? 'PWA diinstal' : 'Dibatalkan');
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+    });
+}
 window.addEventListener('appinstalled', () => { deferredPrompt = null; if (installBtn) installBtn.style.display = 'none'; });
 if (typeof lucide !== 'undefined') lucide.createIcons();
