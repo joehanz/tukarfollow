@@ -366,15 +366,13 @@
       />
     </div>
 
-  <script>
+<script>
 // ==============================================
-// ✅ ALTERNATE.HTML — Baca Judul → Cocokkan Otomatis
-// Tampilkan info lengkap di layar
+// ✅ VERSI BERSIH — Cocokkan ID TMDB + Judul
 // ==============================================
 const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 const ABYSS_PLAYER_BASE = 'https://api.abyss.to/player/';
 
-// Elemen
 const filmIframe = document.getElementById('filmIframe');
 const videoWrapper = document.getElementById('videoWrapper');
 const btnHomeBack = document.getElementById('btnHomeBack');
@@ -390,55 +388,45 @@ const panelBackdrop = document.getElementById('panelBackdrop');
 let currentMovieId = null;
 let currentMovieTitle = '';
 
-// ✅ Ambil ID & Judul dari URL — mendukung 2 format
+// Ambil data dari URL
 function ambilDariUrl() {
   const params = new URLSearchParams(window.location.search);
+  let id = params.get('id')?.replace(/\D/g, '') || null;
+  let judul = params.get('judul') || '';
   
-  // Format baru: ?id=123&judul=film-judul
-  if (params.get('id') && params.get('judul')) {
-    return {
-      id: params.get('id')?.replace(/\D/g, '') || null,
-      judul: (params.get('judul') || '').trim()
-    };
+  // Fallback format lama: ?id=123/judul
+  if (!judul) {
+    const q = window.location.search;
+    if (q) {
+      const bagian = q.replace(/^\?id=/, '').split('/');
+      id = bagian[0].replace(/\D/g, '') || null;
+      judul = bagian[1] || '';
+    }
   }
   
-  // Format lama: ?id=123/judul-film
-  const q = window.location.search;
-  if (!q) return { id: null, judul: '' };
-  const bersih = q.replace(/^\?id=/, '');
-  const bagian = bersih.split('/');
-  return {
-    id: bagian[0].replace(/\D/g, '') || null,
-    judul: bagian[1] || ''
-  };
+  return { id, judul };
 }
 
-// ✅ Cari kode Abyss lewat Apps Script
-async function cariKodeAbyss(tmdbId, judul) {
-  if (!tmdbId || !judul) {
-    return { kode: null, info: "ID atau judul kosong" };
-  }
-
+// Cari di Abyss lewat Apps Script
+async function cariAbyss(tmdbId, judul) {
+  if (!tmdbId) return { kode: null, info: "ID kosong" };
+  
   try {
     const res = await fetch(
       `${URL_APPS_SCRIPT}?action=cariAbyss&tmdbId=${tmdbId}&judul=${encodeURIComponent(judul)}`,
       { cache: "no-store" }
     );
-
     const hasil = await res.json();
     return {
       kode: hasil.kodeAbyss || null,
       info: JSON.stringify(hasil, null, 2)
     };
   } catch (err) {
-    return {
-      kode: null,
-      info: "Error koneksi: " + err.message
-    };
+    return { kode: null, info: "Error: " + err.message };
   }
 }
 
-// ✅ Jalankan
+// Jalankan
 async function mulai() {
   const { id, judul } = ambilDariUrl();
   currentMovieId = id;
@@ -448,40 +436,34 @@ async function mulai() {
     videoWrapper.innerHTML = `
       <div class="status-info error">
         <h3>ID Film tidak ditemukan</h3>
-        <p>Pastikan dibuka dari halaman yang benar</p>
-        <button class="submit-btn" onclick="window.location.href='index.html'">Kembali</button>
+        <button class="submit-btn" onclick="history.back()">Kembali</button>
       </div>
     `;
     return;
   }
 
-  // Tampilkan sedang mencari
   videoWrapper.innerHTML = `
     <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#fff; flex-direction:column; gap:16px;">
-      <p>🔎 Mencocokkan judul: <strong>"${judul}"</strong>...</p>
+      <p>🔎 Mencari: <strong>${id}</strong> — "${judul}"</p>
     </div>
   `;
 
-  // Cari kode
-  const hasil = await cariKodeAbyss(id, judul);
+  const hasil = await cariAbyss(id, judul);
 
   if (hasil.kode) {
-    // ✅ Ketemu → mainkan
-    console.log('✅ Kode Abyss:', hasil.kode);
     filmIframe.src = ABYSS_PLAYER_BASE + hasil.kode;
   } else {
-    // ❌ Tidak ketemu → tampilkan panduan
     videoWrapper.innerHTML = `
       <div class="status-info error" style="max-width:600px; margin:0 auto; padding:30px;">
         <h3>Film belum terdaftar di Abyss</h3>
         <p><strong>TMDB ID:</strong> ${id}</p>
         <p><strong>Judul dicari:</strong> "${judul}"</p>
         <hr style="border:none; border-top:1px solid #333; margin:15px 0;">
-        <p><strong>📌 Nama yang disarankan di Abyss:</strong></p>
-        <p style="color:#4facff; font-weight:bold;">Coyote vs. Acme.mp4</p>
-        <p style="color:#4facff; font-weight:bold;">Coyote vs. Acme (2026).mp4</p>
+        <p><strong>📌 Nama file di Abyss sebaiknya:</strong></p>
+        <p style="color:#4facff; font-weight:bold;">${id} Salmokji Whispering Water.mp4</p>
+        <p style="color:#4facff; font-weight:bold;">Salmokji Whispering Water.mp4</p>
         <hr style="border:none; border-top:1px solid #333; margin:15px 0;">
-        <p style="font-size:12px; color:#888; text-align:left; white-space:pre-wrap; margin-top:10px;">
+        <p style="font-size:12px; color:#888; white-space:pre-wrap; margin-top:10px;">
 <strong>Info sistem:</strong>
 ${hasil.info}
         </p>
@@ -491,7 +473,7 @@ ${hasil.info}
   }
 }
 
-// ✅ Layar Penuh
+// Layar Penuh
 btnFullscreen?.addEventListener('click', () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen?.();
@@ -510,12 +492,11 @@ document.addEventListener('fullscreenchange', () => {
   lucide.createIcons();
 });
 
-// ✅ Kembali
 btnHomeBack?.addEventListener('click', () => {
-  window.history.length > 1 ? history.back() : (window.location.href = 'index.html');
+  history.length > 1 ? history.back() : (window.location.href = 'index.html');
 });
 
-// ✅ Komentar
+// Komentar
 btnAddComment?.addEventListener('click', () => {
   infoPanel?.classList.add('show');
   panelBackdrop?.classList.add('active');
@@ -528,19 +509,19 @@ panelBackdrop?.addEventListener('click', () => {
 async function kirimKomentar() {
   const nama = document.getElementById('commentName')?.value.trim();
   const teks = document.getElementById('commentText')?.value.trim();
-  if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
+  if (!nama || !teks) return alert("Isi dulu!");
   try {
     await fetch(URL_APPS_SCRIPT, {
       method: 'POST',
       mode: 'no-cors',
       body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
     });
-    alert("✅ Komentar terkirim!");
+    alert("✅ Terkirim!");
     infoPanel?.classList.remove('show');
     panelBackdrop?.classList.remove('active');
     setTimeout(muatKomentar, 800);
   } catch {
-    alert("❌ Gagal kirim. Coba lagi.");
+    alert("❌ Gagal. Coba lagi.");
   }
 }
 
@@ -559,7 +540,7 @@ async function muatKomentar() {
     const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
     const hasil = await res.json();
     if (hasil.status !== "success" || !hasil.data?.length) {
-      commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar. Jadilah yang pertama!</div>';
+      commentListEl.innerHTML = '<div class="empty-comments">Belum ada komentar!</div>';
       return;
     }
     commentListEl.innerHTML = hasil.data.map(item => `
@@ -570,16 +551,13 @@ async function muatKomentar() {
       </div>
     `).join('');
   } catch {
-    commentListEl.innerHTML = '<div class="empty-comments">Gagal memuat komentar.</div>';
+    commentListEl.innerHTML = '<div class="empty-comments">Gagal dimuat.</div>';
   }
 }
 
-// ✅ Kontrol tombol
-const subtitleLayer = document.getElementById('subLayer');
-const controls = subtitleLayer?.querySelector('.subtitle-controls');
+// Kontrol
+const controls = document.getElementById('subLayer')?.querySelector('.subtitle-controls');
 let hideTimer = null;
-const HIDE_DELAY = 3000;
-
 function showControls() {
   if (!controls) return;
   controls.style.opacity = '1';
@@ -590,15 +568,13 @@ function showControls() {
     controls.style.opacity = '0';
     controls.style.pointerEvents = 'none';
     controls.style.visibility = 'hidden';
-  }, HIDE_DELAY);
+  }, 3000);
 }
-
-['touchstart','touchmove','mousedown','mousemove','click','scroll','keydown'].forEach(ev => {
+['touchstart','mousedown','click'].forEach(ev => {
   document.addEventListener(ev, showControls, { passive: true });
 });
 controls?.addEventListener('click', showControls);
 
-// ✅ MULAI
 window.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   mulai();
