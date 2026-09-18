@@ -848,10 +848,11 @@ function pasangPemutar(tmdbId) {
 // ✅ Tombol Bendera → Buka alternate.html
 btnSubIndo?.addEventListener('click', () => {
   if (!currentMovieId) {
-    alert("ID film tidak ditemukan.");
+    alert("Pilih film dulu!");
     return;
   }
-  window.location.href = `alternate.html?id=${currentMovieId}/${currentMovieTitle}`;
+  // Kirim ID + Judul bersih
+  window.location.href = `alternate.html?id=${currentMovieId}&judul=${encodeURIComponent(currentMovieTitle)}`;
 });
 
 // ✅ Layar Penuh
