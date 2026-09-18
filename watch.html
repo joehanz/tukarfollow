@@ -15,30 +15,15 @@
     />
     <meta name="screen-orientation" content="any" />
     <meta name="fullscreen" content="yes" />
+    <title>TUKARFOLLOW - Nonton Film</title>
 
-    <!-- ✅ PERBAIKAN: Deklarasi nilai SEBELUM title dipakai -->
-    <script>
-    const judulUrl = "Tukar Followers & Likes Gratis";
-    function updateTitle() {
-      document.title = "TUKARFOLLOW - " + judulUrl;
-    }
-    </script>
-    <title>TUKARFOLLOW - Tukar Followers & Likes Gratis</title>
-    <script>
-    // Jalankan langsung
-    updateTitle();
-    // Kalau mau ganti judul dinamis tinggal panggil:
-    // judulUrl = "Judul Baru"; updateTitle();
-    </script>
-
-    <!-- ✅ PERBAIKAN: Deskripsi & Keyword sesuai situs TukarFollow, BUKAN nonton film -->
     <meta
       name="description"
-      content="Tukar Followers, Likes & Views Gratis — Tambah akun media sosial kamu dengan sistem tukar poin aman dan cepat."
+      content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia."
     />
     <meta
       name="keywords"
-      content="tukar followers, tukar likes, tambah followers gratis, tukar poin sosial, penambah pengikut"
+      content="nonton film gratis, streaming movie sub indo, bioskop online"
     />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="id" />
@@ -51,14 +36,13 @@
       rel="apple-touch-icon"
       href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
     />
-    <!-- ✅ PERBAIKAN: OG sesuai konten TukarFollow -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="TUKARFOLLOW - Tukar Followers & Likes Gratis" />
+    <meta property="og:type" content="video.movie" />
+    <meta property="og:title" content="TUKARFOLLOW" />
     <meta
       property="og:description"
-      content="Sistem tukar poin untuk menambah pengikut, suka, dan penonton secara aman dan gratis."
+      content="Nonton film dan serial TV terbaru sub Indonesia."
     />
-    <meta property="og:url" content="https://tukarfollow.web.id/" />
+    <meta property="og:url" content="https://tukarfollow.web.id/watch.html" />
     <meta
       property="og:image"
       content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp"
@@ -83,6 +67,7 @@
             width: 100vw;
             height: 100vh;
             font-size: 30px !important;
+            /* ✅ Izinkan perubahan orientasi */
             orientation: portrait;
             orientation: landscape;
           }
@@ -176,6 +161,7 @@
           .video-main-wrapper {
             position: relative;
             width: 100%;
+            /* ✅ Sesuaikan tinggi: cukup ruang untuk subtitle, lebar selalu penuh */
             height: calc(100vh - 40px);
             max-width: 125vw;
             margin: 0 auto;
@@ -183,6 +169,7 @@
             overflow: hidden;
             background: #000;
           }
+          /* ✅ Penutup kontrol bawaan video */
           .video-overlay {
             position: absolute;
             top: 0;
@@ -192,6 +179,7 @@
             z-index: 5;
             pointer-events: none;
           }
+          /* ✅ Area khusus tetap bisa diklik untuk subtitle/terjemah */
           .clickable-subtitle-area {
             position: absolute;
             bottom: 60px;
@@ -208,6 +196,7 @@
             object-fit: contain;
             background: #000;
           }
+          /* ✅ Logo situs: selalu terlihat, termasuk saat layar penuh & horizontal */
           .watermark-logo {
             position: fixed;
             top: max(20px, env(safe-area-inset-top));
@@ -220,51 +209,63 @@
             width: 80px;
             height: auto;
           }
-          .subtitle-layer {
-            position: fixed;
-            bottom: 0px;
-            left: 0;
-            right: 0;
-            height: 48px;
-            z-index: 999999;
-            background: transparent;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 1 !important;
-            pointer-events: none !important;
-          }
-          .subtitle-layer * {
-            pointer-events: auto;
-          }
-          .grup-kontrol-situs {
-            position: absolute;
-            left: 35%;
-            transform: translateX(-50%);
-          }
-          .subtitle-layer::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 150px;
-            background: rgba(0, 0, 0, 0);
-            z-index: -1;
-            pointer-events: auto;
-          }
-          .subtitle-layer::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: calc(100% - 60px);
-            right: 0;
-            background: rgba(0, 0, 0, 0);
-            z-index: -1;
-            pointer-events: auto;
-          }
+      /* ✅ Navigasi kontrol: selalu terlihat di semua kondisi */
+      .subtitle-layer {
+        position: fixed;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+        height: 48px; /* Sesuaikan dengan tinggi nav control situs Anda */
+        z-index: 999999;
+        /* Hapus background di induk */
+        background: transparent;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 1 !important;
+        /* Induk none agar area lobang di kanan bisa tembus klik ke subtitle asli */
+        pointer-events: none !important;
+      }
+      /* Supaya tombol-tombol nav situs Anda TETAP BISA DIKLIK */
+      .subtitle-layer * {
+        pointer-events: auto;
+      }
+      /* ⬇️ SISIPAN BARU: Seting otomatis untuk menggeser grup kontrol situs ke kiri dari titik 0 ⬇️ */
+      /* Ganti .grup-kontrol-situs dengan class wrapper/pembungkus ikon grup kontrol situs Anda */
+      .grup-kontrol-situs {
+        position: absolute;
+        /* PANDUAN GESER: Patokan kiri layar adalah 0 */
+        left: 35%; /* Semakin KECIL persennya (misal: 30%, 25%), grup kontrol akan semakin geser ke KIRI secara otomatis di semua perangkat */
+        transform: translateX(-50%); /* Menjaga titik pusat ikon agar tetap presisi */
+      }
+      /* TAMENG KIRI: Tak terlihat tapi memblokir klik */
+      .subtitle-layer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 150px; /* Batas kiri lobang Anda */
+        /* TRIK: Menggunakan rgba dengan alpha 0. Visualnya 100% transparan (tidak norak),
+           tapi browser tetap menganggapnya ada wujud untuk memblokir klik! */
+        background: rgba(0, 0, 0, 0);
+        z-index: -1;
+        pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+      }
+      /* TAMENG KANAN: Tak terlihat tapi memblokir klik */
+      .subtitle-layer::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(100% - 60px); /* Batas kanan lobang Anda */
+        right: 0;
+        /* TRIK yang sama: Transparan tapi tetap berwujud menahan klik */
+        background: rgba(0, 0, 0, 0);
+        z-index: -1;
+        pointer-events: auto; /* AKTIF MEMBLOKIR KLIK */
+      }
           .subtitle-controls {
             display: flex;
             align-items: center;
@@ -450,6 +451,7 @@
           .submit-btn:hover {
             background: #1d4ed8;
           }
+          /* ✅ PENTING: Semua elemen TETAP terlihat saat layar penuh & orientasi berubah */
           :fullscreen,
           :-webkit-full-screen,
           :-moz-full-screen,
@@ -470,6 +472,7 @@
             visibility: visible !important;
             z-index: 999999 !important;
           }
+          /* ✅ Khusus tampilan HP & PWA */
           @media (max-width: 768px) {
             .video-main-wrapper {
               width: 100vw;
@@ -485,6 +488,7 @@
               right: -95%;
             }
           }
+          /* ✅ Saat mode horizontal, pastikan lebar penuh */
           @media screen and (orientation: landscape) {
             .video-main-wrapper {
               width: 100vw;
@@ -501,7 +505,7 @@
           }
     </style>
     <script>(function(s){s.dataset.zone='11439624',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-</head>
+    </head>
 
   <body>
     <div class="comments-panel" id="commentsPanel">
