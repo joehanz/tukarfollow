@@ -783,9 +783,9 @@ async function cekAbyss(tmdbId, judulDariUrl = '') {
     console.log('🔍 Cek Abyss — ID:', tmdbId, '| Judul:', judulDariUrl);
     
     const res = await fetch(ABYSS_LIST_URL, { 
-      cache: "no-store",
-      mode: "cors"
-    });
+  cache: "no-store",
+  mode: "cors"  // ❌ Ini diblokir browser — tidak akan jalan!
+});
     
     if (!res.ok) {
       console.warn('⚠️ Abyss respon error:', res.status);
@@ -851,7 +851,6 @@ btnSubIndo?.addEventListener('click', () => {
     alert("Pilih film dulu!");
     return;
   }
-  // Kirim ID + Judul bersih
   window.location.href = `alternate.html?id=${currentMovieId}&judul=${encodeURIComponent(currentMovieTitle)}`;
 });
 
