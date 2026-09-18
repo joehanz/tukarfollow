@@ -1,28 +1,44 @@
 <html lang="id">
-<head>
+    <head>
+  <!-- BASIC META -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
   <title>TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia</title>
-  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
+  <meta name="description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia. Update feed harian ala TikTok mobile friendly." />
   <meta name="keywords" content="nonton film gratis, streaming movie sub indo, download film hd, bioskop online, tukarfollow movie, streaming film hp" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="id" />
+
+  <!-- CANONICAL -->
   <link rel="canonical" href="https://tukarfollow.web.id/" />
+
+  <!-- ICONS -->
+  <!-- Silakan ganti ke path logo asli web kamu jika ada -->
   <link rel="icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" type="image/x-icon" />
   <link rel="apple-touch-icon" href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" />
+
+  <!-- OPEN GRAPH (Sangat penting saat link di-share ke WA/Sosmed agar muncul gambar poster) -->
   <meta property="og:type" content="video.movie" />
   <meta property="og:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
   <meta property="og:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
   <meta property="og:url" content="https://tukarfollow.web.id/" />
   <meta property="og:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
   <meta property="og:site_name" content="TUKARFOLLOW" />
+
+  <!-- TWITTER CARD -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TUKARFOLLOW - Situs Streaming Film & Series Subtitle Indonesia" />
   <meta name="twitter:description" content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia." />
   <meta name="twitter:image" content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp" />
+
+  <!-- FONTS & ICON SCRIPT -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
+  <!-- Script Lucide Icon dari kode lama kita -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- STRUCTURED DATA (Diubah ke MovieTheater / WebSite agar Google tahu ini web hiburan/film) -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -37,407 +53,225 @@
       }
     }
   </script>
+
+  <!-- PWA MANIFEST -->
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QP8EWQ9SW7"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-QP8EWQ9SW7');
-  </script>
+
+  <!-- CALL EXTERNAL CSS -->
+  <link rel="stylesheet" href="https://midasxxi.github.io/tukarfollow/style.css" />
+
+        <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QP8EWQ9SW7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QP8EWQ9SW7');
+</script>
+  
 </head>
+    
 <body>
+
+    <!-- Search Bar -->
     <div class="search-container" id="searchContainer">
         <div class="search-box">
             <i data-lucide="search" size="18" color="#888"></i>
             <input type="text" id="searchInput" placeholder="Cari film...">
         </div>
     </div>
+
+    <!-- Video Player Screen -->
     <div class="video-player-container" id="videoPlayerContainer">
         <div class="close-player" id="closePlayerBtn">
             <i data-lucide="x" size="24" color="#fff"></i>
         </div>
         <div id="playerArea" style="width:100%; height:100%;"></div>
     </div>
+
+    <!-- Feed Container Utama -->
     <div class="feed-container" id="feedContainer"></div>
+
+    <!-- Info Panel Cicilan Dinamis -->
     <div class="info-panel" id="infoPanel">
-        <div class="panel-content" id="panelContentArea"></div>
+        <div class="panel-content" id="panelContentArea">
+            <!-- Isi Konten di-inject dinamis berdasarkan tombol yang diklik -->
+        </div>
     </div>
+
+    <!-- Bottom Navigation -->
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" id="navSearch">
             <i data-lucide="search" size="24"></i>
             <span>Search</span>
         </div>
         <div class="nav-item" id="installPwaBtn">
-            <i data-lucide="plus-circle" size="28" color="#fff"></i>
-            <span>Add</span>
-        </div>
+    <i data-lucide="plus-circle" size="28" color="#fff"></i>
+    <span>Add</span>
+</div>
         <div class="nav-item active" id="navHome">
             <i data-lucide="home" size="24"></i>
             <span>Home</span>
         </div>
     </div>
 
-    <script>
-    // ==============================================
-    // KONFIGURASI — TMDB UTAMA, ABYSS HANYA CEK SUB ID
-    // ==============================================
-    const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_URL = 'https://image.tmdb.org/t/p/w780';
-    const ABYSS_API = 'https://api.abyss.to';
-    const ABYSS_KEY = '22eef122604d349b3de00257ae5ed34b';
-
-    const feedContainer = document.getElementById('feedContainer');
-    const searchContainer = document.getElementById('searchContainer');
-    const searchInput = document.getElementById('searchInput');
-    const infoPanel = document.getElementById('infoPanel');
-    const panelContentArea = document.getElementById('panelContentArea');
-
-    let moviesData = [];
-    let daftarAbyss = []; // HANYA daftar ID yang punya Sub ID dari Abyss
-    let currentPage = 1;
-    let currentActiveSection = null;
-    let isDesktop = false;
-    let sedangMemuat = false;
-    const SCROLL_POS_KEY = 'feedScrollPosition';
-
-    // ==============================================
-    // PARSE NAMA FILE ABYSS
-    // ==============================================
-    function ambilTmdbIdDariNama(nama) {
-        const bagian = nama.split(' - ');
-        return bagian[0] && !isNaN(bagian[0]) ? parseInt(bagian[0], 10) : null;
-    }
-
-    // ==============================================
-    // MUAT DAFTAR ABYSS — HANYA CEK SIAPA YANG ADA
-    // ==============================================
-    async function muatDaftarAbyss() {
-        try {
-            const res = await fetch(`${ABYSS_API}/v1/videos?api_key=${ABYSS_KEY}`, { cache: 'no-store' });
-            if (!res.ok) throw new Error(`Abyss: ${res.status}`);
-            const json = await res.json();
-            daftarAbyss = (json.data || []).map(v => ({
-                tmdb_id: ambilTmdbIdDariNama(v.name),
-                abyss_id: v.id,
-                embed: `${ABYSS_API}/v1/embed/${v.id}?api_key=${ABYSS_KEY}`
-            })).filter(item => item.tmdb_id);
-            console.log(`✅ Daftar Abyss dimuat: ${daftarAbyss.length} film punya Sub ID`);
-        } catch (e) {
-            console.warn('⚠️ Gagal muat daftar Abyss:', e);
-            daftarAbyss = [];
-        }
-    }
-
-    // ==============================================
-    // CEK: FILM INI PUNYA SUB ID DARI ABYSS?
-    // ==============================================
-    function cekPunyaSubId(tmdbId) {
-        return daftarAbyss.find(f => f.tmdb_id === Number(tmdbId));
-    }
-
-    // ==============================================
-    // DETEKSI PERANGKAT — TETAP SAMA
-    // ==============================================
-    function detectDevice() {
-        isDesktop = window.innerWidth >= 1024;
-        document.querySelectorAll('.arrow-actions-container').forEach(a => {
-            if (a) a.style.display = isDesktop ? 'flex' : 'none';
-        });
-    }
-
-    // ==============================================
-    // SIMPAN POSISI GULIR — TETAP SAMA
-    // ==============================================
-    function simpanPosisiGulir() {
-        if (feedContainer) sessionStorage.setItem(SCROLL_POS_KEY, feedContainer.scrollTop);
-    }
-    function pulihkanPosisiGulir() {
-        if (feedContainer) {
-            const pos = sessionStorage.getItem(SCROLL_POS_KEY);
-            if (pos) feedContainer.scrollTop = parseInt(pos, 10);
-        }
-    }
-
-    // ==============================================
-    // BUKA KE WATCH — KIRIM STATUS ABYSS ATAU TIDAK
-    // ==============================================
-    function playMovie(tmdbId) {
-        if (!tmdbId) return;
-        simpanPosisiGulir();
-        const adaSubId = cekPunyaSubId(tmdbId);
-        window.location.href = `watch.html?id=${tmdbId}&abyss=${adaSubId ? '1' : '0'}`;
-    }
-
-    // ==============================================
-    // AMBIL DARI TMDB — TETAP PENUH SEPERTI ASLI
-    // ==============================================
-    async function fetchMovies(page = 1) {
-        try {
-            // Muat daftar Abyss sekali di awal
-            if (page === 1 && daftarAbyss.length === 0) await muatDaftarAbyss();
-            
-            // Data utama DARI TMDB — TIDAK DIUBAH
-            const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=id-ID&page=${page}`);
-            if (!res.ok) throw new Error('Gagal hubung TMDB');
-            const data = await res.json();
-            if (page === 1) moviesData = data.results;
-            else moviesData = [...moviesData, ...data.results];
-            renderFeed(moviesData);
-        } catch (err) {
-            console.warn('⚠️ Error:', err);
-            loadFallbackData();
-        }
-    }
-
-    // ==============================================
-    // DATA CADANGAN — TETAP SAMA
-    // ==============================================
-    function loadFallbackData() {
-        if (moviesData.length === 0) {
-            moviesData = [
-                { id: 726888, title: 'Heartbeast', overview: 'Elina, rapper Finlandia...', release_date: '2022-11-04', poster_path: '', origin_country: ['FI'] },
-                { id: 157336, title: 'Interstellar', overview: 'Sekelompok penjelajah melintasi lubang cacing...', release_date: '2014-11-05', poster_path: '/gEU2Qv0vHB77Yp7v6v94goI86v3.jpg', origin_country: ['US'] }
-            ];
-        }
-        renderFeed(moviesData);
-    }
-
-    // ==============================================
-    // TAMPILAN KARTU — TETAP SAMA PERSIS
-    // ==============================================
-    function renderFeed(movies) {
-        if (!feedContainer) return;
-        feedContainer.innerHTML = '';
-        movies.forEach((movie, index) => {
-            const posterUrl = movie.poster_path
-                ? `${IMAGE_URL}${movie.poster_path}`
-                : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500';
-            const tahun = movie.release_date ? movie.release_date.split('-')[0] : '-';
-            const adaSubId = cekPunyaSubId(movie.id);
-            
-            const card = document.createElement('div');
-            card.className = 'movie-card';
-            card.style.backgroundImage = `url('${posterUrl}')`;
-            card.innerHTML = `
-                <div class="overlay"></div>
-                <div class="top-title">
-                    ${movie.title}
-                    ${adaSubId ? '<span style="color:#00ff88; font-size:12px; margin-left:8px;">🇮🇩 Sub ID</span>' : ''}
-                </div>
-                <div class="play-btn-container" onclick="simpanPosisiGulir(); playMovie(${movie.id})">
-                    <div class="play-circle"><i data-lucide="play" fill="#fff" size="32"></i></div>
-                </div>
-                <div class="main-content">
-                    <div class="side-actions">
-                        <div class="arrow-actions-container" style="display: ${isDesktop ? 'flex' : 'none'};">
-                            <div class="inline-scroll-arrow" onclick="feedContainer.scrollBy({top:-window.innerHeight,behavior:'smooth'})"><i data-lucide="chevron-up" size="22"></i></div>
-                            <div class="inline-scroll-arrow" onclick="feedContainer.scrollBy({top:window.innerHeight,behavior:'smooth'})"><i data-lucide="chevron-down" size="22"></i></div>
-                        </div>
-                        <div class="action-item" onclick="toggleSection(event, ${index}, 'info')">
-                            <i data-lucide="info" size="28"></i><span>Info</span>
-                        </div>
-                        <div class="action-item" onclick="toggleSection(event, ${index}, 'release')">
-                            <i data-lucide="calendar" size="28"></i><span>${tahun}</span>
-                        </div>
-                        <div class="action-item" onclick="toggleSection(event, ${index}, 'genre')">
-                            <i data-lucide="clapperboard" size="28"></i><span>Genre</span>
-                        </div>
-                        <div class="action-item" onclick="toggleSection(event, ${index}, 'country')">
-                            <i data-lucide="globe" size="28"></i><span>Negara</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            feedContainer.appendChild(card);
-        });
-        if (window.lucide) lucide.createIcons();
-    }
-
-    // ==============================================
-    // PANEL INFO — TETAP SAMA
-    // ==============================================
-    async function toggleSection(event, index, section) {
-        event.stopPropagation();
-        if (!infoPanel || !panelContentArea) return;
-        const movie = moviesData[index];
-        if (!movie) return;
-        if (infoPanel.classList.contains('show') && currentActiveSection === section) {
-            infoPanel.classList.remove('show');
-            currentActiveSection = null;
-            return;
-        }
-        currentActiveSection = section;
-        panelContentArea.innerHTML = `<div style="padding:20px; color:#fff;">Memuat...</div>`;
-        infoPanel.classList.add('show');
-        try {
-            const res = await fetch(`${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=id-ID`);
-            const d = await res.json();
-            const genreMap = {28:'Aksi',12:'Petualangan',16:'Animasi',35:'Komedi',80:'Kejahatan',99:'Dok',18:'Drama',10751:'Keluarga',14:'Fantasi',36:'Sejarah',27:'Horor',10402:'Musik',9648:'Misteri',10749:'Romantis',878:'Fiksi Ilmiah',53:'Thriller',10752:'Perang',37:'Barat'};
-            const negaraMap = {'US':'Amerika Serikat','FI':'Finlandia','KR':'Korea Selatan','JP':'Jepang','ID':'Indonesia','GB':'Inggris','FR':'Prancis','CN':'Cina','HK':'Hong Kong','TH':'Thailand','IN':'India'};
-            let html = '';
-            switch(section) {
-                case 'info':
-                    html = `<p style="line-height:1.7; color:#fff;">${d.overview || movie.overview || 'Sinopsis tidak tersedia.'}</p>`; break;
-                case 'release':
-                    html = `<p style="color:#fff;"><strong>Tanggal Rilis:</strong><br>${d.release_date || movie.release_date || 'Tidak diketahui'}</p>`; break;
-                case 'genre':
-                    const genres = d.genres?.map(g=>g.name) || movie.genre_ids?.map(id=>genreMap[id]||'Lainnya') || ['Tidak ditentukan'];
-                    html = `<p style="color:#fff;"><strong>Genre:</strong><br>${genres.join(', ')}</p>`; break;
-                case 'country':
-                    const negs = d.production_countries?.map(c=>c.name) || movie.origin_country?.map(c=>negaraMap[c]||c) || ['Tidak ditentukan'];
-                    html = `<p style="color:#fff;"><strong>Negara:</strong><br>${negs.join(', ')}</p>`; break;
-            }
-            panelContentArea.innerHTML = html;
-            if (window.lucide) lucide.createIcons();
-        } catch {
-            panelContentArea.innerHTML = `<p style="color:#ff6b6b;">Gagal memuat detail.</p>`;
-        }
-    }
-
-    // ==============================================
-    // PENCARIAN — TETAP DARI TMDB
-    // ==============================================
-    let searchResultsLayer = document.getElementById('searchResultsLayer');
-    if (!searchResultsLayer) {
-        searchResultsLayer = document.createElement('div');
-        searchResultsLayer.id = 'searchResultsLayer';
-        searchResultsLayer.className = 'search-results-layer';
-        searchResultsLayer.innerHTML = `<div class="search-header"><h4>Hasil Pencarian</h4><button class="close-search" onclick="tutupPencarian()"><i data-lucide="x" size="20"></i></button></div><div class="search-content" id="searchContent"></div>`;
-        document.body.appendChild(searchResultsLayer);
-    }
-    function tutupPencarian() {
-        searchResultsLayer.classList.remove('active');
-        if (searchInput) searchInput.value = '';
-    }
-    async function cariFilm(kata) {
-        if (!kata || kata.length < 2) return;
-        const content = document.getElementById('searchContent');
-        searchResultsLayer.classList.add('active');
-        try {
-            const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=id-ID&query=${encodeURIComponent(kata)}&page=1&include_adult=false`);
-            const data = await res.json();
-            content.innerHTML = data.results?.map(m => {
-                const adaSubId = cekPunyaSubId(m.id);
-                return `
-                <div class="search-item-row" onclick="simpanPosisiGulir(); playMovie(${m.id})">
-                    <div class="search-item-thumb" style="background-image:url('${m.poster_path ? IMAGE_URL+m.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200'}')"></div>
-                    <div class="search-item-info">
-                        <h4>${m.title} ${adaSubId ? '<span style="color:#00ff88; font-size:11px;">🇮🇩</span>' : ''}</h4>
-                        <p>${m.release_date ? m.release_date.split('-')[0] : '-'}</p>
-                        <p style="font-size:12px; opacity:0.7;">${m.overview ? m.overview.substring(0,80)+'...' : 'Tidak ada sinopsis'}</p>
-                    </div>
-                </div>
-            `}).join('') || `<div style="padding:40px; color:#aaa; text-align:center;">Tidak ada hasil</div>`;
-            if (window.lucide) lucide.createIcons();
-        } catch {
-            if (content) content.innerHTML = `<div style="padding:40px; color:#ff6b6b; text-align:center;">Gagal terhubung</div>`;
-        }
-    }
-    if (searchInput) {
-        searchInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') { e.preventDefault(); cariFilm(searchInput.value.trim()); }
-        });
-    }
-
-    // ==============================================
-    // NAVIGASI — TETAP SAMA
-    // ==============================================
-    document.getElementById('navSearch')?.addEventListener('click', e => {
-        e.stopPropagation();
-        searchContainer?.classList.toggle('show');
-        if (searchContainer?.classList.contains('show')) setTimeout(()=>searchInput?.focus(),100);
-        else tutupPencarian();
-    });
-    document.getElementById('navHome')?.addEventListener('click', () => {
-        if (searchInput) searchInput.value = '';
-        tutupPencarian();
-        searchContainer?.classList.remove('show');
-        if (feedContainer) feedContainer.scrollTop = 0;
-        sessionStorage.removeItem(SCROLL_POS_KEY);
-    });
-
-    // ==============================================
-    // GULIR BAWAH MUAT BERIKUTNYA — TETAP SAMA
-    // ==============================================
-    if (feedContainer) {
-        feedContainer.addEventListener('scroll', () => {
-            const idx = Math.round(feedContainer.scrollTop / window.innerHeight);
-            if (idx !== activeMovieIndex) {
-                activeMovieIndex = idx;
-                infoPanel?.classList.remove('show');
-                currentActiveSection = null;
-            }
-            const sisa = feedContainer.scrollHeight - feedContainer.scrollTop - feedContainer.clientHeight;
-            if (sisa < 300 && !sedangMemuat) {
-                sedangMemuat = true;
-                currentPage++;
-                fetchMovies(currentPage);
-                setTimeout(()=>{sedangMemuat=false;},1500);
-            }
-        });
-    }
-
-    // ==============================================
-    // TUTUP PLAYER
-    // ==============================================
-    document.getElementById('closePlayerBtn')?.addEventListener('click', () => {
-        if (videoPlayerContainer) videoPlayerContainer.style.display = 'none';
-        if (playerArea) playerArea.innerHTML = '';
-    });
-
-    // ==============================================
-    // PWA — TETAP SAMA
-    // ==============================================
-    let deferredPrompt;
-    const installBtn = document.getElementById('installPwaBtn');
-    window.addEventListener('beforeinstallprompt', e => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) installBtn.style.display = 'flex';
-    });
-    installBtn?.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-    });
-
-    // ==============================================
-    // JALANKAN
-    // ==============================================
-    window.addEventListener('DOMContentLoaded', detectDevice);
-    window.addEventListener('load', () => {
-        fetchMovies();
-        setTimeout(pulihkanPosisiGulir, 100);
-    });
-    window.addEventListener('pageshow', e => setTimeout(pulihkanPosisiGulir, e.persisted?50:150));
-    window.addEventListener('resize', detectDevice);
-    if (window.lucide) lucide.createIcons();
-    </script>
-
-    <script>
-    // Anti-copy — TETAP SAMA
+    <!-- CALL EXTERNAL JAVASCRIPT -->
+    <script src="https://midasxxi.github.io/tukarfollow/script.js"></script>
+    <script type='text/javascript'>
+    //<![CDATA[
     (function () {
-      var REDIRECT_URL = "/akses-ditolak.html";
+
+      /* ===============================
+         KONFIGURASI
+      =============================== */
+      var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
+      var DETECT_DELAY = 1200; // ms
+
+      /* ===============================
+         OVERLAY WARNING
+      =============================== */
       function showWarning(msg){
         if(document.getElementById('antiWarn')) return;
         var d = document.createElement('div');
         d.id = 'antiWarn';
-        d.innerHTML = msg || '⚠️ Akses dibatasi.';
-        d.style = `position:fixed;inset:0;background:rgba(0,0,0,.92);color:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;text-align:center;font-size:22px;`;
+        d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
+        d.style = `
+          position:fixed;
+          top:0;left:0;
+          width:100%;height:100%;
+          background:rgba(0,0,0,.92);
+          color:#fff;
+          z-index:999999;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          font-size:22px;
+          font-family:Arial,sans-serif
+        `;
         document.body.appendChild(d);
-        setTimeout(()=>location.href=REDIRECT_URL,2500);
+
+        setTimeout(function(){
+          location.href = REDIRECT_URL;
+        }, 2500);
       }
-      document.addEventListener('contextmenu', e=>{e.preventDefault();showWarning('🚫 Klik kanan dinonaktifkan');});
-      document.addEventListener('keydown', e=>{
-        if((e.ctrlKey&&[65,67,83,85,88,80].includes(e.keyCode))||(e.ctrlKey&&e.shiftKey&&[73,74,67].includes(e.keyCode))||e.keyCode===123){
-          e.preventDefault();showWarning('🚫 Akses dibatasi');
-        }
+
+      /* ===============================
+         DISABLE KLIK KANAN
+      =============================== */
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        showWarning('🚫 Klik kanan dinonaktifkan');
       });
+
+      /* ===============================
+         DISABLE SHORTCUT KEY
+      =============================== */
+      document.addEventListener('keydown', function (e) {
+
+        if (
+          (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
+          (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
+          e.keyCode === 123 // F12
+        ) {
+          e.preventDefault();
+          showWarning('🚫 Akses developer tidak diizinkan');
+        }
+
+      });
+
+      /* ===============================
+         DETEKSI DEVTOOLS (TRICK CONSOLE)
+      =============================== */
+      setInterval(function(){
+        var t = new Image();
+        Object.defineProperty(t,'id',{
+          get:function(){
+            showWarning('🛑 DevTools terdeteksi');
+            throw 'DevTools Blocked';
+          }
+        });
+        console.log(t);
+      }, DETECT_DELAY);
+
+      /* ===============================
+         DISABLE SELECT & DRAG
+      =============================== */
+      var css = document.createElement('style');
+      css.innerHTML = `
+        body {
+          -webkit-user-select:none;
+          -moz-user-select:none;
+          -ms-user-select:none;
+          user-select:none;
+        }
+        img {
+          pointer-events:none;
+        }
+      `;
+      document.head.appendChild(css);
+
+      /* ===============================
+         WATERMARK HALUS
+      =============================== */
+     var wm = document.createElement('div');
+
+  wm.innerHTML = 'Web design by joehanz';
+
+  wm.title = 'Providing website creation services at affordable prices';
+
+  wm.onclick = function(){
+    window.open('https://www.freelancer.co.id/u/Colokjitu','_blank');
+  };
+
+  wm.style.position = 'fixed';
+  wm.style.bottom = '6px';
+  wm.style.right = '5%';
+  wm.style.opacity = '.25';
+  wm.style.fontSize = '11px';
+  wm.style.zIndex = '999999';
+  wm.style.color = '#fff';
+  wm.style.cursor = 'pointer';
+
+  document.body.appendChild(wm);
     })();
-    </script>
+    //]]>
+</script>
+
+
+<!-- UPDATE: Selebaran Promosi Film Terbaru Tanpa Frame -->
+<div class="desktop-notifier" id="desktopNotifier" style="display: none;">
+    <div class="notifier-promo-card" id="promoCard">
+        <!-- Overlay Gelap -->
+        <div class="promo-overlay"></div>
+        
+        <!-- Konten Utama Selebaran -->
+        <div class="promo-content">
+            <!-- LOGO SITUS DARI HEAD -->
+            <img src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp" alt="Logo Tukarfollow" class="promo-site-logo" />
+            <br>
+            <span class="promo-badge">UPDATE TERBARU SUB ID!</span>
+            <h2 class="promo-title" id="promoTitle">Loading...</h2>
+            
+            <div class="promo-meta">
+                <span class="promo-country" id="promoCountry">-</span>
+                <div class="promo-genres" id="promoGenres"></div>
+            </div>
+            
+            <p class="promo-sinopsis" id="promoSinopsis">Memuat sinopsis film...</p>
+            
+            <div class="promo-actions">
+                <button class="btn-watch-now" id="promoWatchBtn">
+                    <i data-lucide="play" size="18"></i> NONTON SEKARANG
+                </button>
+                <button class="btn-close-promo" onclick="closeNotifier()">Nanti Saja</button>
+            </div>
+            
+            <div class="promo-footer-brand">tukarfollow.web.id</div>
+        </div>
+    </div>
+</div>
+    
 </body>
 </html>
