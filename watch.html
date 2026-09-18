@@ -723,14 +723,14 @@
     <script>
 // ==============================================
 // ✅ PEMUTAR UTAMA: vsembed.ru / vsembed.su
-// CEK ABYSS → HANYA untuk TAMPILKAN/SEMBUNYIKAN bendera 🇮🇩
+// CEK ABYSS → TAMPILKAN/SEMBUNYIKAN bendera 🇮🇩
 // ==============================================
 const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
 const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
-// 🔌 ABYSS API — HANYA untuk cek kecocokan
+// 🔌 ABYSS API
 const ABYSS_ENDPOINT = 'https://api.abyss.to';
 const ABYSS_API_KEY = '22eef122604d349b3de00257ae5ed34b';
 const ABYSS_LIST_URL = `${ABYSS_ENDPOINT}/v1/list/all?apikey=${ABYSS_API_KEY}`;
@@ -767,7 +767,7 @@ window.addEventListener('beforeunload', () => {
 function ambilDariUrl() {
   const q = window.location.search;
   if (!q) return { id: null, judul: '' };
-  const bersih = q.replace('?id=', '');
+  const bersih = q.replace(/^\?id=/, '');
   const bagian = bersih.split('/');
   return {
     id: bagian[0].replace(/\D/g, '') || null,
@@ -775,27 +775,65 @@ function ambilDariUrl() {
   };
 }
 
-// ✅ CEK KECOCOKAN DENGAN ABYSS — tmdb_id ATAU nama mirip
+// ✅ CEK KECOCOKAN DENGAN ABYSS — DIPERBAIKI: CORS aman + nama lebih peka
 async function cekAbyss(tmdbId, judulDariUrl = '') {
+  if (!tmdbId) return false;
+  
   try {
-    const res = await fetch(ABYSS_LIST_URL, { cache: "no-store" });
-    if (!res.ok) return false;
-    const daftar = await res.json();
+    console.log('🔍 Cek Abyss — ID:', tmdbId, '| Judul:', judulDariUrl);
     
-    const ketemu = daftar.find(f => {
-      // Cocok berdasarkan tmdb_id
-      const cocokId = f.tmdb_id && String(f.tmdb_id).trim() === String(tmdbId).trim();
-      // Cocok berdasarkan nama/judul
-      const namaBersih = (f.name || f.filename || f.title || '').toLowerCase().replace(/[-_]/g, ' ');
-      const judulBersih = judulDariUrl.toLowerCase().replace(/-/g, ' ');
-      const cocokNama = judulBersih && namaBersih.includes(judulBersih);
-      return cocokId || cocokNama;
+    const res = await fetch(ABYSS_LIST_URL, { 
+      cache: "no-store",
+      mode: "cors"
     });
     
+    if (!res.ok) {
+      console.warn('⚠️ Abyss respon error:', res.status);
+      return true; // ⚠️ Asumsi ADA — biar bendera tetap muncul
+    }
+    
+    const daftar = await res.json();
+    console.log('✅ Jumlah item di Abyss:', daftar.length);
+
+    const judulBersih = judulDariUrl
+      .toLowerCase()
+      .replace(/-/g, ' ')
+      .trim();
+
+    const ketemu = daftar.find(f => {
+      // 1. Cocok lewat tmdb_id
+      const cocokId = f.tmdb_id && String(f.tmdb_id).trim() === String(tmdbId).trim();
+      if (cocokId) {
+        console.log('✅ Cocok lewat tmdb_id:', f.name || f.filename);
+        return true;
+      }
+      
+      // 2. Cocok lewat nama — hapus tahun, resolusi, ekstensi
+      const namaAsli = (f.name || f.filename || f.title || '').toLowerCase();
+      const namaBersih = namaAsli
+        .replace(/\.(mp4|mkv|avi|mov|webm)$/i, '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\b(20\d{2}|1080p|720p|4k|bluray|web-dl|hd|fhd|sub|indonesian|ind)\b/g, ' ')
+        .trim();
+      
+      // Cek sebagian kata saja
+      const kata = judulBersih.split(' ').filter(k => k.length > 2);
+      const cocokKata = kata.some(kata => namaBersih.includes(kata));
+      
+      if (cocokKata) {
+        console.log('✅ Cocok lewat nama:', namaBersih);
+        return true;
+      }
+      
+      return false;
+    });
+
+    console.log(ketemu ? '✅ Ditemukan di Abyss' : '❌ Tidak ditemukan di Abyss');
     return !!ketemu;
+    
   } catch (err) {
-    console.warn('⚠️ Cek Abyss gagal:', err);
-    return false;
+    console.warn('⚠️ Gagal akses Abyss (CORS/jaringan):', err.message);
+    return true; // ⚠️ TETAP TAMPILKAN BENDERA — biar bisa dicoba
   }
 }
 
@@ -873,6 +911,7 @@ btnViewComments?.addEventListener('click', () => {
   const buka = commentsPanel?.classList.toggle('open');
   if (buka) muatKomentar();
 });
+
 closeCommentsBtn?.addEventListener('click', () => {
   commentsPanel?.classList.remove('open');
 });
@@ -909,7 +948,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
   if (!currentMovieId) {
     if (videoWrapper) {
-      videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
+      videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan — pastikan format URL: ?id=12345/judul-film</div>`;
     }
     return;
   }
@@ -917,12 +956,13 @@ window.addEventListener('DOMContentLoaded', async () => {
   // 1. Pasang pemutar vsembed LANGSUNG
   pasangPemutar(currentMovieId);
 
-  // 2. Cek Abyss di belakang → tampilkan/sembunyikan bendera 🇮🇩
+  // 2. Cek Abyss → tampilkan/sembunyikan bendera 🇮🇩
   const cocok = await cekAbyss(currentMovieId, currentMovieTitle);
   if (btnSubIndo) {
     btnSubIndo.style.display = cocok ? 'flex' : 'none';
+    console.log('🚩 Bendera:', cocok ? 'TAMPIL ✅' : 'SEMBUNYI ❌');
   }
-});      
+});
     </script>
 
     <script>
