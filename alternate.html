@@ -6,7 +6,6 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- ✅ Tambahan untuk dukungan PWA & orientasi layar -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -15,19 +14,17 @@
     />
     <meta name="screen-orientation" content="any" />
     <meta name="fullscreen" content="yes" />
-
-    <title>TUKARFOLLOW - Nonton Film</title>
+    <title>TUKARFOLLOW - Pemutar Alternatif</title>
     <meta
       name="description"
-      content="Nonton streaming film dan serial TV terbaru gratis dengan kualitas HD dan subtitle Indonesia."
+      content="Pemutar alternatif film dengan subtitle Indonesia."
     />
     <meta
       name="keywords"
-      content="nonton film gratis, streaming movie sub indo, bioskop online"
+      content="nonton film, streaming sub indo, pemutar alternatif"
     />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="id" />
-
     <link
       rel="icon"
       href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
@@ -37,20 +34,18 @@
       rel="apple-touch-icon"
       href="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
     />
-
     <meta property="og:type" content="video.movie" />
-    <meta property="og:title" content="TUKARFOLLOW" />
+    <meta property="og:title" content="TUKARFOLLOW - Pemutar Alternatif" />
     <meta
       property="og:description"
-      content="Nonton film dan serial TV terbaru sub Indonesia."
+      content="Pemutar alternatif film dengan subtitle Indonesia."
     />
-    <meta property="og:url" content="https://tukarfollow.web.id/watch.html" />
+    <meta property="og:url" content="https://tukarfollow.web.id/alternate.html" />
     <meta
       property="og:image"
       content="https://tukarfollow.web.id/banner/banner-tukarfollow.webp"
     />
     <meta property="og:site_name" content="TUKARFOLLOW" />
-
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
@@ -69,9 +64,6 @@
         overflow: hidden;
         width: 100vw;
         height: 100vh;
-        font-size: 30px !important;
-        orientation: portrait;
-        orientation: landscape;
       }
       .comments-panel {
         position: fixed;
@@ -149,50 +141,20 @@
         font-size: 11px;
         color: #777;
       }
-      .watch-layout {
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        overflow: hidden;
-      }
       .video-main-wrapper {
         position: relative;
         width: 100%;
         height: calc(100vh - 40px);
-        max-width: 125vw;
+        max-width: 100vw;
         margin: 0 auto;
         border-radius: 0;
         overflow: hidden;
         background: #000;
       }
-      .video-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 5;
-        pointer-events: none;
-      }
-      .clickable-subtitle-area {
-        position: absolute;
-        bottom: 60px;
-        right: 20px;
-        width: 120px;
-        height: 40px;
-        z-index: 6;
-        pointer-events: auto;
-      }
       #filmIframe {
         width: 100%;
         height: 100%;
         border: none;
-        object-fit: contain;
         background: #000;
       }
       .watermark-logo {
@@ -209,7 +171,7 @@
       }
       .subtitle-layer {
         position: fixed;
-        bottom: 0px;
+        bottom: 0;
         left: 0;
         right: 0;
         height: 48px;
@@ -219,39 +181,15 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        opacity: 1 !important;
-        pointer-events: none !important;
+        pointer-events: none;
       }
       .subtitle-layer * {
-        pointer-events: auto;
-      }
-      .subtitle-layer::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 150px;
-        background: rgba(0, 0, 0, 0);
-        z-index: -1;
-        pointer-events: auto;
-      }
-      .subtitle-layer::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: calc(100% - 60px);
-        right: 0;
-        background: rgba(0, 0, 0, 0);
-        z-index: -1;
         pointer-events: auto;
       }
       .subtitle-controls {
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-wrap: wrap;
         gap: 14px;
         padding: 8px 16px;
         border-radius: 12px;
@@ -274,11 +212,6 @@
       .ctrl-btn:hover {
         background: rgba(255,255,255,0.3);
         transform: scale(1.05);
-      }
-      .ctrl-btn svg,
-      .ctrl-btn .custom-icon {
-        width: 20px;
-        height: 20px;
       }
       .panel-backdrop {
         position: fixed;
@@ -336,11 +269,6 @@
         color: #fff;
         font-size: 14px;
       }
-      .form-group input:focus,
-      .form-group textarea:focus {
-        outline: none;
-        border-color: #4facff;
-      }
       .submit-btn {
         background: #2563eb;
         border: none;
@@ -349,36 +277,20 @@
         padding: 10px;
         border-radius: 8px;
         cursor: pointer;
-        transition: background 0.2s;
       }
       .submit-btn:hover {
         background: #1d4ed8;
       }
-      :fullscreen,
-      :-webkit-full-screen,
-      :-moz-full-screen,
-      :-ms-fullscreen {
-        width: 100vw !important;
-        height: 100vh !important;
+      .status-info {
+        text-align: center;
+        padding: 30px;
+        color: #aaa;
       }
-      :fullscreen .watermark-logo,
-      :fullscreen .subtitle-layer,
-      :-webkit-full-screen .watermark-logo,
-      :-webkit-full-screen .subtitle-layer,
-      :-moz-full-screen .watermark-logo,
-      :-moz-full-screen .subtitle-layer,
-      :-ms-fullscreen .watermark-logo,
-      :-ms-fullscreen .subtitle-layer {
-        position: fixed !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        z-index: 999999 !important;
-      }
+      .status-info.success { color: #4facff; }
+      .status-info.error { color: #ff6b6b; }
       @media (max-width: 768px) {
         .video-main-wrapper {
-          width: 100vw;
           height: calc(100vh - 45px);
-          max-width: 100vw;
         }
         .ctrl-btn {
           width: 38px;
@@ -391,88 +303,46 @@
       }
       @media screen and (orientation: landscape) {
         .video-main-wrapper {
-          width: 100vw;
           height: calc(100vh - 40px);
-          max-width: 100vw;
-        }
-        .watermark-logo img {
-          width: 50px;
-        }
-        .ctrl-btn {
-          width: 36px;
-          height: 36px;
         }
       }
     </style>
     <script>(function(s){s.dataset.zone='11439624',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-      </head>
+  </head>
   <body>
     <div class="comments-panel" id="commentsPanel">
-      <div class="comments-header" id="commentsHeader">
+      <div class="comments-header">
         <span><i data-lucide="message-square" size="16"></i> Komentar Netizen</span>
         <button class="close-comments" id="closeCommentsBtn">&times;</button>
       </div>
-      <div class="comments-section" id="commentsSection">
+      <div class="comments-section">
         <div class="comments-list-container" id="commentList">
           <div class="empty-comments">Buka untuk melihat komentar...</div>
         </div>
       </div>
     </div>
-    <div class="watch-layout" id="watchLayout"></div>
+
     <div class="video-main-wrapper" id="videoWrapper">
       <iframe
         id="filmIframe"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none;"
         src=""
         allowfullscreen
-        allow="autoplay; encrypted-media"
+        allow="autoplay; fullscreen; encrypted-media"
       ></iframe>
-      <div class="video-overlay"></div>
-      <div class="clickable-subtitle-area"></div>
     </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const iframe = document.getElementById("filmIframe");
-        const videoWrapper = document.getElementById("videoWrapper");
-        const dummyLayer = document.createElement("div");
-        dummyLayer.style.cssText = `
-          position:fixed;top:0;left:0;width:100%;height:100%;
-          background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAkJiGKw5otYyJgpBBtop9PZXrNpbMHJUvpja586ANY4sU_n6YWV7axeh02uKQtvfBWJlXCUS67JR6xIuvx_o7__3JZMmz9lFrnB78WQkymFMzqPJE4L2x4uPWH2fNsKJsACIdaQTaVTW4DK1QIgmSJqUzg0DkXIux4DANoKd5QGoQxWwyrxEXEJkBC5U/s1500/segera-dimulai.webp') center/cover no-repeat;
-          z-index:9999;
-        `;
-        videoWrapper.appendChild(dummyLayer);
-        setTimeout(() => {
-          dummyLayer.style.display = "none";
-          const overlay = document.createElement("div");
-          overlay.style.cssText = `
-            position:fixed;top:0;left:0;width:100%;height:100%;
-            background:rgba(0,0,0,0);z-index:9999;cursor:pointer;
-          `;
-          videoWrapper.appendChild(overlay);
-          overlay.addEventListener("click", () => {
-            const domains = ["https://rajarayap.com","https://rewangiklan.my.id/iklan.html?id=IKL000105","https://rewangiklan.my.id/iklan.html?id=IKL000109","https://rewangiklan.my.id/iklan.html?id=IKL000107","https://caturbangunsentosa.blogspot.com","https://ptdwiprima.blogspot.com"];
-            const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-            window.open(randomDomain, "_blank");
-            overlay.remove();
-            iframe.style.display = "block";
-          }, { once:true });
-        }, 3000);
-      });
-    </script>
 
     <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-controls">
-        <button class="ctrl-btn" id="btnHomeBack" title="Kembali ke halaman sebelumnya">
+        <button class="ctrl-btn" id="btnHomeBack" title="Kembali">
           <i data-lucide="arrow-left"></i>
         </button>
         <button class="ctrl-btn" id="btnAddComment" title="Tulis Komentar">
           <i data-lucide="plus-circle"></i>
         </button>
-        <button class="ctrl-btn" id="btnViewComments" title="Lihat Daftar Komentar">
+        <button class="ctrl-btn" id="btnViewComments" title="Lihat Komentar">
           <i data-lucide="message-square"></i>
         </button>
-        <button class="ctrl-btn" id="btnFullscreen" title="Masuk/Keluar Layar Penuh">
+        <button class="ctrl-btn" id="btnFullscreen" title="Layar Penuh">
           <i data-lucide="maximize"></i>
         </button>
       </div>
@@ -483,26 +353,35 @@
       <div class="panel-content">
         <div class="form-title">Tulis Komentar Kamu</div>
         <div class="form-group">
-          <input type="text" id="commentName" placeholder="Nama samaran kamu..." />
-          <textarea id="commentText" placeholder="Tulis opini/komentar film di sini..." rows="3" maxlength="300"></textarea>
+          <input type="text" id="commentName" placeholder="Nama samaran..." />
+          <textarea id="commentText" placeholder="Tulis pendapatmu..." rows="3" maxlength="300"></textarea>
           <button class="submit-btn" onclick="kirimKomentar()">Kirim Komentar</button>
         </div>
       </div>
     </div>
 
+    <div class="watermark-logo">
+      <img
+        src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
+        alt="TukarFollow"
+      />
+    </div>
+
     <script>
+      // ==============================================
+      // ✅ MURNI API ABYSS — GAK PAKAI JSON LAMA
+      // ==============================================
       const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
-      const BASE_URL = 'https://api.themoviedb.org/3';
-      const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
       const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
-      const JSON_PATHS = [
-        'https://midasxxi.github.io/tukarfollow/movies.json',
-        'https://midasxxi.github.io/tukarfollow/movies2025.json',
-        'https://midasxxi.github.io/tukarfollow/movies2024.json',
-        'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
-      ];
-      const videoWrapper = document.getElementById('videoWrapper');
+
+      // 🔌 ABYSS API
+      const ABYSS_ENDPOINT = 'https://api.abyss.to';
+      const ABYSS_API_KEY = '22eef122604d349b3de00257ae5ed34b';
+      const ABYSS_LIST_URL = `${ABYSS_ENDPOINT}/v1/list/all?apikey=${ABYSS_API_KEY}`;
+
+      // 🎯 Elemen
       const filmIframe = document.getElementById('filmIframe');
+      const videoWrapper = document.getElementById('videoWrapper');
       const btnHomeBack = document.getElementById('btnHomeBack');
       const btnAddComment = document.getElementById('btnAddComment');
       const btnViewComments = document.getElementById('btnViewComments');
@@ -512,41 +391,66 @@
       const commentListEl = document.getElementById('commentList');
       const infoPanel = document.getElementById('infoPanel');
       const panelBackdrop = document.getElementById('panelBackdrop');
+
       let currentMovieId = null;
 
-      // ✅ Ambil ID SAMA PERSIS seperti watch.html
-      function ambilIdDariUrl() {
-        const query = window.location.search;
-        if (!query) return null;
-        const bagian = query.replace('?id=', '').split('/')[0];
-        const idBersih = bagian.replace(/\D/g, '');
-        return idBersih || null;
+      // ✅ Ambil ID & Judul dari URL ?id=12345/judul
+      function ambilDariUrl() {
+        const q = window.location.search;
+        if (!q) return { id: null, judul: '' };
+        const bersih = q.replace('?id=', '');
+        const bagian = bersih.split('/');
+        return {
+          id: bagian[0].replace(/\D/g, '') || null,
+          judul: bagian[1] || ''
+        };
       }
 
-      // ✅ HANYA AMBIL KOLOM iframe — iframe2 DIHAPUS
-      async function cekDanMuatFilm(tmdbId) {
-        for (const path of JSON_PATHS) {
-          try {
-            const res = await fetch(path, { cache: "no-store" });
-            if (res.ok) {
-              const daftar = await res.json();
-              const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-              if (ketemu && ketemu.iframe) {
-                filmIframe.src = ketemu.iframe;
-                return true;
-              }
-            }
-          } catch (err) {
-            console.warn("⚠️ Gagal baca:", path, err);
+      // ✅ Cek Abyss → pasang pemutar
+      async function muatDariAbyss(tmdbId, judulDariUrl = '') {
+        try {
+          const res = await fetch(ABYSS_LIST_URL, { cache: "no-store" });
+          if (!res.ok) throw new Error('Gagal hubung Abyss');
+          const daftar = await res.json();
+
+          // Cocokkan: tmdb_id ATAU nama mirip
+          const ketemu = daftar.find(f => {
+            const cocokId = f.tmdb_id && String(f.tmdb_id).trim() === String(tmdbId).trim();
+            const namaBersih = (f.name || f.filename || f.title || '').toLowerCase().replace(/[-_]/g, ' ');
+            const judulBersih = judulDariUrl.toLowerCase().replace(/-/g, ' ');
+            const cocokNama = judulBersih && namaBersih.includes(judulBersih);
+            return cocokId || cocokNama;
+          });
+
+          if (ketemu) {
+            const kode = ketemu.code || ketemu.id;
+            filmIframe.src = `${ABYSS_ENDPOINT}/player/${kode}`;
+            return true;
           }
+
+          // Tidak ketemu
+          videoWrapper.innerHTML = `
+            <div class="status-info error">
+              <h3>Film tidak ditemukan di Abyss</h3>
+              <p>ID: ${tmdbId}</p>
+              <button class="submit-btn" style="margin-top:20px;" onclick="window.history.back()">Kembali</button>
+            </div>
+          `;
+          return false;
+        } catch (err) {
+          console.warn('⚠️ Abyss error:', err);
+          videoWrapper.innerHTML = `
+            <div class="status-info error">
+              <h3>Gagal terhubung ke Abyss</h3>
+              <p>Silakan coba lagi nanti</p>
+              <button class="submit-btn" style="margin-top:20px;" onclick="window.location.reload()">Muat Ulang</button>
+            </div>
+          `;
+          return false;
         }
-        if (videoWrapper) {
-          videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link video tidak tersedia</div>`;
-        }
-        return false;
       }
 
-      // ✅ Tombol Fullscreen
+      // ✅ Layar Penuh
       btnFullscreen?.addEventListener('click', () => {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen?.();
@@ -557,36 +461,30 @@
         }
         lucide.createIcons();
       });
-      document.addEventListener('fullscreenchange', updateFullscreenIcon);
-      function updateFullscreenIcon() {
-        const isFull = document.fullscreenElement;
-        if (btnFullscreen) {
-          btnFullscreen.innerHTML = isFull
-            ? '<i data-lucide="minimize"></i>'
-            : '<i data-lucide="maximize"></i>';
-          lucide.createIcons();
-        }
-      }
+      document.addEventListener('fullscreenchange', () => {
+        if (!btnFullscreen) return;
+        btnFullscreen.innerHTML = document.fullscreenElement
+          ? '<i data-lucide="minimize"></i>'
+          : '<i data-lucide="maximize"></i>';
+        lucide.createIcons();
+      });
 
-      // ✅ Tombol Kembali
+      // ✅ Kembali ke watch.html
       btnHomeBack?.addEventListener('click', () => {
         if (window.history.length > 1) window.history.back();
         else window.location.href = 'index.html';
       });
 
-      // ✅ Komentar: Buka/Tutup Form
-      btnAddComment?.addEventListener('click', bukaFormKomen);
-      panelBackdrop?.addEventListener('click', tutupFormKomen);
-      function bukaFormKomen() {
+      // ✅ Komentar
+      btnAddComment?.addEventListener('click', () => {
         infoPanel?.classList.add('show');
         panelBackdrop?.classList.add('active');
-      }
-      function tutupFormKomen() {
+      });
+      panelBackdrop?.addEventListener('click', () => {
         infoPanel?.classList.remove('show');
         panelBackdrop?.classList.remove('active');
-      }
+      });
 
-      // ✅ Kirim Komentar
       async function kirimKomentar() {
         const nama = document.getElementById('commentName')?.value.trim();
         const teks = document.getElementById('commentText')?.value.trim();
@@ -597,25 +495,26 @@
             mode: 'no-cors',
             body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
           });
-          alert("✅ Komentar berhasil dikirim!");
-          tutupFormKomen();
+          alert("✅ Komentar terkirim!");
+          infoPanel?.classList.remove('show');
+          panelBackdrop?.classList.remove('active');
           setTimeout(muatKomentar, 800);
         } catch {
-          alert("❌ Gagal mengirim komentar. Coba lagi.");
+          alert("❌ Gagal kirim. Coba lagi.");
         }
       }
 
-      // ✅ Buka/Tutup Daftar Komentar
       btnViewComments?.addEventListener('click', () => {
         const buka = commentsPanel?.classList.toggle('open');
         if (buka) muatKomentar();
       });
-      closeCommentsBtn?.addEventListener('click', () => commentsPanel?.classList.remove('open'));
+      closeCommentsBtn?.addEventListener('click', () => {
+        commentsPanel?.classList.remove('open');
+      });
 
-      // ✅ Muat Komentar
       async function muatKomentar() {
         if (!currentMovieId || !commentListEl) return;
-        commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
+        commentListEl.innerHTML = '<div class="empty-comments">Memuat...</div>';
         try {
           const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
           const hasil = await res.json();
@@ -635,199 +534,96 @@
         }
       }
 
-      // ✅ JALANKAN SEMUA
-      window.addEventListener('DOMContentLoaded', async () => {
-        lucide.createIcons();
-        currentMovieId = ambilIdDariUrl();
-        if (!currentMovieId) {
-          if (videoWrapper) {
-            videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
-          }
-          return;
-        }
-        await cekDanMuatFilm(currentMovieId);
-      });
-    </script>
-
-    <script>
+      // ✅ Kontrol otomatis sembunyi/tampil
       const subtitleLayer = document.getElementById('subLayer');
       const controls = subtitleLayer?.querySelector('.subtitle-controls');
-      if (!controls) console.warn('Elemen kontrol tidak ditemukan');
       let hideTimer = null;
       const HIDE_DELAY = 3000;
+
       function showControls() {
         if (!controls) return;
         controls.style.opacity = '1';
         controls.style.pointerEvents = 'auto';
         controls.style.visibility = 'visible';
-        resetHideTimer();
-      }
-      function hideControls() {
-        if (!controls) return;
-        controls.style.opacity = '0';
-        controls.style.pointerEvents = 'none';
-        controls.style.visibility = 'hidden';
-      }
-      function resetHideTimer() {
         clearTimeout(hideTimer);
-        hideTimer = setTimeout(hideControls, HIDE_DELAY);
+        hideTimer = setTimeout(() => {
+          controls.style.opacity = '0';
+          controls.style.pointerEvents = 'none';
+          controls.style.visibility = 'hidden';
+        }, HIDE_DELAY);
       }
-      const ACTIVITY_EVENTS = [
-        'touchstart', 'touchmove', 'touchend', 'touchcancel',
-        'mousedown', 'mousemove', 'mouseup', 'click',
-        'scroll', 'wheel', 'keydown'
-      ];
-      ACTIVITY_EVENTS.forEach(event => {
-        document.addEventListener(event, showControls, { passive: true, capture: true });
+
+      ['touchstart','touchmove','mousedown','mousemove','click','scroll','keydown'].forEach(ev => {
+        document.addEventListener(ev, showControls, { passive: true });
       });
       controls?.addEventListener('click', showControls);
-      controls?.addEventListener('touchstart', showControls);
-      document.addEventListener('DOMContentLoaded', () => {
+
+      // ✅ JALANKAN
+      window.addEventListener('DOMContentLoaded', async () => {
+        lucide.createIcons();
+        const { id, judul } = ambilDariUrl();
+        currentMovieId = id;
+
+        if (!currentMovieId) {
+          videoWrapper.innerHTML = `
+            <div class="status-info error">
+              <h3>ID Film tidak ditemukan</h3>
+              <button class="submit-btn" style="margin-top:20px;" onclick="window.location.href='index.html'">Kembali ke Beranda</button>
+            </div>
+          `;
+          return;
+        }
+
+        await muatDariAbyss(currentMovieId, judul);
         showControls();
       });
     </script>
 
-    <script>
-      function bersihkanLink(linkKotor) {
-        if (!linkKotor) return linkKotor;
-        let link = decodeURIComponent(linkKotor);
-        try {
-          const u = new URL(link);
-          const buang = [
-            'fbclid','gclid','utm_source','utm_medium','utm_campaign','utm_term','utm_content',
-            'utm_name','ref','ref_src','ref_url','igshid','share_id','from','feature',
-            'mc_eid','mc_cid','spm','yclid','twclid','wickedid','mkt_tok','__twitter_impression'
-          ];
-          buang.forEach(p => u.searchParams.delete(p));
-          return u.toString();
-        } catch {
-          link = link.replace(/([?&](fbclid|gclid|utm_[a-z0-9_]+|ref[a-z0-9_]*|igshid)=[^&]*)/gi, '');
-          return link.replace(/&+$/, '').replace(/\?&/, '?');
-        }
-      }
-    </script>
-
     <script type="text/javascript">
-        //<![CDATA[
-        (function () {
-
-          /* ===============================
-             KONFIGURASI
-          =============================== */
-          var REDIRECT_URL = "/akses-ditolak.html"; // ganti jika mau
-          var DETECT_DELAY = 1200; // ms
-
-          /* ===============================
-             OVERLAY WARNING
-          =============================== */
-          function showWarning(msg){
-            if(document.getElementById('antiWarn')) return;
-            var d = document.createElement('div');
-            d.id = 'antiWarn';
-            d.innerHTML = msg || '⚠️ Akses dibatasi. Aktivitas Anda tercatat.';
-            d.style = `
-              position:fixed;
-              top:0;left:0;
-              width:100%;height:100%;
-              background:rgba(0,0,0,.92);
-              color:#fff;
-              z-index:999999;
-              display:flex;
-              align-items:center;
-              justify-content:center;
-              text-align:center;
-              font-size:22px;
-              font-family:Arial,sans-serif
-            `;
-            document.body.appendChild(d);
-
-            setTimeout(function(){
-              location.href = REDIRECT_URL;
-            }, 2500);
-          }
-
-          /* ===============================
-             DISABLE KLIK KANAN
-          =============================== */
-          document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-            showWarning('🚫 Klik kanan dinonaktifkan');
-          });
-
-          /* ===============================
-             DISABLE SHORTCUT KEY
-          =============================== */
-          document.addEventListener('keydown', function (e) {
-
-            if (
-              (e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) || // A C S U X P
-              (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || // I J C
-              e.keyCode === 123 // F12
-            ) {
-              e.preventDefault();
-              showWarning('🚫 Akses developer tidak diizinkan');
-            }
-
-          });
-
-          /* ===============================
-             DETEKSI DEVTOOLS (TRICK CONSOLE)
-          =============================== */
-          setInterval(function(){
-            var t = new Image();
-            Object.defineProperty(t,'id',{
-              get:function(){
-                showWarning('🛑 DevTools terdeteksi');
-                throw 'DevTools Blocked';
-              }
-            });
-            console.log(t);
-          }, DETECT_DELAY);
-
-          /* ===============================
-             DISABLE SELECT & DRAG
-          =============================== */
-          var css = document.createElement('style');
-          css.innerHTML = `
-            body {
-              -webkit-user-select:none;
-              -moz-user-select:none;
-              -ms-user-select:none;
-              user-select:none;
-            }
-            img {
-              pointer-events:none;
-            }
+      // Anti-devtools & perlindungan — biarkan apa adanya
+      (function () {
+        var REDIRECT_URL = "/akses-ditolak.html";
+        var DETECT_DELAY = 1200;
+        function showWarning(msg){
+          if(document.getElementById('antiWarn')) return;
+          var d = document.createElement('div');
+          d.id = 'antiWarn';
+          d.innerHTML = msg || '⚠️ Akses dibatasi.';
+          d.style = `
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,.92);color:#fff;z-index:999999;
+            display:flex;align-items:center;justify-content:center;
+            text-align:center;font-size:22px;font-family:Arial,sans-serif
           `;
-          document.head.appendChild(css);
-
-          /* ===============================
-             WATERMARK HALUS
-          =============================== */
-          var wm = document.createElement('div');
-          wm.innerHTML = 'Web design by joehanz';
-          wm.title = '';
-          
-          // LINK DIMATIKAN — TIDAK BISA DIKLIK
-          wm.style.position = 'fixed';
-          wm.style.bottom = '6px';
-          wm.style.right = '5%';
-          wm.style.opacity = '.25';
-          wm.style.fontSize = '11px';
-          wm.style.zIndex = '999999';
-          wm.style.color = '#fff';
-          wm.style.cursor = 'default';
-          document.body.appendChild(wm);
-          })();
-      //]]>
-      </script>
-
-    <div class="watermark-logo" id="logoTukarFollow">
-      <img
-        src="https://tukarfollow.web.id/banner/tukarfollow.icon.webp"
-        alt="TukarFollow"
-        loading="lazy"
-      />
-    </div>
+          document.body.appendChild(d);
+          setTimeout(() => location.href = REDIRECT_URL, 2500);
+        }
+        document.addEventListener('contextmenu', e => {
+          e.preventDefault(); showWarning('🚫 Klik kanan dinonaktifkan');
+        });
+        document.addEventListener('keydown', e => {
+          if ((e.ctrlKey && [65,67,83,85,88,80].includes(e.keyCode)) ||
+              (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) ||
+              e.keyCode === 123) {
+            e.preventDefault(); showWarning('🚫 Akses developer tidak diizinkan');
+          }
+        });
+        setInterval(() => {
+          var t = new Image();
+          Object.defineProperty(t,'id',{get:()=>{showWarning('🛑 DevTools terdeteksi');throw 'Blocked';}});
+          console.log(t);
+        }, DETECT_DELAY);
+        var css = document.createElement('style');
+        css.innerHTML = `
+          body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+          img{pointer-events:none;}
+        `;
+        document.head.appendChild(css);
+        var wm = document.createElement('div');
+        wm.innerHTML = 'Web design by joehanz';
+        wm.style.cssText = 'position:fixed;bottom:6px;right:5%;opacity:.25;font-size:11px;z-index:999999;color:#fff;cursor:default;';
+        document.body.appendChild(wm);
+      })();
+    </script>
   </body>
 </html>
