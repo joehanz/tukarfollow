@@ -721,21 +721,21 @@
     </div>
 
     <script>
-      // 🔧 KONFIGURASI
+// ==============================================
+// ✅ PEMUTAR UTAMA: vsembed.ru / vsembed.su
+// CEK ABYSS → HANYA untuk TAMPILKAN/SEMBUNYIKAN bendera 🇮🇩
+// ==============================================
 const API_KEY = 'c000d7b8b0f5ee16b98b6103009745d8';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w185';
 const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzoTAiVa0gMhNB-BJs3fLb4y9gKe-MzRWorDOF0y3TgvaRb2lWtj3docQ0abSCIEMBi/exec';
 
-// ✅ Alamat semua file JSON dari GitHub Pages
-const JSON_PATHS = [
-  'https://midasxxi.github.io/tukarfollow/movies.json',
-  'https://midasxxi.github.io/tukarfollow/movies2025.json',
-  'https://midasxxi.github.io/tukarfollow/movies2024.json',
-  'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
-];
+// 🔌 ABYSS API — HANYA untuk cek kecocokan
+const ABYSS_ENDPOINT = 'https://api.abyss.to';
+const ABYSS_API_KEY = '22eef122604d349b3de00257ae5ed34b';
+const ABYSS_LIST_URL = `${ABYSS_ENDPOINT}/v1/list/all?apikey=${ABYSS_API_KEY}`;
 
-// ✅ Sumber Player: utama → cadangan
+// 🎬 PEMUTAR UTAMA — TETAP vsembed
 const SUMBER_EMBED = {
   utama: (id) => `https://vsembed.ru/embed/movie?tmdb=${id}`,
   cadangan1: (id) => `https://vsembed.su/embed/movie?tmdb=${id}`
@@ -748,62 +748,75 @@ const btnHomeBack     = document.getElementById('btnHomeBack');
 const btnAddComment   = document.getElementById('btnAddComment');
 const btnViewComments = document.getElementById('btnViewComments');
 const btnFullscreen   = document.getElementById('btnFullscreen');
+const btnSubIndo      = document.getElementById('btnSubIndo'); // 🇮🇩 Bendera
 const commentsPanel   = document.getElementById('commentsPanel');
-const closeCommentsBtn= document.getElementById('closeCommentsBtn');
+const closeCommentsBtn = document.getElementById('closeCommentsBtn');
 const commentListEl   = document.getElementById('commentList');
 const infoPanel       = document.getElementById('infoPanel');
 const panelBackdrop   = document.getElementById('panelBackdrop');
 
 let currentMovieId = null;
+let currentMovieTitle = '';
 
-// ✅ SIMPAN POSISI GULUNGAN SEBELUM TUTUP HALAMAN
+// ✅ Simpan posisi gulir
 window.addEventListener('beforeunload', () => {
   localStorage.setItem('posisiGulunganFilm', window.scrollY);
 });
 
-// ✅ Ambil ID Film dari URL format ?id=12345/judul-film
-function ambilIdDariUrl() {
-  const query = window.location.search;
-  if (!query) return null;
-  const bagian = query.replace('?id=', '').split('/')[0]; // ambil angka sebelum /
-  const idBersih = bagian.replace(/\D/g, '');
-  return idBersih || null;
+// ✅ Ambil ID & Judul dari URL format ?id=12345/judul-film
+function ambilDariUrl() {
+  const q = window.location.search;
+  if (!q) return { id: null, judul: '' };
+  const bersih = q.replace('?id=', '');
+  const bagian = bersih.split('/');
+  return {
+    id: bagian[0].replace(/\D/g, '') || null,
+    judul: bagian[1] || 'film'
+  };
 }
 
-// ✅ Cek SEMUA JSON → cari ID, pasang iframe
-async function cekDanMuatFilm(tmdbId) {
-  let ketemuDiJson = false;
-  for (const path of JSON_PATHS) {
-    try {
-      const res = await fetch(path, { cache: "no-store" });
-      if (res.ok) {
-        const daftar = await res.json();
-        const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        if (ketemu) {
-          ketemuDiJson = true;
-          pasangIframeUtama(tmdbId);
-          return ketemuDiJson;
-        }
-      }
-    } catch (err) {
-      console.warn("⚠️ Gagal baca:", path, err);
-    }
+// ✅ CEK KECOCOKAN DENGAN ABYSS — tmdb_id ATAU nama mirip
+async function cekAbyss(tmdbId, judulDariUrl = '') {
+  try {
+    const res = await fetch(ABYSS_LIST_URL, { cache: "no-store" });
+    if (!res.ok) return false;
+    const daftar = await res.json();
+    
+    const ketemu = daftar.find(f => {
+      // Cocok berdasarkan tmdb_id
+      const cocokId = f.tmdb_id && String(f.tmdb_id).trim() === String(tmdbId).trim();
+      // Cocok berdasarkan nama/judul
+      const namaBersih = (f.name || f.filename || f.title || '').toLowerCase().replace(/[-_]/g, ' ');
+      const judulBersih = judulDariUrl.toLowerCase().replace(/-/g, ' ');
+      const cocokNama = judulBersih && namaBersih.includes(judulBersih);
+      return cocokId || cocokNama;
+    });
+    
+    return !!ketemu;
+  } catch (err) {
+    console.warn('⚠️ Cek Abyss gagal:', err);
+    return false;
   }
-  // ❌ Tidak ketemu → tetap pasang player
-  ketemuDiJson = false;
-  pasangIframeUtama(tmdbId);
-  return ketemuDiJson;
 }
 
-// 🔧 Bantu: pasang iframe + cadangan
-function pasangIframeUtama(tmdbId) {
+// ✅ Pasang Pemutar Utama — vsembed
+function pasangPemutar(tmdbId) {
   filmIframe.src = SUMBER_EMBED.utama(tmdbId);
   filmIframe.onerror = () => {
     filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
   };
 }
 
-// ✅ Tombol Layar Penuh
+// ✅ Tombol Bendera → Buka alternate.html
+btnSubIndo?.addEventListener('click', () => {
+  if (!currentMovieId) {
+    alert("ID film tidak ditemukan.");
+    return;
+  }
+  window.location.href = `alternate.html?id=${currentMovieId}/${currentMovieTitle}`;
+});
+
+// ✅ Layar Penuh
 btnFullscreen?.addEventListener('click', () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen?.();
@@ -814,77 +827,33 @@ btnFullscreen?.addEventListener('click', () => {
   }
   lucide.createIcons();
 });
-
-document.addEventListener('fullscreenchange', updateFullscreenIcon);
-function updateFullscreenIcon() {
+document.addEventListener('fullscreenchange', () => {
   if (!btnFullscreen) return;
   btnFullscreen.innerHTML = document.fullscreenElement
     ? '<i data-lucide="minimize"></i>'
     : '<i data-lucide="maximize"></i>';
   lucide.createIcons();
-}
+});
 
-// ✅ Tombol Kembali → BALIK KE POSISI TERAKHIR DI INDEX
+// ✅ Kembali ke Index
 btnHomeBack?.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
-// ✅ Tombol Bendera → Buka Alternate Player + Sub Indo
-btnSubIndo?.addEventListener('click', async () => {
-  if (currentMovieId) {
-    let judulUrl = 'film';
-    const files = [
-      'https://midasxxi.github.io/tukarfollow/movies.json',
-      'https://midasxxi.github.io/tukarfollow/movies2025.json',
-      'https://midasxxi.github.io/tukarfollow/movies2024.json',
-      'https://midasxxi.github.io/tukarfollow/moviesclassic.json'
-    ];
-    try {
-      for (const file of files) {
-        const res = await fetch(file, { cache: "no-store" });
-        if (res.ok) {
-          const daftar = await res.json();
-          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(currentMovieId));
-          if (ketemu && ketemu.title) {
-            judulUrl = ketemu.title
-              .trim()
-              .toLowerCase()
-              .replace(/\s+/g, '-')
-              .replace(/[^a-z0-9-]/g, '')
-              .substring(0, 50);
-            break;
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('⚠️ Gagal baca JSON:', err);
-    }
-    // Buka alternate.html dengan format id/judul
-    window.location.href = `alternate.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
-  } else {
-    alert("ID film tidak ditemukan.");
-  }
-});
-
-// ✅ Komentar: Buka / Tutup Form
-btnAddComment?.addEventListener('click', bukaFormKomen);
-panelBackdrop?.addEventListener('click', tutupFormKomen);
-
-function bukaFormKomen() {
+// ✅ Komentar
+btnAddComment?.addEventListener('click', () => {
   infoPanel?.classList.add('show');
   panelBackdrop?.classList.add('active');
-}
-function tutupFormKomen() {
+});
+panelBackdrop?.addEventListener('click', () => {
   infoPanel?.classList.remove('show');
   panelBackdrop?.classList.remove('active');
-}
+});
 
-// ✅ Kirim Komentar ke Google Apps Script
 async function kirimKomentar() {
   const nama = document.getElementById('commentName')?.value.trim();
   const teks = document.getElementById('commentText')?.value.trim();
   if (!nama || !teks) return alert("Isi nama dan komentar dulu!");
-
   try {
     await fetch(URL_APPS_SCRIPT, {
       method: 'POST',
@@ -892,14 +861,14 @@ async function kirimKomentar() {
       body: JSON.stringify({ tmdbId: currentMovieId, nama, komentar: teks })
     });
     alert("✅ Komentar berhasil dikirim!");
-    tutupFormKomen();
+    infoPanel?.classList.remove('show');
+    panelBackdrop?.classList.remove('active');
     setTimeout(muatKomentar, 800);
   } catch {
-    alert("❌ Gagal mengirim komentar. Coba lagi.");
+    alert("❌ Gagal mengirim. Coba lagi.");
   }
 }
 
-// ✅ Buka / Tutup Daftar Komentar
 btnViewComments?.addEventListener('click', () => {
   const buka = commentsPanel?.classList.toggle('open');
   if (buka) muatKomentar();
@@ -908,11 +877,9 @@ closeCommentsBtn?.addEventListener('click', () => {
   commentsPanel?.classList.remove('open');
 });
 
-// ✅ Ambil & Tampilkan Komentar
 async function muatKomentar() {
   if (!currentMovieId || !commentListEl) return;
   commentListEl.innerHTML = '<div class="empty-comments">Memuat komentar...</div>';
-
   try {
     const res = await fetch(`${URL_APPS_SCRIPT}?tmdbId=${currentMovieId}`);
     const hasil = await res.json();
@@ -932,11 +899,14 @@ async function muatKomentar() {
   }
 }
 
-// ✅ JALANKAN SEMUA SAAT HALAMAN SIAP
+// ✅ JALANKAN SAAT HALAMAN SIAP
 window.addEventListener('DOMContentLoaded', async () => {
   lucide.createIcons();
-  currentMovieId = ambilIdDariUrl();
-
+  
+  const { id, judul } = ambilDariUrl();
+  currentMovieId = id;
+  currentMovieTitle = judul;
+  
   if (!currentMovieId) {
     if (videoWrapper) {
       videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">ID Film tidak ditemukan</div>`;
@@ -944,15 +914,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Cek & pasang player
-  const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
+  // 1. Pasang pemutar vsembed LANGSUNG
+  pasangPemutar(currentMovieId);
 
-  // Tampilkan tombol bendera HANYA kalau ada di daftar JSON
+  // 2. Cek Abyss di belakang → tampilkan/sembunyikan bendera 🇮🇩
+  const cocok = await cekAbyss(currentMovieId, currentMovieTitle);
   if (btnSubIndo) {
-    btnSubIndo.style.display = adaDiDaftarKita ? 'flex' : 'none';
+    btnSubIndo.style.display = cocok ? 'flex' : 'none';
   }
-});
-      
+});      
     </script>
 
     <script>
