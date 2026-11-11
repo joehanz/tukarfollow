@@ -784,8 +784,13 @@ const JSON_PATHS = [
   'https://midasxxi.github.io/arisindo/moviesclassic.json'
 ];
 
-// ✅ Sumber Player: ambil langsung dari kolom iframe di data JSON
-let currentMovieData = null;
+// ✅ Sumber Player: utama → cadangan
+const SUMBER_EMBED = {
+  utama: (id) => `https://vidsrc.to/embed/movie?tmdb=${id}`,
+  cadangan1: (id) => `https://vidlink.pro/movie?tmdb=${id}`,
+  cadangan2: (id) => `https://vidfast.pro/embed/movie?tmdb=${id}`,
+  cadangan3: (id) => `https://vsembed.ch/embed/movie?tmdb=${id}`
+};
 
 // 🎯 Elemen Halaman
 const videoWrapper    = document.getElementById('videoWrapper');
@@ -816,44 +821,37 @@ function ambilIdDariUrl() {
   return idBersih || null;
 }
 
-// ✅ Cek SEMUA JSON → cari ID, kembalikan data film
-async function cariFilmDiJson(tmdbId) {
+// ✅ Cek SEMUA JSON → cari ID, pasang iframe
+async function cekDanMuatFilm(tmdbId) {
+  let ketemuDiJson = false;
   for (const path of JSON_PATHS) {
     try {
       const res = await fetch(path, { cache: "no-store" });
       if (res.ok) {
         const daftar = await res.json();
         const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(tmdbId));
-        if (ketemu) return ketemu;
+        if (ketemu) {
+          ketemuDiJson = true;
+          pasangIframeUtama(tmdbId);
+          return ketemuDiJson;
+        }
       }
     } catch (err) {
       console.warn("⚠️ Gagal baca:", path, err);
     }
   }
-  return null;
+  // ❌ Tidak ketemu → tetap pasang player
+  ketemuDiJson = false;
+  pasangIframeUtama(tmdbId);
+  return ketemuDiJson;
 }
 
-// ✅ Pasang iframe dari data JSON
-function pasangIframeDariData(filmData) {
-  if (filmData?.iframe) {
-    filmIframe.src = filmData.iframe;
-    return true;
-  }
-  return false;
-}
-
-// ✅ Cek & muat film
-async function cekDanMuatFilm(tmdbId) {
-  currentMovieData = await cariFilmDiJson(tmdbId);
-  if (currentMovieData) {
-    pasangIframeDariData(currentMovieData);
-    return true;
-  }
-  // ❌ Tidak ketemu → tampilkan pesan
-  if (videoWrapper) {
-    videoWrapper.innerHTML = `<div style="padding:50px; text-align:center; color:#fff;">Link film tidak tersedia</div>`;
-  }
-  return false;
+// 🔧 Bantu: pasang iframe + cadangan
+function pasangIframeUtama(tmdbId) {
+  filmIframe.src = SUMBER_EMBED.utama(tmdbId);
+  filmIframe.onerror = () => {
+    filmIframe.src = SUMBER_EMBED.cadangan1(tmdbId);
+  };
 }
 
 // ✅ Tombol Layar Penuh
@@ -886,14 +884,31 @@ btnHomeBack?.addEventListener('click', () => {
 btnSubIndo?.addEventListener('click', async () => {
   if (currentMovieId) {
     let judulUrl = 'film';
-    if (currentMovieData?.title) {
-      judulUrl = currentMovieData.title
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-        .substring(0, 50);
+    const files = [
+      'https://midasxxi.github.io/arisindo/movies.json',
+      'https://midasxxi.github.io/arisindo/moviesclassic.json'
+    ];
+    try {
+      for (const file of files) {
+        const res = await fetch(file, { cache: "no-store" });
+        if (res.ok) {
+          const daftar = await res.json();
+          const ketemu = daftar.find(f => Number(f.tmdb_id) === Number(currentMovieId));
+          if (ketemu && ketemu.title) {
+            judulUrl = ketemu.title
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^a-z0-9-]/g, '')
+              .substring(0, 50);
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Gagal baca JSON:', err);
     }
+    // Buka alternate.html dengan format id/judul
     window.location.href = `alternate.html?id=${String(currentMovieId).trim()}/${judulUrl}`;
   } else {
     alert("ID film tidak ditemukan.");
@@ -978,7 +993,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Cek & pasang player dari data JSON
+  // Cek & pasang player
   const adaDiDaftarKita = await cekDanMuatFilm(currentMovieId);
 
   // Tampilkan tombol bendera HANYA kalau ada di daftar JSON
@@ -987,7 +1002,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
       
-</script>
+    </script>
 
 
     <script>
