@@ -183,7 +183,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            height: 340px;
+            height: auto;
             transform: translateY(calc(100% - 44px));
             transition: transform 0.32s ease;
             z-index: 99999;
@@ -434,11 +434,11 @@
               right: -95%;
             }
             #panelWrapper {
-              height: auto;
+              height: 340;
               transform: translateY(calc(100% - 44px));
             }
             #panel {
-              height: calc(auto - 44px);
+              height: calc(340 - 44px);
             }
           }
           @media screen and (orientation: landscape) {
