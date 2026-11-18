@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-          * {
+              * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -139,26 +139,49 @@
             overflow: hidden;
             background: #000;
           }
-         .video-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 70px); /* Tutup dari atas sampai 70px dari bawah */
-  z-index: 5;
-  pointer-events: auto; /* ✅ Aktif memblokir klik di area ini */
-}
-
+          .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+          }
+          /* TAMENG KIRI: Blokir klik dari pinggir kiri sampai lubang */
+          .video-overlay::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 70px;
+            left: 0;
+            right: calc(100% - 120px);
+            background: rgba(0, 0, 0, 0);
+            z-index: 6;
+            pointer-events: auto;
+          }
+          /* TAMENG KANAN: Blokir klik dari lubang sampai pinggir kanan */
+          .video-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 70px;
+            left: calc(100% - 60px);
+            right: 0;
+            background: rgba(0, 0, 0, 0);
+            z-index: 6;
+            pointer-events: auto;
+          }
+          /* LUBANG KLIK: Hanya area ini yang tembus ke kontrol iframe */
           .clickable-subtitle-area {
-  position: absolute;
-  bottom: 60px;
-  right: 20px;
-  width: 120px;
-  height: 40px;
-  z-index: 6; /* z-index lebih tinggi dari overlay */
-  pointer-events: auto; /* ✅ Tetap bisa diklik */
-}
-
+            position: absolute;
+            bottom: 0;
+            left: calc(50% - 60px);
+            width: 120px;
+            height: 70px;
+            z-index: 7;
+            pointer-events: none;
+          }
           #filmIframe {
             width: 100%;
             height: 100%;
@@ -178,7 +201,6 @@
             width: 80px;
             height: auto;
           }
-
           /* === PANEL BAWAH YANG BISA DITARIK === */
           #panelWrapper {
             position: fixed;
@@ -218,7 +240,6 @@
             color: #fff;
             overflow-y: auto;
           }
-
           /* Kontrol di dalam panel */
           .subtitle-controls {
             display: flex;
@@ -254,7 +275,6 @@
             width: 20px;
             height: 20px;
           }
-
           .search-container {
             position: fixed;
             top: max(16px, env(safe-area-inset-top));
@@ -457,6 +477,7 @@
               height: 38px;
             }
           }
+
     </style>
 </head>
 <body>
