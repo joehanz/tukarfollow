@@ -139,24 +139,26 @@
             overflow: hidden;
             background: #000;
           }
-          .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(100% - 70px);
-            z-index: 5;
-            pointer-events: none;
-          }
+         .video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px); /* Tutup dari atas sampai 70px dari bawah */
+  z-index: 5;
+  pointer-events: auto; /* ✅ Aktif memblokir klik di area ini */
+}
+
           .clickable-subtitle-area {
-            position: absolute;
-            bottom: 60px;
-            right: 20px;
-            width: 120px;
-            height: 40px;
-            z-index: 6;
-            pointer-events: auto;
-          }
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
+  width: 120px;
+  height: 40px;
+  z-index: 6; /* z-index lebih tinggi dari overlay */
+  pointer-events: auto; /* ✅ Tetap bisa diklik */
+}
+
           #filmIframe {
             width: 100%;
             height: 100%;
