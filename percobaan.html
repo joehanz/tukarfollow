@@ -699,141 +699,56 @@
       />
     </div>
 
-    <style>
-/* Wrapper berisi panel + tombol */
-#panelWrapper {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 110px; /* ← PAS: pas tinggi tombol + padding */
-  transform: translateY(calc(100% - 42px)); 
-  transition: transform .32s ease;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-/* TOMBOL YANG MENEMPEL DI ATAS PANEL */
-#panelBtn {
-  width: 140px;
-  margin: 0 auto;
-  display: block;
-  background: #ff0066;
-  color: #fff;
-  border: none;
-  padding: 10px 22px;
-  border-radius: 18px 18px 0 0;
-  font-size: 16px;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-/* PANEL UTAMA — TINGGI PAS DENGAN TOMBOL KONTROL */
-#panel {
-  background: #111;
-  height: calc(110px - 42px); /* ← WAJIB SAMA dengan tinggi wrapper di atas! */
-  border-top-left-radius: 22px;
-  border-top-right-radius: 22px;
-  box-shadow: 0 -6px 18px rgba(0,0,0,.5);
-  padding: 10px 15px;
-  pointer-events: auto;
-  color: #fff;
-  overflow-y: auto;
-}
-
-/* Saat panel dibuka penuh */
-#panelWrapper.open {
-  transform: translateY(0);
-}
-
-/* === STYLE TOMBOL KONTROL === */
-.subtitle-layer {
-  width: 100%;
-}
-.subtitle-controls {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: nowrap;
-}
-.ctrl-btn {
-  background: #2a2a2a;
-  color: #fff;
-  border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  flex-shrink: 0;
-}
-.ctrl-btn:hover {
-  background: #ff0066;
-}
-.ctrl-btn svg,
-.ctrl-btn i {
-  width: 18px;
-  height: 18px;
-}
-</style>
-
-<!-- PANEL TARIK -->
-<div id='panelWrapper'>
-  <button id='panelBtn' onclick='togglePanel()'>&#9650; Panel</button>
-  <div id='panel'>
-    <center>
-      <div class="subtitle-layer" id="subLayer">
-        <div class="subtitle-controls">
-          <button class="ctrl-btn" id="btnHomeBack" title="Kembali ke halaman sebelumnya">
-            <i data-lucide="arrow-left"></i>
-          </button>
-          <button class="ctrl-btn" id="btnAddComment" title="Tulis Komentar">
-            <i data-lucide="plus-circle"></i>
-          </button>
-          <button class="ctrl-btn" id="btnViewComments" title="Lihat Daftar Komentar">
-            <i data-lucide="message-square"></i>
-          </button>
-          
-          <!-- TOMBOL: Subtitle Indonesia -->
-          <button class="ctrl-btn" id="btnSubIndo" title="Alternatif Player II">
-            <svg width="18" height="16" viewBox="0 0 18 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="2" width="2.8" height="12" rx="0.5"/>
-              <rect x="10.8" y="2" width="2.8" height="12" rx="0.5"/>
-              <rect x="3.6" y="1" width="3.6" height="1.5" rx="0.5"/>
-              <rect x="10.4" y="1" width="3.6" height="1.5" rx="0.5"/>
-              <rect x="3.6" y="13.5" width="3.6" height="1.5" rx="0.5"/>
-              <rect x="10.4" y="13.5" width="3.6" height="1.5" rx="0.5"/>
-            </svg>
-          </button>
-          
-          <button class="ctrl-btn" id="btnFullscreen" title="Masuk/Keluar Layar Penuh">
-            <i data-lucide="maximize"></i>
-          </button>
-        </div>
+    <div class="subtitle-layer" id="subLayer">
+      <div class="subtitle-controls">
+        <button
+          class="ctrl-btn"
+          id="btnHomeBack"
+          title="Kembali ke halaman sebelumnya"
+        >
+          <i data-lucide="arrow-left"></i>
+        </button>
+        <button class="ctrl-btn" id="btnAddComment" title="Tulis Komentar">
+          <i data-lucide="plus-circle"></i>
+        </button>
+        <button
+          class="ctrl-btn"
+          id="btnViewComments"
+          title="Lihat Daftar Komentar"
+        >
+          <i data-lucide="message-square"></i>
+        </button>
+                <!-- ✅ TOMBOL: Subtitle Indonesia (Bendera) -->
+        <button
+  class="ctrl-btn"
+  id="btnSubIndo"
+  title="Alternatif Player II"
+>
+  <svg width="18" height="16" viewBox="0 0 18 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <!-- I kiri -->
+    <rect x="4" y="2" width="2.8" height="12" rx="0.5"/>
+    <!-- I kanan -->
+    <rect x="10.8" y="2" width="2.8" height="12" rx="0.5"/>
+    <!-- Topi kecil atas kiri -->
+    <rect x="3.6" y="1" width="3.6" height="1.5" rx="0.5"/>
+    <!-- Topi kecil atas kanan -->
+    <rect x="10.4" y="1" width="3.6" height="1.5" rx="0.5"/>
+    <!-- Topi kecil bawah kiri -->
+    <rect x="3.6" y="13.5" width="3.6" height="1.5" rx="0.5"/>
+    <!-- Topi kecil bawah kanan -->
+    <rect x="10.4" y="13.5" width="3.6" height="1.5" rx="0.5"/>
+  </svg>
+</button>
+        <button
+          class="ctrl-btn"
+          id="btnFullscreen"
+          title="Masuk/Keluar Layar Penuh"
+        >
+          <i data-lucide="maximize"></i>
+        </button>
       </div>
-    </center>
-  </div>
-</div>
+    </div>
 
-<script>
-function togglePanel() {
-  const wrap = document.getElementById("panelWrapper");
-  const btn = document.getElementById("panelBtn");
-
-  wrap.classList.toggle("open");
-
-  if (wrap.classList.contains("open")) {
-    btn.innerHTML = "&#9660; Tutup";
-  } else {
-    btn.innerHTML = "&#9650; Panel";
-  }
-}
-</script>
-
-  
     <div class="search-container" id="searchContainer">
       <div class="search-box">
         <i data-lucide="search" size="18" color="#888"></i>
