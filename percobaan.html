@@ -503,7 +503,53 @@
               height: 36px;
             }
           }
-    </style>
+       /* Wrapper berisi panel + tombol */
+#panelWrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 320px; /* total tinggi panel */
+  transform: translateY(calc(100% - 42px)); 
+  transition: transform .32s ease;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* TOMBOL YANG MENEMPEL DI ATAS PANEL */
+#panelBtn {
+  width: 140px;
+  margin: 0 auto;
+  display: block;
+  background: #ff0066;
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 18px 18px 0 0;
+  font-size: 16px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* PANEL UTAMA */
+#panel {
+  background: #111;
+  height: calc(320px - 42px);
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  box-shadow: 0 -6px 18px rgba(0,0,0,.5);
+  padding: 15px;
+  pointer-events: auto;
+  color: #fff;
+}
+
+/* Saat panel dibuka penuh */
+#panelWrapper.open {
+  transform: translateY(0);
+}
+
+</style>
+
     </head>
 <body>
     <div class="comments-panel" id="commentsPanel">
