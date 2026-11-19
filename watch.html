@@ -706,7 +706,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 110px; /* ← PAS: pas tinggi tombol + padding */
+  /* ❌ JANGAN PAKAI height tetap */
+  height: fit-content; /* ✅ Otomatis ngikuti isi */
   transform: translateY(calc(100% - 42px)); 
   transition: transform .32s ease;
   z-index: 9999;
@@ -731,14 +732,15 @@
 /* PANEL UTAMA — TINGGI PAS DENGAN TOMBOL KONTROL */
 #panel {
   background: #111;
-  height: calc(110px - 42px); /* ← WAJIB SAMA dengan tinggi wrapper di atas! */
+  /* ✅ Tinggi panel otomatis, nggak pakai calc() */
+  height: fit-content;
+  min-height: 56px; /* biar nggak terlalu gepeng */
   border-top-left-radius: 22px;
   border-top-right-radius: 22px;
   box-shadow: 0 -6px 18px rgba(0,0,0,.5);
   padding: 10px 15px;
   pointer-events: auto;
   color: #fff;
-  overflow-y: auto;
 }
 
 /* Saat panel dibuka penuh */
