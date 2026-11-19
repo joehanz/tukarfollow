@@ -745,6 +745,37 @@
       />
     </div>
 
+
+    <div id='panelWrapper'>
+  <button id='panelBtn' onclick='togglePanel()'>&#9650; Info Panel</button>
+  <div id='panel'>
+    <center>
+      
+      kkkkkkkkkkkk
+      
+    </center>
+  </div>
+</div>
+
+<script>
+function togglePanel() {
+  const wrap = document.getElementById(&quot;panelWrapper&quot;);
+  const btn = document.getElementById(&quot;panelBtn&quot;);
+
+  wrap.classList.toggle(&quot;open&quot;);
+
+  if (wrap.classList.contains(&quot;open&quot;)) {
+    btn.innerHTML = &quot;&#9660; Tutup&quot;;
+  } else {
+    btn.innerHTML = &quot;&#9650; Panel&quot;;
+  }
+}
+</script>
+
+
+
+
+    
     <div class="subtitle-layer" id="subLayer">
       <div class="subtitle-controls">
         <button
@@ -1265,41 +1296,5 @@ window.addEventListener('DOMContentLoaded', async () => {
           })();
       //]]>
       </script>
-
-    <div id='panelWrapper'>
-  <button id='panelBtn' onclick='togglePanel()'>&#9650; Info Panel</button>
-  <div id='panel'>
-    <center>
-      
-      <script type='text/javascript'>
-  atOptions = {
-  	&#39;key&#39; : &#39;1454ac48f3e9cdd06e0c0a239d3fa834&#39;,
-  	&#39;format&#39; : &#39;iframe&#39;,
-  	&#39;height&#39; : 250,
-  	&#39;width&#39; : 300,
-  	&#39;params&#39; : {}
-  };
-</script>
-<script src='https://www.highperformanceformat.com/1454ac48f3e9cdd06e0c0a239d3fa834/invoke.js' type='text/javascript'/>
-
-      
-    </center>
-  </div>
-</div>
-
-<script>
-function togglePanel() {
-  const wrap = document.getElementById(&quot;panelWrapper&quot;);
-  const btn = document.getElementById(&quot;panelBtn&quot;);
-
-  wrap.classList.toggle(&quot;open&quot;);
-
-  if (wrap.classList.contains(&quot;open&quot;)) {
-    btn.innerHTML = &quot;&#9660; Tutup&quot;;
-  } else {
-    btn.innerHTML = &quot;&#9650; Panel&quot;;
-  }
-}
-</script>
     </body>
 </html>
